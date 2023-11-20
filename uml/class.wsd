@@ -1,0 +1,86 @@
+@startuml class diagram
+
+abstract class Entity {
+    -id: Long
+    -preys: Entity[]
+    -kidsAmountRange: int[]
+    -age: int
+    --
+    {abstract} +generatePreys(): list[Entity]
+    {abstract} +generateKids(): list[Entity]
+}
+
+class Simulation {
+    -grid: Grid
+    -regions: Region[]
+    -step: int
+    --
+    +run(): void
+    +stepType(): void
+    +stepWeather(): void
+    +stepEntities(): void
+}
+
+class Grid {
+    -cases: Case[][]
+    -size: int
+}
+
+abstract class Case {
+    -entity: Entity
+    -weather: enum
+    --
+    {abstract} +getPossibleEntities(): Entity[]
+}
+
+class Land {
+    
+}
+
+class Water {
+    
+}
+
+class Weather {
+    -temperature
+    
+}
+
+class Region {
+    -cases: Case[]
+    -weather: Weather
+}
+
+
+class Fish {
+    -type: enum
+}
+
+class Human {
+    -type: enum
+    --
+    
+}
+
+abstract class Animal {
+
+}
+
+class Plant {
+}
+
+class Cow {
+}
+
+Entity <-- Human
+Entity <-- Animal
+Entity <-- Plant
+
+Animal <-- Fish
+Animal <-- Cow
+
+Case <-- Land
+Case <-- Water
+
+
+@enduml
