@@ -1,36 +1,36 @@
 @startuml class diagram
 
 abstract class Entity {
-    -id: Long
-    -preys: Entity[]
-    -kidsAmountRange: int[]
-    -age: int
+    -Long id
+    -{static} Entity[] preys
+    -Entity[] localPreys
+    -int[] kidsAmountRange
+    -int age
     --
-    {abstract} +generatePreys(): list[Entity]
-    {abstract} +generateKids(): list[Entity]
+    +list[Entity] {abstract} generatePreys()
+    +list[Entity] {abstract} generateKids()
 }
 
 class Simulation {
-    -grid: Grid
-    -regions: Region[]
-    -step: int
+    -Grid grid
+    -Region[] regions
+    -int step
     --
-    +run(): void
-    +stepType(): void
-    +stepWeather(): void
-    +stepEntities(): void
+    +void run()
+    +void stepType()
+    +void stepWeather()
+    +void stepEntities()
 }
 
 class Grid {
-    -cases: Case[][]
-    -size: int
+    -Case[][] cases
+    -int size
 }
 
 abstract class Case {
-    -entity: Entity
-    -weather: enum
+    -Entity entity
     --
-    {abstract} +getPossibleEntities(): Entity[]
+    {abstract} +Entity[] getPossibleEntities()
 }
 
 class Land {
@@ -43,23 +43,20 @@ class Water {
 
 class Weather {
     -temperature
-    
 }
 
 class Region {
-    -cases: Case[]
-    -weather: Weather
+    -Case[] cases
+    -Weather weather
 }
 
 
 class Fish {
-    -type: enum
+
 }
 
 class Human {
-    -type: enum
-    --
-    
+
 }
 
 abstract class Animal {
@@ -82,5 +79,9 @@ Animal <-- Cow
 Case <-- Land
 Case <-- Water
 
+note right of Entity::localPreys
+    Each entity from a same specie
+    has a slightly different set of preys
+end note
 
 @enduml
