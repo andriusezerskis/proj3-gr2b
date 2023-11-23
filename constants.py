@@ -4,14 +4,5 @@ Authors: Loïc Bloomaert, Hà Ûyen Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-
-from simulation import Simulation
-
-
-def main():
-    simulation = Simulation(10)
-    simulation.run()
-
-
-if __name__ == "__main__":
-    main()
+# Simulation
+STEP_TIME = 10
