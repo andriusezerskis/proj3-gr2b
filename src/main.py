@@ -4,8 +4,14 @@ Authors: Loïc Blommaert, Hà Ûyen Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-import sys
+from model.simulation import Simulation
 from PyQt6.QtWidgets import QApplication, QWidget
+import os
+import sys
+
+
+sys.path.append(os.path.dirname(
+    os.path.dirname(os.path.abspath("simulation.py"))))
 
 
 def main():
@@ -13,6 +19,8 @@ def main():
 
 
 if __name__ == '__main__':
+    simulation = Simulation()
+    # simulation.run()
     app = QApplication(sys.argv)
     window = QWidget()
     window.setWindowTitle('Simulation 2D')

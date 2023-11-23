@@ -4,14 +4,19 @@ Authors: Loïc Bloomaert, Hà Ûyen Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-
-from constants import *
 import time
+from constants import STEP_TIME
+import os
+import sys
+
+
+sys.path.append(os.path.dirname(
+    os.path.dirname(os.path.abspath("constants.py"))))
 
 
 class Simulation:
-    def __init__(self,  grid):
-        self.grid = grid
+    def __init__(self):
+        self.grid = None
         self.step = 0
 
     def run(self):
