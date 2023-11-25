@@ -2,13 +2,12 @@
 
 abstract class Entity {
     -Long id
-    -{static} Entity[] preys
-    -Entity[] localPreys
     -int[] kidsAmountRange
     -int age
+    -bool isFed
     --
-    +list[Entity] {abstract} generatePreys()
     +list[Entity] {abstract} generateKids()
+    +void eat()
 }
 
 class Simulation {
@@ -60,21 +59,31 @@ class Human {
 }
 
 abstract class Animal {
-
+    -{static} Entity[] preys
+    -Entity[] localPreys
 }
 
-class Plant {
+abstract class Plant {
+}
+
+class Tree {
+}
+
+class Plankton {
 }
 
 class Cow {
 }
 
-Entity <-- Human
 Entity <-- Animal
 Entity <-- Plant
 
+Animal <-- Human
 Animal <-- Fish
 Animal <-- Cow
+
+Plant <-- Tree
+Plant <-- Plankton
 
 Case <-- Land
 Case <-- Water
