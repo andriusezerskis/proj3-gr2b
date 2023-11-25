@@ -1,12 +1,23 @@
 from abc import abstractmethod
 
 class Case:
-    def __init__(self, entityList: list) -> None:
+    def __init__(self, index: tuple, entityList: list) -> None:
+        self.index = index
         self.entities = entityList
         
-    def get_entities(self):
-        return self.entities
+    @abstractmethod
+    def step(self):
+        pass
     
     @abstractmethod
     def getPossibleEntities(self):
         pass
+        
+    def getEntities(self):
+        return self.entities
+    
+    def addEntity(self, entity):
+        self.entities.append(entity)
+        
+    def removeEntity(self, entity):
+        self.entities.remove(entity)
