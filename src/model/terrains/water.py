@@ -1,7 +1,7 @@
 from overrides import override
 from model.case import Case
 from model.entities.fish import Fish
-from model.entities.plankton import Plankton
+from model.entities.algae import Algae
 from model.entities.entity import Entity
 
 class Water(Case):
@@ -10,7 +10,7 @@ class Water(Case):
         
     @override    
     def getPossibleEntities(self):
-        return {Fish, Plankton} # returns a set so that we can check 
+        return {Fish, Algae} # returns a set so that we can check 
     
     def getType(self):
         return "water"

@@ -6,3 +6,10 @@ Date: December 2023
 
 # Simulation
 STEP_TIME = 10
+
+
+# Textures
+HUMAN_TEXTURE_PATH = "../assets/textures/human2.png"
+FISH_TEXTURE_PATH = "../assets/textures/human2.png"
+ALGAE_TEXTURE_PATH = "../assets/textures/human2.png"
+TREE_TEXTURE_PATH = "../assets/textures/plant2.png"

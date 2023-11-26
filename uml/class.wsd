@@ -4,7 +4,7 @@ abstract class Entity {
     -Long id
     -int[] kidsAmountRange
     -int age
-    -bool isFed
+    -float hunger
     --
     +list[Entity] {abstract} generateKids()
     +void eat()

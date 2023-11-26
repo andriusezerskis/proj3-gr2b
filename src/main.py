@@ -6,6 +6,7 @@ Date: December 2023
 import random
 from model.gridgenerator import GridGenerator
 from model.simulation import Simulation
+from model.gridgenerator import GridGenerator
 from PyQt6.QtWidgets import QApplication, QWidget
 import os
 import sys

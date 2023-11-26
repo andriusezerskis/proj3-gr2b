@@ -3,10 +3,15 @@ from abc import ABC, abstractmethod
 
 class Entity(ABC):
 
-    def eat(self):
-        self.isFed = True
+    @staticmethod
+    @abstractmethod
+    def getTexturePath() -> str:
+        ...
+
+    def eat(self) -> None:
+        self.hunger = 0
 
     def __init__(self):
-        self.age: int = 0
+        self.hunger: float = 0
         self.isFed: bool = False
 

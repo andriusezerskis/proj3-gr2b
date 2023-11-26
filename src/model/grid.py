@@ -1,4 +1,3 @@
-from case import Case
 from gridgenerator import GridGenerator
 
 class Grid:

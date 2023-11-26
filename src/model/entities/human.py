@@ -4,8 +4,15 @@ from overrides import override
 from model.entities.fish import Fish
 from model.entities.tree import Tree
 
+from constants import HUMAN_TEXTURE_PATH
+
 
 class Human(Animal):
+
+    @staticmethod
+    @override
+    def getTexturePath() -> str:
+        return HUMAN_TEXTURE_PATH
 
     @staticmethod
     @override
