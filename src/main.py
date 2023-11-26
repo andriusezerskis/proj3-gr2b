@@ -6,6 +6,7 @@ Date: December 2023
 import random
 
 from model.simulation import Simulation
+from model.gridgenerator import GridGenerator
 from PyQt6.QtWidgets import QApplication, QWidget
 import os
 import sys
@@ -21,6 +22,7 @@ def main():
 
 
 if __name__ == '__main__':
+
     simulation = Simulation()
     # simulation.run()
     app = QApplication(sys.argv)
