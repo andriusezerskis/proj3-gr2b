@@ -1,11 +1,11 @@
 from overrides import override
-from case import Case
-from entities.fish import Fish
-from entities.plankton import Plankton
-from entities.entity import Entity
+from model.case import Case
+from model.entities.fish import Fish
+from model.entities.plankton import Plankton
+from model.entities.entity import Entity
 
 class Water(Case):
-    def __init__(self, entity) -> None:
+    def __init__(self, entity: Entity=None) -> None:
         super().__init__(entity)
         
     @override    

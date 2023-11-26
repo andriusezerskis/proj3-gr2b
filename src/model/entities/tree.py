@@ -1,4 +1,4 @@
-from plant import Plant
+from model.entities.plant import Plant
 
 
 class Tree(Plant):

@@ -1,7 +1,7 @@
 from overrides import override
 
-from animal import Animal
-from plankton import Plankton
+from model.entities.animal import Animal
+from model.entities.plankton import Plankton
 
 
 class Fish(Animal):

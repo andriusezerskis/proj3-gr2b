@@ -1,12 +1,12 @@
 from abc import abstractmethod, ABC
 from overrides import override
-from case import Case
-from entities.plant import Plant
-from entities.human import Human
-from entities.entity import Entity
+from model.case import Case
+from model.entities.plant import Plant
+from model.entities.human import Human
+from model.entities.entity import Entity
 
 class Land(Case):
-    def __init__(self, entity: Entity) -> None:
+    def __init__(self, entity: Entity=None) -> None:
         super().__init__(entity)
         
     @override
