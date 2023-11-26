@@ -1,6 +1,6 @@
 from overrides import override
 
-from plant import Plant
+from model.entities.plant import Plant
 
 from constants import ALGAE_TEXTURE_PATH
 

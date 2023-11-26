@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from entities import Entity
+from model.entities.entity import Entity
 
 class Case:
     def __init__(self, index: tuple, entity: Entity = None) -> None:

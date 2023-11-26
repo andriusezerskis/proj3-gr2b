@@ -4,14 +4,14 @@ Authors: Loïc Blommaert, Hà Ûyen Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 import random
-
+from model.gridgenerator import GridGenerator
 from model.simulation import Simulation
 from model.gridgenerator import GridGenerator
 from PyQt6.QtWidgets import QApplication, QWidget
 import os
 import sys
 
-from src.view.grid import Window
+from view.grid import Window
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("simulation.py"))))
@@ -22,7 +22,8 @@ def main():
 
 
 if __name__ == '__main__':
-
+    objet = GridGenerator(10, 10)
+    objet.generateGrid()
     simulation = Simulation()
     # simulation.run()
     app = QApplication(sys.argv)

@@ -1,4 +1,4 @@
-from entity import Entity
+from model.entities.entity import Entity
 from abc import abstractmethod, ABC
 from random import random
 

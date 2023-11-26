@@ -1,8 +1,8 @@
-from animal import Animal
+from model.entities.animal import Animal
 from overrides import override
 
-from fish import Fish
-from tree import Tree
+from model.entities.fish import Fish
+from model.entities.tree import Tree
 
 from constants import HUMAN_TEXTURE_PATH
 

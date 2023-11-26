@@ -1,4 +1,4 @@
-from case import Case
+from gridgenerator import GridGenerator
 
 class Grid:
     def __init__(self, size: tuple) -> None:
@@ -6,13 +6,8 @@ class Grid:
         self.size = size
         
     def initialize(self):
-        """Probably useless, need random initialization"""
-        for line in range(self.size[0]):
-            self.cases.append([])
-            for col in range(self.size[1]):
-                self.cases[line].append(Case([]))
-                
-        # add entities randomly TODO
+        """Random initialization of the grid with perlin noise"""
+        self.cases = GridGenerator(self.size[0], self.size[1]).generateGrid()
                 
     def entityInAdjacentCase(self, entity, currentCase):
         """Checks if, given a current case, there's an entity in an adjacent case to eventually interact with"""

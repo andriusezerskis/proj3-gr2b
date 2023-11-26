@@ -1,4 +1,4 @@
-from plant import Plant
+from model.entities.plant import Plant
 from overrides import override
 
 from constants import TREE_TEXTURE_PATH

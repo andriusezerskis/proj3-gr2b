@@ -2,8 +2,8 @@ from overrides import override
 
 from constants import FISH_TEXTURE_PATH
 
-from animal import Animal
-from algae import Algae
+from model.entities.animal import Animal
+from model.entities.algae import Algae
 
 
 class Fish(Animal):
