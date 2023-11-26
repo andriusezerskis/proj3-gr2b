@@ -29,6 +29,6 @@ class Grid:
         
         for case in adjacent_cases:
             if 0 <= case[0] < self.size[0] and 0 <= case[1] < self.size[1]:
-                if entity in self.cases[case[0]][case[1]].entities:
+                if entity.id == self.cases[case[0]][case[1]].getEntity().id:
                     return True
         return False

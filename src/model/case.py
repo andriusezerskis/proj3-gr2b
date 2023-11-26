@@ -1,9 +1,10 @@
 from abc import abstractmethod
+from entities import Entity
 
 class Case:
-    def __init__(self, index: tuple, entityList: list) -> None:
+    def __init__(self, index: tuple, entity: Entity = None) -> None:
         self.index = index
-        self.entities = entityList
+        self.entity = entity
         
     @abstractmethod
     def step(self):
@@ -13,11 +14,13 @@ class Case:
     def getPossibleEntities(self):
         pass
         
-    def getEntities(self):
-        return self.entities
+    def getEntity(self):
+        return self.entity
     
     def addEntity(self, entity):
-        self.entities.append(entity)
+        if not self.entity:
+            self.entity = entity
         
-    def removeEntity(self, entity):
-        self.entities.remove(entity)
+    def removeEntity(self):
+        if self.entity:
+            self.entity = None
