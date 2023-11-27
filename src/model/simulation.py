@@ -44,7 +44,7 @@ class Simulation:
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity():
-                    entities = self.grid.entityInAdjacentCase(tile.index)
+                    entities = self.grid.entitiesInAdjacentTile(tile.index)
                     for entity in entities:
                         if tile.getEntity():
                             self.interaction(tile, entity)
