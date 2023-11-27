@@ -23,6 +23,9 @@ class Tile(ABC):
         
     def getEntity(self):
         return self.entity
+
+    def hasEntity(self) -> bool:
+        return self.entity is not None
     
     def addEntity(self, entity):
         if not self.entity:

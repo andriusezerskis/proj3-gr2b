@@ -11,12 +11,12 @@ STEP_TIME = 10
 # # Textures
 
 # Entities
-HUMAN_TEXTURE_PATH = "../assets/textures/human2.png"
-FISH_TEXTURE_PATH = "../assets/textures/human2.png"
-ALGAE_TEXTURE_PATH = "../assets/textures/human2.png"
-TREE_TEXTURE_PATH = "../assets/textures/plant2.png"
+HUMAN_TEXTURE_PATH = "../assets/textures/human.png"
+FISH_TEXTURE_PATH = "../assets/textures/fish.png"
+ALGAE_TEXTURE_PATH = "../assets/textures/algae.png"
+TREE_TEXTURE_PATH = "../assets/textures/plant.png"
 
 # Tiles
 
-LAND_TEXTURE_PATH = "../assets/textures/land2.png"
-WATER_TEXTURE_PATH = "../assets/textures/water2.png"
+LAND_TEXTURE_PATH = "../assets/textures/land.png"
+WATER_TEXTURE_PATH = "../assets/textures/water.png"
