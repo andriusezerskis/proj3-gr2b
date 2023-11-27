@@ -1,10 +1,18 @@
 from overrides import override
-from model.case import Case
+from model.terrains.tile import Tile
 from model.entities.fish import Fish
 from model.entities.algae import Algae
 from model.entities.entity import Entity
+from constants import WATER_TEXTURE_PATH
 
-class Water(Case):
+
+class Water(Tile):
+
+    @staticmethod
+    @override
+    def getTexturePath() -> str:
+        return WATER_TEXTURE_PATH
+
     def __init__(self, entity: Entity=None) -> None:
         super().__init__(entity)
         

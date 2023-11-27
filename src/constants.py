@@ -8,8 +8,15 @@ Date: December 2023
 STEP_TIME = 10
 
 
-# Textures
+# # Textures
+
+# Entities
 HUMAN_TEXTURE_PATH = "../assets/textures/human2.png"
 FISH_TEXTURE_PATH = "../assets/textures/human2.png"
 ALGAE_TEXTURE_PATH = "../assets/textures/human2.png"
 TREE_TEXTURE_PATH = "../assets/textures/plant2.png"
+
+# Tiles
+
+LAND_TEXTURE_PATH = "../assets/textures/land2.png"
+WATER_TEXTURE_PATH = "../assets/textures/water2.png"

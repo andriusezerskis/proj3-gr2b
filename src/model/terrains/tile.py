@@ -1,12 +1,19 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from model.entities.entity import Entity
 
-class Case:
+
+class Tile(ABC):
+
+    @staticmethod
+    @abstractmethod
+    def getTexturePath() -> str:
+        ...
+
     def __init__(self, index: tuple, entity: Entity = None) -> None:
         self.index = index
         self.entity = entity
         
-    @abstractmethod
+    # @abstractmethod
     def step(self):
         pass
     

@@ -1,7 +1,8 @@
 from perlin_noise import PerlinNoise
-from model.case import Case
+from model.terrains.tile import Case
 from model.terrains.water import Water
 from model.terrains.land import Land
+
 
 class GridGenerator:
 
