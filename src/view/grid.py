@@ -43,7 +43,6 @@ class Grid(QGraphicsView):
     def draw_grid(self, grid: List[List]):
         for i, line in enumerate(grid):
             for j, tile in enumerate(line):
-                tile.addEntity(Human())
                 pixmap_item = QGraphicsPixmapItem(self.get_pixmap(tile))
                 pixmap_item.setPos(j * self.size[0], i * self.size[1])
                 self.pixmap_items[i][j][0] = pixmap_item
