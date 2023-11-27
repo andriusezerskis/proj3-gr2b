@@ -8,6 +8,7 @@ from model.gridgenerator import GridGenerator
 from model.simulation import Simulation
 from model.gridgenerator import GridGenerator
 from PyQt6.QtWidgets import QApplication, QWidget
+from model.regionhandler import RegionHandler
 import os
 import sys
 
@@ -21,14 +22,28 @@ def main():
     print("")
 
 
+def test_region():
+    regions = RegionHandler(20, 20)
+    while True:
+        for y in range(20):
+            for x in range(20):
+                print(regions.sample(x, y), end=" ")
+            print()
+
+        print()
+        regions.advanceTime()
+        if regions.t >= 20:
+            break
+
+
+
 if __name__ == '__main__':
-    # objet = GridGenerator(10, 10)
+    objet = GridGenerator(100, 100)
+    test_region()
     # objet.generateGrid()
-    simulation = Simulation()
-    simulation.run()
-    """
+    # simulation = Simulation()
+    # simulation.run()
     app = QApplication(sys.argv)
-    window = Window((200, 200), [[random.choice(["LH", "LC", "LP", "L", "W", "W", "W", "W", "L", "L", "L"])
-                                  for _ in range(200)] for _ in range(200)])
+    window = Window((200, 200), objet.generateGrid())
     window.show()
-    sys.exit(app.exec())"""
+    sys.exit(app.exec())
