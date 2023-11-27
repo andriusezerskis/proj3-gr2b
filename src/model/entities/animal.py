@@ -8,7 +8,7 @@ class Animal(Entity, ABC):
     @staticmethod
     @abstractmethod
     def getClassPreys() -> list:
-        ...
+        return None
 
     def generateLocalPreys(self) -> list:
         preys = []

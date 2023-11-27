@@ -1,5 +1,5 @@
 from perlin_noise import PerlinNoise
-from model.terrains.tile import Case
+from model.terrains.tile import Tile
 from model.terrains.water import Water
 from model.terrains.land import Land
 
@@ -10,9 +10,10 @@ class GridGenerator:
         self.w = w
         self.h = h
 
-    def generateGrid(self) -> list[list[Case]]:
+    def generateGrid(self) -> list[list[Tile]]:
         noise = PerlinNoise(octaves=4)
-        matrix = [[Water() if noise([x/self.w, y/self.h]) < 0 else Land() for x in range(self.w)] for y in range(self.h)]
+        matrix = [[Water((y, x)) if noise([x/self.w, y/self.h]) < 0 else Land((y, x))
+                   for x in range(self.w)] for y in range(self.h)]
         for l in matrix:
             for c in l:
                 print(c.getType(), end=" ")
