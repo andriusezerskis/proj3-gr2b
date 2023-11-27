@@ -15,3 +15,5 @@ class Entity(ABC):
         self.hunger: float = 0
         self.isFed: bool = False
 
+    def getType(self):
+        return self.__class__

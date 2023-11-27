@@ -5,7 +5,11 @@ Date: December 2023
 """
 
 # Simulation
-STEP_TIME = 10
+STEP_TIME = 2
+
+# Grid
+GRID_WIDTH = 10
+GRID_HEIGHT = 10
 
 
 # # Textures

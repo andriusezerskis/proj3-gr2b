@@ -13,8 +13,8 @@ class Water(Tile):
     def getTexturePath() -> str:
         return WATER_TEXTURE_PATH
 
-    def __init__(self, entity: Entity=None) -> None:
-        super().__init__(entity)
+    def __init__(self, index, entity: Entity=None) -> None:
+        super().__init__(index, entity)
         
     @override    
     def getPossibleEntities(self):

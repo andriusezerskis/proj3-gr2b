@@ -13,8 +13,8 @@ class Land(Tile):
     def getTexturePath() -> str:
         return LAND_TEXTURE_PATH
 
-    def __init__(self, entity: Entity=None) -> None:
-        super().__init__(entity)
+    def __init__(self, index, entity: Entity=None) -> None:
+        super().__init__(index, entity)
         
     @override
     def getPossibleEntities(self):
