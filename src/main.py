@@ -27,13 +27,9 @@ def test_region():
     import numpy as np
     regions = RegionHandler(100, 100)
     while True:
-        mat = [[0 for _ in range(100)] for _ in range(100)]
-        for y in range(100):
-            for x in range(100):
-                mat[y][x] = regions.sample(x, y)
-        plt.imsave(f"{regions.t}.png", np.array(mat, np.float32))
+        regions.renderTemperatureMap()
         regions.advanceTime()
-        if regions.t >= 20:
+        if regions.t >= 100:
             break
 
 

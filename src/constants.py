@@ -11,6 +11,12 @@ STEP_TIME = 2
 GRID_WIDTH = 10
 GRID_HEIGHT = 10
 
+# # Climate
+SEASON_TEMPERATURE_DIFFERENCE = 20  # Temperature difference between winter and summer
+MAX_TEMPERATURE_DIFFERENCE = 10     # in degrees
+RANDOM_TEMPERATURE_VARIABILITY = 2  # in degrees
+YEAR_DURATION = 100  # year duration in timesteps
+AVERAGE_TEMPERATURE = 10
 
 # # Textures
 TEXTURE_FOLDER_PATH = "../assets/textures"
@@ -22,7 +28,6 @@ ALGAE_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/algae.png"
 TREE_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/tree.png"
 
 # Tiles
-
 LAND_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/land.png"
 WATER_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/water.png"
 SAND_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/sand.png"

@@ -11,7 +11,7 @@ from model.terrains.sand import Sand
 class GridGenerator:
 
     def __init__(self, w: int, h: int, thresholds=((Water, 0), (Sand, 0.06), (Land, 1))):
-        self.noiseGenerator = NoiseGenerator(w, h)
+        self.noiseGenerator = NoiseGenerator()
         self.w = w
         self.h = h
         #self.noiseGenerator = Perlin()
@@ -19,7 +19,7 @@ class GridGenerator:
         self.thresholds = thresholds
 
     def _getTile(self, x: int, y: int) -> Tile:
-        sample = self.noiseGenerator.sample2D(x, y)
+        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h)
         for tileType, threshold in self.thresholds:
 
             if sample < threshold:

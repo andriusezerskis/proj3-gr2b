@@ -7,10 +7,7 @@ class NoiseGenerator:
     Perlin noise wrapper that supports the summing of different noise with different weights
     """
 
-    def __init__(self, w: int, h: int, z: int = 1_000_000):
-        self.w = w
-        self.h = h
-        self.z = z
+    def __init__(self):
         self.noises = []
         self.weight_sum = 0
 
@@ -23,17 +20,16 @@ class NoiseGenerator:
         self.noises.append((perlin_noise.PerlinNoise(octaves=octaves), weight))
         self.weight_sum += weight
 
-    def sample2D(self, x: int, y: int) -> float:
-        assert 0 <= x < self.w and 0 <= y
+    def sample2D(self, x: float, y: float) -> float:
+        assert 0 <= x <= 1 and 0 <= y <= 1
         if self.weight_sum <= 0:
             raise "The sum of the weights of the noise functions must be > 0"
 
-        return sum([noise([x/self.w, y/self.h]) * weight for noise, weight in self.noises]) / self.weight_sum
+        return sum([noise([x, y]) * weight for noise, weight in self.noises]) / self.weight_sum
 
-    def sample3D(self, x: int, y: int, z: int) -> float:
-        assert 0 <= x < self.w and 0 <= y < self.h and 0 <= z < self.z
+    def sample3D(self, x: float, y: float, z: float) -> float:
+        assert 0 <= x <= 1 and 0 <= y <= 1 and 0 <= z <= 1
         if self.weight_sum <= 0:
             raise "The sum of the weights of the noise functions must be > 0"
 
-        return sum([noise([x/self.w, y/self.h, z/self.z]) * weight
-                    for noise, weight in self.noises]) / self.weight_sum
+        return sum([noise([x, y, z]) * weight for noise, weight in self.noises]) / self.weight_sum
