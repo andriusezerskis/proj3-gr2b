@@ -1,6 +1,8 @@
 from model.entities.entity import Entity
 from abc import abstractmethod, ABC
+from overrides import override
 from random import random
+import random
 
 
 class Animal(Entity, ABC):
@@ -9,6 +11,10 @@ class Animal(Entity, ABC):
     @abstractmethod
     def getClassPreys() -> list:
         return None
+    
+    @abstractmethod
+    def reproduce(self) -> None:
+        ...
 
     def generateLocalPreys(self) -> list:
         preys = []
