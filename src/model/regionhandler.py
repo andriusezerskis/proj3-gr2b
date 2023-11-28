@@ -9,6 +9,7 @@ class RegionHandler:
         self.w = w
         self.h = h
         self.t = 0
+        self._generate()
 
     def _generate(self):
         self.noiseGenerator.addNoise(3, 1)

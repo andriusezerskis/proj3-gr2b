@@ -1,4 +1,6 @@
-from perlin_noise import PerlinNoise
+import noise
+from pynoise.noisemodule import Perlin
+from pynoise.noiseutil import terrain_gradient, noise_map_plane
 from model.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
 from model.terrains.water import Water
@@ -12,14 +14,15 @@ class GridGenerator:
         self.noiseGenerator = NoiseGenerator(w, h)
         self.w = w
         self.h = h
+        #self.noiseGenerator = Perlin()
+        #self.noiseMap = noise_map_plane(self.w, self.h, -1, 1, -1, 1, self.noiseGenerator)
         self.thresholds = thresholds
 
     def _getTile(self, x: int, y: int) -> Tile:
         sample = self.noiseGenerator.sample2D(x, y)
         for tileType, threshold in self.thresholds:
-            # self._sample() returns a value in [-self.weight_sum; self.weight_sum]
-            # because without weight, noise() returns a value in [-1; 1]
-            if sample < threshold * self.noiseGenerator.weight_sum:
+
+            if sample < threshold:
                 return tileType((y, x))
 
     def _generateMatrix(self) -> list[list[Tile]]:
