@@ -32,3 +32,10 @@ class Grid:
                         self.tiles[tile[0]][tile[1]].getEntity())
 
         return entitiesList
+
+
+    def moveEntity(self, entity, currentTile, nextTile):
+        """Moves an entity from a tile to another"""
+        if not self.tiles[nextTile[0]][nextTile[1]].hasEntity():
+            self.tiles[nextTile[0]][nextTile[1]].addEntity(entity)
+            self.tiles[currentTile[0]][currentTile[1]].removeEntity()
