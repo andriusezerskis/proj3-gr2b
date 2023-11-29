@@ -22,13 +22,13 @@ def main():
 
 
 if __name__ == '__main__':
-    objet = GridGenerator(100, 100)
-    grid = objet.generateGrid()
+    # objet = GridGenerator(10, 10)
+    # objet.generateGrid()
     simulation = Simulation()
-    # simulation.run()
+    simulation.run()
+    """
     app = QApplication(sys.argv)
-    window = Window((100, 100), grid)
-    """window = Window((200, 200), [[random.choice(["LH", "LC", "LP", "L", "W", "W", "W", "W", "L", "L", "L"])
-                                  for _ in range(200)] for _ in range(200)])"""
+    window = Window((200, 200), [[random.choice(["LH", "LC", "LP", "L", "W", "W", "W", "W", "L", "L", "L"])
+                                  for _ in range(200)] for _ in range(200)])
     window.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec())"""

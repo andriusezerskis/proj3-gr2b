@@ -1,5 +1,6 @@
 from model.entities.animal import Animal
 from overrides import override
+from random import random
 
 from model.entities.fish import Fish
 from model.entities.tree import Tree
@@ -21,3 +22,8 @@ class Human(Animal):
 
     def __init__(self):
         super().__init__()
+
+    @override
+    def reproduce(self) -> None:
+        kidsProbability = [(0, 0.1), (1, 0.4), (2, 0.5), (3, 0.1)]
+        return random.choices(kidsProbability, weights=[prob for _, prob in kidsProbability])[0]

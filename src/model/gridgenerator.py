@@ -32,7 +32,7 @@ class GridGenerator:
             # self._sample() returns a value in [-self.weight_sum; self.weight_sum]
             # because without weight, noise() returns a value in [-1; 1]
             if sample < threshold * self.weight_sum:
-                return tileType()
+                return tileType((y, x))
 
     def _generateMatrix(self) -> list[list[Tile]]:
         return [[self._getTile(x, y) for x in range(self.w)] for y in range(self.h)]

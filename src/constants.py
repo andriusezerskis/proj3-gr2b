@@ -5,7 +5,11 @@ Date: December 2023
 """
 
 # Simulation
-STEP_TIME = 10
+STEP_TIME = 2
+
+# Grid
+GRID_WIDTH = 10
+GRID_HEIGHT = 10
 
 
 # # Textures
@@ -15,7 +19,7 @@ TEXTURE_FOLDER_PATH = "../assets/textures"
 HUMAN_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/human.png"
 FISH_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/fish.png"
 ALGAE_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/algae.png"
-TREE_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/plant.png"
+TREE_TEXTURE_PATH = f"{TEXTURE_FOLDER_PATH}/tree.png"
 
 # Tiles
 
