@@ -11,6 +11,7 @@ from model.entities.tree import Tree
 from model.simulation import Simulation
 from model.grid import Grid
 
+
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
@@ -19,11 +20,19 @@ class Window(QMainWindow):
         self.view = GraphicalGrid(grid_size, simulation.get_grid())
         self.setCentralWidget(self.view)
 
+    def get_graphical_grid(self):
+        return self.view
 
-class GraphicalGrid(QGraphicsView):
+class SimulationObserver:
+    def ping_update(self, query):
+        print("simulation new step")
+
+
+class GraphicalGrid(QGraphicsView, SimulationObserver):
     def __init__(self, grid_size: Tuple[int, int], grid: Grid):
         self.scene = QGraphicsScene()
-        super().__init__(self.scene)
+        QGraphicsView.__init__(self, self.scene)
+
         """self.setRenderHint(QPainter.Antialiasing)
         self.setRenderHint(QPainter.SmoothPixmapTransform)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)"""

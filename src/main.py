@@ -24,9 +24,10 @@ def main():
 
 if __name__ == '__main__':
     simulation = Simulation()
-    #simulation.run()
 
     app = QApplication(sys.argv)
     window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
+    simulation.addObserver(window.get_graphical_grid())
+    simulation.run()
     window.show()
     sys.exit(app.exec())
