@@ -19,7 +19,7 @@ class Animal(Entity, ABC):
     def generateLocalPreys(self) -> list:
         preys = []
         for entity_, prob in self.getClassPreys():
-            if random() <= prob:
+            if random.randint(0, 100)/100 <= prob:
                 preys.append(entity_)
         return preys
 
