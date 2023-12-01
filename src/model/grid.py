@@ -1,5 +1,7 @@
+from typing import List
 
 from model.gridgenerator import GridGenerator
+from model.terrains.tile import Tile
 
 
 class Grid:
@@ -32,3 +34,17 @@ class Grid:
                         self.tiles[tile[0]][tile[1]].getEntity())
 
         return entitiesList
+
+    def moveEntity(self, entity, currentTile, nextTile):
+        """Moves an entity from a tile to another"""
+        if not self.tiles[nextTile[0]][nextTile[1]].hasEntity():
+            self.tiles[nextTile[0]][nextTile[1]].addEntity(entity)
+            self.tiles[currentTile[0]][currentTile[1]].removeEntity()
+
+    def get_tiles(self) -> List[List[Tile]]:
+        return self.tiles
+
+    def __iter__(self):
+        for i, line in enumerate(self.tiles):
+            for j, tile in enumerate(line):
+                yield (i, j), tile

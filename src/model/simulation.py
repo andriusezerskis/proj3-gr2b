@@ -1,6 +1,6 @@
 """
 Project 3: Ecosystem simulation in 2D
-Authors: Loïc Bloomaert, Hà Ûyen Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
 
@@ -14,26 +14,28 @@ from model.entities.animal import Animal
 from model.entities.fish import Fish
 
 from model.grid import Grid
-
+from model.subject import Subject
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
 
 
-class Simulation:
+class Simulation(Subject):
     def __init__(self):
+        super().__init__()
         self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
+        self.grid.initialize()
+        self.generateEntities()
         self.step_count = 0
 
     def run(self):
         print("Starting simulation...")
-        self.grid.initialize()
-        self.generateEntities()
         end = 0
         start = time.time()
         while True:
             end = time.time()
             if (end-start) > STEP_TIME:
+                self.notify()
                 self.step()
                 start = time.time()
 
@@ -129,3 +131,6 @@ class Simulation:
                 else:
                     print('_', end=' ')
             print()
+
+    def get_grid(self) -> Grid:
+        return self.grid
