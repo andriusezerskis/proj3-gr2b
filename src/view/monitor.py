@@ -22,9 +22,11 @@ class MonitorWindow(QMainWindow):
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
 
-        self.slot__1_widget = self.slot1()
+        self.slot_1 = self.slot("Choisir une coordonnée", "0, 0")
+        self.slot_2 = self.slot("Température de la zone", "0°")
 
-        self.layout.addWidget(self.slot__1_widget)
+        self.layout.addWidget(self.slot_1)
+        self.layout.addWidget(self.slot_2)
 
         label_2 = QLabel('yo')
         self.layout.addWidget(label_2)
@@ -34,13 +36,13 @@ class MonitorWindow(QMainWindow):
     def lol(self):
     	print('lol')
 
-    def slot1(self):
+    def slot(self, button, text):
         slot_1 = QHBoxLayout()
-        button = QPushButton("DJ KHALEDDDD")
+        button = QPushButton(button)
         button.clicked.connect(self.lol)
         slot_1.addWidget(button)
 
-        label = QLabel("WIL THE BEST MUUUWWZIKK")
+        label = QLabel(text)
         slot_1.addWidget(label)        
 
         container = QWidget()
