@@ -13,10 +13,13 @@ GRID_HEIGHT = 10
 
 # # Climate
 SEASON_TEMPERATURE_DIFFERENCE = 20  # Temperature difference between winter and summer
-MAX_TEMPERATURE_DIFFERENCE = 10     # in degrees
-RANDOM_TEMPERATURE_VARIABILITY = 2  # in degrees
-YEAR_DURATION = 100  # year duration in timesteps
-AVERAGE_TEMPERATURE = 10
+MAX_TEMPERATURE_DIFFERENCE = 10  # in degrees
+MAX_RANDOM_TEMPERATURE_DIFFERENCE = 5  # in degrees
+YEAR_DURATION = 1000  # year duration in timesteps
+AVERAGE_TEMPERATURE = 10  # in degrees
+MAX_TIMESTEP = 10000  # speed of the variable temperature change is 1/MAX_TIMESTEP, periodic noise after that
+# but the noise does not tile :(
+NB_STEP_BEFORE_UPDATE = 10  # number of timesteps before an update (for performance)
 
 # # Textures
 TEXTURE_FOLDER_PATH = "../assets/textures"

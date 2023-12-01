@@ -22,21 +22,8 @@ def main():
     print("")
 
 
-def test_region():
-    import matplotlib.pyplot as plt
-    import numpy as np
-    regions = RegionHandler(100, 100)
-    while True:
-        regions.renderTemperatureMap()
-        regions.advanceTime()
-        if regions.t >= 100:
-            break
-
-
-
 if __name__ == '__main__':
     objet = GridGenerator(100, 100)
-    test_region()
     # objet.generateGrid()
     # simulation = Simulation()
     # simulation.run()

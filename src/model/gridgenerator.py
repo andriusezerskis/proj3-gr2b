@@ -14,8 +14,8 @@ class GridGenerator:
         self.noiseGenerator = NoiseGenerator()
         self.w = w
         self.h = h
-        #self.noiseGenerator = Perlin()
-        #self.noiseMap = noise_map_plane(self.w, self.h, -1, 1, -1, 1, self.noiseGenerator)
+        # self.noiseGenerator = Perlin()
+        # self.noiseMap = noise_map_plane(self.w, self.h, -1, 1, -1, 1, self.noiseGenerator)
         self.thresholds = thresholds
 
     def _getTile(self, x: int, y: int) -> Tile:
