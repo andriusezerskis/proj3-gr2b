@@ -11,13 +11,6 @@ class MonitorWindow(QMainWindow):
         self.setGeometry(100, 100, 200, 300)
         self.layout = QVBoxLayout()
 
-        # self.label = QLabel("WIL THE BEST MUUUWWZIKK")
-        # self.layout.addWidget(self.label)
-
-        # button = QPushButton("DJ KHALEDDDD")
-        # button.clicked.connect(self.lol)
-        # self.layout.addWidget(button)
-
         widget = QWidget()
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
@@ -60,7 +53,7 @@ class MonitorWindow(QMainWindow):
         container.setLayout(slot)
         return container
 
-app = QApplication(sys.argv)
-w = MonitorWindow()
-w.show()
-app.exec()
+# app = QApplication(sys.argv)
+# w = MonitorWindow()
+# w.show()
+# app.exec()

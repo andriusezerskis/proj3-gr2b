@@ -7,6 +7,8 @@ from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QG
 from model.simulation import Simulation
 from model.grid import Grid
 
+from view.monitor import MonitorWindow
+
 
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
@@ -16,10 +18,15 @@ class Window(QMainWindow):
         self.view = GraphicalGrid(grid_size, simulation.get_grid())
         self.setCentralWidget(self.view)
         self.simulation = simulation
+        
+        self.monitor_window = MonitorWindow()
+        self.monitor_window.show()
 
     def get_graphical_grid(self):
         return self.view
 
+    def show_monitor(self):
+        self.monitor_window.show()
 
 class SimulationObserver:
     def ping_update(self, query):
