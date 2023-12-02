@@ -8,7 +8,7 @@ class MonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Monitor deb'île")
-        self.setGeometry(100, 100, 400, 400)
+        self.setGeometry(100, 100, 200, 300)
         self.layout = QVBoxLayout()
 
         # self.label = QLabel("WIL THE BEST MUUUWWZIKK")
@@ -22,8 +22,8 @@ class MonitorWindow(QMainWindow):
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
 
-        self.slot_1 = self.slot("Choisir une coordonnée", "0, 0")
-        self.slot_2 = self.slot("Température de la zone", "0°")
+        self.slot_1 = self.slot_choose_coord()
+        self.slot_2 = self.slot_temperature()
 
         self.layout.addWidget(self.slot_1)
         self.layout.addWidget(self.slot_2)
@@ -31,22 +31,33 @@ class MonitorWindow(QMainWindow):
         label_2 = QLabel('yo')
         self.layout.addWidget(label_2)
 
-
+#faire une classe slot comme ça pour manipuler les label etc c carré
 
     def lol(self):
     	print('lol')
 
-    def slot(self, button, text):
-        slot_1 = QHBoxLayout()
-        button = QPushButton(button)
+    def slot_choose_coord(self):
+        slot = QHBoxLayout()
+        button = QPushButton("Choisir une coordonnée")
         button.clicked.connect(self.lol)
-        slot_1.addWidget(button)
+        slot.addWidget(button)
 
-        label = QLabel(text)
-        slot_1.addWidget(label)        
+        label = QLabel("0, 0")
+        slot.addWidget(label)        
 
         container = QWidget()
-        container.setLayout(slot_1)
+        container.setLayout(slot)
+        return container
+
+    def slot_temperature(self):
+        slot = QHBoxLayout()
+        label = QLabel("Température de la région")
+        slot.addWidget(label)
+        label = QLabel("t°")
+        slot.addWidget(label)
+
+        container = QWidget()
+        container.setLayout(slot)
         return container
 
 app = QApplication(sys.argv)
