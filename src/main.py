@@ -31,6 +31,5 @@ if __name__ == '__main__':
     window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
     simulation.addObserver(window.get_graphical_grid())
     window.show()
-    #window.show_monitor()
     simulation.run()
     sys.exit(app.exec())

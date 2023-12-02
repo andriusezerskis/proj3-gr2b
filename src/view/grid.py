@@ -18,15 +18,13 @@ class Window(QMainWindow):
         self.view = GraphicalGrid(grid_size, simulation.get_grid())
         self.setCentralWidget(self.view)
         self.simulation = simulation
+
         
-        self.monitor_window = MonitorWindow()
-        self.monitor_window.show()
 
     def get_graphical_grid(self):
         return self.view
 
-    def show_monitor(self):
-        self.monitor_window.show()
+    
 
 class SimulationObserver:
     def ping_update(self, query):
@@ -56,6 +54,10 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         print(f"drawn in: {exec_time}s")
         self.scale(0.002, 0.002)
 
+
+        self.monitor_window = MonitorWindow()
+        self.monitor_window.show()
+
     def draw_grid(self, grid: Grid):
         for (i, j), tile in grid:
             pixmap_item = QGraphicsPixmapItem(self.get_pixmap(tile))
@@ -84,3 +86,12 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         # Appliquer le zoom
         self.zoom_factor *= zoom_factor
         self.scale(zoom_factor, zoom_factor)
+
+
+    def mousePressEvent(self, event):
+        point = self.mapToScene(event.pos())
+        point_2 = event.pos()
+        print(point)
+        print(point_2)
+        self.monitor_window.update_coord(point_2)
+        
