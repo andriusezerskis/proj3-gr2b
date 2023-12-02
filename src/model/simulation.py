@@ -5,6 +5,7 @@ Date: December 2023
 """
 
 import random
+import threading
 import time
 from constants import *
 import os
@@ -29,15 +30,21 @@ class Simulation(Subject):
         self.step_count = 0
 
     def run(self):
-        print("Starting simulation...")
-        end = 0
+        print("Starting simulation in 5s...")
+        """end = 0
         start = time.time()
         while True:
             end = time.time()
             if (end-start) > STEP_TIME:
                 self.notify()
                 self.step()
-                start = time.time()
+                start = time.time()"""
+        threading.Timer(5.0, self.simulate).start()
+
+    def simulate(self):
+        self.notify()
+        self.step()
+        threading.Timer(STEP_TIME, self.simulate).start()
 
     def step(self):
         self.step_count += 1

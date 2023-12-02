@@ -4,10 +4,6 @@ from typing import Tuple, List
 from PyQt6.QtGui import QPixmap, QPainter
 from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
 
-from model.terrains.land import Land
-from model.terrains.water import Water
-from model.entities.human import Human
-from model.entities.tree import Tree
 from model.simulation import Simulation
 from model.grid import Grid
 
@@ -19,9 +15,11 @@ class Window(QMainWindow):
         self.setGeometry(100, 100, 400, 400)
         self.view = GraphicalGrid(grid_size, simulation.get_grid())
         self.setCentralWidget(self.view)
+        self.simulation = simulation
 
     def get_graphical_grid(self):
         return self.view
+
 
 class SimulationObserver:
     def ping_update(self, query):

@@ -4,6 +4,8 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 import random
+import threading
+
 from model.gridgenerator import GridGenerator
 from model.simulation import Simulation
 from model.gridgenerator import GridGenerator
@@ -28,6 +30,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
     simulation.addObserver(window.get_graphical_grid())
-    simulation.run()
     window.show()
+    simulation.run()
     sys.exit(app.exec())

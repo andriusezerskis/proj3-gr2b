@@ -1,6 +1,3 @@
-import noise
-from pynoise.noisemodule import Perlin
-from pynoise.noiseutil import terrain_gradient, noise_map_plane
 from model.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
 from model.terrains.water import Water
