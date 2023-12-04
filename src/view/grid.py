@@ -4,10 +4,14 @@ from typing import Tuple, List, Set
 
 from PyQt6.QtGui import QPixmap, QPainter
 from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
 
 from model.simulation import Simulation
 from model.grid import Grid
 from model.terrains.tile import Tile
+
 
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
@@ -17,9 +21,20 @@ class Window(QMainWindow):
         self.view = GraphicalGrid(grid_size, simulation.getGrid())
         self.setCentralWidget(self.view)
         self.simulation = simulation
+        self.timer = QTimer()
+        self.timer.setInterval(3000)
+        self.timer.timeout.connect(self.recurring_timer)
+        self.timer.start()
+
+    def recurring_timer(self):
+        self.simulation.step()
+        self.updateGrid()
 
     def getGraphicalGrid(self):
         return self.view
+
+    def updateGrid(self):
+        self.view.drawGrid(self.simulation.getGrid())
 
 
 class SimulationObserver:
@@ -64,7 +79,7 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         if self.pixmap_items[i][j][0]:
             self.scene.removeItem(self.pixmap_items[i][j][0])
         self.pixmap_items[i][j][0] = pixmap_item
-        #pixmap_item.show()
+        # pixmap_item.show()
         self.scene.addItem(pixmap_item)
         if tile.hasEntity():
             pixmap_item = QGraphicsPixmapItem(self.getPixmap(tile.entity))
@@ -72,7 +87,7 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
             if self.pixmap_items[i][j][1]:
                 self.scene.removeItem(self.pixmap_items[i][j][1])
             self.pixmap_items[i][j][1] = pixmap_item
-            #pixmap_item.show()
+            # pixmap_item.show()
             self.scene.addItem(pixmap_item)
 
     def getPixmap(self, tile):

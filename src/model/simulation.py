@@ -52,7 +52,6 @@ class Simulation(Subject):
     def step(self) -> Set[Tile]:
         self.stepCount += 1
         print("Step " + str(self.stepCount))
-        self.printGrid()
         modifiedTiles = set()
         for line in self.grid.tiles:
             for tile in line:

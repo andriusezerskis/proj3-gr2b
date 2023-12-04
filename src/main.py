@@ -15,8 +15,8 @@ from model.regionHandler import RegionHandler
 import os
 import sys
 
-from view.grid import Window
-from constants import GRID_WIDTH, GRID_HEIGHT
+from view.grid import SimulationObserver, Window
+from constants import GRID_WIDTH, GRID_HEIGHT, STEP_TIME
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("simulation.py"))))
@@ -30,7 +30,5 @@ if __name__ == '__main__':
     simulation = Simulation()
     app = QApplication(sys.argv)
     window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
-    simulation.addObserver(window.getGraphicalGrid())
     window.show()
-    simulation.run()
-    sys.exit(app.exec())
+    app.exec()

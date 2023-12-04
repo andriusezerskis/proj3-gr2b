@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBo
 from typing import Tuple, List
 import sys
 
+
 class MonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -31,10 +32,10 @@ class MonitorWindow(QMainWindow):
         label_2 = QLabel('yo')
         self.layout.addWidget(label_2)
 
-#faire une classe slot comme ça pour manipuler les label etc c carré
+# faire une classe slot comme ça pour manipuler les label etc c carré
 
     def lol(self):
-    	print('lol')
+        print('lol')
 
     def slot_choose_coord(self):
         slot = QHBoxLayout()
@@ -43,7 +44,7 @@ class MonitorWindow(QMainWindow):
         slot.addWidget(button)
 
         label = QLabel("0, 0")
-        slot.addWidget(label)        
+        slot.addWidget(label)
 
         container = QWidget()
         container.setLayout(slot)
@@ -59,6 +60,7 @@ class MonitorWindow(QMainWindow):
         container = QWidget()
         container.setLayout(slot)
         return container
+
 
 app = QApplication(sys.argv)
 w = MonitorWindow()
