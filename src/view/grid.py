@@ -13,7 +13,7 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 400, 400)
-        self.view = GraphicalGrid(grid_size, simulation.get_grid())
+        self.view = GraphicalGrid(grid_size, simulation.getGrid())
         self.setCentralWidget(self.view)
         self.simulation = simulation
 
@@ -40,7 +40,8 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
 
         self.size = 2048, 2048
         self.grid_size = grid_size
-        self.pixmap_items = [[[None, None] for _ in range(grid_size[0])] for _ in range(grid_size[1])]
+        self.pixmap_items = [[[None, None] for _ in range(
+            grid_size[0])] for _ in range(grid_size[1])]
         self.pixmap_from_path = {}
 
         start_time = time.time()

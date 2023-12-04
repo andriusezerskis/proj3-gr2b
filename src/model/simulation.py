@@ -20,7 +20,6 @@ from model.grid import Grid
 from model.subject import Subject
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
-from model.terrains.water import Water
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -32,7 +31,7 @@ class Simulation(Subject):
         self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
         self.grid.initialize()
 
-        self.step_count = 0
+        self.stepCount = 0
 
     def run(self):
         print("Starting simulation in 5s...")
@@ -51,10 +50,10 @@ class Simulation(Subject):
         threading.Timer(STEP_TIME, self.simulate).start()
 
     def step(self) -> Set[Tile]:
-        self.step_count += 1
-        print("Step " + str(self.step_count))
-        self.print_grid()
-        modified_tiles = set()
+        self.stepCount += 1
+        print("Step " + str(self.stepCount))
+        self.printGrid()
+        modifiedTiles = set()
         for line in self.grid.tiles:
             for tile in line:
                 if not tile.getEntity():
@@ -62,21 +61,21 @@ class Simulation(Subject):
                 for entity in self.grid.entitiesInAdjacentTile(tile.index):
                     if not tile.getEntity():
                         continue
-                    modified_tile = self.interaction(tile, entity)
-                    modified_tiles.add(modified_tile)
-        return modified_tiles - {None}
+                    modifiedTile = self.interaction(tile, entity)
+                    modifiedTiles.add(modifiedTile)
+        return modifiedTiles - {None}
 
-    def interaction(self, tile: Tile, other_entity: Entity) -> Tile | None:
-        modified_tile = None
+    def interaction(self, tile: Tile, otherEntity: Entity) -> Tile | None:
+        modifiedTile = None
         entity = tile.getEntity()
-        if type(entity) is type(other_entity):
-            modified_tile = self.reproduce(tile)
+        if type(entity) is type(otherEntity):
+            modifiedTile = self.reproduce(tile)
 
-        elif isinstance(other_entity, Animal):
-            if type(entity) in other_entity.generateLocalPreys():
+        elif isinstance(otherEntity, Animal):
+            if type(entity) in otherEntity.generateLocalPreys():
                 # other_entity.eat()
-                modified_tile = self.dead(tile)
-        return modified_tile
+                modifiedTile = self.dead(tile)
+        return modifiedTile
 
     # TO ADD INTO each entity
     """
@@ -115,11 +114,11 @@ class Simulation(Subject):
 
     def reproduce(self, tile: Tile) -> Tile | None:
         entity = tile.getEntity()
-        no_entity = self.randomTileWithoutEntity(tile)
-        if no_entity:
-            x = random.randint(0, len(no_entity) - 1)
-            no_entity[x].addEntity(entity)
-            return no_entity[x]
+        noEntity = self.randomTileWithoutEntity(tile)
+        if noEntity:
+            x = random.randint(0, len(noEntity) - 1)
+            noEntity[x].addEntity(entity)
+            return noEntity[x]
 
     @staticmethod
     def dead(tile: Tile) -> Tile:
@@ -128,7 +127,7 @@ class Simulation(Subject):
 
     # TO TEST
 
-    def print_grid(self):
+    def printGrid(self):
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity():
@@ -140,5 +139,5 @@ class Simulation(Subject):
                     print('_', end=' ')
             print()
 
-    def get_grid(self) -> Grid:
+    def getGrid(self) -> Grid:
         return self.grid
