@@ -1,3 +1,5 @@
+from typing import List
+
 from model.entities.entity import Entity
 from abc import abstractmethod, ABC
 from overrides import override
@@ -16,7 +18,7 @@ class Animal(Entity, ABC):
     def reproduce(self) -> None:
         ...
 
-    def generateLocalPreys(self) -> list:
+    def generateLocalPreys(self) -> List[Entity]:
         preys = []
         for entity_, prob in self.getClassPreys():
             if random.randint(0, 100)/100 <= prob:

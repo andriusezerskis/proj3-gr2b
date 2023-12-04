@@ -2,6 +2,7 @@ from typing import List
 
 from model.gridgenerator import GridGenerator
 from model.terrains.tile import Tile
+from model.entities.entity import Entity
 
 
 class Grid:
@@ -13,7 +14,7 @@ class Grid:
         """Random initialization of the grid with perlin noise"""
         self.tiles = GridGenerator(self.size[0], self.size[1]).generateGrid()
 
-    def entitiesInAdjacentTile(self, currentTile):
+    def entitiesInAdjacentTile(self, currentTile) -> List[Entity]:
         """Checks if, given a current tile, there's an entity in an adjacent case to eventually interact with"""
         adjacent_tiles = [
             (currentTile[0] - 1, currentTile[1]),  # up
@@ -35,7 +36,7 @@ class Grid:
 
         return entitiesList
 
-    def moveEntity(self, entity, currentTile, nextTile):
+    def moveEntity(self, entity, currentTile, nextTile) -> None:
         """Moves an entity from a tile to another"""
         if not self.tiles[nextTile[0]][nextTile[1]].hasEntity():
             self.tiles[nextTile[0]][nextTile[1]].addEntity(entity)
@@ -45,6 +46,6 @@ class Grid:
         return self.tiles
 
     def __iter__(self):
-        for i, line in enumerate(self.tiles):
-            for j, tile in enumerate(line):
-                yield (i, j), tile
+        for line in self.tiles:
+            for tile in line:
+                yield tile

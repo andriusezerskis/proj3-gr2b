@@ -8,8 +8,8 @@ Date: December 2023
 STEP_TIME = 2
 
 # Grid
-GRID_WIDTH = 10
-GRID_HEIGHT = 10
+GRID_WIDTH = 5
+GRID_HEIGHT = 5
 
 # # Climate
 SEASON_TEMPERATURE_DIFFERENCE = 20  # Temperature difference between winter and summer

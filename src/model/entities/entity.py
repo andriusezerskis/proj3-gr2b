@@ -23,6 +23,3 @@ class Entity(ABC):
     
     def isHungry(self) -> bool:
         return self.hunger >= 50
-    
-    def getType(self):
-        return self.__class__

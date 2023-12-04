@@ -23,7 +23,7 @@ class Window(QMainWindow):
 
 class SimulationObserver:
     def ping_update(self, query):
-        print("simulation new step")
+        print(query)
 
 
 class GraphicalGrid(QGraphicsView, SimulationObserver):
@@ -50,7 +50,8 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         self.scale(0.002, 0.002)
 
     def draw_grid(self, grid: Grid):
-        for (i, j), tile in grid:
+        for tile in grid:
+            i, j = tile.getIndex()
             pixmap_item = QGraphicsPixmapItem(self.get_pixmap(tile))
             pixmap_item.setPos(j * self.size[0], i * self.size[1])
             self.pixmap_items[i][j][0] = pixmap_item

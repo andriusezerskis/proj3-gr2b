@@ -7,6 +7,8 @@ Date: December 2023
 import random
 import threading
 import time
+from typing import List, Set
+
 from constants import *
 import os
 import sys
@@ -16,6 +18,8 @@ from model.entities.fish import Fish
 
 from model.grid import Grid
 from model.subject import Subject
+from model.terrains.tile import Tile
+from model.entities.entity import Entity
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -42,31 +46,34 @@ class Simulation(Subject):
         threading.Timer(5.0, self.simulate).start()
 
     def simulate(self):
-        self.notify()
-        self.step()
+        self.notify(self.step())
         threading.Timer(STEP_TIME, self.simulate).start()
 
-    def step(self):
+    def step(self) -> Set[Tile]:
         self.step_count += 1
         print("Step " + str(self.step_count))
         self.print_grid()
+        modified_tiles = set()
         for line in self.grid.tiles:
             for tile in line:
-                if tile.getEntity():
-                    entities = self.grid.entitiesInAdjacentTile(tile.index)
-                    for entity in entities:
-                        if tile.getEntity():
-                            self.interaction(tile, entity)
+                if not tile.getEntity(): continue
+                for entity in self.grid.entitiesInAdjacentTile(tile.index):
+                    if not tile.getEntity(): continue
+                    modified_tile = self.interaction(tile, entity)
+                    modified_tiles.add(modified_tile)
+        return modified_tiles - {None}
 
-    def interaction(self, tile, other_entity):
+    def interaction(self, tile: Tile, other_entity: Entity) -> Tile | None:
+        modified_tile = None
         entity = tile.getEntity()
-        if entity.getType() == other_entity.getType():
-            self.reproduce(tile)
+        if type(entity) is type(other_entity):
+            modified_tile = self.reproduce(tile)
 
         elif isinstance(other_entity, Animal):
-            if entity.getType() in other_entity.generateLocalPreys():
+            if type(entity) in other_entity.generateLocalPreys():
                 # other_entity.eat()
-                self.dead(tile)
+                modified_tile = self.dead(tile)
+        return modified_tile
 
     # TO ADD INTO each entity
     """
@@ -98,15 +105,18 @@ class Simulation(Subject):
                         self.grid.tiles[tile[0]][tile[1]])
         return no_entity
 
-    def reproduce(self, tile):
+    def reproduce(self, tile: Tile) -> Tile | None:
         entity = tile.getEntity()
         no_entity = self.randomTileWithoutEntity(tile.index)
-        if no_entity != []:
-            x = random.randint(0, len(no_entity)-1)
+        if no_entity:
+            x = random.randint(0, len(no_entity) - 1)
             no_entity[x].addEntity(entity)
+            return no_entity[x]
 
-    def dead(self, tile):
+    @staticmethod
+    def dead(tile: Tile) -> Tile:
         tile.removeEntity()
+        return tile
 
     # TO MOVE INTO GENERATE GRID
 
@@ -117,7 +127,8 @@ class Simulation(Subject):
 
     # TO MOVE INTO GENERATE GRID
 
-    def addRandomEntity(self, tile):
+    @staticmethod
+    def addRandomEntity(tile: Tile):
         if random.randint(0, 10) == 1:
             tile.addEntity(Fish())
         if random.randint(0, 10) == 2:
@@ -131,9 +142,9 @@ class Simulation(Subject):
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity():
-                    if tile.getEntity().getType() == Fish:
+                    if type(tile.getEntity()) == Fish:
                         print('f', end=' ')
-                    if tile.getEntity().getType() == Algae:
+                    if type(tile.getEntity()) == Algae:
                         print('a', end=' ')
                 else:
                     print('_', end=' ')
