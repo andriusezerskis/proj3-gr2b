@@ -20,6 +20,7 @@ from model.grid import Grid
 from model.subject import Subject
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
+from model.terrains.water import Water
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -30,7 +31,7 @@ class Simulation(Subject):
         super().__init__()
         self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
         self.grid.initialize()
-        self.generateEntities()
+
         self.step_count = 0
 
     def run(self):
@@ -56,9 +57,11 @@ class Simulation(Subject):
         modified_tiles = set()
         for line in self.grid.tiles:
             for tile in line:
-                if not tile.getEntity(): continue
+                if not tile.getEntity():
+                    continue
                 for entity in self.grid.entitiesInAdjacentTile(tile.index):
-                    if not tile.getEntity(): continue
+                    if not tile.getEntity():
+                        continue
                     modified_tile = self.interaction(tile, entity)
                     modified_tiles.add(modified_tile)
         return modified_tiles - {None}
@@ -86,28 +89,33 @@ class Simulation(Subject):
     # TO MOVE INTO GRID
 
     def randomTileWithoutEntity(self, currentTile):
+        """Generate random tile to reproduce, it must be empty and must be the same tile type as the currentTile
+        """
         adjacent_tiles = [
-            (currentTile[0] - 1, currentTile[1]),  # up
-            (currentTile[0] + 1, currentTile[1]),  # down
-            (currentTile[0], currentTile[1] - 1),  # left
-            (currentTile[0], currentTile[1] + 1),  # right
-            (currentTile[0] - 1, currentTile[1] - 1),  # upper left
-            (currentTile[0] - 1, currentTile[1] + 1),  # upper right
-            (currentTile[0] + 1, currentTile[1] - 1),  # lower left
-            (currentTile[0] + 1, currentTile[1] + 1)  # lower right
+            (currentTile.index[0] - 1, currentTile.index[1]),  # up
+            (currentTile.index[0] + 1, currentTile.index[1]),  # down
+            (currentTile.index[0], currentTile.index[1] - 1),  # left
+            (currentTile.index[0], currentTile.index[1] + 1),  # right
+            (currentTile.index[0] - 1, currentTile.index[1] - 1),  # upper left
+            (currentTile.index[0] - 1,
+             currentTile.index[1] + 1),  # upper right
+            (currentTile.index[0] + 1, currentTile.index[1] - 1),  # lower left
+            (currentTile.index[0] + 1, currentTile.index[1] + 1)  # lower right
         ]
 
         no_entity = []
         for tile in adjacent_tiles:
             if 0 <= tile[0] < self.grid.size[0] and 0 <= tile[1] < self.grid.size[1]:
-                if not self.grid.tiles[tile[0]][tile[1]].getEntity():
-                    no_entity.append(
-                        self.grid.tiles[tile[0]][tile[1]])
+                randomTile = self.grid.tiles[tile[0]][tile[1]]
+                if not randomTile.getEntity():
+                    if (type(currentTile) == type(randomTile)):
+                        no_entity.append(
+                            self.grid.tiles[tile[0]][tile[1]])
         return no_entity
 
     def reproduce(self, tile: Tile) -> Tile | None:
         entity = tile.getEntity()
-        no_entity = self.randomTileWithoutEntity(tile.index)
+        no_entity = self.randomTileWithoutEntity(tile)
         if no_entity:
             x = random.randint(0, len(no_entity) - 1)
             no_entity[x].addEntity(entity)
@@ -117,24 +125,6 @@ class Simulation(Subject):
     def dead(tile: Tile) -> Tile:
         tile.removeEntity()
         return tile
-
-    # TO MOVE INTO GENERATE GRID
-
-    def generateEntities(self):
-        for line in self.grid.tiles:
-            for tile in line:
-                self.addRandomEntity(tile)
-
-    # TO MOVE INTO GENERATE GRID
-
-    @staticmethod
-    def addRandomEntity(tile: Tile):
-        if random.randint(0, 10) == 1:
-            tile.addEntity(Fish())
-        if random.randint(0, 10) == 2:
-            tile.addEntity(Algae())
-        if random.randint(0, 10) == 3:
-            tile.addEntity(Algae())
 
     # TO TEST
 

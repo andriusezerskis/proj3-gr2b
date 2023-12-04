@@ -6,11 +6,11 @@ Date: December 2023
 import random
 import threading
 
-from model.gridgenerator import GridGenerator
+from model.gridGenerator import GridGenerator
 from model.simulation import Simulation
-from model.gridgenerator import GridGenerator
+from model.gridGenerator import GridGenerator
 from PyQt6.QtWidgets import QApplication, QWidget
-from model.regionhandler import RegionHandler
+from model.regionHandler import RegionHandler
 import os
 import sys
 
