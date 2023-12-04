@@ -35,14 +35,13 @@ class Window(QMainWindow):
         return self.view
 
     def updateGrid(self):
-        self.view.drawGrid(self.simulation.getGrid())
+        start = time.time()
+        self.view.pingUpdate(self.simulation.getUpdatedTiles())
+        print("--- %s seconds ---" % (time.time() - start))
 
 
 class SimulationObserver:
-    def pingUpdate(self, updated_tiles: Set[Tile]):
-        print(updated_tiles)
-        for tile in updated_tiles:
-            self._drawTile(tile)
+    pass
 
 
 class GraphicalGrid(QGraphicsView, SimulationObserver):
@@ -68,6 +67,11 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         self.scale(0.002, 0.002)
+
+    def pingUpdate(self, updated_tiles: Set[Tile]):
+        print(updated_tiles)
+        for tile in updated_tiles:
+            self._drawTile(tile)
 
     def drawGrid(self, grid: Grid):
         for tile in grid:

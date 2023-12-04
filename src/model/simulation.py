@@ -31,35 +31,32 @@ class Simulation(Subject):
         self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
         self.grid.initialize()
         self.stepCount = 0
+        self.modifiedTiles = set()
 
     def step(self) -> Set[Tile]:
+        self.modifiedTiles = set()
         self.stepCount += 1
         print("Step " + str(self.stepCount))
-        modifiedTiles = set()
         for line in self.grid.tiles:
             for tile in line:
-                if not tile.getEntity():
-                    continue
-                for entity in self.grid.entitiesInAdjacentTile(tile.index):
-                    if not tile.getEntity():
-                        continue
-                    modifiedTile = self.interaction(tile, entity)
+                if tile.getEntity():
                     self.evolution(tile)
-                    modifiedTiles.add(modifiedTile)
-        return modifiedTiles - {None}
+                    for entity in self.grid.entitiesInAdjacentTile(tile.index):
+                        self.interaction(tile, entity)
 
-    def interaction(self, tile: Tile, otherEntity: Entity) -> Tile | None:
-        modifiedTile = None
+    def getUpdatedTiles(self):
+        return self.modifiedTiles
+
+    def interaction(self, tile: Tile, otherEntity: Entity):
         entity = tile.getEntity()
 
         if type(entity) is type(otherEntity):
-            modifiedTile = self.reproduce(tile)
+            self.reproduce(tile)
 
         elif isinstance(otherEntity, Animal):
             if type(entity) in otherEntity.generateLocalPreys():
                 # other_entity.eat()
-                modifiedTile = self.dead(tile)
-        return modifiedTile
+                self.dead(tile)
 
     def evolution(self, tile):
         entity = tile.getEntity()
@@ -78,7 +75,7 @@ class Simulation(Subject):
         if noEntity:
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
-            return noEntity[x]
+            self.modifiedTiles.add(noEntity[x])
 
     def moveEntity(self, tile: Tile):
         entity = tile.getEntity()
@@ -86,12 +83,13 @@ class Simulation(Subject):
         if noEntity:
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
+            self.modifiedTiles.add(noEntity[x])
             tile.removeEntity()
+            self.modifiedTiles.add(tile)
 
-    @staticmethod
-    def dead(tile: Tile) -> Tile:
+    def dead(self, tile: Tile) -> Tile:
         tile.removeEntity()
-        return tile
+        self.modifiedTiles.add(tile)
 
     def getGrid(self) -> Grid:
         return self.grid
