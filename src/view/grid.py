@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QG
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
+from constants import STEP_TIME
 
 from model.simulation import Simulation
 from model.grid import Grid
@@ -22,7 +23,7 @@ class Window(QMainWindow):
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.timer = QTimer()
-        self.timer.setInterval(3000)
+        self.timer.setInterval(STEP_TIME)
         self.timer.timeout.connect(self.recurring_timer)
         self.timer.start()
 

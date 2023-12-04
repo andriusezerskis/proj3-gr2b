@@ -45,6 +45,31 @@ class Grid:
             self.tiles[nextTile[0]][nextTile[1]].addEntity(entity)
             self.tiles[currentTile[0]][currentTile[1]].removeEntity()
 
+    def randomTileWithoutEntity(self, currentTile):
+        """Generate random tile to reproduce, it must be empty and must be the same tile type as the currentTile
+        """
+        adjacent_tiles = [
+            (currentTile.index[0] - 1, currentTile.index[1]),  # up
+            (currentTile.index[0] + 1, currentTile.index[1]),  # down
+            (currentTile.index[0], currentTile.index[1] - 1),  # left
+            (currentTile.index[0], currentTile.index[1] + 1),  # right
+            (currentTile.index[0] - 1, currentTile.index[1] - 1),  # upper left
+            (currentTile.index[0] - 1,
+             currentTile.index[1] + 1),  # upper right
+            (currentTile.index[0] + 1, currentTile.index[1] - 1),  # lower left
+            (currentTile.index[0] + 1, currentTile.index[1] + 1)  # lower right
+        ]
+
+        no_entity = []
+        for tile in adjacent_tiles:
+            if 0 <= tile[0] < self.size[0] and 0 <= tile[1] < self.size[1]:
+                randomTile = self.tiles[tile[0]][tile[1]]
+                if not randomTile.getEntity():
+                    if (type(currentTile) == type(randomTile)):
+                        no_entity.append(
+                            self.tiles[tile[0]][tile[1]])
+        return no_entity
+
     def getTiles(self) -> List[List[Tile]]:
         return self.tiles
 
