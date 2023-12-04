@@ -5,6 +5,7 @@ Date: December 2023
 """
 import random
 import threading
+import time
 
 from model.gridGenerator import GridGenerator
 from model.simulation import Simulation
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     simulation = Simulation()
     app = QApplication(sys.argv)
     window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
-    simulation.addObserver(window.get_graphical_grid())
+    simulation.addObserver(window.getGraphicalGrid())
     window.show()
     simulation.run()
     sys.exit(app.exec())

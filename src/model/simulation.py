@@ -7,7 +7,7 @@ Date: December 2023
 import random
 import threading
 import time
-from typing import List, Set
+from typing import Set
 
 from constants import *
 import os

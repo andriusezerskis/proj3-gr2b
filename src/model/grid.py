@@ -45,7 +45,7 @@ class Grid:
             self.tiles[nextTile[0]][nextTile[1]].addEntity(entity)
             self.tiles[currentTile[0]][currentTile[1]].removeEntity()
 
-    def get_tiles(self) -> List[List[Tile]]:
+    def getTiles(self) -> List[List[Tile]]:
         return self.tiles
 
     def __iter__(self):

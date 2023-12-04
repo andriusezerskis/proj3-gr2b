@@ -1,12 +1,13 @@
 import time
-from typing import Tuple, List
+from abc import ABC, abstractmethod
+from typing import Tuple, List, Set
 
 from PyQt6.QtGui import QPixmap, QPainter
 from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
 
 from model.simulation import Simulation
 from model.grid import Grid
-
+from model.terrains.tile import Tile
 
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
@@ -17,13 +18,15 @@ class Window(QMainWindow):
         self.setCentralWidget(self.view)
         self.simulation = simulation
 
-    def get_graphical_grid(self):
+    def getGraphicalGrid(self):
         return self.view
 
 
 class SimulationObserver:
-    def ping_update(self, query):
-        print(query)
+    def pingUpdate(self, updated_tiles: Set[Tile]):
+        print(updated_tiles)
+        for tile in updated_tiles:
+            self._drawTile(tile)
 
 
 class GraphicalGrid(QGraphicsView, SimulationObserver):
@@ -45,25 +48,34 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         self.pixmap_from_path = {}
 
         start_time = time.time()
-        self.draw_grid(grid)
+        self.drawGrid(grid)
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         self.scale(0.002, 0.002)
 
-    def draw_grid(self, grid: Grid):
+    def drawGrid(self, grid: Grid):
         for tile in grid:
-            i, j = tile.getIndex()
-            pixmap_item = QGraphicsPixmapItem(self.get_pixmap(tile))
-            pixmap_item.setPos(j * self.size[0], i * self.size[1])
-            self.pixmap_items[i][j][0] = pixmap_item
-            self.scene.addItem(pixmap_item)
-            if tile.hasEntity():
-                pixmap_item = QGraphicsPixmapItem(self.get_pixmap(tile.entity))
-                pixmap_item.setPos(j * self.size[0], i * self.size[1])
-                self.pixmap_items[i][j][1] = pixmap_item
-                self.scene.addItem(pixmap_item)
+            self._drawTile(tile)
 
-    def get_pixmap(self, tile):
+    def _drawTile(self, tile):
+        i, j = tile.getIndex()
+        pixmap_item = QGraphicsPixmapItem(self.getPixmap(tile))
+        pixmap_item.setPos(j * self.size[0], i * self.size[1])
+        if self.pixmap_items[i][j][0]:
+            self.scene.removeItem(self.pixmap_items[i][j][0])
+        self.pixmap_items[i][j][0] = pixmap_item
+        #pixmap_item.show()
+        self.scene.addItem(pixmap_item)
+        if tile.hasEntity():
+            pixmap_item = QGraphicsPixmapItem(self.getPixmap(tile.entity))
+            pixmap_item.setPos(j * self.size[0], i * self.size[1])
+            if self.pixmap_items[i][j][1]:
+                self.scene.removeItem(self.pixmap_items[i][j][1])
+            self.pixmap_items[i][j][1] = pixmap_item
+            #pixmap_item.show()
+            self.scene.addItem(pixmap_item)
+
+    def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
             pixmap = QPixmap(tile.getTexturePath())
             pixmap = pixmap.scaled(self.size[0], self.size[1])
