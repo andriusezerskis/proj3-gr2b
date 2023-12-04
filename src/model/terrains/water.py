@@ -20,5 +20,5 @@ class Water(Tile):
     def getPossibleEntities(self):
         return {Fish, Algae} # returns a set so that we can check 
     
-    def getType(self):
-        return "water"
+    def __repr__(self):
+        return f"Water({self.index})"

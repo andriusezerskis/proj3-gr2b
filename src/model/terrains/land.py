@@ -20,5 +20,5 @@ class Land(Tile):
     def getPossibleEntities(self):
         return {Human, Plant}
     
-    def getType(self):
-        return "land"
+    def __repr__(self):
+        return f"Land({self.index})"

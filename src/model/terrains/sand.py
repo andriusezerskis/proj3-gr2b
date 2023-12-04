@@ -19,5 +19,5 @@ class Sand(Tile):
     def getPossibleEntities(self):
         return {}
 
-    def getType(self):
-        return "sand"
+    def __repr__(self):
+        return f"Sand({self.index})"
