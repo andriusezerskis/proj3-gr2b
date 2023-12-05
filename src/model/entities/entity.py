@@ -23,3 +23,6 @@ class Entity(ABC):
     
     def isHungry(self) -> bool:
         return self.hunger >= 50
+
+    def __str__(self):
+        ...

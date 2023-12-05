@@ -27,3 +27,6 @@ class Human(Animal):
     def reproduce(self) -> None:
         kidsProbability = [(0, 0.1), (1, 0.4), (2, 0.5), (3, 0.1)]
         return random.choices(kidsProbability, weights=[prob for _, prob in kidsProbability])[0]
+
+    def __str__(self):
+        return 'H'

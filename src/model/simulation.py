@@ -40,6 +40,7 @@ class Simulation(Subject):
                     self.evolution(tile)
                     for entity in self.grid.entitiesInAdjacentTile(tile.index):
                         self.interaction(tile, entity)
+        print(self.grid)
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
