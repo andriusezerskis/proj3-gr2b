@@ -5,16 +5,13 @@ Date: December 2023
 """
 
 import random
-import threading
 import time
 from typing import Set
 
 from constants import *
 import os
 import sys
-from model.entities.algae import Algae
 from model.entities.animal import Animal
-from model.entities.fish import Fish
 
 from model.grid import Grid
 from model.subject import Subject
@@ -29,9 +26,10 @@ class Simulation:
     def __init__(self):
         super().__init__()
         self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
-        self.grid.initialize()
+
         self.stepCount = 0
         self.modifiedTiles = set()
+        self.entities = self.grid.initialize()
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -49,6 +47,9 @@ class Simulation:
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
+
+    def getNumberEntities(self):
+        return self.entities
 
     def interaction(self, tile: Tile, otherEntity: Entity):
         entity = tile.getEntity()
@@ -72,12 +73,13 @@ class Simulation:
             if entity.hunger() == 1:
                 self.dead(entity)"""
 
-    def reproduce(self, tile: Tile) -> Tile | None:
+    def reproduce(self, tile: Tile):
         entity = tile.getEntity()
         noEntity = self.grid.randomTileWithoutEntity(tile)
         if noEntity:
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
+            self.entities[type(tile.getEntity())] += 1
             self.modifiedTiles.add(noEntity[x])
 
     def moveEntity(self, tile: Tile):
@@ -91,6 +93,7 @@ class Simulation:
             self.modifiedTiles.add(tile)
 
     def dead(self, tile: Tile) -> Tile:
+        self.entities[type(tile.getEntity())] -= 1
         tile.removeEntity()
         self.modifiedTiles.add(tile)
 

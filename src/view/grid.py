@@ -31,6 +31,7 @@ class Window(QMainWindow):
     def recurring_timer(self):
         self.simulation.step()
         self.updateGrid()
+        print(self.simulation.getNumberEntities())
 
     def getGraphicalGrid(self):
         return self.view
