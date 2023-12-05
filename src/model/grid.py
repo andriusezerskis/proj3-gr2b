@@ -77,3 +77,11 @@ class Grid:
         for line in self.tiles:
             for tile in line:
                 yield tile
+
+    def __str__(self):
+        res = ""
+        for line in self.tiles:
+            for tile in line:
+                res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+            res += "\n"
+        return res

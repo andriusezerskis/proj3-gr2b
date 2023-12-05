@@ -22,3 +22,6 @@ class Water(Tile):
     
     def __repr__(self):
         return f"Water({self.index})"
+
+    def __str__(self):
+        return "W"

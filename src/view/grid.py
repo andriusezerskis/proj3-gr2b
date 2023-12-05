@@ -12,6 +12,7 @@ from constants import STEP_TIME
 from model.simulation import Simulation
 from model.grid import Grid
 from model.terrains.tile import Tile
+from model.entities.entity import Entity
 
 
 class Window(QMainWindow):
@@ -37,7 +38,7 @@ class Window(QMainWindow):
     def updateGrid(self):
         start = time.time()
         self.view.pingUpdate(self.simulation.getUpdatedTiles())
-        print("--- %s seconds ---" % (time.time() - start))
+        print(f"--- {time.time() - start} seconds ---")
 
 
 class SimulationObserver:
@@ -71,28 +72,32 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
     def pingUpdate(self, updated_tiles: Set[Tile]):
         print(updated_tiles)
         for tile in updated_tiles:
-            self._drawTile(tile)
+            self._drawEntities(tile)
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
-            self._drawTile(tile)
+            self._drawTiles(tile)
 
-    def _drawTile(self, tile):
-        i, j = tile.getIndex()
-        pixmap_item = QGraphicsPixmapItem(self.getPixmap(tile))
-        pixmap_item.setPos(j * self.size[0], i * self.size[1])
-        if self.pixmap_items[i][j][0]:
-            self.scene.removeItem(self.pixmap_items[i][j][0])
-        self.pixmap_items[i][j][0] = pixmap_item
-        # pixmap_item.show()
-        self.scene.addItem(pixmap_item)
-        if tile.hasEntity():
-            pixmap_item = QGraphicsPixmapItem(self.getPixmap(tile.entity))
+    def _drawTiles(self, tile):
+        self._drawTerrains(tile)
+        self._drawEntities(tile)
+
+    def _drawTerrains(self, tile):
+        self._drawPixmap(tile.getIndex(), tile)
+
+    def _drawEntities(self, tile):
+        self._drawPixmap(tile.getIndex(), tile.getEntity())
+
+    def _drawPixmap(self, index: Tuple[int, int], item: Tile | Entity):
+        i, j = index
+        k = 0 if isinstance(item, Tile) else 1
+        if self.pixmap_items[i][j][k]:
+            self.scene.removeItem(self.pixmap_items[i][j][k])
+            self.pixmap_items[i][j][k] = None
+        if item:
+            pixmap_item = QGraphicsPixmapItem(self.getPixmap(item))
             pixmap_item.setPos(j * self.size[0], i * self.size[1])
-            if self.pixmap_items[i][j][1]:
-                self.scene.removeItem(self.pixmap_items[i][j][1])
-            self.pixmap_items[i][j][1] = pixmap_item
-            # pixmap_item.show()
+            self.pixmap_items[i][j][k] = pixmap_item
             self.scene.addItem(pixmap_item)
 
     def getPixmap(self, tile):

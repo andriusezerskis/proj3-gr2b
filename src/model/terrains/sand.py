@@ -21,3 +21,6 @@ class Sand(Tile):
 
     def __repr__(self):
         return f"Sand({self.index})"
+
+    def __str__(self):
+        return "S"

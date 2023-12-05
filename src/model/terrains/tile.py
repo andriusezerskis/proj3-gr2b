@@ -42,3 +42,6 @@ class Tile(ABC):
 
     def __repr__(self):
         return f"Tile({self.index})"
+
+    def __str__(self):
+        ...
