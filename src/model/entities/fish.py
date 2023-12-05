@@ -8,7 +8,6 @@ from model.entities.algae import Algae
 
 
 class Fish(Animal):
-    nb = 0
 
     @staticmethod
     @override
@@ -26,8 +25,6 @@ class Fish(Animal):
 
     def __init__(self):
         super().__init__()
-        Fish.nb += 1
-        self.my_id = Fish.nb
 
     def __str__(self):
-        return f'F{self.my_id}'
+        return 'F'

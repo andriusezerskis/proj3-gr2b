@@ -10,4 +10,4 @@ class Subject(ABC):
 
     def notify(self, query=None):
         for observer in self.observers:
-            observer.pingUpdate(query)
+            ...

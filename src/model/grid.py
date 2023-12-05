@@ -54,8 +54,7 @@ class Grid:
             (currentTile.index[0], currentTile.index[1] - 1),  # left
             (currentTile.index[0], currentTile.index[1] + 1),  # right
             (currentTile.index[0] - 1, currentTile.index[1] - 1),  # upper left
-            (currentTile.index[0] - 1,
-             currentTile.index[1] + 1),  # upper right
+            (currentTile.index[0] - 1, currentTile.index[1] + 1),  # upper right
             (currentTile.index[0] + 1, currentTile.index[1] - 1),  # lower left
             (currentTile.index[0] + 1, currentTile.index[1] + 1)  # lower right
         ]

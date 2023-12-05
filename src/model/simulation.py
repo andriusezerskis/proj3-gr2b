@@ -25,7 +25,7 @@ sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
 
 
-class Simulation(Subject):
+class Simulation:
     def __init__(self):
         super().__init__()
         self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
@@ -33,17 +33,19 @@ class Simulation(Subject):
         self.stepCount = 0
         self.modifiedTiles = set()
 
-    def step(self) -> Set[Tile]:
+    def step(self) -> None:
         self.modifiedTiles = set()
         self.stepCount += 1
         print("Step " + str(self.stepCount))
+        t = time.time()
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity():
                     self.evolution(tile)
                     for entity in self.grid.entitiesInAdjacentTile(tile.index):
                         self.interaction(tile, entity)
-        print(self.grid)
+        # print(self.grid)
+        print(f"compute time : {time.time() - t}")
 
     def getUpdatedTiles(self):
         return self.modifiedTiles

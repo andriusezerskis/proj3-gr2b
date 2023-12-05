@@ -37,18 +37,15 @@ class Window(QMainWindow):
 
     def updateGrid(self):
         start = time.time()
-        self.view.pingUpdate(self.simulation.getUpdatedTiles())
-        print(f"--- {time.time() - start} seconds ---")
+        self.view.updateGrid(self.simulation.getUpdatedTiles())
+        print(f"update time : {time.time() - start}")
 
 
-class SimulationObserver:
-    pass
-
-
-class GraphicalGrid(QGraphicsView, SimulationObserver):
+class GraphicalGrid(QGraphicsView):
     def __init__(self, grid_size: Tuple[int, int], grid: Grid):
+        #super().__init__(*__args)
         self.scene = QGraphicsScene()
-        QGraphicsView.__init__(self, self.scene)
+        super().__init__(self.scene)
 
         """self.setRenderHint(QPainter.Antialiasing)
         self.setRenderHint(QPainter.SmoothPixmapTransform)
@@ -59,8 +56,8 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
 
         self.size = 2048, 2048
         self.grid_size = grid_size
-        self.pixmap_items = [[[None, None] for _ in range(
-            grid_size[0])] for _ in range(grid_size[1])]
+        self.pixmap_items: List[List[List[None | QGraphicsPixmapItem]]] = \
+            [[[None, None] for _ in range(grid_size[0])] for _ in range(grid_size[1])]
         self.pixmap_from_path = {}
 
         start_time = time.time()
@@ -69,8 +66,8 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         print(f"drawn in: {exec_time}s")
         self.scale(0.002, 0.002)
 
-    def pingUpdate(self, updated_tiles: Set[Tile]):
-        print(updated_tiles)
+    def updateGrid(self, updated_tiles: Set[Tile]):
+        #print(updated_tiles)
         for tile in updated_tiles:
             self._drawEntities(tile)
 
@@ -93,6 +90,8 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         k = 0 if isinstance(item, Tile) else 1
         if self.pixmap_items[i][j][k]:
             self.scene.removeItem(self.pixmap_items[i][j][k])
+            #self.pixmap_items[i][j][k].hide()
+            #self.pixmap_items[i][j][k].setParentItem(None)
             self.pixmap_items[i][j][k] = None
         if item:
             pixmap_item = QGraphicsPixmapItem(self.getPixmap(item))

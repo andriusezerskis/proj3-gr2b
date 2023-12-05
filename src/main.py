@@ -15,7 +15,7 @@ from model.regionHandler import RegionHandler
 import os
 import sys
 
-from view.grid import SimulationObserver, Window
+from view.grid import Window
 from constants import GRID_WIDTH, GRID_HEIGHT, STEP_TIME
 
 sys.path.append(os.path.dirname(
