@@ -15,7 +15,8 @@ class Grid:
         """Random initialization of the grid with perlin noise"""
         self.tiles = GridGenerator(self.size[0], self.size[1]).generateGrid()
         entitiesGenerator = EntitiesGenerator()
-        entitiesGenerator.generateEntities(self.tiles)
+        entities = entitiesGenerator.generateEntities(self.tiles)
+        return entities
 
     def entitiesInAdjacentTile(self, currentTile) -> List[Entity]:
         """Checks if, given a current tile, there's an entity in an adjacent case to eventually interact with"""

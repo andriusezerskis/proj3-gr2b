@@ -30,6 +30,7 @@ class Window(QMainWindow):
     def recurring_timer(self):
         self.simulation.step()
         self.updateGrid()
+        print(self.simulation.getNumberEntities())
 
     def getGraphicalGrid(self):
         return self.view
@@ -69,7 +70,6 @@ class GraphicalGrid(QGraphicsView, SimulationObserver):
         self.scale(0.002, 0.002)
 
     def pingUpdate(self, updated_tiles: Set[Tile]):
-        print(updated_tiles)
         for tile in updated_tiles:
             self._drawTile(tile)
 
