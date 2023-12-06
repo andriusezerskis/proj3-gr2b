@@ -5,6 +5,6 @@
 `python3 main.py`
 
 # Dependencies 
-`pip install perlin-noise`
+`pip install perlin-noise`  
 `pip install PyQt6`
 
