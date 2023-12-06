@@ -9,15 +9,8 @@ class MonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Monitor deb'île")
-        self.setGeometry(100, 100, 200, 300)
+        self.setGeometry(500, 500, 200, 300)
         self.layout = QVBoxLayout()
-
-        # self.label = QLabel("WIL THE BEST MUUUWWZIKK")
-        # self.layout.addWidget(self.label)
-
-        # button = QPushButton("DJ KHALEDDDD")
-        # button.clicked.connect(self.lol)
-        # self.layout.addWidget(button)
 
         widget = QWidget()
         widget.setLayout(self.layout)
@@ -43,8 +36,8 @@ class MonitorWindow(QMainWindow):
         button.clicked.connect(self.lol)
         slot.addWidget(button)
 
-        label = QLabel("0, 0")
-        slot.addWidget(label)
+        self.label_coord = QLabel("0, 0")
+        slot.addWidget(self.label_coord)        
 
         container = QWidget()
         container.setLayout(slot)
@@ -61,8 +54,5 @@ class MonitorWindow(QMainWindow):
         container.setLayout(slot)
         return container
 
-
-app = QApplication(sys.argv)
-w = MonitorWindow()
-w.show()
-app.exec()
+    def update_coord(self, new_coord):
+        self.label_coord.setText(str(new_coord))

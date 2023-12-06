@@ -14,6 +14,8 @@ from model.grid import Grid
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 
+from view.monitor import MonitorWindow
+
 
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
@@ -28,6 +30,7 @@ class Window(QMainWindow):
         self.timer.timeout.connect(self.recurring_timer)
         self.timer.start()
 
+#<<<<<<< main
     def recurring_timer(self):
         self.simulation.step()
         self.updateGrid()
@@ -67,6 +70,7 @@ class GraphicalGrid(QGraphicsView):
         print(f"drawn in: {exec_time}s")
         self.scale(0.002, 0.002)
 
+#<<<<<<< main
     def updateGrid(self, updated_tiles: Set[Tile]):
         #print(updated_tiles)
         for tile in updated_tiles:
@@ -96,6 +100,15 @@ class GraphicalGrid(QGraphicsView):
             self.pixmap_items[i][j][k] = None
         if item:
             pixmap_item = QGraphicsPixmapItem(self.getPixmap(item))
+#=======
+
+        #self.monitor_window = MonitorWindow()
+        #self.monitor_window.show()
+
+    #def draw_grid(self, grid: Grid):
+        #for (i, j), tile in grid:
+            #pixmap_item = QGraphicsPixmapItem(self.get_pixmap(tile))
+#>>>>>>> hawen_monitoring
             pixmap_item.setPos(j * self.size[0], i * self.size[1])
             self.pixmap_items[i][j][k] = pixmap_item
             self.scene.addItem(pixmap_item)
@@ -116,3 +129,12 @@ class GraphicalGrid(QGraphicsView):
         # Appliquer le zoom
         self.zoom_factor *= zoom_factor
         self.scale(zoom_factor, zoom_factor)
+
+
+    def mousePressEvent(self, event):
+        point = self.mapToScene(event.pos())
+        point_2 = event.pos()
+        print(point)
+        print(point_2)
+        self.monitor_window.update_coord(point_2)
+        
