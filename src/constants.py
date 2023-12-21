@@ -11,6 +11,10 @@ STEP_TIME = 2000
 GRID_WIDTH = 100
 GRID_HEIGHT = 100
 
+# Rendering size
+RENDERING_WIDTH = 50
+RENDERING_HEIGHT = 50
+
 # # Climate
 # Temperature difference between winter and summer
 SEASON_TEMPERATURE_DIFFERENCE = 20

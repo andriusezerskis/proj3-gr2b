@@ -13,6 +13,7 @@ from model.simulation import Simulation
 from model.grid import Grid
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
+from model.renderMonitor import RenderMonitor
 
 
 class Window(QMainWindow):
@@ -47,6 +48,7 @@ class GraphicalGrid(QGraphicsView):
         #super().__init__(*__args)
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
+        self.rendering_monitor = RenderMonitor()
 
         """self.setRenderHint(QPainter.Antialiasing)
         self.setRenderHint(QPainter.SmoothPixmapTransform)
@@ -65,16 +67,23 @@ class GraphicalGrid(QGraphicsView):
         self.drawGrid(grid)
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
-        self.scale(0.002, 0.002)
+        #self.scale(0.002, 0.002)
+        self.scale(0.01, 0.01)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
         #print(updated_tiles)
+        """for tile in updated_tiles:
+            self._drawEntities(tile)"""
         for tile in updated_tiles:
-            self._drawEntities(tile)
+            if tile.getIndex() in self.rendering_monitor.get_rendering_section():
+                self._drawEntities(tile)
 
     def drawGrid(self, grid: Grid):
-        for tile in grid:
-            self._drawTiles(tile)
+        """for tile in grid:
+            self._drawTiles(tile)"""
+
+        for i, j in self.rendering_monitor.get_rendering_section():
+            self._drawTiles(grid.getTile(i, j))
 
     def _drawTiles(self, tile):
         self._drawTerrains(tile)
@@ -108,11 +117,22 @@ class GraphicalGrid(QGraphicsView):
             return pixmap
         return self.pixmap_from_path[tile.getTexturePath()]
 
-    def wheelEvent(self, event):
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Q:
+            self.rendering_monitor.left()
+            print("ah")
+        if event.key() == Qt.Key.Key_Z:
+            self.rendering_monitor.up()
+        if event.key() == Qt.Key.Key_D:
+            self.rendering_monitor.right()
+        if event.key() == Qt.Key.Key_S:
+            self.rendering_monitor.down()
+
+    """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
         zoom_out = event.angleDelta().y() < 0
         zoom_factor = 1.1 if zoom_out else 0.9
 
         # Appliquer le zoom
         self.zoom_factor *= zoom_factor
-        self.scale(zoom_factor, zoom_factor)
+        self.scale(zoom_factor, zoom_factor)"""

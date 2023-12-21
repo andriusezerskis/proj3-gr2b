@@ -73,6 +73,9 @@ class Grid:
     def getTiles(self) -> List[List[Tile]]:
         return self.tiles
 
+    def getTile(self, i, j) -> Tile:
+        return self.tiles[i][j]
+
     def __iter__(self):
         for line in self.tiles:
             for tile in line:
