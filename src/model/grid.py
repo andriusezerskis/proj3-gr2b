@@ -9,11 +9,13 @@ from model.entities.entity import Entity
 class Grid:
     def __init__(self, size: tuple) -> None:
         self.tiles: List[Tile] = []
+        self.islands: List[Tile] = []
         self.size = size
 
     def initialize(self):
         """Random initialization of the grid with perlin noise"""
-        self.tiles = GridGenerator(self.size[0], self.size[1]).generateGrid()
+        self.tiles, self.islands = GridGenerator(self.size[0], self.size[1],
+                                                 [2, 3, 4, 5, 6], 250).generateGrid()
         entitiesGenerator = EntitiesGenerator()
         entities = entitiesGenerator.generateEntities(self.tiles)
         return entities
