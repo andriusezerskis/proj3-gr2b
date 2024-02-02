@@ -1,8 +1,7 @@
 import time
-from abc import ABC, abstractmethod
 from typing import Tuple, List, Set
 
-from PyQt6.QtGui import QPixmap, QPainter
+from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
@@ -25,15 +24,61 @@ class Window(QMainWindow):
         self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation)
         self.setCentralWidget(self.view)
         self.simulation = simulation
+        self.total_time = 0
         self.timer = QTimer()
         self.timer.setInterval(STEP_TIME)
-        self.timer.timeout.connect(self.recurring_timer)
+        self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
 
-    def recurring_timer(self):
+        self.fastF = False
+        self.paused = False
+
+        self.layout = QHBoxLayout()
+        self.drawButtons()
+        self.view.setLayout(self.layout)
+        self.setCentralWidget(self.view)
+
+    def pauseTimer(self):
+
+        if self.paused:
+            self.paused = False
+            self.timer.start()
+            self.pauseButton.setStyleSheet(
+                "background-color: green; color: white;")
+
+        else:
+            self.timer.stop()
+            self.paused = True
+            self.pauseButton.setStyleSheet(
+                "background-color: blue; color: white;")
+
+    def recurringTimer(self):
+        self.total_time += 1
         self.simulation.step()
         self.updateGrid()
-        print(self.simulation.getNumberEntities())
+        self.show_time()
+
+    def show_time(self):
+        """
+        Display the time passed, one step is one hour
+        """
+
+        convert = time.strftime(
+            "%A %e:%H hours", time.gmtime(self.total_time * 3600))
+        self.timebutton.setText(convert)
+
+    def fastForward(self):
+        if self.fastF:
+            self.timer.setInterval(STEP_TIME)
+            self.fastF = False
+            self.fastFbutton.setStyleSheet(
+                "background-color: green; color: white;")
+
+        else:
+            self.timer.setInterval(STEP_TIME // 2)
+            self.fastF = True
+            self.fastFbutton.setStyleSheet(
+                "background-color: blue; color: white;")
 
     def getGraphicalGrid(self):
         return self.view
@@ -43,11 +88,35 @@ class Window(QMainWindow):
         self.view.updateGrid(self.simulation.getUpdatedTiles())
         print(f"update time : {time.time() - start}")
 
+    def drawButtons(self):
+        self.pauseButton = QPushButton("pause")
+        self.pauseButton.setStyleSheet(
+            "background-color: green; color: white;")
+        self.pauseButton.clicked.connect(self.pauseTimer)
+
+        self.fastFbutton = QPushButton("fast forward")
+        self.fastFbutton.setStyleSheet(
+            "background-color: green; color: white;")
+        self.fastFbutton.clicked.connect(self.fastForward)
+
+        self.timebutton = QPushButton("00:00:00")
+
+        self.layout.addStretch()
+        self.layout.addWidget(self.pauseButton)
+        self.layout.addWidget(self.fastFbutton)
+        self.layout.addWidget(self.timebutton)
+        self.layout.addStretch()
+
+        self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
+        self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
+        self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)
+
 
 class GraphicalGrid(QGraphicsView):
+
     def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation):
         self.simulation = simulation
-        #super().__init__(*__args)
+        # super().__init__(*__args)
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
         self.rendering_monitor = RenderMonitor()
@@ -62,18 +131,19 @@ class GraphicalGrid(QGraphicsView):
         self.size = 2048, 2048
         self.grid_size = grid_size
         self.pixmap_items: List[List[List[None | QGraphicsPixmapItem]]] = \
-            [[[None, None] for _ in range(grid_size[0])] for _ in range(grid_size[1])]
+            [[[None, None] for _ in range(grid_size[0])]
+             for _ in range(grid_size[1])]
         self.pixmap_from_path = {}
 
         start_time = time.time()
         self.drawGrid(grid)
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
-        #self.scale(0.002, 0.002)
+        # self.scale(0.002, 0.002)
         self.scale(0.01, 0.01)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
-        #print(updated_tiles)
+        # print(updated_tiles)
         """for tile in updated_tiles:
             self._drawEntities(tile)"""
         for tile in updated_tiles:
@@ -105,8 +175,8 @@ class GraphicalGrid(QGraphicsView):
         k = 0 if isinstance(item, Tile) else 1
         if self.pixmap_items[i][j][k]:
             self.scene.removeItem(self.pixmap_items[i][j][k])
-            #self.pixmap_items[i][j][k].hide()
-            #self.pixmap_items[i][j][k].setParentItem(None)
+            # self.pixmap_items[i][j][k].hide()
+            # self.pixmap_items[i][j][k].setParentItem(None)
             self.pixmap_items[i][j][k] = None
         if item:
             pixmap_item = QGraphicsPixmapItem(self.getPixmap(item))
