@@ -17,6 +17,7 @@ from model.grid import Grid
 from model.subject import Subject
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
+from model.player.player import Player
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -30,6 +31,7 @@ class Simulation:
         self.stepCount = 0
         self.modifiedTiles = set()
         self.entities = self.grid.initialize()
+        self.player = Player()
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -99,3 +101,6 @@ class Simulation:
 
     def getGrid(self) -> Grid:
         return self.grid
+
+    def getPlayer(self) -> Player:
+        return self.player

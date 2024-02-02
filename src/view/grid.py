@@ -202,18 +202,26 @@ class GraphicalGrid(QGraphicsView):
         return self.pixmap_from_path[tile.getTexturePath()]
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key.Key_Z:
-            self._moveCamera(self.rendering_monitor.up())
-            print("z")
-        if event.key() == Qt.Key.Key_Q:
-            self._moveCamera(self.rendering_monitor.left())
-            print("q")
-        if event.key() == Qt.Key.Key_S:
-            self._moveCamera(self.rendering_monitor.down())
-            print("s")
-        if event.key() == Qt.Key.Key_D:
-            self._moveCamera(self.rendering_monitor.right())
-            print("d")
+        match event.key():
+            # camera
+            case Qt.Key.Key_Up:
+                self._moveCamera(self.rendering_monitor.up())
+            case Qt.Key.Key_Left:
+                self._moveCamera(self.rendering_monitor.left())
+            case Qt.Key.Key_Down:
+                self._moveCamera(self.rendering_monitor.down())
+            case Qt.Key.Key_Right:
+                self._moveCamera(self.rendering_monitor.right())
+
+            # player
+            case Qt.Key.Key_Z:
+                ...
+            case Qt.Key.Key_Q:
+                ...
+            case Qt.Key.Key_S:
+                ...
+            case Qt.Key.Key_D:
+                ...
 
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
@@ -223,3 +231,16 @@ class GraphicalGrid(QGraphicsView):
         # Appliquer le zoom
         self.zoom_factor *= zoom_factor
         self.scale(zoom_factor, zoom_factor)"""
+
+    def mousePressEvent(self, event):
+        scene_pos = self.mapToScene(event.pos())
+        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+        print(tile)
+        #x = scene_pos.x()
+        # y = scene_pos.y()
+        # print(x, y)
+        # print(self.getClickedTile(x, y))
+
+    def getClickedTile(self, x, y):
+        # print(self.scene.sceneRect().size())
+        return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
