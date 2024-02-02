@@ -14,14 +14,15 @@ from model.grid import Grid
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.renderMonitor import RenderMonitor
+from model.renderMonitor import Cuboid
 
 
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
-        self.setGeometry(100, 100, 400, 400)
-        self.view = GraphicalGrid(grid_size, simulation.getGrid())
+        self.setGeometry(100, 100, 1000, 1000)
+        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.timer = QTimer()
@@ -44,7 +45,8 @@ class Window(QMainWindow):
 
 
 class GraphicalGrid(QGraphicsView):
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid):
+    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation):
+        self.simulation = simulation
         #super().__init__(*__args)
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
@@ -79,11 +81,14 @@ class GraphicalGrid(QGraphicsView):
                 self._drawEntities(tile)
 
     def drawGrid(self, grid: Grid):
-        """for tile in grid:
-            self._drawTiles(tile)"""
+        for tile in grid:
+            if tile in self.rendering_monitor.get_rendering_section():
+                self._drawTiles(tile)
+            else:
+                self._drawTerrains(tile)
 
-        for i, j in self.rendering_monitor.get_rendering_section():
-            self._drawTiles(grid.getTile(i, j))
+        """for i, j in self.rendering_monitor.get_rendering_section():
+            self._drawTiles(grid.getTile(i, j))"""
 
     def _drawTiles(self, tile):
         self._drawTerrains(tile)
@@ -109,6 +114,15 @@ class GraphicalGrid(QGraphicsView):
             self.pixmap_items[i][j][k] = pixmap_item
             self.scene.addItem(pixmap_item)
 
+    def _moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
+        lost, won = cuboids
+        for i, j in lost:
+            if self.pixmap_items[i][j][1]:
+                self.scene.removeItem(self.pixmap_items[i][j][1])
+                self.pixmap_items[i][j][1] = None
+        for i, j in won:
+            self._drawEntities(self.simulation.getGrid().getTile(i, j))
+
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
             pixmap = QPixmap(tile.getTexturePath())
@@ -118,15 +132,18 @@ class GraphicalGrid(QGraphicsView):
         return self.pixmap_from_path[tile.getTexturePath()]
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key.Key_Q:
-            self.rendering_monitor.left()
-            print("ah")
         if event.key() == Qt.Key.Key_Z:
-            self.rendering_monitor.up()
-        if event.key() == Qt.Key.Key_D:
-            self.rendering_monitor.right()
+            self._moveCamera(self.rendering_monitor.up())
+            print("z")
+        if event.key() == Qt.Key.Key_Q:
+            self._moveCamera(self.rendering_monitor.left())
+            print("q")
         if event.key() == Qt.Key.Key_S:
-            self.rendering_monitor.down()
+            self._moveCamera(self.rendering_monitor.down())
+            print("s")
+        if event.key() == Qt.Key.Key_D:
+            self._moveCamera(self.rendering_monitor.right())
+            print("d")
 
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
