@@ -6,6 +6,8 @@ from constants import FISH_TEXTURE_PATH
 from model.entities.animal import Animal
 from model.entities.algae import Algae
 
+from model.terrains.water import Water
+
 
 class Fish(Animal):
 
@@ -13,6 +15,11 @@ class Fish(Animal):
     @override
     def getTexturePath() -> str:
         return FISH_TEXTURE_PATH
+
+    @staticmethod
+    @override
+    def getValidTiles() -> set[type]:
+        return {Water}
 
     @staticmethod
     @override

@@ -5,6 +5,9 @@ from random import random
 from model.entities.fish import Fish
 from model.entities.tree import Tree
 
+from model.terrains.land import Land
+from model.terrains.sand import Sand
+
 from constants import HUMAN_TEXTURE_PATH
 
 
@@ -14,6 +17,11 @@ class Human(Animal):
     @override
     def getTexturePath() -> str:
         return HUMAN_TEXTURE_PATH
+
+    @staticmethod
+    @override
+    def getValidTiles() -> set[type]:
+        return {Land, Sand}
 
     @staticmethod
     @override

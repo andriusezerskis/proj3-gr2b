@@ -15,10 +15,6 @@ class Land(Tile):
 
     def __init__(self, index, entity: Entity=None) -> None:
         super().__init__(index, entity)
-        
-    @override
-    def getPossibleEntities(self):
-        return {Human, Plant}
     
     def __repr__(self):
         return f"Land({self.index})"

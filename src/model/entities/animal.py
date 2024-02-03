@@ -12,7 +12,7 @@ class Animal(Entity, ABC):
     @staticmethod
     @abstractmethod
     def getClassPreys() -> list:
-        return None
+        return []
     
     @abstractmethod
     def reproduce(self) -> None:

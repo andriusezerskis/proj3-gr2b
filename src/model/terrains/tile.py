@@ -18,10 +18,6 @@ class Tile(ABC):
     # @abstractmethod
     def step(self):
         pass
-    
-    @abstractmethod
-    def getPossibleEntities(self):
-        pass
         
     def getEntity(self) -> Entity | None:
         return self.entity

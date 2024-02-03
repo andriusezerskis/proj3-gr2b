@@ -71,6 +71,7 @@ class GridGenerator:
     def generateGrid(self) -> tuple[list[list[Tile]], set[Tile]]:
         islands = set()
         size_ok = False
+        print("Generating terrain...")
         while len(islands) not in self.island_nb or not size_ok:
             self.noiseGenerator = NoiseGenerator()
             self.noiseGenerator.addNoise(2, 1)
@@ -79,9 +80,8 @@ class GridGenerator:
             islands = self.getIslands()
             size_ok = True
             for island in islands:
-                print(len(island))
                 if len(island) < self.island_size:
                     size_ok = False
                     break
-            print()
+        print("Terrain generated")
         return self.matrix, islands
