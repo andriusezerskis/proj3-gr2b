@@ -1,3 +1,4 @@
+import random
 from typing import List
 from model.entitiesGenerator import EntitiesGenerator
 
@@ -33,7 +34,6 @@ class Grid:
             (currentTile[0] + 1, currentTile[1] + 1)  # lower right
         ]
         entitiesList = []
-
         for tile in adjacent_tiles:
             if 0 <= tile[0] < self.size[0] and 0 <= tile[1] < self.size[1]:
                 if self.tiles[tile[0]][tile[1]].getEntity():
@@ -51,13 +51,15 @@ class Grid:
     def randomTileWithoutEntity(self, currentTile):
         """Generate random tile to reproduce, it must be empty and must be the same tile type as the currentTile
         """
+
         adjacent_tiles = [
             (currentTile.index[0] - 1, currentTile.index[1]),  # up
             (currentTile.index[0] + 1, currentTile.index[1]),  # down
             (currentTile.index[0], currentTile.index[1] - 1),  # left
             (currentTile.index[0], currentTile.index[1] + 1),  # right
             (currentTile.index[0] - 1, currentTile.index[1] - 1),  # upper left
-            (currentTile.index[0] - 1, currentTile.index[1] + 1),  # upper right
+            (currentTile.index[0] - 1,
+             currentTile.index[1] + 1),  # upper right
             (currentTile.index[0] + 1, currentTile.index[1] - 1),  # lower left
             (currentTile.index[0] + 1, currentTile.index[1] + 1)  # lower right
         ]
