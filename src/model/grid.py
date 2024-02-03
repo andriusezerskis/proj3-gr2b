@@ -9,7 +9,7 @@ from model.entities.entity import Entity
 
 class Grid:
     def __init__(self, size: tuple) -> None:
-        self.tiles: List[Tile] = []
+        self.tiles: List[List[Tile]] = []
         self.islands: List[Tile] = []
         self.size = size
 

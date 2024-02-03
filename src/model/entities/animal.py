@@ -17,7 +17,7 @@ class Animal(Entity, ABC):
     @staticmethod
     @abstractmethod
     def getClassPreys() -> list:
-        return None
+        return []
 
     @override
     def isDead(self):

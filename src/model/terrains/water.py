@@ -15,11 +15,7 @@ class Water(Tile):
 
     def __init__(self, index, entity: Entity=None) -> None:
         super().__init__(index, entity)
-        
-    @override    
-    def getPossibleEntities(self):
-        return {Fish, Algae} # returns a set so that we can check 
-    
+
     def __repr__(self):
         return f"Water({self.index})"
 

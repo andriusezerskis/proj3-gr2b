@@ -12,6 +12,11 @@ class Entity(ABC):
     def getTexturePath() -> str:
         ...
 
+    @staticmethod
+    @abstractmethod
+    def getValidTiles() -> set[type]:
+        ...
+
     @abstractmethod
     def reproduce(self) -> None:
         return True

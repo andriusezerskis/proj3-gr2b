@@ -15,10 +15,6 @@ class Sand(Tile):
     def __init__(self, entity: Entity = None) -> None:
         super().__init__(entity)
 
-    @override
-    def getPossibleEntities(self):
-        return {}
-
     def __repr__(self):
         return f"Sand({self.index})"
 
