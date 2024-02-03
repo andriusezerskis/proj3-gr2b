@@ -31,3 +31,7 @@ class Point:
 
 def euclidDistance(point1: Point, point2: Point) -> int:
     return point1.euclidDistance(point2)
+
+
+def getPointsAdjacentTo(point: Point) -> list[Point]:
+    return [Point(point.x() + x, point.y() + y) for x in [-1, 0, 1] for y in [-1, 0, 1] if x != 0 or y != 0]
