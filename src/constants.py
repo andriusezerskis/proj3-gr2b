@@ -12,8 +12,8 @@ GRID_WIDTH = 100
 GRID_HEIGHT = 100
 
 # Rendering size
-RENDERING_WIDTH = 50
-RENDERING_HEIGHT = 50
+RENDERING_WIDTH = 100
+RENDERING_HEIGHT = 100
 
 # # Climate
 # Temperature difference between winter and summer

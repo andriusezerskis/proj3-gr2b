@@ -193,6 +193,13 @@ class GraphicalGrid(QGraphicsView):
         for i, j in won:
             self._drawEntities(self.simulation.getGrid().getTile(i, j))
 
+    def _movePlayer(self, movement):
+        i, j = self.simulation.getPlayer().getPosition()
+        self.scene.removeItem(self.pixmap_items[i][j][1])
+        self.pixmap_items[i][j][1] = None
+        self.simulation.getPlayer().move(movement)
+        self._drawEntities(self.simulation.getPlayer().getTile())
+
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
             pixmap = QPixmap(tile.getTexturePath())
@@ -215,13 +222,21 @@ class GraphicalGrid(QGraphicsView):
 
             # player
             case Qt.Key.Key_Z:
-                ...
+                if self.simulation.hasPlayer():
+                    #self.simulation.getPlayer().move((-1, 0))
+                    self._movePlayer((-1, 0))
             case Qt.Key.Key_Q:
-                ...
+                if self.simulation.hasPlayer():
+                    #self.simulation.getPlayer().move((0, -1))
+                    self._movePlayer((0, -1))
             case Qt.Key.Key_S:
-                ...
+                if self.simulation.hasPlayer():
+                    #self.simulation.getPlayer().move((1, 0))
+                    self._movePlayer((1, 0))
             case Qt.Key.Key_D:
-                ...
+                if self.simulation.hasPlayer():
+                    #self.simulation.getPlayer().move((0, 1))
+                    self._movePlayer((0, 1))
 
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
@@ -235,12 +250,14 @@ class GraphicalGrid(QGraphicsView):
     def mousePressEvent(self, event):
         scene_pos = self.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
-        print(tile)
+        if tile.hasEntity():
+            self.simulation.setPlayerEntity(tile)
         #x = scene_pos.x()
         # y = scene_pos.y()
         # print(x, y)
         # print(self.getClickedTile(x, y))
 
     def getClickedTile(self, x, y):
+        """Crash here if not on a pixmap"""
         # print(self.scene.sceneRect().size())
         return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))

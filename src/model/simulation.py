@@ -31,7 +31,7 @@ class Simulation:
         self.stepCount = 0
         self.modifiedTiles = set()
         self.entities = self.grid.initialize()
-        self.player = Player()
+        self.player = Player(self.grid)
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -40,7 +40,7 @@ class Simulation:
         t = time.time()
         for line in self.grid.tiles:
             for tile in line:
-                if tile.getEntity():
+                if tile.getEntity() and not isinstance(tile.getEntity(), Player):
                     self.evolution(tile)
                     for entity in self.grid.entitiesInAdjacentTile(tile.index):
                         self.interaction(tile, entity)
@@ -104,3 +104,9 @@ class Simulation:
 
     def getPlayer(self) -> Player:
         return self.player
+
+    def setPlayerEntity(self, tile) -> None:
+        self.player.setClaimedEntity(tile)
+
+    def hasPlayer(self) -> bool:
+        return self.player.isPlaying()
