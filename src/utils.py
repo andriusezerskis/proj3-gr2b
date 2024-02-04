@@ -25,8 +25,19 @@ class Point:
     def __repr__(self):
         return str(self)
 
+    def __copy__(self):
+        return Point(self.x(), self.y())
+
     def euclidDistance(self, other):
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
+
+    def getLowerCorner(self, lower_point: "Point"):
+        #assert lower_point.y() <= self.y()
+        return Point(self.x(), lower_point.y())
+
+    def getUpperCorner(self, upper_point: "Point"):
+        #assert upper_point.y() >= self.y()
+        return Point(upper_point.x(), self.y())
 
 
 def euclidDistance(point1: Point, point2: Point) -> int:

@@ -1,6 +1,8 @@
 import time
 from typing import Tuple, List, Set
 
+from utils import Point
+
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
 from PyQt6.QtGui import *
@@ -147,7 +149,7 @@ class GraphicalGrid(QGraphicsView):
         """for tile in updated_tiles:
             self._drawEntities(tile)"""
         for tile in updated_tiles:
-            if tile.getIndex() in self.rendering_monitor.get_rendering_section():
+            if tile.getPos() in self.rendering_monitor.get_rendering_section():
                 self._drawEntities(tile)
 
     def drawGrid(self, grid: Grid):
@@ -165,13 +167,13 @@ class GraphicalGrid(QGraphicsView):
         self._drawEntities(tile)
 
     def _drawTerrains(self, tile):
-        self._drawPixmap(tile.getIndex(), tile)
+        self._drawPixmap(tile.getPos(), tile)
 
     def _drawEntities(self, tile):
-        self._drawPixmap(tile.getIndex(), tile.getEntity())
+        self._drawPixmap(tile.getPos(), tile.getEntity())
 
-    def _drawPixmap(self, index: Tuple[int, int], item: Tile | Entity):
-        i, j = index
+    def _drawPixmap(self, index: Point, item: Tile | Entity):
+        i, j = index.y(), index.x()
         k = 0 if isinstance(item, Tile) else 1
         if self.pixmap_items[i][j][k]:
             self.scene.removeItem(self.pixmap_items[i][j][k])

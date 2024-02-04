@@ -1,5 +1,9 @@
-import random
-from typing import List
+from typing import List, Dict, Type
+
+from model.entities.algae import Algae
+from model.entities.fish import Fish
+from model.entities.human import Human
+from model.entities.tree import Tree
 
 from utils import Point, getPointsAdjacentTo
 
@@ -21,8 +25,7 @@ class Grid:
         self.tiles, self.islands = GridGenerator(self.size.x(), self.size.y(),
                                                  [2, 3, 4, 5, 6], 350).generateGrid()
         entitiesGenerator = EntitiesGenerator()
-        entities = entitiesGenerator.generateEntities(self.tiles)
-        return entities
+        entitiesGenerator.generateEntities(self.tiles)
 
     def entitiesInAdjacentTile(self, currentTile: Point) -> List[Entity]:
         """Checks if, given a current tile, there's an entity in an adjacent case to eventually interact with"""

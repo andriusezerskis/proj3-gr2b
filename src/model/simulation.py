@@ -10,11 +10,14 @@ import time
 from constants import *
 import os
 import sys
+
+from utils import Point
 from model.entities.animal import Animal
 
 from model.grid import Grid
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
+from model.entities.human import Human
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -23,11 +26,11 @@ sys.path.append(os.path.dirname(
 class Simulation:
     def __init__(self):
         super().__init__()
-        self.grid = Grid((GRID_WIDTH, GRID_HEIGHT))
+        self.grid = Grid(Point(GRID_WIDTH, GRID_HEIGHT))
 
         self.stepCount = 0
         self.modifiedTiles = set()
-        self.entities = self.grid.initialize()
+        self.grid.initialize()
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -37,7 +40,7 @@ class Simulation:
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity():
-                    for entity in self.grid.entitiesInAdjacentTile(tile.index):
+                    for entity in self.grid.entitiesInAdjacentTile(tile.getPos()):
                         self.interaction(tile, entity)
                 if tile.getEntity():
                     self.evolution(tile)
@@ -46,9 +49,6 @@ class Simulation:
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
-
-    def getNumberEntities(self):
-        return self.entities
 
     def interaction(self, tile: Tile, otherEntity: Entity):
         entity = tile.getEntity()
@@ -73,16 +73,15 @@ class Simulation:
     def reproduce(self, tile: Tile):
         entityType = type(tile.getEntity())
         newEntity = entityType()
-        tileWithNoEntity = self.grid.randomTileWithoutEntity(tile)
+        tileWithNoEntity = self.grid.randomTileWithoutEntity(tile.getPos())
         if tileWithNoEntity:
             x = random.randint(0, len(tileWithNoEntity) - 1)
             tileWithNoEntity[x].addEntity(newEntity)
-            self.entities[entityType] += 1
             self.modifiedTiles.add(tileWithNoEntity[x])
 
     def moveEntity(self, tile: Tile):
         entity = tile.getEntity()
-        noEntity = self.grid.randomTileWithoutEntity(tile)
+        noEntity = self.grid.randomTileWithoutEntity(tile.getPos())
         if noEntity:
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
@@ -90,8 +89,7 @@ class Simulation:
             tile.removeEntity()
             self.modifiedTiles.add(tile)
 
-    def dead(self, tile: Tile) -> Tile:
-        self.entities[type(tile.getEntity())] -= 1
+    def dead(self, tile: Tile) -> None:
         tile.removeEntity()
         self.modifiedTiles.add(tile)
 

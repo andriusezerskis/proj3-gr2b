@@ -1,4 +1,6 @@
+from copy import copy
 from typing import List, Tuple
+from utils import Point
 
 from constants import *
 
@@ -85,8 +87,84 @@ class Cuboid:
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
         if isinstance(item, Tile):
-            item = item.getIndex()
+            item = item.getPos()
+            item = (item.y(), item.x())
         return self.upper[0] <= item[0] <= self.lower[0] and self.upper[1] <= item[1] <= self.lower[1]
+
+    def __repr__(self):
+        return f"Cuboid({self.upper}, {self.lower})"
+
+
+class Cuboid2:
+    def __init__(self, upper_left_point: Point, lower_right_point: Point):
+        self.upper = upper_left_point
+        self.lower = lower_right_point
+
+    def left_move(self, left_dist):
+        save_upper = copy(self.upper)
+        save_lower = copy(self.lower)
+        left_movement = Point(min(left_dist, self.upper.x()), 0)
+
+        self.upper -= left_movement
+        self.lower -= left_movement
+
+        lost_area = Cuboid2(self.upper.getUpperCorner(self.lower) + Point(1, 0), save_lower)
+        won_area = Cuboid2(self.upper, save_upper.getLowerCorner(save_lower) - Point(1, 0))
+        return lost_area, won_area
+
+    def right_move(self, right_dist):
+        save_upper = self.upper[:]
+        save_lower = self.lower[:]
+        right_movement = min(right_dist, GRID_WIDTH - 1 - self.lower[1])
+
+        self.upper[1] += right_movement
+        self.lower[1] += right_movement
+
+        lost_area = Cuboid(save_upper, [self.lower[0], self.upper[1] - 1])
+        won_area = Cuboid([self.upper[0], save_lower[1] + 1], self.lower)
+        return lost_area, won_area
+
+    def up_move(self, up_dist):
+        save_upper = self.upper[:]
+        save_lower = self.lower[:]
+        up_movement = min(up_dist, self.upper[0])
+
+        self.upper[0] -= up_movement
+        self.lower[0] -= up_movement
+
+        lost_area = Cuboid([self.lower[0] + 1, self.upper[1]], save_lower)
+        won_area = Cuboid(self.upper, [save_upper[0] - 1, self.lower[1]])
+        return lost_area, won_area
+
+    def down_move(self, down_dist):
+        save_upper = self.upper[:]
+        save_lower = self.lower[:]
+        down_movement = min(down_dist, GRID_HEIGHT - 1 - self.lower[0])
+        print(down_movement)
+
+        self.upper[0] += down_movement
+        self.lower[0] += down_movement
+
+        lost_area = Cuboid(save_upper, [self.upper[0] - 1, self.lower[1]])
+        won_area = Cuboid([save_lower[0] + 1, self.upper[1]], self.lower)
+        return lost_area, won_area
+
+    def getLine(self, y) -> List[Point]:
+        return [Point(x, y) for x in range(self.upper.x(), self.lower.x())]
+
+    def getColumn(self, x) -> List[Point]:
+        return [Point(x, y) for y in range(self.lower.y(), self.upper.y())]
+
+    def __iter__(self):
+        for x in range(self.upper.x(), self.lower.x() + 1):
+            for y in range(self.lower.y(), self.upper.y() + 1):
+                yield Point(x, y)
+
+    def __contains__(self, item):
+        assert isinstance(item, (Point, Tile))
+        if isinstance(item, Tile):
+            item = item.getPos()
+        return self.upper.y() <= item.y() <= self.lower.y() and self.upper.x() <= item.x() <= self.lower.x()
 
     def __repr__(self):
         return f"Cuboid({self.upper}, {self.lower})"
@@ -94,8 +172,10 @@ class Cuboid:
 
 class RenderMonitor:
     def __init__(self):
-        self.rendering_section = Cuboid([(GRID_HEIGHT - RENDERING_HEIGHT) // 2, (GRID_WIDTH - RENDERING_WIDTH) // 2],
-                                        [(GRID_HEIGHT + RENDERING_HEIGHT) // 2, (GRID_WIDTH + RENDERING_WIDTH) // 2])
+        self.rendering_section = Cuboid2(Point((GRID_HEIGHT - RENDERING_HEIGHT) // 2,
+                                               (GRID_WIDTH - RENDERING_WIDTH) // 2),
+                                         Point((GRID_HEIGHT + RENDERING_HEIGHT) // 2,
+                                               (GRID_WIDTH + RENDERING_WIDTH) // 2))
 
     def left(self):
         return self.rendering_section.left_move(1)

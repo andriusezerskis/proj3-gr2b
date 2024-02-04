@@ -11,9 +11,15 @@ from constants import HUMAN_TEXTURE_PATH
 
 
 class Human(Animal):
+    count = 0
+
     def __init__(self):
         super().__init__()
+        Human.count += 1
 
+    def __del__(self):
+        super().__del__()
+        Human.count -= 1
         
     @staticmethod
     @override

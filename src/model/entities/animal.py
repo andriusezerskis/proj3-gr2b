@@ -8,11 +8,18 @@ import random
 
 
 class Animal(Entity, ABC):
+    count = 0
+
     def __init__(self):
         super().__init__()
+        Animal.count += 1
         self.preys = self.generateLocalPreys()
         self.hunger: float = 5
         self.age = 0
+
+    def __del__(self):
+        super().__del__()
+        Animal.count -= 1
 
     @staticmethod
     @abstractmethod
@@ -29,7 +36,7 @@ class Animal(Entity, ABC):
         self.hunger += 1
 
     def reproduce(self):
-        return True if self.hunger < 5 and self.age > 5 else False
+        return True if self.hunger < 5 < self.age else False
 
     def generateLocalPreys(self) -> List[Entity]:
         preys = []

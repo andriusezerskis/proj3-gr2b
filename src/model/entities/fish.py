@@ -10,6 +10,7 @@ from model.terrains.water import Water
 
 
 class Fish(Animal):
+    count = 0
 
     @staticmethod
     @override
@@ -28,6 +29,11 @@ class Fish(Animal):
 
     def __init__(self):
         super().__init__()
+        Fish.count += 1
+
+    def __del__(self):
+        super().__del__()
+        Fish.count -= 1
 
     def __str__(self):
         return 'F'
