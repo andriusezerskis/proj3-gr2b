@@ -29,6 +29,18 @@ class Entity(ABC):
 
     def evolve(self):
         self.age += 1
+        
+    def getAge(self):
+        return self.age
+    
+    def setAge(self, age):
+        self.age = age
+        
+    def getHunger(self):
+        return self.hunger
+    
+    def setHunger(self, hunger: int):
+        self.hunger = hunger
 
     def __str__(self):
         ...

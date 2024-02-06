@@ -2,7 +2,7 @@ import time
 from typing import Tuple, List, Set
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
+from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView, QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
@@ -214,6 +214,11 @@ class GraphicalGrid(QGraphicsView):
         if event.key() == Qt.Key.Key_D:
             self._moveCamera(self.rendering_monitor.right())
             print("d")
+            
+    def _drawEntityInfo(self, entity: Entity):
+        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
+        QMessageBox.information(self, "Entity Information", entity_info)
+        
 
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
