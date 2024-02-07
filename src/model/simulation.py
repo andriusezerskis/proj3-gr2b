@@ -19,6 +19,8 @@ from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.entities.human import Human
 
+from model.pathfinder import Pathfinder
+
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
 
