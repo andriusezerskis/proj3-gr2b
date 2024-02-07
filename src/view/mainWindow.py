@@ -5,7 +5,9 @@ from PyQt6.QtCore import *
 from constants import STEP_TIME
 
 from model.simulation import Simulation
+from model.renderMonitor import RenderMonitor
 from view.graphicalGrid import GraphicalGrid
+from controller.gridController import GridController
 
 
 class Window(QMainWindow):
@@ -13,7 +15,9 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
-        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation)
+        self.rendering_monitor = RenderMonitor()
+        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
+        self.grid_controller = GridController(self.view, simulation, self.rendering_monitor)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
