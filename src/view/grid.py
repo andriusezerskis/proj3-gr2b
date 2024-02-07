@@ -2,7 +2,7 @@ import time
 from typing import Tuple, List, Set
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
+from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView, QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
@@ -238,6 +238,26 @@ class GraphicalGrid(QGraphicsView):
                     #self.simulation.getPlayer().move((0, 1))
                     self._movePlayer((0, 1))
 
+    def _drawEntityInfo(self, entity: Entity):
+        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
+        messageBox = QMessageBox()
+        messageBox.setWindowTitle("Entity Information")
+        messageBox.setText(entity_info)
+        messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
+        messageBox.exec()
+
+    def mousePressEvent(self, event):
+        scene_pos = self.mapToScene(event.pos())
+        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+        if tile.hasEntity():
+            self._drawEntityInfo(tile.getEntity())
+
+
+    def getClickedTile(self, x, y):
+        """Crash here if not on a pixmap"""
+        # print(self.scene.sceneRect().size())
+        return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
+
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
         zoom_out = event.angleDelta().y() < 0
@@ -246,18 +266,3 @@ class GraphicalGrid(QGraphicsView):
         # Appliquer le zoom
         self.zoom_factor *= zoom_factor
         self.scale(zoom_factor, zoom_factor)"""
-
-    def mousePressEvent(self, event):
-        scene_pos = self.mapToScene(event.pos())
-        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
-        if tile.hasEntity():
-            self.simulation.setPlayerEntity(tile)
-        #x = scene_pos.x()
-        # y = scene_pos.y()
-        # print(x, y)
-        # print(self.getClickedTile(x, y))
-
-    def getClickedTile(self, x, y):
-        """Crash here if not on a pixmap"""
-        # print(self.scene.sceneRect().size())
-        return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))

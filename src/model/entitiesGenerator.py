@@ -32,7 +32,7 @@ class EntitiesGenerator:
             tile.addEntity(Fish())
             self.entities[Fish] += 1
 
-        elif random.randint(0, 2) == 1:
+        elif random.randint(0, 5) == 1:
             tile.addEntity(Algae())
             self.entities[Algae] += 1
 
@@ -40,10 +40,11 @@ class EntitiesGenerator:
         tile.addEntity(Human())
         self.entities[Human] += 1
         return
-        if random.randint(0, 2) == 1:
+
+        if random.randint(0, 5) == 1:
             tile.addEntity(Human())
             self.entities[Human] += 1
 
-        elif random.randint(0, 2) == 1:
+        elif random.randint(0, 3) == 1:
             tile.addEntity(Tree())
             self.entities[Tree] += 1

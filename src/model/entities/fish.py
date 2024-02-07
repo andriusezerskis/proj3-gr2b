@@ -6,6 +6,8 @@ from constants import FISH_TEXTURE_PATH
 from model.entities.animal import Animal
 from model.entities.algae import Algae
 
+from model.terrains.water import Water
+
 
 class Fish(Animal):
 
@@ -16,12 +18,13 @@ class Fish(Animal):
 
     @staticmethod
     @override
+    def getValidTiles() -> set[type]:
+        return {Water}
+
+    @staticmethod
+    @override
     def getClassPreys() -> list[tuple]:
         return [(Algae, 0.99)]
-    
-    def reproduce(self) -> None:
-        kidsProbability = [(0, 0.1), (1, 0.4), (2, 0.3), (3, 0.2)]
-        return random.choices(kidsProbability, weights=[prob for _, prob in kidsProbability])[0]
 
     def __init__(self):
         super().__init__()

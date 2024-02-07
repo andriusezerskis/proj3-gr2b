@@ -5,6 +5,6 @@ from random import random
 
 
 class Plant(Entity, ABC):
-    @abstractmethod
+
     def reproduce(self) -> None:
-        ...
+        return True if random() < 0.5 else False

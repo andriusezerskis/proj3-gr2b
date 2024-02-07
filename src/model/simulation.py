@@ -6,7 +6,6 @@ Date: December 2023
 
 import random
 import time
-from typing import Set
 
 from constants import *
 import os
@@ -14,7 +13,6 @@ import sys
 from model.entities.animal import Animal
 
 from model.grid import Grid
-from model.subject import Subject
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.player.player import Player
@@ -41,10 +39,11 @@ class Simulation:
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity() and not isinstance(tile.getEntity(), Player):
-                    self.evolution(tile)
                     for entity in self.grid.entitiesInAdjacentTile(tile.index):
                         self.interaction(tile, entity)
-        # print(self.grid)
+                if tile.getEntity() and not isinstance(tile.getEntity(), Player):
+                    self.evolution(tile)
+
         print(f"compute time : {time.time() - t}")
 
     def getUpdatedTiles(self):
@@ -56,33 +55,32 @@ class Simulation:
     def interaction(self, tile: Tile, otherEntity: Entity):
         entity = tile.getEntity()
 
-        if type(entity) is type(otherEntity):
+        if type(entity) is type(otherEntity) and entity.reproduce() and otherEntity.reproduce():
             self.reproduce(tile)
 
         elif isinstance(otherEntity, Animal):
             if type(entity) in otherEntity.generateLocalPreys():
-                # other_entity.eat()
+                otherEntity.eat()
                 self.dead(tile)
 
     def evolution(self, tile):
         entity = tile.getEntity()
-        if isinstance(entity, Animal):
-            self.moveEntity(tile)
-
-        """
-        if entity.getType() == "animal":
-            entity = Animal(entity)
-            if entity.hunger() == 1:
-                self.dead(entity)"""
+        if entity:
+            entity.evolve()
+            if entity.isDead():
+                self.dead(tile)
+            elif isinstance(entity, Animal):
+                self.moveEntity(tile)
 
     def reproduce(self, tile: Tile):
-        entity = tile.getEntity()
-        noEntity = self.grid.randomTileWithoutEntity(tile)
-        if noEntity:
-            x = random.randint(0, len(noEntity) - 1)
-            noEntity[x].addEntity(entity)
-            self.entities[type(tile.getEntity())] += 1
-            self.modifiedTiles.add(noEntity[x])
+        entityType = type(tile.getEntity())
+        newEntity = entityType()
+        tileWithNoEntity = self.grid.randomTileWithoutEntity(tile)
+        if tileWithNoEntity:
+            x = random.randint(0, len(tileWithNoEntity) - 1)
+            tileWithNoEntity[x].addEntity(newEntity)
+            self.entities[entityType] += 1
+            self.modifiedTiles.add(tileWithNoEntity[x])
 
     def moveEntity(self, tile: Tile):
         entity = tile.getEntity()
