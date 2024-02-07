@@ -217,9 +217,27 @@ class GraphicalGrid(QGraphicsView):
             
     def _drawEntityInfo(self, entity: Entity):
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
-        QMessageBox.information(self, "Entity Information", entity_info)
+        messageBox = QMessageBox()
+        messageBox.setWindowTitle("Entity Information")
+        messageBox.setText(entity_info)
+        messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
+        messageBox.exec()
         
+    def mousePressEvent(self, event):
+        scene_pos = self.mapToScene(event.pos())
+        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+        if tile.hasEntity():
+            self._drawEntityInfo(tile.getEntity())
+        #x = scene_pos.x()
+        # y = scene_pos.y()
+        # print(x, y)
+        # print(self.getClickedTile(x, y))
 
+    def getClickedTile(self, x, y):
+        """Crash here if not on a pixmap"""
+        # print(self.scene.sceneRect().size())
+        return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
+    
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
         zoom_out = event.angleDelta().y() < 0
