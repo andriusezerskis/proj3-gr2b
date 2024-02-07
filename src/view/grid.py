@@ -231,11 +231,11 @@ class GraphicalGrid(QGraphicsView):
                     self._movePlayer((0, -1))
             case Qt.Key.Key_S:
                 if self.simulation.hasPlayer():
-                    #self.simulation.getPlayer().move((1, 0))
+                    # self.simulation.getPlayer().move((1, 0))
                     self._movePlayer((1, 0))
             case Qt.Key.Key_D:
                 if self.simulation.hasPlayer():
-                    #self.simulation.getPlayer().move((0, 1))
+                    # self.simulation.getPlayer().move((0, 1))
                     self._movePlayer((0, 1))
 
     def _drawEntityInfo(self, entity: Entity):
@@ -251,7 +251,6 @@ class GraphicalGrid(QGraphicsView):
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile.hasEntity():
             self._drawEntityInfo(tile.getEntity())
-
 
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""

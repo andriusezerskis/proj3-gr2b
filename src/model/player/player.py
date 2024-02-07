@@ -36,6 +36,9 @@ class Player(Entity):
     def getTexturePath(self) -> str:
         return self.claimed_entity.getTexturePath()
 
+    def getValidTiles(self):
+        return self.claimed_entity.getValidTiles()
+
     @staticmethod
     def reproduce() -> None:
         return None
