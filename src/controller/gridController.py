@@ -52,8 +52,8 @@ class GridController:
         scene_pos = self.graphical_grid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile.hasEntity():
-            self.simulation.setPlayerEntity(tile)
-            # self._drawEntityInfo(tile.getEntity())
+            # self.simulation.setPlayerEntity(tile)
+            self.graphical_grid.drawEntityInfo(tile.getEntity())
 
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""

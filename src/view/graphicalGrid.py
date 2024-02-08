@@ -98,7 +98,7 @@ class GraphicalGrid(QGraphicsView):
             return pixmap
         return self.pixmap_from_path[tile.getTexturePath()]
 
-    def _drawEntityInfo(self, entity: Entity):
+    def drawEntityInfo(self, entity: Entity):
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
