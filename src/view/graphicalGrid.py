@@ -83,12 +83,11 @@ class GraphicalGrid(QGraphicsView):
         for i, j in won:
             self._drawEntities(self.simulation.getGrid().getTile(i, j))
 
-    def movePlayer(self, movement):
-        i, j = self.simulation.getPlayer().getPosition()
+    def movePlayer(self, old_pos, new_pos):
+        i, j = old_pos
         self.scene.removeItem(self.pixmap_items[i][j][1])
         self.pixmap_items[i][j][1] = None
-        self.simulation.getPlayer().move(movement)
-        self._drawEntities(self.simulation.getPlayer().getTile())
+        self._drawEntities(self.simulation.getGrid().getTile(new_pos[0], new_pos[1]))
 
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
@@ -98,7 +97,8 @@ class GraphicalGrid(QGraphicsView):
             return pixmap
         return self.pixmap_from_path[tile.getTexturePath()]
 
-    def drawEntityInfo(self, entity: Entity):
+    @staticmethod
+    def drawEntityInfo(entity: Entity):
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
