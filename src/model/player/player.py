@@ -6,6 +6,7 @@ from model.grid import Grid
 
 
 class Player(Entity):
+
     def __init__(self, grid):
         super().__init__()
         self.claimed_entity: Entity | None = None

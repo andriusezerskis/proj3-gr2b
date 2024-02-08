@@ -8,6 +8,9 @@ from constants import ALGAE_TEXTURE_PATH
 
 class Algae(Plant):
 
+    def __init__(self):
+        super().__init__()
+
     @staticmethod
     @override
     def getTexturePath() -> str:
@@ -17,9 +20,6 @@ class Algae(Plant):
     @override
     def getValidTiles() -> set[type]:
         return {Water}
-
-    def __init__(self):
-        super().__init__()
 
     @override
     def reproduce(self) -> None:

@@ -11,6 +11,9 @@ from model.terrains.water import Water
 
 class Fish(Animal):
 
+    def __init__(self):
+        super().__init__()
+
     @staticmethod
     @override
     def getTexturePath() -> str:
@@ -25,9 +28,6 @@ class Fish(Animal):
     @override
     def getClassPreys() -> list[tuple]:
         return [(Algae, 0.99)]
-
-    def __init__(self):
-        super().__init__()
 
     def __str__(self):
         return 'F'
