@@ -13,9 +13,6 @@ class EntitiesGenerator:
         self.entities = {Algae: 0, Human: 0, Fish: 0, Tree: 0}
 
     def generateEntities(self, tiles):
-        self.generateLandEntities(tiles[0][0])
-        return self.entities
-
         for line in tiles:
             for tile in line:
                 self.addRandomEntity(tile)
@@ -37,10 +34,6 @@ class EntitiesGenerator:
             self.entities[Algae] += 1
 
     def generateLandEntities(self, tile: Tile):
-        tile.addEntity(Human())
-        self.entities[Human] += 1
-        return
-
         if random.randint(0, 5) == 1:
             tile.addEntity(Human())
             self.entities[Human] += 1
