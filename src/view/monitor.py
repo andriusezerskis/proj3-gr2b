@@ -5,6 +5,13 @@ from PyQt6.QtCore import Qt
 from typing import Tuple, List
 import sys
 
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+import random      # pour tester graphe, plus besoin apres
+import matplotlib
+matplotlib.use('QtAgg')
+
 class MonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -27,6 +34,8 @@ class MonitorWindow(QMainWindow):
         # ---- second layout for selection ----
         # Hlayout containing 2 Vlayout (check button)
         #-> peut être le changer en stacked layout plus tard 
+        # ou ajouter un truc QSpinBox à côté de rayon
+        # 1 case = rayon de 1 enfaite 
         self.layout_2 = QHBoxLayout()
         self.check_zone = self.check_box()
         self.check_cata = self.check_box_2()
@@ -42,7 +51,6 @@ class MonitorWindow(QMainWindow):
         button = QPushButton("OK")
         button.clicked.connect(self.lol)
         self.layout.addWidget(button)
-
         
 
 
