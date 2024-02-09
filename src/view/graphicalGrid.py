@@ -1,8 +1,8 @@
 import time
-from typing import Tuple, List, Set
+from typing import Tuple, Set
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QMessageBox
+from PyQt6.QtWidgets import QGraphicsScene, QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from model.grid import Grid
@@ -10,7 +10,6 @@ from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
-from model.simulation import Simulation
 
 from controller.gridController import GridController
 
@@ -23,6 +22,7 @@ class GraphicalGrid(QGraphicsView):
         self.layout = layout
 
         self.scene = QGraphicsScene()
+        self.gridController = GridController(self, simulation, RenderMonitor())
 
         super().__init__(self.scene)
         self.rendering_monitor = RenderMonitor()
@@ -42,8 +42,6 @@ class GraphicalGrid(QGraphicsView):
         self.zoom_step = 0.1
 
         self.size = 16, 16
-        self.pixmap_items: List[List[QLabel]] = [
-            [[None] for _ in range(grid_size[0])]for _ in range(grid_size[1])]
         self.pixmap_from_path = {}
 
         start_time = time.time()
@@ -66,10 +64,12 @@ class GraphicalGrid(QGraphicsView):
             self.layout.addWidget(widget, tile.index[0], tile.index[1])
             self.layer2widgets[tile.getIndex()[0]][tile.getIndex()[1]] = widget
 
+            widget.mousePressEvent = self.mousePressEvent
             secondwidget = QLabel()
             self.layer1widgets[tile.getIndex()[0]
                                ][tile.getIndex()[1]] = secondwidget
             if tile.hasEntity():
+                secondwidget.mousePressEvent = self.mousePressEvent
 
                 secondwidget.setPixmap(self.getPixmap(tile.getEntity()))
                 self.layout.addWidget(
@@ -114,29 +114,10 @@ class GraphicalGrid(QGraphicsView):
         messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
         messageBox.exec()
 
-    def mousePressEvent(self, event):
-        scene_pos = self.mapToScene(event.pos())
-        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
-        if tile.hasEntity():
-            self._drawEntityInfo(tile.getEntity())
-        # x = scene_pos.x()
-        # y = scene_pos.y()
-        # print(x, y)
-        # print(self.getClickedTile(x, y))
-
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""
         # print(self.scene.sceneRect().size())
         return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
-
-    """def wheelEvent(self, event):
-        # Récupérer le facteur de zoom actuel
-        zoom_out = event.angleDelta().y() < 0
-        zoom_factor = 1.1 if zoom_out else 0.9
-
-        # Appliquer le zoom
-        self.zoom_factor *= zoom_factor
-        self.scale(zoom_factor, zoom_factor)"""
 
     def movePlayer(self, old_pos, new_pos):
         i, j = old_pos
