@@ -16,6 +16,9 @@ class Tile(ABC):
         self.pos = pos
         self.height = height
         self.entity = entity
+        #if entity and self.__class__ in entity.getValidTiles():
+        #    print("cc")
+        #    self.entity = entity
         
     # @abstractmethod
     def step(self):
@@ -44,6 +47,10 @@ class Tile(ABC):
 
     def getIndex(self) -> tuple[int, int]:
         return self.pos.y(), self.pos.x()
+
+    @staticmethod
+    def copyWithDifferentTypeOf(toCopy: "Tile", type_: type) -> "Tile":
+        return type_(toCopy.pos, toCopy.height, toCopy.entity)
 
     def __repr__(self):
         return f"Tile({self.pos})"

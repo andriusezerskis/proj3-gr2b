@@ -36,6 +36,7 @@ class Simulation:
         self.modifiedTiles = set()
         self.entities = self.grid.initialize()
         self.player = Player(self.grid)
+
         self._TEST_PATHFINDING()
 
     def _TEST_PATHFINDING(self):

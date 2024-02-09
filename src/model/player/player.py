@@ -1,5 +1,7 @@
 from typing import Tuple
 
+from utils import Point
+
 from model.entities.entity import Entity
 from model.terrains.tile import Tile
 from model.grid import Grid
@@ -29,11 +31,12 @@ class Player(Entity):
     def move(self, movement: Tuple[int, int]):
         old_position_i, old_position_j = self.position[:]
         wanted_position_i, wanted_position_j = self.position[0] + movement[0], self.position[1] + movement[1]
-
-        if (not self.grid.getTile(wanted_position_i, wanted_position_j).hasEntity() and
-                type(self.grid.getTile(wanted_position_i, wanted_position_j)) in self.getValidTiles()):
-            self.grid.getTile(old_position_i, old_position_j).removeEntity()
-            self.grid.getTile(wanted_position_i, wanted_position_j).addEntity(self)
+        old_position = Point(old_position_j, old_position_i)
+        wanted_position = Point(wanted_position_j, wanted_position_i)
+        if (not self.grid.getTile(wanted_position).hasEntity() and
+                type(self.grid.getTile(wanted_position)) in self.getValidTiles()):
+            self.grid.getTile(old_position).removeEntity()
+            self.grid.getTile(wanted_position).addEntity(self)
             self.position = wanted_position_i, wanted_position_j
             return True
         return False

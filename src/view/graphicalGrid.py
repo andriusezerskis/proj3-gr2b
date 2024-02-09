@@ -1,6 +1,8 @@
 import time
 from typing import Tuple, Set
 
+from utils import Point
+
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QGraphicsScene, QMessageBox
 from PyQt6.QtGui import *
@@ -82,7 +84,7 @@ class GraphicalGrid(QGraphicsView):
                 self.scene.removeItem(self.pixmap_items[i][j][1])
                 self.pixmap_items[i][j][1] = None
         for i, j in won:
-            self._drawEntities(self.simulation.getGrid().getTile(i, j))
+            self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
@@ -117,14 +119,14 @@ class GraphicalGrid(QGraphicsView):
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""
         # print(self.scene.sceneRect().size())
-        return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
+        return self.simulation.getGrid().getTile(Point(int(y // self.size[1]), int(x // self.size[0])))
 
     def movePlayer(self, old_pos, new_pos):
         i, j = old_pos
         self.scene.removeItem(self.pixmap_items[i][j][1])
         self.pixmap_items[i][j][1] = None
         self._drawEntities(
-            self.simulation.getGrid().getTile(new_pos[0], new_pos[1]))
+            self.simulation.getGrid().getTile(Point(new_pos[1], new_pos[0])))
 
     @staticmethod
     def drawEntityInfo(entity: Entity):
