@@ -110,10 +110,8 @@ class Simulation:
 
     def moveEntity(self, tile: Tile):
         entity = tile.getEntity()
-        print("uwu")
         noEntity = self.grid.randomTileWithoutEntity(tile.getPos())
         if noEntity:
-            print("no entity")
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
             self.modifiedTiles.add(noEntity[x])
