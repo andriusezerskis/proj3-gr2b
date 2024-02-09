@@ -28,9 +28,11 @@ class Window(QMainWindow):
 
         self.fastF = False
         self.paused = False
+        self.realLayout = QVBoxLayout()
+        self.realLayout.addLayout(self.layout)
 
-        # self.drawButtons()
-        self.view.setLayout(self.layout)
+        self.drawButtons()
+        self.view.setLayout(self.realLayout)
         self.setCentralWidget(self.view)
 
     def pauseTimer(self):
@@ -51,7 +53,7 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
-        # self.show_time()
+        self.show_time()
 
     def show_time(self):
         """
@@ -96,12 +98,13 @@ class Window(QMainWindow):
 
         self.timebutton = QPushButton("00:00:00")
 
-        self.layout.addStretch()
-        self.layout.addWidget(self.pauseButton)
-        self.layout.addWidget(self.fastFbutton)
-        self.layout.addWidget(self.timebutton)
-        self.layout.addStretch()
+        self.realLayout.addWidget(self.pauseButton)
+        self.realLayout.addWidget(self.fastFbutton)
+        self.realLayout.addWidget(self.timebutton)
 
-        self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)
+        self.realLayout.setAlignment(
+            self.pauseButton, Qt.AlignmentFlag.AlignTop)
+        self.realLayout.setAlignment(
+            self.fastFbutton, Qt.AlignmentFlag.AlignTop)
+        self.realLayout.setAlignment(
+            self.timebutton, Qt.AlignmentFlag.AlignTop)
