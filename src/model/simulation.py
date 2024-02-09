@@ -50,10 +50,12 @@ class Simulation:
                 dest = choice(list(self.grid.islands[0])).getPos()
                 t1 = time.time()
                 if pathfinder.findPath(tile.getEntity(), current, dest):
-                    print(f"Found path from {current} to {dest} in {time.time() - t1}s")
+                    print(
+                        f"Found path from {current} to {dest} in {time.time() - t1}s")
                     print("simulating path...")
                     for move in pathfinder.getPath():
-                        print(f"{current} + {move} = {current + move} (tile {self.grid.getTile(current + move)})")
+                        print(
+                            f"{current} + {move} = {current + move} (tile {self.grid.getTile(current + move)})")
                         current = current + move
                 break
 
@@ -91,12 +93,11 @@ class Simulation:
 
     def evolution(self, tile):
         entity = tile.getEntity()
-        if entity:
-            entity.evolve()
-            if entity.isDead():
-                self.dead(tile)
-            elif isinstance(entity, Animal):
-                self.moveEntity(tile)
+        entity.evolve()
+        if entity.isDead():
+            self.dead(tile)
+        elif isinstance(entity, Animal):
+            self.moveEntity(tile)
 
     def reproduce(self, tile: Tile):
         entityType = type(tile.getEntity())
@@ -109,8 +110,10 @@ class Simulation:
 
     def moveEntity(self, tile: Tile):
         entity = tile.getEntity()
+        print("uwu")
         noEntity = self.grid.randomTileWithoutEntity(tile.getPos())
         if noEntity:
+            print("no entity")
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
             self.modifiedTiles.add(noEntity[x])

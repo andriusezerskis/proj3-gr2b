@@ -46,7 +46,7 @@ class Grid:
             if self.isPosInGrid(tile):
                 randomTile = self.getTile(tile)
                 if not randomTile.getEntity():
-                    if type(currentTile) is type(randomTile):
+                    if (type(self.getTile(currentTile)) is type(randomTile)):
                         no_entity.append(
                             self.getTile(tile))
         return no_entity
