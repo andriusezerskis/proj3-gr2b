@@ -1,7 +1,8 @@
 from abc import abstractmethod, ABC
-from typing import Tuple
 
 from model.entities.entity import Entity
+
+from utils import Point
 
 
 class Tile(ABC):
@@ -11,8 +12,9 @@ class Tile(ABC):
     def getTexturePath() -> str:
         ...
 
-    def __init__(self, index: Tuple[int, int], entity: Entity = None) -> None:
-        self.index = index
+    def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
+        self.pos = pos
+        self.height = height
         self.entity = entity
         
     # @abstractmethod
@@ -33,11 +35,18 @@ class Tile(ABC):
         if self.entity:
             self.entity = None
 
-    def getIndex(self) -> Tuple[int, int]:
-        return self.index
+    def getPos(self) -> Point:
+        return self.pos
+
+    @property
+    def index(self) -> tuple[int, int]:
+        return self.getIndex()
+
+    def getIndex(self) -> tuple[int, int]:
+        return self.pos.y(), self.pos.x()
 
     def __repr__(self):
-        return f"Tile({self.index})"
+        return f"Tile({self.pos})"
 
     def __str__(self):
         ...

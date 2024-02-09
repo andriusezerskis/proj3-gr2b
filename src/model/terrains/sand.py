@@ -12,11 +12,8 @@ class Sand(Tile):
     def getTexturePath() -> str:
         return SAND_TEXTURE_PATH
 
-    def __init__(self, entity: Entity = None) -> None:
-        super().__init__(entity)
-
     def __repr__(self):
-        return f"Sand({self.index})"
+        return f"Sand({self.pos})"
 
     def __str__(self):
         return "S"

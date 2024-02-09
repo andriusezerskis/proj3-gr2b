@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from utils import Point
 
 from constants import *
 
@@ -85,7 +86,8 @@ class Cuboid:
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
         if isinstance(item, Tile):
-            item = item.getIndex()
+            item = item.getPos()
+            item = (item.y(), item.x())
         return self.upper[0] <= item[0] <= self.lower[0] and self.upper[1] <= item[1] <= self.lower[1]
 
     def __repr__(self):
