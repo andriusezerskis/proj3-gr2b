@@ -10,28 +10,23 @@ class MonitorWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Monitor deb'île")
         self.setGeometry(100, 100, 300, 200)
+
+        # --- main layout settings ---
         self.layout = QVBoxLayout()
-
-        # self.label = QLabel("WIL THE BEST MUUUWWZIKK")
-        # self.layout.addWidget(self.label)
-
-        # button = QPushButton("DJ KHALEDDDD")
-        # button.clicked.connect(self.lol)
-        # self.layout.addWidget(button)
 
         widget = QWidget()
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
 
-        self.label_2 = QLabel('Tableau de bord-inator')
-        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # --- add widget on Vlayout ---
+        title = QLabel('Tableau de bord-inator')
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setStyleSheet("QLabel{font-size: 20pt;}")
+        self.layout.addWidget(title)
 
-        self.label_2.setStyleSheet("QLabel{font-size: 20pt;}")
-
-        self.layout.addWidget(self.label_2)
-
-        #self.slot_1 = self.slot_choose_coord()
-        #self.slot_2 = self.slot_temperature()
+        # ---- second layout for selection ----
+        # Hlayout containing 2 Vlayout (check button)
+        #-> peut être le changer en stacked layout plus tard 
         self.layout_2 = QHBoxLayout()
         self.check_zone = self.check_box()
         self.check_cata = self.check_box_2()
@@ -41,11 +36,8 @@ class MonitorWindow(QMainWindow):
 
         self.container = QWidget()
         self.container.setLayout(self.layout_2)
-
-
-        #self.layout.addWidget(self.slot_1)
-        #self.layout.addWidget(self.slot_2)
         self.layout.addWidget(self.container)
+
 
         button = QPushButton("OK")
         button.clicked.connect(self.lol)
@@ -53,37 +45,10 @@ class MonitorWindow(QMainWindow):
 
         
 
-# faire une classe slot comme ça pour manipuler les label etc c carré
 
     def lol(self):
+        # bouton OK handler
         print('lol')
-
-    def slot_choose_coord(self):
-        slot = QHBoxLayout()
-        button = QPushButton("Choisir une coordonnée")
-        button.clicked.connect(self.lol)
-
-        # my_font = QFont("Times New Roman", 12)
-        # my_button.setFont(my_font)
-        slot.addWidget(button)
-
-        label = QLabel("0, 0")
-        slot.addWidget(label)
-
-        container = QWidget()
-        container.setLayout(slot)
-        return container
-
-    def slot_temperature(self):
-        slot = QHBoxLayout()
-        label = QLabel("Température de la région")
-        slot.addWidget(label)
-        label = QLabel("t°")
-        slot.addWidget(label)
-
-        container = QWidget()
-        container.setLayout(slot)
-        return container
 
 
     def check_box(self):
@@ -92,18 +57,18 @@ class MonitorWindow(QMainWindow):
         label = QLabel("Choix de zone")
         layout.addWidget(label)
 
-        self.b1 = QRadioButton("Button1")
-        self.b1.setChecked(True)
-        self.b1.toggled.connect(lambda:self.btnstate(self.b1))
-        layout.addWidget(self.b1)
+        b1 = QRadioButton("Case unique")
+        b1.setChecked(True)
+        b1.toggled.connect(lambda:self.btn_zone(b1))
+        layout.addWidget(b1)
 
-        self.b2 = QRadioButton("Button2")
-        self.b2.toggled.connect(lambda:self.btnstate(self.b2))
-        layout.addWidget(self.b2)
+        b2 = QRadioButton("Rayon")
+        b2.toggled.connect(lambda:self.btn_zone(b2))
+        layout.addWidget(b2)
 
-        self.b3 = QRadioButton("Button3")
-        #self.b3.toggled.connect(lambda:self.btnstate(self.b3))
-        layout.addWidget(self.b3)
+        b3 = QRadioButton("Ile")
+        b3.toggled.connect(lambda:self.btn_zone(b3))
+        layout.addWidget(b3)
 
         container = QWidget()
         container.setLayout(layout)
@@ -115,36 +80,62 @@ class MonitorWindow(QMainWindow):
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        self.b1 = QRadioButton("Button1")
-        self.b1.setChecked(True)
-        self.b1.toggled.connect(lambda:self.btnstate(self.b1))
-        layout.addWidget(self.b1)
+        b1 = QRadioButton("Froid glacial")
+        b1.setChecked(True)
+        b1.toggled.connect(lambda:self.btn_cata(b1))
+        layout.addWidget(b1)
 
-        self.b2 = QRadioButton("Button2")
-        self.b2.toggled.connect(lambda:self.btnstate(self.b2))
-        layout.addWidget(self.b2)
+        b2 = QRadioButton("Super hot")
+        b2.toggled.connect(lambda:self.btn_cata(b2))
+        layout.addWidget(b2)
 
-        self.b3 = QRadioButton("Button3")
-        #self.b3.toggled.connect(lambda:self.btnstate(self.b3))
-        layout.addWidget(self.b3)
+        b3 = QRadioButton("EXPLOSION")
+        b3.toggled.connect(lambda:self.btn_cata(b3))
+        layout.addWidget(b3)
 
         container = QWidget()
         container.setLayout(layout)
         return container
 
-    def btnstate(self,b):
-    
-      if b.text() == "Button1":
-         if b.isChecked() == True:
-            print(b.text()+" is selected")
-         else:
-            print(b.text()+" is deselected")
+    def btn_zone(self,b):
+        if b.text() == "Case unique":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
                 
-      if b.text() == "Button2":
-         if b.isChecked() == True:
-            print(b.text()+" is selected")
-         else:
-            print(b.text()+" is deselected")
+        if b.text() == "Rayon":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+
+        if b.text() == "Ile":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+
+    def btn_cata(self, b):
+        if b.text() == "Froid glacial":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+                
+        if b.text() == "Super hot":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+
+        if b.text() == "EXPLOSION":
+            if b.isChecked() == True:
+                print(b.text()+" is selected")
+            else:
+                print(b.text()+" is deselected")
+
+
         
 
 app = QApplication(sys.argv)
