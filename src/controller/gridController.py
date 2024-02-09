@@ -35,29 +35,35 @@ class GridController:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((-1, 0)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
             case Qt.Key.Key_Q:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, -1)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
             case Qt.Key.Key_S:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((1, 0)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
             case Qt.Key.Key_D:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, 1)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
 
     def mousePressEvent(self, event):
+        # si j'enlève ça ça marche pas jcomprends pas pq mais dcp je le laisse
+        print("bruh")
         scene_pos = self.graphical_grid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile.hasEntity():
-            self.simulation.setPlayerEntity(tile)
-            # self.graphical_grid.drawEntityInfo(tile.getEntity())
+            # self.simulation.setPlayerEntity(tile)
+            self.graphical_grid.drawEntityInfo(tile.getEntity())
 
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""

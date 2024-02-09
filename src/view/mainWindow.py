@@ -15,9 +15,9 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
-        self.rendering_monitor = RenderMonitor()
-        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
-        self.grid_controller = GridController(self.view, simulation, self.rendering_monitor)
+        self.layout = QGridLayout()
+        self.view = GraphicalGrid(
+            grid_size, simulation.getGrid(), simulation, self.layout)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
@@ -29,8 +29,7 @@ class Window(QMainWindow):
         self.fastF = False
         self.paused = False
 
-        self.layout = QHBoxLayout()
-        self.drawButtons()
+        # self.drawButtons()
         self.view.setLayout(self.layout)
         self.setCentralWidget(self.view)
 
@@ -52,7 +51,7 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
-        self.show_time()
+        # self.show_time()
 
     def show_time(self):
         """
