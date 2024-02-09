@@ -1,4 +1,5 @@
 from PyQt6.QtCore import *
+from utils import Point
 
 
 class GridController:
@@ -67,7 +68,7 @@ class GridController:
 
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""
-        return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
+        return self.simulation.getGrid().getTile(Point(int(y // self.size[1]), int(x // self.size[0])))
 
     def wheelEvent(self, event):
         """zoom_out = event.angleDelta().y() < 0
