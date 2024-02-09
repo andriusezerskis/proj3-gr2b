@@ -20,6 +20,7 @@ from model.entities.entity import Entity
 from model.entities.human import Human
 
 from model.pathfinder import Pathfinder
+from random import choice
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -33,6 +34,25 @@ class Simulation:
         self.stepCount = 0
         self.modifiedTiles = set()
         self.grid.initialize()
+        self._TEST_PATHFINDING()
+
+    def _TEST_PATHFINDING(self):
+        """
+        PATHFINDING TEST, TO REMOVE
+        """
+        for tile in self.grid.islands[0]:
+            if type(tile.getEntity()) is Human:
+                pathfinder = Pathfinder(self.grid)
+                current = tile.getPos()
+                dest = choice(list(self.grid.islands[0])).getPos()
+                t1 = time.time()
+                if pathfinder.findPath(tile.getEntity(), current, dest):
+                    print(f"Found path from {current} to {dest} in {time.time() - t1}s")
+                    print("simulating path...")
+                    for move in pathfinder.getPath():
+                        print(f"{current} + {move} = {current + move} (tile {self.grid.getTile(current + move)})")
+                        current = current + move
+                break
 
     def step(self) -> None:
         self.modifiedTiles = set()

@@ -17,7 +17,7 @@ from model.entities.entity import Entity
 class Grid:
     def __init__(self, size: Point) -> None:
         self.tiles: List[List[Tile]] = []
-        self.islands: List[Tile] = []
+        self.islands: List[List[Tile]] = []
         self.size: Point = size
 
     def initialize(self):

@@ -12,8 +12,9 @@ class Tile(ABC):
     def getTexturePath() -> str:
         ...
 
-    def __init__(self, pos: Point, entity: Entity = None) -> None:
+    def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
         self.pos = pos
+        self.height = height
         self.entity = entity
         
     # @abstractmethod

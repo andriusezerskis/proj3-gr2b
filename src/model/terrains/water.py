@@ -11,11 +11,8 @@ class Water(Tile):
     def getTexturePath() -> str:
         return WATER_TEXTURE_PATH
 
-    def __init__(self, index, entity: Entity = None) -> None:
-        super().__init__(index, entity)
-
     def __repr__(self):
-        return f"Water({self.index})"
+        return f"Water({self.pos})"
 
     def __str__(self):
         return "W"

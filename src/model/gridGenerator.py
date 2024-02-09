@@ -31,7 +31,7 @@ class GridGenerator:
         for tileType, threshold in self.thresholds:
 
             if sample < threshold:
-                return tileType(Point(x, y))
+                return tileType(Point(x, y), sample)
 
     def _generateMatrix(self) -> list[list[Tile]]:
         return [[self._getTile(x, y) for x in range(self.w)] for y in range(self.h)]
