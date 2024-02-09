@@ -42,12 +42,12 @@ class GraphicalGrid(QGraphicsView):
 
     def updateGrid(self, updated_tiles: Set[Tile]):
         for tile in updated_tiles:
-            if tile.getIndex() in self.rendering_monitor.get_rendering_section():
+            if tile.getIndex() in self.rendering_monitor.getRenderingSection():
                 self._drawEntities(tile)
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
-            if tile in self.rendering_monitor.get_rendering_section():
+            if tile in self.rendering_monitor.getRenderingSection():
                 self._drawTiles(tile)
             else:
                 self._drawTerrains(tile)
@@ -61,6 +61,11 @@ class GraphicalGrid(QGraphicsView):
 
     def _drawEntities(self, tile):
         self._drawPixmap(tile.getIndex(), tile.getEntity())
+
+    def _removeEntity(self, i, j):
+        if self.pixmap_items[i][j][1]:
+            self.scene.removeItem(self.pixmap_items[i][j][1])
+            self.pixmap_items[i][j][1] = None
 
     def _drawPixmap(self, index: Tuple[int, int], item: Tile | Entity):
         i, j = index
@@ -96,6 +101,16 @@ class GraphicalGrid(QGraphicsView):
             self.pixmap_from_path[tile.getTexturePath()] = pixmap
             return pixmap
         return self.pixmap_from_path[tile.getTexturePath()]
+
+    def removeRenderedEntities(self):
+        for i, j in self.rendering_monitor.getRenderingSection():
+            if self.pixmap_items[i][j][1] is not None:
+                self._removeEntity(i, j)
+
+    def renderEntities(self):
+        for i, j in self.rendering_monitor.getRenderingSection():
+            print(i, j)
+            self._drawEntities(self.simulation.getGrid().getTile(i, j))
 
     @staticmethod
     def drawEntityInfo(entity: Entity):

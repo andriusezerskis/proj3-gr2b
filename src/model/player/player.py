@@ -30,8 +30,10 @@ class Player(Entity):
         old_position_i, old_position_j = self.position[:]
         wanted_position_i, wanted_position_j = self.position[0] + movement[0], self.position[1] + movement[1]
 
-        if (not self.grid.getTile(wanted_position_i, wanted_position_j).hasEntity() and
-                type(self.grid.getTile(wanted_position_i, wanted_position_j)) in self.getValidTiles()):
+        if (self.grid.isInGrid(wanted_position_i, wanted_position_j)
+                and not self.grid.getTile(wanted_position_i, wanted_position_j).hasEntity()
+                and type(self.grid.getTile(wanted_position_i, wanted_position_j)) in self.getValidTiles()):
+
             self.grid.getTile(old_position_i, old_position_j).removeEntity()
             self.grid.getTile(wanted_position_i, wanted_position_j).addEntity(self)
             self.position = wanted_position_i, wanted_position_j

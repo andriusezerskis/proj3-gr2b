@@ -15,7 +15,7 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
-        self.rendering_monitor = RenderMonitor()
+        self.rendering_monitor = simulation.getRenderMonitor()
         self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
         self.grid_controller = GridController(self.view, simulation, self.rendering_monitor)
         self.setCentralWidget(self.view)

@@ -16,6 +16,7 @@ from model.grid import Grid
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.player.player import Player
+from model.renderMonitor import RenderMonitor
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -30,6 +31,7 @@ class Simulation:
         self.modifiedTiles = set()
         self.entities = self.grid.initialize()
         self.player = Player(self.grid)
+        self.renderMonitor = RenderMonitor()
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -80,7 +82,7 @@ class Simulation:
             x = random.randint(0, len(tileWithNoEntity) - 1)
             tileWithNoEntity[x].addEntity(newEntity)
             self.entities[entityType] += 1
-            self.modifiedTiles.add(tileWithNoEntity[x])
+            self.addModifiedTiles(tileWithNoEntity[x])
 
     def moveEntity(self, tile: Tile):
         entity = tile.getEntity()
@@ -88,14 +90,14 @@ class Simulation:
         if noEntity:
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
-            self.modifiedTiles.add(noEntity[x])
+            self.addModifiedTiles(noEntity[x])
             tile.removeEntity()
-            self.modifiedTiles.add(tile)
+            self.addModifiedTiles(tile)
 
     def dead(self, tile: Tile) -> Tile:
         self.entities[type(tile.getEntity())] -= 1
         tile.removeEntity()
-        self.modifiedTiles.add(tile)
+        self.addModifiedTiles(tile)
 
     def getGrid(self) -> Grid:
         return self.grid
@@ -108,3 +110,10 @@ class Simulation:
 
     def hasPlayer(self) -> bool:
         return self.player.isPlaying()
+
+    def addModifiedTiles(self, tile):
+        if tile in self.renderMonitor.getRenderingSection():
+            self.modifiedTiles.add(tile)
+
+    def getRenderMonitor(self):
+        return self.renderMonitor

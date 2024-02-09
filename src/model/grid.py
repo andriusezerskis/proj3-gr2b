@@ -6,6 +6,8 @@ from model.gridGenerator import GridGenerator
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 
+from constants import GRID_HEIGHT, GRID_WIDTH
+
 
 class Grid:
     def __init__(self, size: tuple) -> None:
@@ -69,7 +71,13 @@ class Grid:
         return no_entity
 
     def getTile(self, i, j) -> Tile:
+        if not self.isInGrid(i, j):
+            raise IndexError
         return self.tiles[i][j]
+
+    @staticmethod
+    def isInGrid(i, j):
+        return 0 <= i < GRID_HEIGHT and 0 <= j < GRID_WIDTH
 
     def __iter__(self):
         for line in self.tiles:
@@ -80,6 +88,7 @@ class Grid:
         res = ""
         for line in self.tiles:
             for tile in line:
-                res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                #res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                res += (str(tile) + ' ')
             res += "\n"
         return res

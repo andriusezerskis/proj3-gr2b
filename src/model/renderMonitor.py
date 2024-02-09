@@ -3,6 +3,10 @@ from typing import List, Tuple
 from constants import *
 
 from model.terrains.tile import Tile
+from model.grid import Grid
+
+from constants import RENDERING_HEIGHT, GRID_WIDTH, RENDERING_WIDTH, GRID_HEIGHT
+
 
 
 class Cuboid:
@@ -10,10 +14,10 @@ class Cuboid:
         self.upper = upper_left_point
         self.lower = lower_right_point
 
-    def left_move(self, left_dist):
+    def left_move(self, dist: int, keep_on_screen: bool):
         save_upper = self.upper[:]
         save_lower = self.lower[:]
-        left_movement = min(left_dist, self.upper[1])
+        left_movement = min(dist, self.upper[1]) if keep_on_screen else dist
 
         self.upper[1] -= left_movement
         self.lower[1] -= left_movement
@@ -22,10 +26,10 @@ class Cuboid:
         won_area = Cuboid(self.upper, [self.lower[0], save_upper[1] - 1])
         return lost_area, won_area
 
-    def right_move(self, right_dist):
+    def right_move(self, dist: int, keep_on_screen: bool):
         save_upper = self.upper[:]
         save_lower = self.lower[:]
-        right_movement = min(right_dist, GRID_WIDTH - 1 - self.lower[1])
+        right_movement = min(dist, GRID_WIDTH - 1 - self.lower[1]) if keep_on_screen else dist
 
         self.upper[1] += right_movement
         self.lower[1] += right_movement
@@ -34,10 +38,10 @@ class Cuboid:
         won_area = Cuboid([self.upper[0], save_lower[1] + 1], self.lower)
         return lost_area, won_area
 
-    def up_move(self, up_dist):
+    def up_move(self, dist: int, keep_on_screen: bool):
         save_upper = self.upper[:]
         save_lower = self.lower[:]
-        up_movement = min(up_dist, self.upper[0])
+        up_movement = min(dist, self.upper[0]) if keep_on_screen else dist
 
         self.upper[0] -= up_movement
         self.lower[0] -= up_movement
@@ -46,11 +50,10 @@ class Cuboid:
         won_area = Cuboid(self.upper, [save_upper[0] - 1, self.lower[1]])
         return lost_area, won_area
 
-    def down_move(self, down_dist):
+    def down_move(self, dist: int, keep_on_screen: bool):
         save_upper = self.upper[:]
         save_lower = self.lower[:]
-        down_movement = min(down_dist, GRID_HEIGHT - 1 - self.lower[0])
-        print(down_movement)
+        down_movement = min(dist, GRID_HEIGHT - 1 - self.lower[0]) if keep_on_screen else dist
 
         self.upper[0] += down_movement
         self.lower[0] += down_movement
@@ -80,7 +83,8 @@ class Cuboid:
     def __iter__(self):
         for i in range(self.upper[0], self.lower[0] + 1):
             for j in range(self.upper[1], self.lower[1] + 1):
-                yield i, j
+                if Grid.isInGrid(i, j):
+                    yield i, j
 
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
@@ -97,17 +101,22 @@ class RenderMonitor:
         self.rendering_section = Cuboid([(GRID_HEIGHT - RENDERING_HEIGHT) // 2, (GRID_WIDTH - RENDERING_WIDTH) // 2],
                                         [(GRID_HEIGHT + RENDERING_HEIGHT) // 2, (GRID_WIDTH + RENDERING_WIDTH) // 2])
 
-    def left(self):
-        return self.rendering_section.left_move(1)
+    def left(self, keep_on_screen=True):
+        return self.rendering_section.left_move(1, keep_on_screen)
 
-    def right(self):
-        return self.rendering_section.right_move(1)
+    def right(self, keep_on_screen=True):
+        return self.rendering_section.right_move(1, keep_on_screen)
 
-    def up(self):
-        return self.rendering_section.up_move(1)
+    def up(self, keep_on_screen=True):
+        return self.rendering_section.up_move(1, keep_on_screen)
 
-    def down(self):
-        return self.rendering_section.down_move(1)
+    def down(self, keep_on_screen=True):
+        return self.rendering_section.down_move(1, keep_on_screen)
 
-    def get_rendering_section(self):
+    def getRenderingSection(self):
         return self.rendering_section
+
+    def centerOnPoint(self, point: Tuple[int, int]):
+        i, j = point
+        self.rendering_section = Cuboid([i - RENDERING_HEIGHT // 2, j - RENDERING_WIDTH // 2],
+                                        [i + RENDERING_HEIGHT // 2, j + RENDERING_WIDTH // 2])
