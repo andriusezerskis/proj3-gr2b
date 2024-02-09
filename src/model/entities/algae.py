@@ -1,5 +1,4 @@
 from overrides import override
-from random import random
 
 from model.entities.plant import Plant
 from model.terrains.water import Water
@@ -8,6 +7,9 @@ from constants import ALGAE_TEXTURE_PATH
 
 
 class Algae(Plant):
+
+    def __init__(self):
+        super().__init__()
 
     @staticmethod
     @override
@@ -18,9 +20,6 @@ class Algae(Plant):
     @override
     def getValidTiles() -> set[type]:
         return {Water}
-
-    def __init__(self):
-        super().__init__()
 
     @override
     def reproduce(self) -> None:

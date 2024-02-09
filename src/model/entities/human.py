@@ -14,7 +14,6 @@ class Human(Animal):
     def __init__(self):
         super().__init__()
 
-        
     @staticmethod
     @override
     def getTexturePath() -> str:
