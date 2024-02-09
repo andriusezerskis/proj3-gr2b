@@ -1,12 +1,14 @@
 import time
 from typing import Tuple, List, Set
+import os
+import sys
 
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMainWindow, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView, QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
-from constants import STEP_TIME
+from constants import ALGAE_TEXTURE_PATH, LAND_TEXTURE_PATH, SAND_TEXTURE_PATH, STEP_TIME
 
 from model.simulation import Simulation
 from model.grid import Grid
@@ -21,7 +23,9 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
-        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation)
+        self.layout = QGridLayout()
+        self.view = GraphicalGrid(
+            grid_size, simulation.getGrid(), simulation, self.layout)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
@@ -33,8 +37,7 @@ class Window(QMainWindow):
         self.fastF = False
         self.paused = False
 
-        self.layout = QHBoxLayout()
-        self.drawButtons()
+        # self.drawButtons()
         self.view.setLayout(self.layout)
         self.setCentralWidget(self.view)
 
@@ -56,7 +59,7 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
-        self.show_time()
+        # self.show_time()
 
     def show_time(self):
         """
@@ -114,12 +117,17 @@ class Window(QMainWindow):
 
 class GraphicalGrid(QGraphicsView):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation):
+    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation, layout):
         self.simulation = simulation
         # super().__init__(*__args)
+        self.layout = layout
+
         self.scene = QGraphicsScene()
+
         super().__init__(self.scene)
         self.rendering_monitor = RenderMonitor()
+        self.layout.setVerticalSpacing(0)
+        self.layout.setHorizontalSpacing(0)
 
         """self.setRenderHint(QPainter.Antialiasing)
         self.setRenderHint(QPainter.SmoothPixmapTransform)
@@ -128,11 +136,10 @@ class GraphicalGrid(QGraphicsView):
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
-        self.size = 2048, 2048
+        self.size = 200, 200
         self.grid_size = grid_size
-        self.pixmap_items: List[List[List[None | QGraphicsPixmapItem]]] = \
-            [[[None, None] for _ in range(grid_size[0])]
-             for _ in range(grid_size[1])]
+        self.pixmap_items: List[List[QLabel]] = [
+            [[None] for _ in range(grid_size[0])]for _ in range(grid_size[1])]
         self.pixmap_from_path = {}
 
         start_time = time.time()
@@ -148,14 +155,36 @@ class GraphicalGrid(QGraphicsView):
             self._drawEntities(tile)"""
         for tile in updated_tiles:
             if tile.getIndex() in self.rendering_monitor.get_rendering_section():
-                self._drawEntities(tile)
+                if tile.hasEntity():
+                    self.layer1widgets[tile.getIndex()[0]][tile.getIndex()[1]].setPixmap(
+                        self.getPixmap(tile.getEntity()))
 
     def drawGrid(self, grid: Grid):
+        # for tile in grid:
+        # if tile in self.rendering_monitor.get_rendering_section():
+        #   self._drawTiles(tile)
+        # else:
+        #    self._drawTerrains(tile)
+
+        self.layer2widgets = [[None for _ in range(
+            self.grid_size[0])]for _ in range(self.grid_size[1])]
+
+        self.layer1widgets = [[None for _ in range(
+            self.grid_size[0])]for _ in range(self.grid_size[1])]
         for tile in grid:
-            if tile in self.rendering_monitor.get_rendering_section():
-                self._drawTiles(tile)
-            else:
-                self._drawTerrains(tile)
+            widget = QLabel()
+            widget.setPixmap(self.getPixmap(tile))
+            self.layout.addWidget(widget, tile.index[0], tile.index[1])
+            self.layer2widgets[tile.getIndex()[0]][tile.getIndex()[1]] = widget
+
+            secondwidget = QLabel()
+            self.layer1widgets[tile.getIndex()[0]
+                               ][tile.getIndex()[1]] = secondwidget
+            if tile.hasEntity():
+
+                secondwidget.setPixmap(self.getPixmap(tile.getEntity()))
+                self.layout.addWidget(
+                    secondwidget, tile.index[0], tile.index[1])
 
         """for i, j in self.rendering_monitor.get_rendering_section():
             self._drawTiles(grid.getTile(i, j))"""
@@ -214,7 +243,7 @@ class GraphicalGrid(QGraphicsView):
         if event.key() == Qt.Key.Key_D:
             self._moveCamera(self.rendering_monitor.right())
             print("d")
-            
+
     def _drawEntityInfo(self, entity: Entity):
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
         messageBox = QMessageBox()
@@ -222,13 +251,13 @@ class GraphicalGrid(QGraphicsView):
         messageBox.setText(entity_info)
         messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
         messageBox.exec()
-        
+
     def mousePressEvent(self, event):
         scene_pos = self.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile.hasEntity():
             self._drawEntityInfo(tile.getEntity())
-        #x = scene_pos.x()
+        # x = scene_pos.x()
         # y = scene_pos.y()
         # print(x, y)
         # print(self.getClickedTile(x, y))
@@ -237,7 +266,7 @@ class GraphicalGrid(QGraphicsView):
         """Crash here if not on a pixmap"""
         # print(self.scene.sceneRect().size())
         return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
-    
+
     """def wheelEvent(self, event):
         # Récupérer le facteur de zoom actuel
         zoom_out = event.angleDelta().y() < 0
