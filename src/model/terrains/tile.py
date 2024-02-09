@@ -38,6 +38,13 @@ class Tile(ABC):
     def getPos(self) -> Point:
         return self.pos
 
+    @property
+    def index(self) -> tuple[int, int]:
+        return self.getIndex()
+
+    def getIndex(self) -> tuple[int, int]:
+        return self.pos.y(), self.pos.x()
+
     def __repr__(self):
         return f"Tile({self.pos})"
 

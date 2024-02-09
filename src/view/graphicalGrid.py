@@ -61,8 +61,8 @@ class GraphicalGrid(QGraphicsView):
         for tile in grid:
             widget = QLabel()
             widget.setPixmap(self.getPixmap(tile))
-            self.layout.addWidget(widget, tile.pos.y(), tile.pos.x())
-            self.layer2widgets[tile.pos.y()][tile.pos.x()] = widget
+            self.layout.addWidget(widget, tile.index[0], tile.index[1])
+            self.layer2widgets[tile.getIndex()[0]][tile.getIndex()[1]] = widget
 
             widget.mousePressEvent = self.mousePressEvent
             secondwidget = QLabel()

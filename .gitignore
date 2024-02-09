@@ -1,7 +1,0 @@
-__pycache__/constants.cpython-310.pyc
-__pycache__/simulation.cpython-310.pyc
-src/__pycache__
-src/model/__pycache__
-src/model/entities/__pycache__
-src/model/terrains/__pycache__
-src/view/__pycache__
