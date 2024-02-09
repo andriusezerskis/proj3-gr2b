@@ -129,15 +129,19 @@ class GraphicalGrid(QGraphicsView):
         self.layout.setVerticalSpacing(0)
         self.layout.setHorizontalSpacing(0)
 
-        """self.setRenderHint(QPainter.Antialiasing)
-        self.setRenderHint(QPainter.SmoothPixmapTransform)
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)"""
+        self.grid_size = grid_size
+
+        self.layer2widgets = [[None for _ in range(
+            self.grid_size[0])]for _ in range(self.grid_size[1])]
+
+        self.layer1widgets = [[None for _ in range(
+            self.grid_size[0])]for _ in range(self.grid_size[1])]
+
         self.setMouseTracking(True)
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
-        self.size = 200, 200
-        self.grid_size = grid_size
+        self.size = 16, 16
         self.pixmap_items: List[List[QLabel]] = [
             [[None] for _ in range(grid_size[0])]for _ in range(grid_size[1])]
         self.pixmap_from_path = {}
@@ -146,13 +150,8 @@ class GraphicalGrid(QGraphicsView):
         self.drawGrid(grid)
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
-        # self.scale(0.002, 0.002)
-        self.scale(0.01, 0.01)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
-        # print(updated_tiles)
-        """for tile in updated_tiles:
-            self._drawEntities(tile)"""
         for tile in updated_tiles:
             if tile.getIndex() in self.rendering_monitor.get_rendering_section():
                 if tile.hasEntity():
@@ -160,17 +159,7 @@ class GraphicalGrid(QGraphicsView):
                         self.getPixmap(tile.getEntity()))
 
     def drawGrid(self, grid: Grid):
-        # for tile in grid:
-        # if tile in self.rendering_monitor.get_rendering_section():
-        #   self._drawTiles(tile)
-        # else:
-        #    self._drawTerrains(tile)
 
-        self.layer2widgets = [[None for _ in range(
-            self.grid_size[0])]for _ in range(self.grid_size[1])]
-
-        self.layer1widgets = [[None for _ in range(
-            self.grid_size[0])]for _ in range(self.grid_size[1])]
         for tile in grid:
             widget = QLabel()
             widget.setPixmap(self.getPixmap(tile))
@@ -185,33 +174,6 @@ class GraphicalGrid(QGraphicsView):
                 secondwidget.setPixmap(self.getPixmap(tile.getEntity()))
                 self.layout.addWidget(
                     secondwidget, tile.index[0], tile.index[1])
-
-        """for i, j in self.rendering_monitor.get_rendering_section():
-            self._drawTiles(grid.getTile(i, j))"""
-
-    def _drawTiles(self, tile):
-        self._drawTerrains(tile)
-        self._drawEntities(tile)
-
-    def _drawTerrains(self, tile):
-        self._drawPixmap(tile.getIndex(), tile)
-
-    def _drawEntities(self, tile):
-        self._drawPixmap(tile.getIndex(), tile.getEntity())
-
-    def _drawPixmap(self, index: Tuple[int, int], item: Tile | Entity):
-        i, j = index
-        k = 0 if isinstance(item, Tile) else 1
-        if self.pixmap_items[i][j][k]:
-            self.scene.removeItem(self.pixmap_items[i][j][k])
-            # self.pixmap_items[i][j][k].hide()
-            # self.pixmap_items[i][j][k].setParentItem(None)
-            self.pixmap_items[i][j][k] = None
-        if item:
-            pixmap_item = QGraphicsPixmapItem(self.getPixmap(item))
-            pixmap_item.setPos(j * self.size[0], i * self.size[1])
-            self.pixmap_items[i][j][k] = pixmap_item
-            self.scene.addItem(pixmap_item)
 
     def _moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
