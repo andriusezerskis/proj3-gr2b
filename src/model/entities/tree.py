@@ -28,9 +28,6 @@ class Tree(Plant):
     def getValidTiles() -> set[type]:
         return {Land}
 
-    def __init__(self):
-        super().__init__()
-
     def __str__(self):
         return 'T'
 

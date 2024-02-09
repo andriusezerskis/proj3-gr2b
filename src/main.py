@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import QApplication
 import os
 import sys
 
-from view.grid import Window
+from view.mainWindow import Window
 from constants import GRID_WIDTH, GRID_HEIGHT
 
 sys.path.append(os.path.dirname(

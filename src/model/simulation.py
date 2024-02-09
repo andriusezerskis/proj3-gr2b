@@ -21,6 +21,7 @@ from model.entities.human import Human
 
 from model.pathfinder import Pathfinder
 from random import choice
+from model.player.player import Player
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -33,7 +34,8 @@ class Simulation:
 
         self.stepCount = 0
         self.modifiedTiles = set()
-        self.grid.initialize()
+        self.entities = self.grid.initialize()
+        self.player = Player(self.grid)
         self._TEST_PATHFINDING()
 
     def _TEST_PATHFINDING(self):
@@ -64,13 +66,16 @@ class Simulation:
                 if tile.getEntity():
                     for entity in self.grid.entitiesInAdjacentTile(tile.getPos()):
                         self.interaction(tile, entity)
-                if tile.getEntity():
+                if tile.getEntity() and not isinstance(tile.getEntity(), Player):
                     self.evolution(tile)
 
         print(f"compute time : {time.time() - t}")
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
+
+    def getNumberEntities(self):
+        return self.entities
 
     def interaction(self, tile: Tile, otherEntity: Entity):
         entity = tile.getEntity()
@@ -117,3 +122,12 @@ class Simulation:
 
     def getGrid(self) -> Grid:
         return self.grid
+
+    def getPlayer(self) -> Player:
+        return self.player
+
+    def setPlayerEntity(self, tile) -> None:
+        self.player.setClaimedEntity(tile)
+
+    def hasPlayer(self) -> bool:
+        return self.player.isPlaying()
