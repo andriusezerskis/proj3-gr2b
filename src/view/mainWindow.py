@@ -15,25 +15,35 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
-        self.layout = QGridLayout()
-        self.view = GraphicalGrid(
-            grid_size, simulation.getGrid(), simulation, self.layout)
-        self.setCentralWidget(self.view)
+        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation)
+
+        self.fastF = False
+        self.paused = False
+        self.realLayout = QVBoxLayout()
+        self.realLayout.addLayout(self.view)
+
+        self.pauseButton = None
+        self.timebutton = None
+        self.fastFbutton = None
+        self.drawButtons()
+
         self.simulation = simulation
         self.total_time = 0
         self.timer = QTimer()
         self.timer.setInterval(STEP_TIME)
         self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
+        self.recurringTimer()
 
-        self.fastF = False
-        self.paused = False
-        self.realLayout = QVBoxLayout()
-        self.realLayout.addLayout(self.layout)
 
-        self.drawButtons()
-        self.view.setLayout(self.realLayout)
-        self.setCentralWidget(self.view)
+
+
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
+        central_widget.setLayout(self.realLayout)
+        central_widget.setMaximumSize(1000, 1000)
+        #self.view.addLayout(self.realLayout)
+        #self.setCentralWidget(self.view)
 
     def pauseTimer(self):
 
@@ -108,3 +118,6 @@ class Window(QMainWindow):
             self.fastFbutton, Qt.AlignmentFlag.AlignTop)
         self.realLayout.setAlignment(
             self.timebutton, Qt.AlignmentFlag.AlignTop)
+
+    def keyPressEvent(self, event):
+        GridController.getInstance().keyPressEvent(event)
