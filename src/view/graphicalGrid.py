@@ -108,14 +108,6 @@ class GraphicalGrid(QGraphicsView):
             self._moveCamera(self.rendering_monitor.right())
             print("d")
 
-    def _drawEntityInfo(self, entity: Entity):
-        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
-        messageBox = QMessageBox()
-        messageBox.setWindowTitle("Entity Information")
-        messageBox.setText(entity_info)
-        messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
-        messageBox.exec()
-
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""
         # print(self.scene.sceneRect().size())
