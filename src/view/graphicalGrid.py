@@ -69,7 +69,7 @@ class GraphicalGrid(QGridLayout):
         self.grid_size = grid_size
 
         self.widgets: List[List[GraphicalTile]] = \
-            [[GraphicalTile(i, j) for i in range(self.grid_size[0])] for j in range(self.grid_size[1])]
+            [[GraphicalTile(j, i) for i in range(self.grid_size[0])] for j in range(self.grid_size[1])]
         self._addWidgets()
 
         # self.setMouseTracking(True)

@@ -31,6 +31,7 @@ class Grid:
 
         entitiesGenerator = EntitiesGenerator()
         entities = entitiesGenerator.generateEntities(self.tiles)
+        print(self)
         return entities
 
     def entitiesInAdjacentTile(self, currentTile: Point) -> List[Entity]:
@@ -99,6 +100,7 @@ class Grid:
         res = ""
         for line in self.tiles:
             for tile in line:
-                res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                #res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                res += (str(tile) + ' ')
             res += "\n"
         return res
