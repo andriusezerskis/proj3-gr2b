@@ -16,20 +16,55 @@ from model.renderMonitor import Cuboid
 from controller.gridController import GridController
 
 
+class GraphicalTile:
+    def __init__(self):
+        self.terrain = QLabel()
+        self.entity = QLabel()
+
+        self.is_rendering_entity = False
+
+    def getTerrain(self):
+        return self.terrain
+
+    def getEntity(self):
+        return self.entity
+
+    def isRenderingEntity(self):
+        return self.is_rendering_entity
+
+    def startRender(self):
+        self.is_rendering_entity = True
+
+    def stopRender(self):
+        self.is_rendering_entity = False
+
+    def __iter__(self):
+        yield self.terrain
+        yield self.entity
+
+    def __getitem__(self, item):
+        if item == 0:
+            return self.terrain
+        elif item == 1:
+            return self.entity
+        else:
+            raise IndexError
+
+
 class GraphicalGrid(QGridLayout):
 
     def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation):
         super().__init__()
         self.simulation = simulation
-        self.gridController = GridController(self, simulation, RenderMonitor())
         self.rendering_monitor = RenderMonitor()
+        self.gridController = GridController(self, simulation, self.rendering_monitor)
         self.setVerticalSpacing(0)
         self.setHorizontalSpacing(0)
         self.grid_size = grid_size
 
-        self.widgets: List[List[List[None | QLabel]]] = \
-            [[[None, None] for _ in range(self.grid_size[0])]
-             for _ in range(self.grid_size[1])]
+        self.widgets: List[List[GraphicalTile]] = \
+            [[GraphicalTile() for _ in range(self.grid_size[0])] for _ in range(self.grid_size[1])]
+        self._addWidgets()
 
         # self.setMouseTracking(True)
         self.zoom_factor = 1.0
@@ -50,49 +85,41 @@ class GraphicalGrid(QGridLayout):
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
-            if tile in self.rendering_monitor.getRenderingSection():
-                if tile.getEntity():
-                    self._drawTiles(tile)
-                else:
-                    self._drawTerrains(tile)
-            else:
-                self._drawTerrains(tile)
+            self._drawTiles(tile)
 
     def _drawTiles(self, tile):
         self._drawTerrains(tile)
         self._drawEntities(tile)
 
     def _drawTerrains(self, tile):
-        self._drawPixmap(tile.getIndex(), tile)
+        i, j = tile.getIndex()
+        self.widgets[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
     def _drawEntities(self, tile):
-        self._drawPixmap(tile.getIndex(), tile.getEntity())
+        if not tile.getEntity(): return
+        if tile in self.rendering_monitor.getRenderingSection():
+            i, j = tile.getIndex()
+            self.widgets[i][j].getEntity().setPixmap(self.getPixmap(tile.getEntity()))
 
     def _removeEntity(self, i, j):
         if self.widgets[i][j][1]:
             self.widgets[i][j][1].clear()
 
-    def _drawPixmap(self, index: Tuple[int, int], item: Tile | Entity):
-        if item == None:
-            return
-        i, j = index
-        k = 0 if isinstance(item, Tile) else 1
-        if self.widgets[i][j][k]:
-            if k == 1:
-                self.widgets[i][j][k].setPixmap(self.getPixmap(item))
-        elif item:
-            widget = QLabel()
-            widget.setPixmap(self.getPixmap(item))
-            self.addWidget(widget, i, j)
-            self.widgets[i][j][k] = widget
-            # widget.mousePressEvent = self.mousePressEvent
+    def _addWidgets(self):
+        for i, line in enumerate(self.widgets):
+            for j, graphical_tile in enumerate(line):
+                if (i, j) in self.rendering_monitor.getRenderingSection():
+                    graphical_tile.startRender()
+                for label in graphical_tile:
+                    self.addWidget(label, i, j)
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
-            if self.widgets[i][j][1]:
-                self.widgets[i][j][1].clear()
+            self.widgets[i][j].stopRender()
+            self.widgets[i][j].getEntity().clear()
         for i, j in won:
+            self.widgets[i][j].startRender()
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def getPixmap(self, tile):

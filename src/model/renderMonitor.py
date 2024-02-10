@@ -50,7 +50,6 @@ class Cuboid:
         save_upper = self.upper[:]
         save_lower = self.lower[:]
         down_movement = min(down_dist, GRID_HEIGHT - 1 - self.lower[0])
-        print(down_movement)
 
         self.upper[0] += down_movement
         self.lower[0] += down_movement
