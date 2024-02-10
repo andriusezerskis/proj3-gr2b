@@ -28,9 +28,10 @@ class GraphicalGrid(QGridLayout):
         self.grid_size = grid_size
 
         self.widgets: List[List[List[None | QLabel]]] = \
-            [[[None, None] for _ in range(self.grid_size[0])] for _ in range(self.grid_size[1])]
+            [[[None, None] for _ in range(self.grid_size[0])]
+             for _ in range(self.grid_size[1])]
 
-        #self.setMouseTracking(True)
+        # self.setMouseTracking(True)
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
@@ -50,7 +51,10 @@ class GraphicalGrid(QGridLayout):
     def drawGrid(self, grid: Grid):
         for tile in grid:
             if tile in self.rendering_monitor.getRenderingSection():
-                self._drawTiles(tile)
+                if tile.getEntity():
+                    self._drawTiles(tile)
+                else:
+                    self._drawTerrains(tile)
             else:
                 self._drawTerrains(tile)
 
@@ -66,33 +70,28 @@ class GraphicalGrid(QGridLayout):
 
     def _removeEntity(self, i, j):
         if self.widgets[i][j][1]:
-            self.removeWidget(self.widgets[i][j][1])
-            self.widgets[i][j][1].deleteLater()
-            self.widgets[i][j][1] = None
+            self.widgets[i][j][1].clear()
 
     def _drawPixmap(self, index: Tuple[int, int], item: Tile | Entity):
+        if item == None:
+            return
         i, j = index
         k = 0 if isinstance(item, Tile) else 1
         if self.widgets[i][j][k]:
-            """self.removeWidget(self.widgets[i][j][k])
-            self.widgets[i][j][k].deleteLater()
-            self.widgets[i][j][k] = None"""
-        if item:
+            if k == 1:
+                self.widgets[i][j][k].setPixmap(self.getPixmap(item))
+        elif item:
             widget = QLabel()
             widget.setPixmap(self.getPixmap(item))
             self.addWidget(widget, i, j)
             self.widgets[i][j][k] = widget
-            #widget.mousePressEvent = self.mousePressEvent
+            # widget.mousePressEvent = self.mousePressEvent
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
             if self.widgets[i][j][1]:
-                self.removeWidget(self.widgets[i][j][1])
-                self.widgets[i][j][1].deleteLater()
-                self.parent().removeWidget(self.widgets[i][j][1])
-                self.widgets[i][j][1].setParent(None)
-                self.widgets[i][j][1] = None
+                self.widgets[i][j][1].clear()
         for i, j in won:
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
