@@ -21,6 +21,7 @@ class Grid:
                                                  [2, 3, 4, 5, 6], 250).generateGrid()
         entitiesGenerator = EntitiesGenerator()
         entities = entitiesGenerator.generateEntities(self.tiles)
+        print(self)
         return entities
 
     def entitiesInAdjacentTile(self, currentTile) -> List[Entity]:
