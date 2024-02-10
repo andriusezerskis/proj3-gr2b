@@ -17,11 +17,13 @@ from controller.gridController import GridController
 
 
 class GraphicalTile:
-    def __init__(self):
+    def __init__(self, i: int, j: int):
+        self.position = (i, j)
         self.terrain = QLabel()
         self.entity = QLabel()
+        self.entity.mousePressEvent = self.mousePressEvent
 
-        self.is_rendering_entity = False
+        self.allows_entity_rendering = False
 
     def getTerrain(self):
         return self.terrain
@@ -29,14 +31,18 @@ class GraphicalTile:
     def getEntity(self):
         return self.entity
 
-    def isRenderingEntity(self):
-        return self.is_rendering_entity
+    def mayRenderEntity(self):
+        return self.allows_entity_rendering
 
-    def startRender(self):
-        self.is_rendering_entity = True
+    def EnableEntityRendering(self):
+        self.allows_entity_rendering = True
 
-    def stopRender(self):
-        self.is_rendering_entity = False
+    def DisableEntityRendering(self):
+        self.allows_entity_rendering = False
+
+    def mousePressEvent(self, event):
+        if self.mayRenderEntity():
+            GridController.getInstance().mousePressEvent(event, self.position)
 
     def __iter__(self):
         yield self.terrain
@@ -53,8 +59,8 @@ class GraphicalTile:
 
 class GraphicalGrid(QGridLayout):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation):
-        super().__init__()
+    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation, parent=None):
+        super().__init__(parent)
         self.simulation = simulation
         self.rendering_monitor = RenderMonitor()
         self.gridController = GridController(self, simulation, self.rendering_monitor)
@@ -63,7 +69,7 @@ class GraphicalGrid(QGridLayout):
         self.grid_size = grid_size
 
         self.widgets: List[List[GraphicalTile]] = \
-            [[GraphicalTile() for _ in range(self.grid_size[0])] for _ in range(self.grid_size[1])]
+            [[GraphicalTile(i, j) for i in range(self.grid_size[0])] for j in range(self.grid_size[1])]
         self._addWidgets()
 
         # self.setMouseTracking(True)
@@ -108,18 +114,18 @@ class GraphicalGrid(QGridLayout):
     def _addWidgets(self):
         for i, line in enumerate(self.widgets):
             for j, graphical_tile in enumerate(line):
-                if (i, j) in self.rendering_monitor.getRenderingSection():
-                    graphical_tile.startRender()
+                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
+                    graphical_tile.EnableEntityRendering()
                 for label in graphical_tile:
                     self.addWidget(label, i, j)
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
-            self.widgets[i][j].stopRender()
+            self.widgets[i][j].DisableEntityRendering()
             self.widgets[i][j].getEntity().clear()
         for i, j in won:
-            self.widgets[i][j].startRender()
+            self.widgets[i][j].EnableEntityRendering()
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def getPixmap(self, tile):
@@ -139,6 +145,7 @@ class GraphicalGrid(QGridLayout):
 
     @staticmethod
     def drawEntityInfo(entity: Entity):
+        print("bruh")
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
@@ -147,8 +154,5 @@ class GraphicalGrid(QGridLayout):
         messageBox.exec()
 
     # Redirection of PYQT events to the controller
-    def mousePressEvent(self, event):
-        GridController.getInstance().mousePressEvent(event)
-
     def wheelEvent(self, event):
         GridController.getInstance().wheelEvent(event)
