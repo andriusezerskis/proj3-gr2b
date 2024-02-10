@@ -8,8 +8,15 @@ from constants import TREE_TEXTURE_PATH
 
 
 class Tree(Plant):
+    count = 0
+
     def __init__(self):
         super().__init__()
+        Tree.count += 1
+
+    def __del__(self):
+        super().__del__()
+        Tree.count -= 1
 
     @staticmethod
     @override
@@ -20,9 +27,6 @@ class Tree(Plant):
     @override
     def getValidTiles() -> set[type]:
         return {Land}
-
-    def __init__(self):
-        super().__init__()
 
     def __str__(self):
         return 'T'

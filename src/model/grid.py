@@ -1,5 +1,6 @@
 import random
 from typing import List
+from utils import Point, getPointsAdjacentTo
 from model.entitiesGenerator import EntitiesGenerator
 
 from model.gridGenerator import GridGenerator
@@ -8,77 +9,56 @@ from model.entities.entity import Entity
 
 
 class Grid:
-    def __init__(self, size: tuple) -> None:
+    def __init__(self, size: Point) -> None:
         self.tiles: List[List[Tile]] = []
-        self.islands: List[Tile] = []
-        self.size = size
+        self.islands: List[List[Tile]] = []
+        self.size: Point = size
 
     def initialize(self):
         """Random initialization of the grid with perlin noise"""
-        self.tiles, self.islands = GridGenerator(self.size[0], self.size[1],
-                                                 [2, 3, 4, 5, 6], 250).generateGrid()
+        self.tiles, self.islands = GridGenerator(self.size.x(), self.size.y(),
+                                                 [2, 3, 4, 5, 6], 350).generateGrid()
         entitiesGenerator = EntitiesGenerator()
         entities = entitiesGenerator.generateEntities(self.tiles)
         return entities
 
-    def entitiesInAdjacentTile(self, currentTile) -> List[Entity]:
+    def entitiesInAdjacentTile(self, currentTile: Point) -> List[Entity]:
         """Checks if, given a current tile, there's an entity in an adjacent case to eventually interact with"""
-        adjacent_tiles = [
-            (currentTile[0] - 1, currentTile[1]),  # up
-            (currentTile[0] + 1, currentTile[1]),  # down
-            (currentTile[0], currentTile[1] - 1),  # left
-            (currentTile[0], currentTile[1] + 1),  # right
-            (currentTile[0] - 1, currentTile[1] - 1),  # upper left
-            (currentTile[0] - 1, currentTile[1] + 1),  # upper right
-            (currentTile[0] + 1, currentTile[1] - 1),  # lower left
-            (currentTile[0] + 1, currentTile[1] + 1)  # lower right
-        ]
         entitiesList = []
-        for tile in adjacent_tiles:
-            if 0 <= tile[0] < self.size[0] and 0 <= tile[1] < self.size[1]:
-                if self.tiles[tile[0]][tile[1]].getEntity():
-                    entitiesList.append(
-                        self.tiles[tile[0]][tile[1]].getEntity())
+        for pos in getPointsAdjacentTo(currentTile):
+            if self.isPosInGrid(pos) and self.getTile(pos).getEntity():
+                entitiesList.append(self.getTile(pos).getEntity())
 
         return entitiesList
 
-    def moveEntity(self, entity, currentTile, nextTile) -> None:
+    def moveEntity(self, entity, currentTile: Point, nextTile: Point) -> None:
         """Moves an entity from a tile to another"""
-        if not self.tiles[nextTile[0]][nextTile[1]].hasEntity():
-            self.tiles[nextTile[0]][nextTile[1]].addEntity(entity)
-            self.tiles[currentTile[0]][currentTile[1]].removeEntity()
+        if not self.getTile(currentTile).hasEntity():
+            self.getTile(nextTile).addEntity(entity)
+            self.getTile(currentTile).removeEntity()
 
-    def randomTileWithoutEntity(self, currentTile):
+    def randomTileWithoutEntity(self, currentTile: Point):
         """Generate random tile to reproduce, it must be empty and must be the same tile type as the currentTile
         """
 
-        adjacent_tiles = [
-            (currentTile.index[0] - 1, currentTile.index[1]),  # up
-            (currentTile.index[0] + 1, currentTile.index[1]),  # down
-            (currentTile.index[0], currentTile.index[1] - 1),  # left
-            (currentTile.index[0], currentTile.index[1] + 1),  # right
-            (currentTile.index[0] - 1, currentTile.index[1] - 1),  # upper left
-            (currentTile.index[0] - 1,
-             currentTile.index[1] + 1),  # upper right
-            (currentTile.index[0] + 1, currentTile.index[1] - 1),  # lower left
-            (currentTile.index[0] + 1, currentTile.index[1] + 1)  # lower right
-        ]
-
         no_entity = []
-        for tile in adjacent_tiles:
-            if 0 <= tile[0] < self.size[0] and 0 <= tile[1] < self.size[1]:
-                randomTile = self.tiles[tile[0]][tile[1]]
+        for tile in getPointsAdjacentTo(currentTile):
+            if self.isPosInGrid(tile):
+                randomTile = self.getTile(tile)
                 if not randomTile.getEntity():
-                    if (type(currentTile) == type(randomTile)):
+                    if (type(self.getTile(currentTile)) is type(randomTile)):
                         no_entity.append(
-                            self.tiles[tile[0]][tile[1]])
+                            self.getTile(tile))
         return no_entity
 
     def getTiles(self) -> List[List[Tile]]:
         return self.tiles
 
-    def getTile(self, i, j) -> Tile:
-        return self.tiles[i][j]
+    def getTile(self, pos: Point) -> Tile:
+        return self.tiles[pos.y()][pos.x()]
+
+    def isPosInGrid(self, pos: Point) -> bool:
+        return 0 <= pos.x() < self.size.x() and 0 <= pos.y() < self.size.y()
 
     def __iter__(self):
         for line in self.tiles:

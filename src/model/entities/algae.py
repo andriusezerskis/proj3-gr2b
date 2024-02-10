@@ -8,6 +8,7 @@ from constants import ALGAE_TEXTURE_PATH
 
 
 class Algae(Plant):
+    count = 0
 
     @staticmethod
     @override
@@ -21,6 +22,11 @@ class Algae(Plant):
 
     def __init__(self):
         super().__init__()
+        Algae.count += 1
+
+    def __del__(self):
+        super().__del__()
+        Algae.count -= 1
 
     @override
     def reproduce(self) -> None:

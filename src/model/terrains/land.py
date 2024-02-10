@@ -11,11 +11,8 @@ class Land(Tile):
     def getTexturePath() -> str:
         return LAND_TEXTURE_PATH
 
-    def __init__(self, index, entity: Entity = None) -> None:
-        super().__init__(index, entity)
-
     def __repr__(self):
-        return f"Land({self.index})"
+        return f"Land({self.pos})"
 
     def __str__(self):
         return "L"
