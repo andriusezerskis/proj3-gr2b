@@ -35,15 +35,12 @@ class Window(QMainWindow):
         self.timer.start()
         self.recurringTimer()
 
-
-
-
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
         central_widget.setLayout(self.realLayout)
         central_widget.setMaximumSize(1000, 1000)
-        #self.view.addLayout(self.realLayout)
-        #self.setCentralWidget(self.view)
+        # self.view.addLayout(self.realLayout)
+        # self.setCentralWidget(self.view)
 
     def pauseTimer(self):
 
@@ -111,6 +108,10 @@ class Window(QMainWindow):
         self.realLayout.addWidget(self.pauseButton)
         self.realLayout.addWidget(self.fastFbutton)
         self.realLayout.addWidget(self.timebutton)
+
+        self.pauseButton.keyPressEvent = self.keyPressEvent
+        self.fastFbutton.keyPressEvent = self.keyPressEvent
+        self.timebutton.keyPressEvent = self.keyPressEvent
 
         self.realLayout.setAlignment(
             self.pauseButton, Qt.AlignmentFlag.AlignTop)
