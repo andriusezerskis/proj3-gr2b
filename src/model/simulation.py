@@ -35,7 +35,7 @@ class Simulation:
         self.grid = Grid(Point(GRID_WIDTH, GRID_HEIGHT))
 
         self.stepCount = 0
-        self.modifiedTiles: set[Point] = set()
+        self.modifiedTiles: set[Tile] = set()
         self.entities = self.grid.initialize()
         self.player = Player(self.grid)
 
