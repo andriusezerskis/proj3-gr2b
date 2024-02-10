@@ -89,8 +89,6 @@ class Simulation:
         self.water_level = (WATER_LEVEL +
                             (-cos(2 * pi * self.stepCount / DAY_DURATION) + 1) * (MAX_WATER_LEVEL - WATER_LEVEL) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.water_level)
-        print(modified)
-        print(self.water_level)
         self.modifiedTiles |= modified
 
     def interaction(self, tile: Tile, otherEntity: Entity):

@@ -9,21 +9,25 @@ from model.terrains.sand import Sand
 from model.terrains.water import Water
 from model.entities.entity import Entity
 
+from constants import WATER_LEVEL, MAX_WATER_LEVEL
+
 
 class Grid:
     def __init__(self, size: Point) -> None:
         self.tiles: List[List[Tile]] = []
         self.islands: List[List[Tile]] = []
-        self.coast: set[Tile] = set()
+        self.coasts: set[Tile] = set()
         self.size: Point = size
 
     def initialize(self):
         """Random initialization of the grid with perlin noise"""
         self.tiles, self.islands = GridGenerator(self.size.x(), self.size.y(),
                                                  [2, 3, 4, 5, 6], 350).generateGrid()
+
+        # construct the set of tiles that will be affected by tides
         for tile in self:
-            if type(tile) is Sand:
-                self.coast.add(tile)
+            if WATER_LEVEL < tile.height < MAX_WATER_LEVEL:
+                self.coasts.add(tile)
 
         entitiesGenerator = EntitiesGenerator()
         entities = entitiesGenerator.generateEntities(self.tiles)
@@ -60,19 +64,21 @@ class Grid:
 
     def updateTilesWithWaterLevel(self, newWaterLevel: float) -> set[Tile]:
         modified = set()
-        for tile in self.coast:
+        for tile in self.coasts:
             newTile = None
             if type(tile) is Sand and tile.height < newWaterLevel:
                 newTile = Tile.copyWithDifferentTypeOf(tile, Water)
             elif type(tile) is Water and tile.height > newWaterLevel:
                 newTile = Tile.copyWithDifferentTypeOf(tile, Sand)
-                print(newTile.height)
+
             if not newTile:
                 continue
-            self.coast.remove(tile)
-            self.coast.add(newTile)
+
+            self.coasts.remove(tile)
+            self.coasts.add(newTile)
+
             self.tiles[tile.getPos().y()][tile.getPos().x()] = newTile
-            modified.add(tile)
+            modified.add(newTile)
         return modified
 
     def getTiles(self) -> List[List[Tile]]:
