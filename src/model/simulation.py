@@ -23,6 +23,8 @@ from model.pathfinder import Pathfinder
 from random import choice
 from model.player.player import Player
 
+from math import cos, pi
+
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
 
@@ -33,9 +35,11 @@ class Simulation:
         self.grid = Grid(Point(GRID_WIDTH, GRID_HEIGHT))
 
         self.stepCount = 0
-        self.modifiedTiles = set()
+        self.modifiedTiles: set[Point] = set()
         self.entities = self.grid.initialize()
         self.player = Player(self.grid)
+
+        self.water_level = WATER_LEVEL
 
         self._TEST_PATHFINDING()
 
@@ -64,6 +68,7 @@ class Simulation:
         self.stepCount += 1
         print("Step " + str(self.stepCount))
         t = time.time()
+        self.updateWaterLevel()
         for line in self.grid.tiles:
             for tile in line:
                 if tile.getEntity():
@@ -79,6 +84,12 @@ class Simulation:
 
     def getNumberEntities(self):
         return self.entities
+
+    def updateWaterLevel(self) -> None:
+        self.water_level = (WATER_LEVEL +
+                            (-cos(2 * pi * self.stepCount / DAY_DURATION) + 1) * (MAX_WATER_LEVEL - WATER_LEVEL) / 2)
+        modified = self.grid.updateTilesWithWaterLevel(self.water_level)
+        self.modifiedTiles |= modified
 
     def interaction(self, tile: Tile, otherEntity: Entity):
         entity = tile.getEntity()
