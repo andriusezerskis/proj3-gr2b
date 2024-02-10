@@ -6,11 +6,13 @@ from model.terrains.sand import Sand
 
 from utils import Point
 
+from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL
+
 
 class GridGenerator:
 
     def __init__(self, w: int, h: int, island_nb: list[int], island_size: int,
-                 thresholds=((Water, 0), (Sand, 0.03), (Land, 1))):
+                 thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL))):
         """
         :param w: width of the map in #tiles
         :param h: height of the map in #tiles

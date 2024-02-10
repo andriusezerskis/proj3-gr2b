@@ -15,10 +15,10 @@ class Tile(ABC):
     def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
         self.pos = pos
         self.height = height
-        self.entity = entity
-        #if entity and self.__class__ in entity.getValidTiles():
-        #    print("cc")
-        #    self.entity = entity
+        self.entity = None
+        # we only set the entity if the tile is of a valid type
+        if entity and self.__class__ in entity.getValidTiles():
+            self.entity = entity
         
     # @abstractmethod
     def step(self):

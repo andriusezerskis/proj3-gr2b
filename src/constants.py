@@ -22,11 +22,21 @@ MAX_TEMPERATURE_DIFFERENCE = 10  # in degrees
 MAX_RANDOM_TEMPERATURE_DIFFERENCE = 5  # in degrees
 YEAR_DURATION = 1000  # year duration in timesteps
 AVERAGE_TEMPERATURE = 10  # in degrees
-# speed of the variable temperature change is 1/MAX_TIMESTEP, periodic noise after that
-MAX_TIMESTEP = 10000
-# but the noise does not tile :(
 # number of timesteps before an update (for performance)
 NB_STEP_BEFORE_UPDATE = 10
+
+# # Generation & Tides
+# the level is the maximum height of a tile of a certain type
+# the height is in [-1, 1]
+# for instance, Water tiles are found from height -1 to WATER_LEVEL
+# Sand tiles are found from height WATER_LEVEL to SAND_LEVEL
+WATER_LEVEL = 0
+SAND_LEVEL = 0.03
+LAND_LEVEL = 1
+# the water level will oscillate between WATER_LEVEL and MAX_WATER_LEVEL in a sinusoidal manner
+# WATER_LEVEL < MAX_WATER_LEVEL < SAND_LEVEL
+MAX_WATER_LEVEL = 0.015
+DAY_DURATION = 10
 
 # # Textures
 TEXTURE_FOLDER_PATH = "../assets/textures"

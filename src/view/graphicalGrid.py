@@ -82,6 +82,7 @@ class GraphicalGrid(QGridLayout):
         for tile in updated_tiles:
             if tile.getIndex() in self.rendering_monitor.getRenderingSection():
                 self._drawEntities(tile)
+                self._drawTerrains(tile)
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
@@ -96,10 +97,12 @@ class GraphicalGrid(QGridLayout):
         self.widgets[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
     def _drawEntities(self, tile):
-        if not tile.getEntity(): return
         if tile in self.rendering_monitor.getRenderingSection():
             i, j = tile.getIndex()
-            self.widgets[i][j].getEntity().setPixmap(self.getPixmap(tile.getEntity()))
+            if tile.getEntity():
+                self.widgets[i][j].getEntity().setPixmap(self.getPixmap(tile.getEntity()))
+            else:
+                self.widgets[i][j].getEntity().clear()
 
     def _removeEntity(self, i, j):
         if self.widgets[i][j][1]:
