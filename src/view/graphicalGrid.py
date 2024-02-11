@@ -1,6 +1,6 @@
 import time
 from typing import Tuple, Set, List
-from constants import HUMAN_TEXTURE_PATH, MIDDLE_OF_THE_NIGHT, NIGHT_MODE, NIGHT_MODE_FINISH, NIGHT_MODE_START, SUNSET_MODE
+from constants import *
 
 from utils import Point
 
@@ -18,43 +18,7 @@ from controller.gridController import GridController
 
 from src.model.simulation import Simulation
 
-
-class GraphicalTile:
-    def __init__(self, i: int, j: int):
-        self.position = (i, j)
-        self.terrain = QGraphicsPixmapItem()
-        self.terrain.setPos(j * 2048, i * 2048)
-        self.entity = QGraphicsPixmapItem()
-        self.entity.setPos(j * 2048, i * 2048)
-
-        self.allows_entity_rendering = False
-
-    def getTerrain(self):
-        return self.terrain
-
-    def getEntity(self):
-        return self.entity
-
-    def mayRenderEntity(self):
-        return self.allows_entity_rendering
-
-    def EnableEntityRendering(self):
-        self.allows_entity_rendering = True
-
-    def DisableEntityRendering(self):
-        self.allows_entity_rendering = False
-
-    def __iter__(self):
-        yield self.terrain
-        yield self.entity
-
-    def __getitem__(self, item):
-        if item == 0:
-            return self.terrain
-        elif item == 1:
-            return self.entity
-        else:
-            raise IndexError
+from src.view.graphicalTile import GraphicalTile
 
 
 class GraphicalGrid(QGraphicsView):
@@ -82,7 +46,9 @@ class GraphicalGrid(QGraphicsView):
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         self.scale(0.01, 0.01)
+        self.initNightMode()
 
+    def initNightMode(self):
         self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
@@ -130,7 +96,7 @@ class GraphicalGrid(QGraphicsView):
 
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
-        if hour == 18:
+        if hour == SUNSET_MODE_START:
             self.luminosityMode.setPixmap(QPixmap(SUNSET_MODE))
             self.luminosityMode.setOpacity(0.1)
         if hour == NIGHT_MODE_START:
