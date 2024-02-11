@@ -25,6 +25,7 @@ class Window(QMainWindow):
         self.timer.setInterval(STEP_TIME)
         self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
+        self.recurringTimer()
 
         self.fastF = False
         self.paused = False

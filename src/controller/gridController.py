@@ -1,4 +1,5 @@
 from PyQt6.QtCore import *
+from utils import Point
 
 from model.grid import Grid
 from model.terrains.tile import Tile
@@ -19,6 +20,7 @@ class GridController:
 
     @staticmethod
     def getInstance():
+        if GridController.instance is None: raise TypeError
         return GridController.instance
 
     def keyPressEvent(self, event):

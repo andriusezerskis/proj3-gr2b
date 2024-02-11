@@ -1,6 +1,5 @@
-from typing import List, Tuple
+from typing import List
 
-from constants import *
 
 from model.terrains.tile import Tile
 from model.grid import Grid
@@ -62,24 +61,6 @@ class Cuboid:
         won_area = Cuboid([save_lower[0] + 1, self.upper[1]], self.lower)
         return lost_area, won_area
 
-    def left_line_gt(self, value):
-        return self.upper[1] > value
-
-    def right_line_lt(self, value):
-        return self.upper[1] < value
-
-    def up_line_gt(self, value):
-        return self.upper[0] > value
-
-    def down_line_lt(self, value):
-        return self.upper[0] < value
-
-    def getLine(self, i) -> List[Tuple[int, int]]:
-        return [(i, j) for j in range(self.upper[0], 1, self.lower[0])]
-
-    def getColumn(self, j) -> List[Tuple[int, int]]:
-        return [(i, j) for i in range(self.upper[1], 1, self.lower[1])]
-
     def __iter__(self):
         for i in range(self.upper[0], self.lower[0] + 1):
             for j in range(self.upper[1], self.lower[1] + 1):
@@ -89,7 +70,8 @@ class Cuboid:
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
         if isinstance(item, Tile):
-            item = item.getIndex()
+            item = item.getPos()
+            item = (item.y(), item.x())
         return self.upper[0] <= item[0] <= self.lower[0] and self.upper[1] <= item[1] <= self.lower[1]
 
     def __repr__(self):

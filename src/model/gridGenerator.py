@@ -4,11 +4,15 @@ from model.terrains.water import Water
 from model.terrains.land import Land
 from model.terrains.sand import Sand
 
+from utils import Point
+
+from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL
+
 
 class GridGenerator:
 
     def __init__(self, w: int, h: int, island_nb: list[int], island_size: int,
-                 thresholds=((Water, 0), (Sand, 0.03), (Land, 1))):
+                 thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL))):
         """
         :param w: width of the map in #tiles
         :param h: height of the map in #tiles
@@ -28,8 +32,8 @@ class GridGenerator:
         sample = self.noiseGenerator.sample2D(x/self.w, y/self.h)
         for tileType, threshold in self.thresholds:
 
-            if sample < threshold:
-                return tileType((y, x))
+            if sample <= threshold:
+                return tileType(Point(x, y), sample)
 
     def _generateMatrix(self) -> list[list[Tile]]:
         return [[self._getTile(x, y) for x in range(self.w)] for y in range(self.h)]
