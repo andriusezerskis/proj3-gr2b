@@ -79,7 +79,7 @@ class GridController:
         """return false if there is no tile at (x, y) coord"""
         i, j = int(y // self.size[1]), int(x // self.size[0])
         if Grid.isInGrid(i, j):
-            return self.simulation.getGrid().getTile(int(y // self.size[1]), int(x // self.size[0]))
+            return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
         return False
 
     def wheelEvent(self, event):

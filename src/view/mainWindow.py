@@ -21,19 +21,23 @@ class Window(QMainWindow):
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
+
+        self.fastF = False
+        self.paused = False
+
+        self.pauseButton = None
+        self.fastFbutton = None
+        self.timebutton = None
+
+        self.layout = QHBoxLayout()
+        self.drawButtons()
+        self.view.setLayout(self.layout)
+
         self.timer = QTimer()
         self.timer.setInterval(STEP_TIME)
         self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
         self.recurringTimer()
-
-        self.fastF = False
-        self.paused = False
-
-        self.layout = QHBoxLayout()
-        self.drawButtons()
-        self.view.setLayout(self.layout)
-        self.setCentralWidget(self.view)
 
     def pauseTimer(self):
 

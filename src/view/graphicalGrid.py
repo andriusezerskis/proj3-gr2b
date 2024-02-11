@@ -15,6 +15,8 @@ from model.renderMonitor import Cuboid
 
 from controller.gridController import GridController
 
+from src.model.simulation import Simulation
+
 
 class GraphicalTile:
     def __init__(self, i: int, j: int):
@@ -82,7 +84,7 @@ class GraphicalGrid(QGraphicsView):
     def updateGrid(self, updated_tiles: Set[Tile]):
         for tile in updated_tiles:
             if tile.getIndex() in self.rendering_monitor.getRenderingSection():
-                self._drawEntities(tile)
+                self._drawTiles(tile)
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
@@ -114,12 +116,12 @@ class GraphicalGrid(QGraphicsView):
             self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
         for i, j in won:
             self.pixmap_items[i][j].EnableEntityRendering()
-            self._drawEntities(self.simulation.getGrid().getTile(i, j))
+            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
     def movePlayer(self, old_pos, new_pos):
         i, j = old_pos
         self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
-        self._drawEntities(self.simulation.getGrid().getTile(new_pos[0], new_pos[1]))
+        self._drawEntities(self.simulation.getGrid().getTile(Point(new_pos[1], new_pos[0])))
 
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
@@ -137,12 +139,12 @@ class GraphicalGrid(QGraphicsView):
     def renderEntities(self):
         for i, j in self.rendering_monitor.getRenderingSection():
             print(i, j)
-            self._drawEntities(self.simulation.getGrid().getTile(i, j))
+            self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
         for i, line in enumerate(self.pixmap_items):
             for j, graphical_tile in enumerate(line):
-                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(i, j).hasEntity():
+                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
                     graphical_tile.EnableEntityRendering()
                 for label in graphical_tile:
                     self.scene.addItem(label)

@@ -1,5 +1,4 @@
-from typing import List
-
+from typing import List, Tuple
 
 from model.terrains.tile import Tile
 from model.grid import Grid
