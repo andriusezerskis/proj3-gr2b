@@ -1,6 +1,6 @@
 import time
 from typing import Tuple, Set, List
-from constants import HUMAN_TEXTURE_PATH, NIGHT_MODE
+from constants import HUMAN_TEXTURE_PATH, MIDDLE_OF_THE_NIGHT, NIGHT_MODE, NIGHT_MODE_FINISH, NIGHT_MODE_START, SUNSET_MODE
 
 from utils import Point
 
@@ -131,15 +131,18 @@ class GraphicalGrid(QGraphicsView):
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
         if hour == 18:
+            self.luminosityMode.setPixmap(QPixmap(SUNSET_MODE))
+            self.luminosityMode.setOpacity(0.1)
+        if hour == NIGHT_MODE_START:
             self.luminosityMode.setPixmap(QPixmap(NIGHT_MODE))
             self.luminosityMode.setOpacity(0.1)
 
-        elif hour == 6:
+        elif hour == NIGHT_MODE_FINISH:
             self.luminosityMode.setPixmap(QPixmap())
-        elif hour > 18 or hour < 1:
+        elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT:
             self.luminosityMode.setOpacity(opacity + 0.1)
 
-        elif hour > 1 and hour < 6:
+        elif hour > MIDDLE_OF_THE_NIGHT and hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, old_pos, new_pos):
