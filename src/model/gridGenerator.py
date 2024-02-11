@@ -32,7 +32,7 @@ class GridGenerator:
         sample = self.noiseGenerator.sample2D(x/self.w, y/self.h)
         for tileType, threshold in self.thresholds:
 
-            if sample < threshold:
+            if sample <= threshold:
                 return tileType(Point(x, y), sample)
 
     def _generateMatrix(self) -> list[list[Tile]]:
