@@ -151,7 +151,7 @@ class GraphicalGrid(QGraphicsView):
 
     @staticmethod
     def drawEntityInfo(entity: Entity):
-        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
+        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
         messageBox.setText(entity_info)

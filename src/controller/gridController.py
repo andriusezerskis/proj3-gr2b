@@ -66,7 +66,7 @@ class GridController:
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
             self.controlEntity(tile)
-            # self.graphical_grid.drawEntityInfo(tile.getEntity())
+            #self.graphical_grid.drawEntityInfo(tile.getEntity())
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
