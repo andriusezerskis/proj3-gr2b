@@ -17,6 +17,7 @@ class GridController:
 
     @staticmethod
     def getInstance():
+        if GridController.instance is None: raise TypeError
         return GridController.instance
 
     def keyPressEvent(self, event):
@@ -57,18 +58,17 @@ class GridController:
                         self.graphical_grid.movePlayer(
                             pos, self.simulation.getPlayer().getPosition())
 
-    def mousePressEvent(self, event):
-        # si j'enlève ça ça marche pas jcomprends pas pq mais dcp je le laisse
-        print("bruh")
-        scene_pos = self.graphical_grid.mapToScene(event.pos())
-        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+    def mousePressEvent(self, event, position):
+        i, j = position
+        tile = self.getClickedTile(i, j)
+        print(tile, position)
         if tile.hasEntity():
             # self.simulation.setPlayerEntity(tile)
             self.graphical_grid.drawEntityInfo(tile.getEntity())
 
     def getClickedTile(self, x, y):
         """Crash here if not on a pixmap"""
-        return self.simulation.getGrid().getTile(Point(int(y // self.size[1]), int(x // self.size[0])))
+        return self.simulation.getGrid().getTile(Point(y, x))
 
     def wheelEvent(self, event):
         """zoom_out = event.angleDelta().y() < 0

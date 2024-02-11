@@ -5,21 +5,33 @@ from model.entitiesGenerator import EntitiesGenerator
 
 from model.gridGenerator import GridGenerator
 from model.terrains.tile import Tile
+from model.terrains.sand import Sand
+from model.terrains.water import Water
 from model.entities.entity import Entity
+
+from constants import WATER_LEVEL, MAX_WATER_LEVEL
 
 
 class Grid:
     def __init__(self, size: Point) -> None:
         self.tiles: List[List[Tile]] = []
         self.islands: List[List[Tile]] = []
+        self.coasts: set[Tile] = set()
         self.size: Point = size
 
     def initialize(self):
         """Random initialization of the grid with perlin noise"""
         self.tiles, self.islands = GridGenerator(self.size.x(), self.size.y(),
                                                  [2, 3, 4, 5, 6], 350).generateGrid()
+
+        # construct the set of tiles that will be affected by tides
+        for tile in self:
+            if WATER_LEVEL < tile.height < MAX_WATER_LEVEL:
+                self.coasts.add(tile)
+
         entitiesGenerator = EntitiesGenerator()
         entities = entitiesGenerator.generateEntities(self.tiles)
+        print(self)
         return entities
 
     def entitiesInAdjacentTile(self, currentTile: Point) -> List[Entity]:
@@ -46,10 +58,29 @@ class Grid:
             if self.isPosInGrid(tile):
                 randomTile = self.getTile(tile)
                 if not randomTile.getEntity():
-                    if (type(self.getTile(currentTile)) is type(randomTile)):
+                    if type(self.getTile(currentTile)) is type(randomTile):
                         no_entity.append(
                             self.getTile(tile))
         return no_entity
+
+    def updateTilesWithWaterLevel(self, newWaterLevel: float) -> set[Tile]:
+        modified = set()
+        for tile in self.coasts:
+            newTile = None
+            if type(tile) is Sand and tile.height < newWaterLevel:
+                newTile = Tile.copyWithDifferentTypeOf(tile, Water)
+            elif type(tile) is Water and tile.height > newWaterLevel:
+                newTile = Tile.copyWithDifferentTypeOf(tile, Sand)
+
+            if not newTile:
+                continue
+
+            self.coasts.remove(tile)
+            self.coasts.add(newTile)
+
+            self.tiles[tile.getPos().y()][tile.getPos().x()] = newTile
+            modified.add(newTile)
+        return modified
 
     def getTiles(self) -> List[List[Tile]]:
         return self.tiles
@@ -69,6 +100,7 @@ class Grid:
         res = ""
         for line in self.tiles:
             for tile in line:
-                res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                #res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                res += (str(tile) + ' ')
             res += "\n"
         return res
