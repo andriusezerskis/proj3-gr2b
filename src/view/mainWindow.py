@@ -5,7 +5,6 @@ from PyQt6.QtCore import *
 from constants import *
 
 from model.simulation import Simulation
-from model.renderMonitor import RenderMonitor
 from view.graphicalGrid import GraphicalGrid
 from controller.gridController import GridController
 
@@ -31,7 +30,6 @@ class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
         self.setWindowTitle(MAIN_WINDOW_TITLE)
-        self.setGeometry(100, 100, 1000, 1000)
         self.rendering_monitor = simulation.getRenderMonitor()
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
@@ -51,6 +49,7 @@ class Window(QMainWindow):
         self.initTimer()
 
         self.commands = CommandWindow(self)
+        self.showMaximized()
 
     def initTimer(self):
         self.timer = QTimer()

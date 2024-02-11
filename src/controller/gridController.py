@@ -20,7 +20,8 @@ class GridController:
 
     @staticmethod
     def getInstance():
-        if GridController.instance is None: raise TypeError
+        if GridController.instance is None:
+            raise TypeError
         return GridController.instance
 
     def keyPressEvent(self, event):
@@ -40,26 +41,34 @@ class GridController:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((-1, 0)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphical_grid.moveCamera(self.rendering_monitor.up(False))
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.moveCamera(
+                            self.rendering_monitor.up(False))
             case Qt.Key.Key_Q:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, -1)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphical_grid.moveCamera(self.rendering_monitor.left(False))
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.moveCamera(
+                            self.rendering_monitor.left(False))
             case Qt.Key.Key_S:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((1, 0)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphical_grid.moveCamera(self.rendering_monitor.down(False))
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.moveCamera(
+                            self.rendering_monitor.down(False))
             case Qt.Key.Key_D:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, 1)):
-                        self.graphical_grid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphical_grid.moveCamera(self.rendering_monitor.right(False))
+                        self.graphical_grid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphical_grid.moveCamera(
+                            self.rendering_monitor.right(False))
 
     def mousePressEvent(self, event):
         scene_pos = self.graphical_grid.mapToScene(event.pos())
@@ -83,9 +92,9 @@ class GridController:
         return False
 
     def wheelEvent(self, event):
-        """zoom_out = event.angleDelta().y() < 0
+        zoom_out = event.angleDelta().y() < 0
         zoom_factor = 1.1 if zoom_out else 0.9
 
         self.zoom_factor *= zoom_factor
-        self.scale(zoom_factor, zoom_factor)"""
+        self.scale(zoom_factor, zoom_factor)
         return

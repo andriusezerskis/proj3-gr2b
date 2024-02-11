@@ -88,7 +88,12 @@ class GraphicalGrid(QGraphicsView):
         self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
-        self.luminosityMode.setScale(1000)
+
+        pixmap_width = self.luminosityMode.pixmap().width()
+        scene_width, scene_height = self.size
+
+        scale = scene_width / pixmap_width if pixmap_width > 0 else 1
+        self.luminosityMode.setScale(scale * GRID_HEIGHT)
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
