@@ -92,9 +92,9 @@ class GridController:
         return False
 
     def wheelEvent(self, event):
-        zoom_out = event.angleDelta().y() < 0
-        zoom_factor = 1.1 if zoom_out else 0.9
+        # zoom_out = event.angleDelta().y() < 0
+        # zoom_factor = 1.1 if zoom_out else 0.9
 
-        self.zoom_factor *= zoom_factor
-        self.scale(zoom_factor, zoom_factor)
+        # self.zoom_factor *= zoom_factor
+        # self.scale(zoom_factor, zoom_factor)
         return

@@ -43,7 +43,7 @@ class Simulation:
 
         self.water_level = WATER_LEVEL
 
-        self._TEST_PATHFINDING()
+        # self._TEST_PATHFINDING()
 
     def _TEST_PATHFINDING(self):
         """
