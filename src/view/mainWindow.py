@@ -15,32 +15,29 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
-        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation)
+        self.rendering_monitor = simulation.getRenderMonitor()
+        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
+        self.grid_controller = GridController(self.view, simulation, self.rendering_monitor)
+        self.setCentralWidget(self.view)
+        self.simulation = simulation
+        self.total_time = 0
 
         self.fastF = False
         self.paused = False
-        self.realLayout = QVBoxLayout()
-        self.realLayout.addLayout(self.view)
 
         self.pauseButton = None
-        self.timebutton = None
         self.fastFbutton = None
-        self.drawButtons()
+        self.timebutton = None
 
-        self.simulation = simulation
-        self.total_time = 0
+        self.layout = QHBoxLayout()
+        self.drawButtons()
+        self.view.setLayout(self.layout)
+
         self.timer = QTimer()
         self.timer.setInterval(STEP_TIME)
         self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
         self.recurringTimer()
-
-        central_widget = QWidget(self)
-        self.setCentralWidget(central_widget)
-        central_widget.setLayout(self.realLayout)
-        central_widget.setMaximumSize(1000, 1000)
-        # self.view.addLayout(self.realLayout)
-        # self.setCentralWidget(self.view)
 
     def pauseTimer(self):
 
@@ -105,20 +102,12 @@ class Window(QMainWindow):
 
         self.timebutton = QPushButton("00:00:00")
 
-        self.realLayout.addWidget(self.pauseButton)
-        self.realLayout.addWidget(self.fastFbutton)
-        self.realLayout.addWidget(self.timebutton)
+        self.layout.addStretch()
+        self.layout.addWidget(self.pauseButton)
+        self.layout.addWidget(self.fastFbutton)
+        self.layout.addWidget(self.timebutton)
+        self.layout.addStretch()
 
-        self.pauseButton.keyPressEvent = self.keyPressEvent
-        self.fastFbutton.keyPressEvent = self.keyPressEvent
-        self.timebutton.keyPressEvent = self.keyPressEvent
-
-        self.realLayout.setAlignment(
-            self.pauseButton, Qt.AlignmentFlag.AlignTop)
-        self.realLayout.setAlignment(
-            self.fastFbutton, Qt.AlignmentFlag.AlignTop)
-        self.realLayout.setAlignment(
-            self.timebutton, Qt.AlignmentFlag.AlignTop)
-
-    def keyPressEvent(self, event):
-        GridController.getInstance().keyPressEvent(event)
+        self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
+        self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
+        self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)

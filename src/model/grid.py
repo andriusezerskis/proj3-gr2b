@@ -9,7 +9,7 @@ from model.terrains.sand import Sand
 from model.terrains.water import Water
 from model.entities.entity import Entity
 
-from constants import WATER_LEVEL, MAX_WATER_LEVEL
+from constants import GRID_HEIGHT, GRID_WIDTH, WATER_LEVEL, MAX_WATER_LEVEL
 
 
 class Grid:
@@ -82,14 +82,17 @@ class Grid:
             modified.add(newTile)
         return modified
 
-    def getTiles(self) -> List[List[Tile]]:
-        return self.tiles
-
     def getTile(self, pos: Point) -> Tile:
+        if not self.isPosInGrid(pos):
+            raise IndexError
         return self.tiles[pos.y()][pos.x()]
 
     def isPosInGrid(self, pos: Point) -> bool:
         return 0 <= pos.x() < self.size.x() and 0 <= pos.y() < self.size.y()
+
+    @staticmethod
+    def isInGrid(i, j):
+        return 0 <= i < GRID_HEIGHT and 0 <= j < GRID_WIDTH
 
     def __iter__(self):
         for line in self.tiles:

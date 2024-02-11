@@ -15,13 +15,16 @@ from model.renderMonitor import Cuboid
 
 from controller.gridController import GridController
 
+from src.model.simulation import Simulation
+
 
 class GraphicalTile:
     def __init__(self, i: int, j: int):
         self.position = (i, j)
-        self.terrain = QLabel()
-        self.entity = QLabel()
-        self.entity.mousePressEvent = self.mousePressEvent
+        self.terrain = QGraphicsPixmapItem()
+        self.terrain.setPos(j * 2048, i * 2048)
+        self.entity = QGraphicsPixmapItem()
+        self.entity.setPos(j * 2048, i * 2048)
 
         self.allows_entity_rendering = False
 
@@ -40,10 +43,6 @@ class GraphicalTile:
     def DisableEntityRendering(self):
         self.allows_entity_rendering = False
 
-    def mousePressEvent(self, event):
-        if self.mayRenderEntity():
-            GridController.getInstance().mousePressEvent(event, self.position)
-
     def __iter__(self):
         yield self.terrain
         yield self.entity
@@ -57,38 +56,35 @@ class GraphicalTile:
             raise IndexError
 
 
-class GraphicalGrid(QGridLayout):
+class GraphicalGrid(QGraphicsView):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation, parent=None):
-        super().__init__(parent)
+    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, rendering_monitor: RenderMonitor):
         self.simulation = simulation
-        self.rendering_monitor = RenderMonitor()
-        self.gridController = GridController(self, simulation, self.rendering_monitor)
-        self.setVerticalSpacing(0)
-        self.setHorizontalSpacing(0)
-        self.grid_size = grid_size
+        self.scene = QGraphicsScene()
+        super().__init__(self.scene)
+        self.rendering_monitor = rendering_monitor
 
-        self.widgets: List[List[GraphicalTile]] = \
-            [[GraphicalTile(j, i) for i in range(self.grid_size[0])] for j in range(self.grid_size[1])]
-        self._addWidgets()
-
-        # self.setMouseTracking(True)
+        self.setMouseTracking(True)
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
-        self.size = 16, 16
+        self.size = 2048, 2048
+        self.grid_size = grid_size
+        self.pixmap_items: List[List[GraphicalTile]] = \
+            [[GraphicalTile(i, j) for j in range(self.grid_size[0])] for i in range(self.grid_size[1])]
+        self._addPixmapItems()
         self.pixmap_from_path = {}
 
         start_time = time.time()
         self.drawGrid(grid)
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
+        self.scale(0.01, 0.01)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
         for tile in updated_tiles:
             if tile.getIndex() in self.rendering_monitor.getRenderingSection():
-                self._drawEntities(tile)
-                self._drawTerrains(tile)
+                self._drawTiles(tile)
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
@@ -100,36 +96,32 @@ class GraphicalGrid(QGridLayout):
 
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()
-        self.widgets[i][j].getTerrain().setPixmap(self.getPixmap(tile))
+        self.pixmap_items[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
     def _drawEntities(self, tile):
         if tile in self.rendering_monitor.getRenderingSection():
             i, j = tile.getIndex()
             if tile.getEntity():
-                self.widgets[i][j].getEntity().setPixmap(self.getPixmap(tile.getEntity()))
+                self.pixmap_items[i][j].getEntity().setPixmap(self.getPixmap(tile.getEntity()))
             else:
-                self.widgets[i][j].getEntity().clear()
+                self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
 
     def _removeEntity(self, i, j):
-        if self.widgets[i][j][1]:
-            self.widgets[i][j][1].clear()
-
-    def _addWidgets(self):
-        for i, line in enumerate(self.widgets):
-            for j, graphical_tile in enumerate(line):
-                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
-                    graphical_tile.EnableEntityRendering()
-                for label in graphical_tile:
-                    self.addWidget(label, i, j)
+        self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
-            self.widgets[i][j].DisableEntityRendering()
-            self.widgets[i][j].getEntity().clear()
+            self.pixmap_items[i][j].DisableEntityRendering()
+            self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
         for i, j in won:
-            self.widgets[i][j].EnableEntityRendering()
-            self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
+            self.pixmap_items[i][j].EnableEntityRendering()
+            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
+
+    def movePlayer(self, old_pos, new_pos):
+        i, j = old_pos
+        self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+        self._drawEntities(self.simulation.getGrid().getTile(Point(new_pos[1], new_pos[0])))
 
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
@@ -139,12 +131,23 @@ class GraphicalGrid(QGridLayout):
             return pixmap
         return self.pixmap_from_path[tile.getTexturePath()]
 
-    def movePlayer(self, old_pos, new_pos):
-        i, j = old_pos
-        self.scene.removeItem(self.widgets[i][j][1])
-        self.widgets[i][j][1] = None
-        self._drawEntities(
-            self.simulation.getGrid().getTile(Point(new_pos[1], new_pos[0])))
+    def removeRenderedEntities(self):
+        for i, j in self.rendering_monitor.getRenderingSection():
+            if self.pixmap_items[i][j][1] is not None:
+                self._removeEntity(i, j)
+
+    def renderEntities(self):
+        for i, j in self.rendering_monitor.getRenderingSection():
+            print(i, j)
+            self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
+
+    def _addPixmapItems(self):
+        for i, line in enumerate(self.pixmap_items):
+            for j, graphical_tile in enumerate(line):
+                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
+                    graphical_tile.EnableEntityRendering()
+                for label in graphical_tile:
+                    self.scene.addItem(label)
 
     @staticmethod
     def drawEntityInfo(entity: Entity):
@@ -156,5 +159,11 @@ class GraphicalGrid(QGridLayout):
         messageBox.exec()
 
     # Redirection of PYQT events to the controller
+    def keyPressEvent(self, event):
+        GridController.getInstance().keyPressEvent(event)
+
+    def mousePressEvent(self, event):
+        GridController.getInstance().mousePressEvent(event)
+
     def wheelEvent(self, event):
         GridController.getInstance().wheelEvent(event)

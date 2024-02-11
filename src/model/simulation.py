@@ -22,6 +22,7 @@ from model.entities.human import Human
 from model.pathfinder import Pathfinder
 from random import choice
 from model.player.player import Player
+from model.renderMonitor import RenderMonitor
 
 from math import cos, pi
 
@@ -38,6 +39,7 @@ class Simulation:
         self.modifiedTiles: set[Tile] = set()
         self.entities = self.grid.initialize()
         self.player = Player(self.grid)
+        self.renderMonitor = RenderMonitor()
 
         self.water_level = WATER_LEVEL
 
@@ -71,7 +73,7 @@ class Simulation:
         self.updateWaterLevel()
         for line in self.grid.tiles:
             for tile in line:
-                if tile.getEntity():
+                if tile.getEntity() and not isinstance(tile.getEntity(), Player):
                     for entity in self.grid.entitiesInAdjacentTile(tile.getPos()):
                         self.interaction(tile, entity)
                 if tile.getEntity() and not isinstance(tile.getEntity(), Player):
@@ -125,13 +127,13 @@ class Simulation:
         if noEntity:
             x = random.randint(0, len(noEntity) - 1)
             noEntity[x].addEntity(entity)
-            self.modifiedTiles.add(noEntity[x])
+            self.addModifiedTiles(noEntity[x])
             tile.removeEntity()
-            self.modifiedTiles.add(tile)
+            self.addModifiedTiles(tile)
 
     def dead(self, tile: Tile) -> None:
         tile.removeEntity()
-        self.modifiedTiles.add(tile)
+        self.addModifiedTiles(tile)
 
     def getGrid(self) -> Grid:
         return self.grid
@@ -144,3 +146,10 @@ class Simulation:
 
     def hasPlayer(self) -> bool:
         return self.player.isPlaying()
+
+    def addModifiedTiles(self, tile):
+        if tile in self.renderMonitor.getRenderingSection():
+            self.modifiedTiles.add(tile)
+
+    def getRenderMonitor(self):
+        return self.renderMonitor

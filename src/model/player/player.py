@@ -29,15 +29,14 @@ class Player(Entity):
         tile.addEntity(self)
 
     def move(self, movement: Tuple[int, int]):
-        old_position_i, old_position_j = self.position[:]
-        wanted_position_i, wanted_position_j = self.position[0] + movement[0], self.position[1] + movement[1]
-        old_position = Point(old_position_j, old_position_i)
-        wanted_position = Point(wanted_position_j, wanted_position_i)
-        if (not self.grid.getTile(wanted_position).hasEntity() and
-                type(self.grid.getTile(wanted_position)) in self.getValidTiles()):
+        old_position = Point(self.position[1], self.position[0])
+        wanted_position = Point(self.position[1] + movement[1], self.position[0] + movement[0])
+        if (self.grid.isInGrid(wanted_position.y(), wanted_position.x())
+                and not self.grid.getTile(wanted_position).hasEntity()
+                and type(self.grid.getTile(wanted_position)) in self.getValidTiles()):
             self.grid.getTile(old_position).removeEntity()
             self.grid.getTile(wanted_position).addEntity(self)
-            self.position = wanted_position_i, wanted_position_j
+            self.position = wanted_position.y(), wanted_position.x()
             return True
         return False
 
