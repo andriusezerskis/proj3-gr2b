@@ -148,7 +148,6 @@ class GraphicalGrid(QGridLayout):
 
     @staticmethod
     def drawEntityInfo(entity: Entity):
-        print("bruh")
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
