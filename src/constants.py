@@ -51,7 +51,7 @@ MAIN_WINDOW_TITLE = "Simulation 2D"
 
 # COMMANDS_WINDOW
 COMMANDS_WINDOW_TITLE = "Commands"
-MOVE_PLAYER_UP = "Move Player UP : UP ARROW"
+MOVE_CAMERA_UP = "Move Camera UP : UP ARROW"
 
 
 # # Textures
