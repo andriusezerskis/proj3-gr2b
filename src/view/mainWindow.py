@@ -16,8 +16,10 @@ class Window(QMainWindow):
         self.setWindowTitle('Simulation 2D')
         self.setGeometry(100, 100, 1000, 1000)
         self.rendering_monitor = simulation.getRenderMonitor()
-        self.view = GraphicalGrid(grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
-        self.grid_controller = GridController(self.view, simulation, self.rendering_monitor)
+        self.view = GraphicalGrid(
+            grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
+        self.grid_controller = GridController(
+            self.view, simulation, self.rendering_monitor)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
@@ -66,7 +68,9 @@ class Window(QMainWindow):
 
         convert = time.strftime(
             "%A %e:%H hours", time.gmtime(self.total_time * 3600))
+        hour = time.strftime("%H", time.gmtime(self.total_time * 3600))
         self.timebutton.setText(convert)
+        self.view.nightMode(int(hour))
 
     def fastForward(self):
         if self.fastF:

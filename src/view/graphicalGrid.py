@@ -1,5 +1,6 @@
 import time
 from typing import Tuple, Set, List
+from constants import HUMAN_TEXTURE_PATH, NIGHT_MODE
 
 from utils import Point
 
@@ -71,7 +72,8 @@ class GraphicalGrid(QGraphicsView):
         self.size = 2048, 2048
         self.grid_size = grid_size
         self.pixmap_items: List[List[GraphicalTile]] = \
-            [[GraphicalTile(i, j) for j in range(self.grid_size[0])] for i in range(self.grid_size[1])]
+            [[GraphicalTile(i, j) for j in range(self.grid_size[0])]
+             for i in range(self.grid_size[1])]
         self._addPixmapItems()
         self.pixmap_from_path = {}
 
@@ -80,6 +82,13 @@ class GraphicalGrid(QGraphicsView):
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         self.scale(0.01, 0.01)
+
+        self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
+        self.scene.addItem(self.luminosityMode)
+        self.luminosityMode.setPos(0, 0)
+        self.luminosityMode.setScale(1000)
+        self.luminosityMode.show()
+        self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
         for tile in updated_tiles:
@@ -102,7 +111,8 @@ class GraphicalGrid(QGraphicsView):
         if tile in self.rendering_monitor.getRenderingSection():
             i, j = tile.getIndex()
             if tile.getEntity():
-                self.pixmap_items[i][j].getEntity().setPixmap(self.getPixmap(tile.getEntity()))
+                self.pixmap_items[i][j].getEntity().setPixmap(
+                    self.getPixmap(tile.getEntity()))
             else:
                 self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
 
@@ -118,10 +128,25 @@ class GraphicalGrid(QGraphicsView):
             self.pixmap_items[i][j].EnableEntityRendering()
             self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
+    def nightMode(self, hour):
+        opacity = self.luminosityMode.opacity()
+        if hour == 18:
+            self.luminosityMode.setPixmap(QPixmap(NIGHT_MODE))
+            self.luminosityMode.setOpacity(0.1)
+
+        elif hour == 6:
+            self.luminosityMode.setPixmap(QPixmap())
+        elif hour > 18 or hour < 1:
+            self.luminosityMode.setOpacity(opacity + 0.1)
+
+        elif hour > 1 and hour < 6:
+            self.luminosityMode.setOpacity(opacity - 0.1)
+
     def movePlayer(self, old_pos, new_pos):
         i, j = old_pos
         self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
-        self._drawEntities(self.simulation.getGrid().getTile(Point(new_pos[1], new_pos[0])))
+        self._drawEntities(self.simulation.getGrid().getTile(
+            Point(new_pos[1], new_pos[0])))
 
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmap_from_path:
@@ -151,10 +176,10 @@ class GraphicalGrid(QGraphicsView):
 
     @staticmethod
     def drawEntityInfo(entity: Entity):
-        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
+        entityInfo = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
-        messageBox.setText(entity_info)
+        messageBox.setText(entityInfo)
         messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
         messageBox.exec()
 
