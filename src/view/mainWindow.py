@@ -20,10 +20,10 @@ class CommandWindow(QMainWindow):
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
-        self.createCommands(self)
+        self.createCommands()
 
     def createCommands(self):
-        self.firstCommand = QLabel(MOVE_PLAYER_UP)
+        self.firstCommand = QLabel(MOVE_CAMERA_UP)
         self.layout.addWidget(self.firstCommand)
 
 
