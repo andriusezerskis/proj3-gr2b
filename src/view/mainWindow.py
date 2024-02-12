@@ -7,6 +7,7 @@ from constants import *
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
 from controller.gridController import GridController
+from view.monitor import MonitorWindow
 
 
 class CommandWindow(QMainWindow):
@@ -50,6 +51,8 @@ class Window(QMainWindow):
 
         self.commands = CommandWindow(self)
         self.showMaximized()
+        dock = MonitorWindow("Monitor deb'île", self)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
 
     def initTimer(self):
         self.timer = QTimer()
