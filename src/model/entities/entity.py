@@ -1,10 +1,16 @@
 from abc import ABC, abstractmethod
 
+from model.grid import Grid
+
+from utils import Point
+
 
 class Entity(ABC):
     count = 0
+    _grid = None
 
-    def __init__(self):
+    def __init__(self, pos: Point):
+        self.pos = pos
         Entity.count += 1
         self.age = 0
         self.hunger = 0
@@ -52,3 +58,11 @@ class Entity(ABC):
 
     def getCount(self):
         return self.count
+
+    @staticmethod
+    def getGrid() -> Grid:
+        return Entity._grid
+
+    @staticmethod
+    def setGrid(grid: Grid) -> None:
+        Entity.grid = grid

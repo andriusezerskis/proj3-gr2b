@@ -24,8 +24,8 @@ class Fish(Animal):
 
     @staticmethod
     @override
-    def getClassPreys() -> list[tuple]:
-        return [(Algae, 0.99)]
+    def getPreys() -> set[type]:
+        return {Algae}
 
     def __init__(self):
         super().__init__()

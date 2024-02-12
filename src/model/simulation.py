@@ -26,6 +26,7 @@ from model.renderMonitor import RenderMonitor
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
 
+
 class Simulation:
     def __init__(self):
         super().__init__()
@@ -38,6 +39,8 @@ class Simulation:
         self.renderMonitor = RenderMonitor()
 
         self.water_level = WATER_LEVEL
+
+        Entity.setGrid(self.grid)
 
         # self._TEST_PATHFINDING()
 

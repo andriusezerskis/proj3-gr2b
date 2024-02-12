@@ -13,7 +13,6 @@ class Animal(Entity, ABC):
     def __init__(self):
         super().__init__()
         Animal.count += 1
-        self.preys = self.generateLocalPreys()
         self.hunger: float = 5
         self.age = 0
 
@@ -23,8 +22,8 @@ class Animal(Entity, ABC):
 
     @staticmethod
     @abstractmethod
-    def getClassPreys() -> list:
-        return []
+    def getPreys() -> set[type]:
+        ...
 
     @override
     def isDead(self):
@@ -37,13 +36,6 @@ class Animal(Entity, ABC):
 
     def reproduce(self):
         return True if self.hunger < 5 < self.age else False
-
-    def generateLocalPreys(self) -> List[Entity]:
-        preys = []
-        for entity_, prob in self.getClassPreys():
-            if random.randint(0, 100)/100 <= prob:
-                preys.append(entity_)
-        return preys
 
     def starvedToDeath(self) -> bool:
         return self.hunger > 9

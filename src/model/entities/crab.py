@@ -32,5 +32,5 @@ class Crab(Animal):
 
     @staticmethod
     @override
-    def getClassPreys() -> list[tuple]:
-        return [(Algae, 0.4), (Fish, 0.6)]
+    def getPreys() -> set[type]:
+        return {Algae, Fish}

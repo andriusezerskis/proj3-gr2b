@@ -33,8 +33,8 @@ class Human(Animal):
 
     @staticmethod
     @override
-    def getClassPreys() -> list:
-        return [(Fish, 0.5), (Tree, 0.4)]
+    def getPreys() -> set[type]:
+        return {Fish, Tree}
   
     def __str__(self):
         return 'H'

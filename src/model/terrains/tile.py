@@ -30,9 +30,13 @@ class Tile(ABC):
     def hasEntity(self) -> bool:
         return self.entity is not None
     
-    def addEntity(self, entity) -> None:
+    def addEntity(self, entity: type) -> None:
+        """
+        Places a new entity in this tile
+        :param entity: the type of entity that must be created
+        """
         if not self.entity:
-            self.entity = entity
+            self.entity = entity(self.pos)
         
     def removeEntity(self) -> None:
         if self.entity:
