@@ -30,9 +30,7 @@ class Grid:
                 self.coasts.add(tile)
 
         entitiesGenerator = EntitiesGenerator()
-        entities = entitiesGenerator.generateEntities(self.tiles)
-        print(self)
-        return entities
+        entitiesGenerator.generateEntities(self.tiles)
 
     def entitiesInAdjacentTile(self, currentTile: Point) -> List[Entity]:
         """Checks if, given a current tile, there's an entity in an adjacent case to eventually interact with"""
@@ -103,7 +101,7 @@ class Grid:
         res = ""
         for line in self.tiles:
             for tile in line:
-                #res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
+                # res += ((str(tile.getEntity()) if tile.getEntity() else '_') + ' ')
                 res += (str(tile) + ' ')
             res += "\n"
         return res

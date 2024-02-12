@@ -11,8 +11,6 @@ from model.terrains.water import Water
 
 
 class EntitiesGenerator:
-    def __init__(self):
-        pass
 
     def generateEntities(self, tiles):
         for line in tiles:

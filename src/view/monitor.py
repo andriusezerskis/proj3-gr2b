@@ -98,11 +98,14 @@ class MonitorWindow(QDockWidget):
         button.clicked.connect(self.lol)
         self.layout.addWidget(button)
 
-        self.show_graph()
+        self.initGraph()
 
-    def show_graph(self):
+    def initGraph(self):
         self.ww = GraphWindow()
         self.ww.show()
+
+    def getGraph(self):
+        return self.ww
 
     def lol(self):
         # bouton OK handler
@@ -222,24 +225,17 @@ class GraphWindow(QMainWindow):
 
         n_data = 50
         self.xdata = list(range(n_data))
-        self.ydata = [random.randint(0, 10) for i in range(n_data)]
+        self.ydata = [0 for i in range(n_data)]
 
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plot_ref = None
-        self.update_plot()
-
+        # self.update_plot()
         self.show()
 
-        # Setup a timer to trigger the redraw by calling update_plot.
-        self.timer = QTimer()
-        self.timer.setInterval(100)
-        self.timer.timeout.connect(self.update_plot)
-        self.timer.start()
-
-    def update_plot(self):
+    def updatePlot(self, new_number):
         # Drop off the first y element, append a new one.
-        self.ydata = self.ydata[1:] + [random.randint(0, 10)]
+        self.ydata = self.ydata[1:] + [new_number]
 
         # Note: we no longer need to clear the axis.
         if self._plot_ref is None:

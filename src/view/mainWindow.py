@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
 from model.entities.entity import Entity
+from model.entities.human import Human
 
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
@@ -34,6 +35,8 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
+        self.dockDebile = MonitorWindow("Monitor deb'île", self)
+
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
         self.grid_controller = GridController(
@@ -53,9 +56,9 @@ class Window(QMainWindow):
 
         self.commands = CommandWindow(self)
         self.showMaximized()
-        dock = MonitorWindow("Monitor deb'île", self)
         # dock2 = EntityInfo("Entity Info", self) fonctionne pas encore
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
+        self.addDockWidget(
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
         # self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock2)
 
         # dock2 = QDockWidget("ahhh", self)
@@ -85,6 +88,9 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
+        self.dockDebile.getGraph().updatePlot(
+            Human.count)
+        # yo deso demeter mais on reglera le probleme plus tard
         self.show_time()
 
     def show_time(self):
