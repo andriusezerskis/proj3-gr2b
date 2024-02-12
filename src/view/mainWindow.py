@@ -3,11 +3,13 @@ from typing import Tuple
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
+from model.entities.entity import Entity
 
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
 from controller.gridController import GridController
-from view.monitor import MonitorWindow
+from view.monitor import EntityInfo, MonitorWindow
+from PyQt6.QtGui import QIcon
 
 
 class CommandWindow(QMainWindow):
@@ -52,7 +54,11 @@ class Window(QMainWindow):
         self.commands = CommandWindow(self)
         self.showMaximized()
         dock = MonitorWindow("Monitor deb'île", self)
+        # dock2 = EntityInfo("Entity Info", self) fonctionne pas encore
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
+        # self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock2)
+
+        # dock2 = QDockWidget("ahhh", self)
 
     def initTimer(self):
         self.timer = QTimer()

@@ -192,8 +192,8 @@ class GraphicalGrid(QGraphicsView):
         messageBox.setText(entityInfo)
         messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
         messageBox.exec()
-
     # Redirection of PYQT events to the controller
+
     def keyPressEvent(self, event):
         GridController.getInstance().keyPressEvent(event)
 
