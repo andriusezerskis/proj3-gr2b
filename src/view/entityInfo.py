@@ -10,6 +10,7 @@ class EntityInfoModel:
         self.message_box = QMessageBox()
 
     def draw_entity_info(self):
+        """Shows information about an entity"""
         entity_info = f"Age: {self.entity.getAge()}\nHunger: {self.entity.getHunger()}"
         self.message_box.setWindowTitle("Entity Information")
         self.message_box.setText(entity_info)
