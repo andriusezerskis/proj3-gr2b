@@ -1,61 +1,12 @@
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import QMainWindow, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox
+from PyQt6.QtCore import Qt
 
-from typing import Tuple, List
-import sys
 
-import random      # pour tester graphe, plus besoin apres
 import matplotlib
 from PyQt6.QtWidgets import QDockWidget
-from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtGui import QIcon
 matplotlib.use('QtAgg')
-
-
-class EntityInfo(QDockWidget):
-    # en cours, fonctionne pas encore
-    def __init__(self, titleDock, jsp):
-        super().__init__(titleDock, jsp)
-        self.setGeometry(100, 100, 300, 200)
-        self.rayon = 20
-
-        # --- main layout settings ---
-        self.layout = QVBoxLayout()
-
-        widget = QWidget()
-        widget.setLayout(self.layout)
-        # self.setCentralWidget(widget)
-
-        # --- add widget on Vlayout ---
-        title = QLabel('Tableau de bord-inator')
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("QLabel{font-size: 20pt;}")
-        self.layout.addWidget(title)
-        self.setWidget(widget)
-
-        # ---- second layout for selection ----
-        # Hlayout containing 2 Vlayout (check button)
-        # -> peut être le changer en stacked layout plus tard
-        # ou ajouter un truc QSpinBox à côté de rayon
-        # 1 case = rayon de 1 enfaite
-        self.layout_2 = QHBoxLayout()
-
-        self.container = QWidget()
-        self.container.setLayout(self.layout_2)
-        self.layout.addWidget(self.container)
-
-        button = QPushButton("OK")
-        self.layout.addWidget(button)
-
-    def updateOnClick(self, entity):
-        """Fonctionne pas prcq il faut que il est lié au grid controller et le dock est dans mainWindow"""
-        if entity:
-            entityInfo = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}\n"
-            messageBox = QLabel(entityInfo)
-            self.layout.addWidget(messageBox)
 
 
 class MonitorWindow(QDockWidget):

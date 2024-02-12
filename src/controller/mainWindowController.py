@@ -6,14 +6,15 @@ from model.terrains.tile import Tile
 from controller.entityInfoController import EntityInfoController
 
 
-class GridController:
+class MainWindowController:
     """Singleton"""
     instance = None
 
-    def __new__(cls, graphical_grid, simulation, rendering_monitor):
+    def __new__(cls, graphical_grid, simulation, rendering_monitor, main_window):
         if cls.instance is None:
             cls.instance = object.__new__(cls)
             cls.graphical_grid = graphical_grid
+            cls.main_window = main_window
             cls.simulation = simulation
             cls.rendering_monitor = rendering_monitor
             cls.size = [2048, 2048]
@@ -21,9 +22,9 @@ class GridController:
 
     @staticmethod
     def getInstance():
-        if GridController.instance is None:
+        if MainWindowController.instance is None:
             raise TypeError
-        return GridController.instance
+        return MainWindowController.instance
 
     def keyPressEvent(self, event):
         match event.key():
@@ -75,10 +76,11 @@ class GridController:
         scene_pos = self.graphical_grid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
-            #self.controlEntity(tile)
+            # self.controlEntity(tile)
+            print("here")
+            self.main_window.dock2.updateOnClick(tile.getEntity())
+            # à faire, fonctionne pas encore
             EntityInfoController(tile.getEntity()).draw_entity_info()
-            
-            
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():

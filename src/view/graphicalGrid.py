@@ -5,16 +5,15 @@ from constants import *
 from utils import Point
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+
 from model.grid import Grid
 from model.terrains.tile import Tile
-from model.entities.entity import Entity
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 
-from controller.gridController import GridController
+from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
 
 from src.model.simulation import Simulation
@@ -197,10 +196,10 @@ class GraphicalGrid(QGraphicsView):
     # Redirection of PYQT events to the controller
 
     def keyPressEvent(self, event):
-        GridController.getInstance().keyPressEvent(event)
+        MainWindowController.getInstance().keyPressEvent(event)
 
     def mousePressEvent(self, event):
-        GridController.getInstance().mousePressEvent(event)
+        MainWindowController.getInstance().mousePressEvent(event)
 
     def wheelEvent(self, event):
-        GridController.getInstance().wheelEvent(event)
+        MainWindowController.getInstance().wheelEvent(event)
