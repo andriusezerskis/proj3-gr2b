@@ -77,6 +77,9 @@ class MainWindowController:
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
             # self.controlEntity(tile)
+            print("here")
+            self.main_window.dock2.updateOnClick(tile.getEntity())
+            # à faire, fonctionne pas encore
             EntityInfoController(tile.getEntity()).draw_entity_info()
 
     def controlEntity(self, tile):

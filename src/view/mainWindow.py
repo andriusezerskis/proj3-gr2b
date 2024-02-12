@@ -3,15 +3,13 @@ from typing import Tuple
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
-from model.entities.entity import Entity
 from model.entities.human import Human
 
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
 from controller.gridController import MainWindowController
-from controller.entityInfoController import EntityInfoController
-from view.monitor import EntityInfo, MonitorWindow
-from PyQt6.QtGui import QIcon
+from view.entityInfoView import EntityInfoView
+from view.monitor import MonitorWindow
 
 
 class CommandWindow(QMainWindow):
@@ -37,6 +35,7 @@ class Window(QMainWindow):
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
         self.dockDebile = MonitorWindow("Monitor deb'île", self)
+        self.dock2 = EntityInfoView("Entity Info", self)
 
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
@@ -57,12 +56,9 @@ class Window(QMainWindow):
 
         self.commands = CommandWindow(self)
         self.showMaximized()
-        # dock2 = EntityInfo("Entity Info", self) fonctionne pas encore
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
-        # self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock2)
-
-        # dock2 = QDockWidget("ahhh", self)
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dock2)
 
     def initTimer(self):
         self.timer = QTimer()
@@ -91,6 +87,7 @@ class Window(QMainWindow):
         self.updateGrid()
         self.dockDebile.getGraph().updatePlot(
             Human.count)
+        self.dock2.updateOnStep()
         # yo deso demeter mais on reglera le probleme plus tard
         self.show_time()
 
