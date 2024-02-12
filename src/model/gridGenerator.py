@@ -3,6 +3,7 @@ from model.terrains.tile import Tile
 from model.terrains.water import Water
 from model.terrains.land import Land
 from model.terrains.sand import Sand
+from model.grid import Grid
 
 from utils import Point
 
@@ -11,7 +12,7 @@ from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL
 
 class GridGenerator:
 
-    def __init__(self, w: int, h: int, island_nb: list[int], island_size: int,
+    def __init__(self, size: Point, island_nb: list[int], island_size: int,
                  thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL))):
         """
         :param w: width of the map in #tiles
@@ -21,8 +22,8 @@ class GridGenerator:
         :param thresholds: mapping of height (in [-1;1]) to type of tile
         """
         self.noiseGenerator = None
-        self.w = w
-        self.h = h
+        self.w = size.x()
+        self.h = size.y()
         self.matrix = None
         self.island_nb = island_nb
         self.island_size = island_size
@@ -72,8 +73,8 @@ class GridGenerator:
                     visited.add(self.matrix[newy][newx])
                     stack.append((newx, newy))
 
-    def generateGrid(self) -> tuple[list[list[Tile]], set[Tile]]:
-        islands = set()
+    def generateGrid(self) -> Grid:
+        islands = []
         size_ok = False
         print("Generating terrain...")
         while len(islands) not in self.island_nb or not size_ok:
@@ -87,5 +88,8 @@ class GridGenerator:
                 if len(island) < self.island_size:
                     size_ok = False
                     break
+
+        grid = Grid(Point(self.w, self.h))
+        grid.initialize(self.matrix, islands)
         print("Terrain generated")
-        return self.matrix, islands
+        return grid

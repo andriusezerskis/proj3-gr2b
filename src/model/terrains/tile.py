@@ -29,8 +29,11 @@ class Tile(ABC):
 
     def hasEntity(self) -> bool:
         return self.entity is not None
-    
-    def addEntity(self, entity: type) -> None:
+
+    def setEntity(self, entity: Entity) -> None:
+        self.entity = entity
+
+    def addNewEntity(self, entity: type) -> None:
         """
         Places a new entity in this tile
         :param entity: the type of entity that must be created

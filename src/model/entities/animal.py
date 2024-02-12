@@ -1,9 +1,11 @@
 from typing import List
 
+from utils import Point
+
 from model.entities.entity import Entity
 from abc import abstractmethod, ABC
 from overrides import override
-from random import random
+from random import choice
 import random
 
 
@@ -20,6 +22,10 @@ class Animal(Entity, ABC):
         super().__del__()
         Animal.count -= 1
 
+    @override
+    def chooseMove(self) -> Point:
+        return choice(self.getAdjacentTiles()) - self.getPos()
+
     @staticmethod
     @abstractmethod
     def getPreys() -> set[type]:
@@ -31,7 +37,7 @@ class Animal(Entity, ABC):
 
     @override
     def evolve(self):
-        self.age += 1
+        super().evolve()
         self.hunger += 1
 
     def reproduce(self):

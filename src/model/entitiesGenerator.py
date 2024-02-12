@@ -1,6 +1,8 @@
 import random
 from typing import Dict, Type
 
+from model.grid import Grid
+
 from model.entities.algae import Algae
 from model.entities.fish import Fish
 from model.entities.human import Human
@@ -12,10 +14,9 @@ from model.terrains.water import Water
 
 class EntitiesGenerator:
 
-    def generateEntities(self, tiles):
-        for line in tiles:
-            for tile in line:
-                self.addRandomEntity(tile)
+    def generateEntities(self, grid: Grid):
+        for tile in grid:
+            self.addRandomEntity(tile)
 
     def addRandomEntity(self, tile: Tile):
         if type(tile) is Water:

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from model.grid import Grid
+from model.action import Action
 
 from utils import Point
 
@@ -30,7 +31,7 @@ class Entity(ABC):
 
     @abstractmethod
     def reproduce(self) -> None:
-        return True
+        ...
 
     def isDeadByOldness(self):
         return self.age >= 10
@@ -55,6 +56,33 @@ class Entity(ABC):
 
     def __str__(self):
         ...
+
+    def getAdjacentTiles(self) -> list[Point]:
+        """
+        :return: The position of the tiles around the entity
+        """
+        return self.getGrid().getAdjacentTiles(self.getPos())
+
+    def getFreeAdjacentTiles(self) -> list[Point]:
+        """
+        :return: The position of the free tiles around the entity
+        """
+        return [tile for tile in self.getAdjacentTiles() if not self.getGrid().getTile(tile).hasEntity()]
+
+    @abstractmethod
+    def chooseAction(self) -> Action:
+        ...
+
+    def getPos(self) -> Point:
+        return self.pos
+
+    def chooseMove(self) -> Point:
+        return Point(0, 0)
+
+    def move(self, movement: Point):
+        self.getGrid().getTile(self.pos).removeEntity()
+        self.pos += movement
+        self.getGrid().getTile(self.pos).setEntity(self)
 
     def getCount(self):
         return self.count
