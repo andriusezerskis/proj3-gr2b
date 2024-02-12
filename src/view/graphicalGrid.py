@@ -14,7 +14,7 @@ from model.entities.entity import Entity
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 
-from controller.gridController import MainWindowController
+from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
 
 from src.model.simulation import Simulation

@@ -7,7 +7,7 @@ from model.entities.human import Human
 
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
-from controller.gridController import MainWindowController
+from controller.mainWindowController import MainWindowController
 from view.entityInfoView import EntityInfoView
 from view.monitor import MonitorWindow
 
@@ -58,7 +58,7 @@ class Window(QMainWindow):
         self.showMaximized()
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
-        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dock2)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2)
 
     def initTimer(self):
         self.timer = QTimer()
