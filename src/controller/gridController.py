@@ -77,8 +77,7 @@ class GridController:
         if tile and tile.hasEntity():
             #self.controlEntity(tile)
             EntityInfoController(tile.getEntity()).draw_entity_info()
-            
-            
+
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
@@ -95,8 +94,18 @@ class GridController:
         return False
 
     def wheelEvent(self, event):
-        zoom_out = event.angleDelta().y() < 0
+        """zoom_out = event.angleDelta().y() < 0
         zoom_factor = 1.1 if zoom_out else 0.9
 
         self.rendering_monitor.zoom_factor *= zoom_factor
-        self.graphical_grid.scale(zoom_factor, zoom_factor)
+        self.graphical_grid.scale(zoom_factor, zoom_factor)"""
+
+    def zoomIn(self):
+        if self.rendering_monitor.zoom_factor < 16:
+            self.rendering_monitor.zoom_factor *= 2
+            self.graphical_grid.scale(2, 2)
+
+    def zoomOut(self):
+        if self.rendering_monitor.zoom_factor > 1/2:
+            self.rendering_monitor.zoom_factor *= 0.5
+            self.graphical_grid.scale(0.5, 0.5)

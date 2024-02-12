@@ -8,6 +8,8 @@ from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
 from controller.gridController import GridController
 
+from src.controller import gridController
+
 
 class CommandWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -29,6 +31,13 @@ class CommandWindow(QMainWindow):
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
+        self.commandsButton = None
+        self.timebutton = None
+        self.fastFbutton = None
+        self.pauseButton = None
+        self.zoomInButton = None
+        self.zoomOutButton = None
+
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
         self.view = GraphicalGrid(
@@ -49,7 +58,9 @@ class Window(QMainWindow):
         self.initTimer()
 
         self.commands = CommandWindow(self)
-        self.showMaximized()
+        #self.showMaximized()
+
+        self.setGeometry(100, 100, 1000, 1000)
 
     def initTimer(self):
         self.timer = QTimer()
@@ -129,15 +140,23 @@ class Window(QMainWindow):
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)
 
+        self.zoomInButton = QPushButton("+")
+        self.zoomInButton.clicked.connect(GridController.getInstance().zoomIn)
+        self.zoomOutButton = QPushButton("-")
+        self.zoomOutButton.clicked.connect(GridController.getInstance().zoomOut)
+
         self.layout.addStretch()
         self.layout.addWidget(self.pauseButton)
         self.layout.addWidget(self.fastFbutton)
         self.layout.addWidget(self.timebutton)
         self.layout.addWidget(self.commandsButton)
+        self.layout.addWidget(self.zoomInButton)
+        self.layout.addWidget(self.zoomOutButton)
         self.layout.addStretch()
 
         self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
         self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
         self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(
-            self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.layout.setAlignment(self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.layout.setAlignment(self.zoomInButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+        self.layout.setAlignment(self.zoomOutButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
