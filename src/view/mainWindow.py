@@ -12,6 +12,7 @@ from view.entityInfoView import EntityInfoView
 from view.monitor import MonitorWindow
 
 from controller.mainWindowController import MainWindowController
+from controller.entityInfoController import EntityInfoController
 
 
 
@@ -38,7 +39,7 @@ class Window(QMainWindow):
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
         self.dockDebile = MonitorWindow("Monitor deb'île", self)
-        self.dock2 = EntityInfoView("Entity Info", self)
+        self.dock2 = EntityInfoController(self)
 
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
@@ -61,7 +62,7 @@ class Window(QMainWindow):
         self.showMaximized()
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2.view)
 
     def initTimer(self):
         self.timer = QTimer()
@@ -90,7 +91,7 @@ class Window(QMainWindow):
         self.updateGrid()
         self.dockDebile.getGraph().updatePlot(
             Human.count)
-        self.dock2.updateOnStep()
+        self.dock2.update()
         # yo deso demeter mais on reglera le probleme plus tard
         self.show_time()
 

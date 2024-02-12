@@ -78,9 +78,9 @@ class MainWindowController:
         if tile and tile.hasEntity():
             # self.controlEntity(tile)
             print("here")
-            self.main_window.dock2.updateOnClick(tile.getEntity())
+            self.main_window.dock2.setEntity(tile.getEntity())
+            self.main_window.dock2.update()
             # à faire, fonctionne pas encore
-            EntityInfoController(tile.getEntity()).draw_entity_info()
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
