@@ -6,7 +6,7 @@ from constants import *
 
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
-from controller.gridController import GridController
+from controller.gridController import MainWindowController
 from controller.entityInfoController import EntityInfoController
 
 
@@ -34,8 +34,8 @@ class Window(QMainWindow):
         self.rendering_monitor = simulation.getRenderMonitor()
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
-        self.grid_controller = GridController(
-            self.view, simulation, self.rendering_monitor)
+        self.grid_controller = MainWindowController(
+            self.view, simulation, self.rendering_monitor, self)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
