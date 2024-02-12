@@ -1,22 +1,20 @@
 import time
 from typing import Tuple, Set, List
-from constants import *
 
 from utils import Point
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from model.grid import Grid
 from model.terrains.tile import Tile
-from model.entities.entity import Entity
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
-
 from controller.gridController import GridController
-from controller.entityInfoController import EntityInfoController
 
+
+from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+    MIDDLE_OF_THE_NIGHT, GRID_HEIGHT
 from src.model.simulation import Simulation
 
 
@@ -61,14 +59,13 @@ class GraphicalTile:
 class GraphicalGrid(QGraphicsView):
 
     def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, rendering_monitor: RenderMonitor):
+        self.luminosityMode = None
         self.simulation = simulation
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
         self.rendering_monitor = rendering_monitor
 
         self.setMouseTracking(True)
-        self.zoom_factor = 1.0
-        self.zoom_step = 0.1
 
         self.size = 2048, 2048
         self.grid_size = grid_size
@@ -149,8 +146,7 @@ class GraphicalGrid(QGraphicsView):
             self.luminosityMode.setPixmap(QPixmap())
         elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT:
             self.luminosityMode.setOpacity(opacity + 0.1)
-
-        elif hour > MIDDLE_OF_THE_NIGHT and hour < NIGHT_MODE_FINISH:
+        elif MIDDLE_OF_THE_NIGHT < hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, old_pos, new_pos):
