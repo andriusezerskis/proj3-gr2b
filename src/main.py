@@ -6,6 +6,7 @@ Date: December 2023
 from contextlib import contextmanager
 import locale
 import threading
+import traceback
 
 from model.simulation import Simulation
 from PyQt6.QtWidgets import QApplication
@@ -39,10 +40,13 @@ def main():
 
 
 if __name__ == '__main__':
-    simulation = Simulation()
-    app = QApplication(sys.argv)
-    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    try:
+        simulation = Simulation()
+        app = QApplication(sys.argv)
+        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
-    window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
-    window.show()
-    app.exec()
+        window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
+        window.show()
+        app.exec()
+    except Exception:
+        traceback.print_exc()
