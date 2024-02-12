@@ -1,5 +1,4 @@
 from overrides import override
-from random import random
 
 from model.entities.plant import Plant
 from model.terrains.water import Water

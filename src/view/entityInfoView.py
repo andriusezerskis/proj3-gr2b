@@ -1,5 +1,4 @@
-from PyQt6.QtWidgets import QMessageBox, QDockWidget, QWidget, QVBoxLayout, QLabel
-from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QDockWidget, QWidget, QVBoxLayout, QLabel
 
 
 class EntityInfoView(QDockWidget):

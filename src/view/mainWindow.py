@@ -3,13 +3,16 @@ from typing import Tuple
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
-from model.entities.human import Human
 
+from model.entities.human import Human
 from model.simulation import Simulation
+
 from view.graphicalGrid import GraphicalGrid
-from controller.mainWindowController import MainWindowController
 from view.entityInfoView import EntityInfoView
 from view.monitor import MonitorWindow
+
+from controller.mainWindowController import MainWindowController
+
 
 
 class CommandWindow(QMainWindow):

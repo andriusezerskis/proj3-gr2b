@@ -5,12 +5,11 @@ from constants import *
 from utils import Point
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+
 from model.grid import Grid
 from model.terrains.tile import Tile
-from model.entities.entity import Entity
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 

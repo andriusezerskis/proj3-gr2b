@@ -7,14 +7,16 @@ from contextlib import contextmanager
 import locale
 import threading
 import traceback
-
-from model.simulation import Simulation
-from PyQt6.QtWidgets import QApplication
 import os
 import sys
 
-from view.mainWindow import Window
+from PyQt6.QtWidgets import QApplication
+
 from constants import GRID_WIDTH, GRID_HEIGHT
+
+from model.simulation import Simulation
+
+from view.mainWindow import Window
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("simulation.py"))))
@@ -36,17 +38,14 @@ def setlocale(name):
 
 
 def main():
-    ...
+    simulation = Simulation()
+    app = QApplication(sys.argv)
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+
+    window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
+    window.show()
+    app.exec()
 
 
 if __name__ == '__main__':
-    try:
-        simulation = Simulation()
-        app = QApplication(sys.argv)
-        locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-
-        window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
-        window.show()
-        app.exec()
-    except Exception:
-        traceback.print_exc()
+    main()

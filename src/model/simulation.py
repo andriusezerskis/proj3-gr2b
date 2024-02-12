@@ -6,29 +6,25 @@ Date: December 2023
 
 import random
 import time
-
-from constants import *
 import os
 import sys
 
+from constants import *
 from utils import Point
-from model.entities.animal import Animal
+from math import cos, pi
 
+from model.entities.animal import Animal
 from model.grid import Grid
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.entities.human import Human
-
 from model.pathfinder import Pathfinder
-from random import choice
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 
-from math import cos, pi
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
-
 
 class Simulation:
     def __init__(self):
@@ -53,7 +49,7 @@ class Simulation:
             if type(tile.getEntity()) is Human:
                 pathfinder = Pathfinder(self.grid)
                 current = tile.getPos()
-                dest = choice(list(self.grid.islands[0])).getPos()
+                dest = random.choice(list(self.grid.islands[0])).getPos()
                 t1 = time.time()
                 if pathfinder.findPath(tile.getEntity(), current, dest):
                     print(
