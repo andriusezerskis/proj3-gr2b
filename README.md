@@ -10,3 +10,5 @@ Python version: 3.12
 `pip install perlin-noise`  
 `pip install PyQt6`
 `pip install overrides`
+`pip install matplotlib`
+
