@@ -23,6 +23,18 @@ class Point:
     def __sub__(self, other):
         return Point(self.x() - other.x(), self.y() - other.y())
 
+    def __mul__(self, other):
+        if isinstance(other, int):
+            return Point(self.x() * other, self.y() * other)
+        elif isinstance(other, Point):
+            return Point(self.x() * other.x(), self.y() * other.y())
+
+    def __truediv__(self, other):
+        if isinstance(other, int):
+            return Point(self.x() // other, self.y() // other)
+        elif isinstance(other, Point):
+            return Point(self.x() // other.x(), self.y() // other.y())
+
     def __str__(self):
         return f"({self.x()}, {self.y()})"
 

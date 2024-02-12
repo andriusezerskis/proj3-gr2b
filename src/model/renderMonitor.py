@@ -5,6 +5,7 @@ from model.grid import Grid
 
 from constants import RENDERING_HEIGHT, GRID_WIDTH, RENDERING_WIDTH, GRID_HEIGHT
 
+from src.utils import Point
 
 
 class Cuboid:
@@ -79,8 +80,11 @@ class Cuboid:
 
 class RenderMonitor:
     def __init__(self):
-        self.rendering_section = Cuboid([(GRID_HEIGHT - RENDERING_HEIGHT) // 2, (GRID_WIDTH - RENDERING_WIDTH) // 2],
-                                        [(GRID_HEIGHT + RENDERING_HEIGHT) // 2, (GRID_WIDTH + RENDERING_WIDTH) // 2])
+        self.rendering_size = Point(GRID_WIDTH, GRID_HEIGHT)
+        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
+                                                        (GRID_WIDTH - self.rendering_size.x()) // 2],
+                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
+                                                        (GRID_WIDTH + self.rendering_size.x()) // 2])
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
@@ -99,11 +103,22 @@ class RenderMonitor:
     def getRenderingSection(self):
         return self.rendering_section
 
+    def multiplyRenderingSize(self, factor):
+        self.rendering_size *= factor
+        #todo
+        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
+                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
+                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
+                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
+
+    def divideRenderingSize(self, factor):
+        self.rendering_size /= factor
+        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
+                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
+                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
+                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
+
     def centerOnPoint(self, point: Tuple[int, int]):
         i, j = point
-        self.rendering_section = Cuboid([i - RENDERING_HEIGHT // 2, j - RENDERING_WIDTH // 2],
-                                        [i + RENDERING_HEIGHT // 2, j + RENDERING_WIDTH // 2])
-
-    def zoom(self, zoom_factor):
-        self.zoom_factor *= zoom_factor
-
+        self.rendering_section = Cuboid([i - self.rendering_size.x() // 2, j - self.rendering_size.y() // 2],
+                                        [i + self.rendering_size.x() // 2, j + self.rendering_size.y() // 2])

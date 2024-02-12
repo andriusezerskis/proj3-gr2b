@@ -103,9 +103,11 @@ class GridController:
     def zoomIn(self):
         if self.rendering_monitor.zoom_factor < 16:
             self.rendering_monitor.zoom_factor *= 2
+            self.rendering_monitor.divideRenderingSize(2)
             self.graphical_grid.scale(2, 2)
 
     def zoomOut(self):
         if self.rendering_monitor.zoom_factor > 1/2:
             self.rendering_monitor.zoom_factor *= 0.5
+            self.rendering_monitor.multiplyRenderingSize(2)
             self.graphical_grid.scale(0.5, 0.5)
