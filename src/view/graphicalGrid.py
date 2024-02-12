@@ -14,6 +14,7 @@ from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 
 from controller.gridController import GridController
+from controller.entityInfoController import EntityInfoController
 
 from src.model.simulation import Simulation
 
@@ -149,14 +150,14 @@ class GraphicalGrid(QGraphicsView):
                 for label in graphical_tile:
                     self.scene.addItem(label)
 
-    @staticmethod
+    """@staticmethod
     def drawEntityInfo(entity: Entity):
         entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}"
         messageBox = QMessageBox()
         messageBox.setWindowTitle("Entity Information")
         messageBox.setText(entity_info)
         messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
-        messageBox.exec()
+        messageBox.exec()"""
 
     # Redirection of PYQT events to the controller
     def keyPressEvent(self, event):

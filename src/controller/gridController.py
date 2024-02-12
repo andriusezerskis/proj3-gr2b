@@ -3,6 +3,7 @@ from utils import Point
 
 from model.grid import Grid
 from model.terrains.tile import Tile
+from controller.entityInfoController import EntityInfoController
 
 
 class GridController:
@@ -65,8 +66,10 @@ class GridController:
         scene_pos = self.graphical_grid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
-            self.controlEntity(tile)
-            #self.graphical_grid.drawEntityInfo(tile.getEntity())
+            #self.controlEntity(tile)
+            EntityInfoController(tile.getEntity()).draw_entity_info()
+            
+            
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
