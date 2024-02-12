@@ -7,6 +7,7 @@ from constants import *
 from model.simulation import Simulation
 from view.graphicalGrid import GraphicalGrid
 from controller.gridController import GridController
+from controller.entityInfoController import EntityInfoController
 
 
 class CommandWindow(QMainWindow):

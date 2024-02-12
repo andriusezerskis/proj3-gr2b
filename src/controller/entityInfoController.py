@@ -1,5 +1,5 @@
 from model.entities.entity import Entity
-from view.entityInfo import EntityInfoModel
+from view.entityInfoView import EntityInfoModel
 
 class EntityInfoController:
     def __init__(self, entity: Entity):
