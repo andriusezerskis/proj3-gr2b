@@ -5,7 +5,7 @@ from model.grid import Grid
 
 from constants import RENDERING_HEIGHT, GRID_WIDTH, RENDERING_WIDTH, GRID_HEIGHT
 
-from src.utils import Point
+from utils import Point
 
 
 class Cuboid:
