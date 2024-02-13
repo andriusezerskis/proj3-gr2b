@@ -10,6 +10,7 @@ import os
 import sys
 
 from constants import *
+from model.terrains.boat import Boat
 from utils import Point
 from math import cos, pi
 
@@ -108,6 +109,24 @@ class Simulation:
                 self.moveEntity(entity)
             case Action.REPRODUCE:
                 self.reproduceEntity(entity)
+            case Action.CUT_WOOD:
+                self.cutWood(entity)
+            case Action.BUILD_BOAT:
+                self.buildBoat(entity)
+
+    def buildBoat(self, entity: Entity):
+        assert isinstance(entity, Human)
+        boatTile = entity.buildBoat()
+        self.grid.tiles[boatTile.getPos().x()][boatTile.getPos().y()] = Boat(
+            boatTile.getPos(), 1)
+        self.addModifiedTiles(boatTile)
+
+    def cutWood(self, entity: Entity):
+        assert isinstance(entity, Human)
+        tree = entity.getAdjacentWood()
+        treeChosen = random.choice(tree)
+        entity.cutWood(treeChosen)
+        self.addModifiedTiles(self.getEntityTile(treeChosen))
 
     def eat(self, entity: Entity):
         assert isinstance(entity, Animal)

@@ -17,11 +17,11 @@ class Tile(ABC):
         self.height = height
         self.entity = None
         self.setEntity(entity)
-        
+
     # @abstractmethod
     def step(self):
         pass
-        
+
     def getEntity(self) -> Entity | None:
         return self.entity
 
@@ -40,7 +40,7 @@ class Tile(ABC):
         """
         if not self.entity:
             self.setEntity(entity(self.getPos()))
-        
+
     def removeEntity(self) -> None:
         if self.entity:
             self.entity = None
