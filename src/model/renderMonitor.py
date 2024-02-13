@@ -88,17 +88,23 @@ class RenderMonitor:
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
-    def left(self, keep_on_screen=True):
-        return self.rendering_section.left_move(1, keep_on_screen)
+    def left(self, dist=1, keep_on_screen=True):
+        return self.rendering_section.left_move(dist, keep_on_screen)
 
-    def right(self, keep_on_screen=True):
-        return self.rendering_section.right_move(1, keep_on_screen)
+    def right(self, dist=1, keep_on_screen=True):
+        return self.rendering_section.right_move(dist, keep_on_screen)
 
-    def up(self, keep_on_screen=True):
-        return self.rendering_section.up_move(1, keep_on_screen)
+    def up(self, dist=1, keep_on_screen=True):
+        return self.rendering_section.up_move(dist, keep_on_screen)
 
-    def down(self, keep_on_screen=True):
-        return self.rendering_section.down_move(1, keep_on_screen)
+    def down(self, dist=1, keep_on_screen=True):
+        return self.rendering_section.down_move(dist, keep_on_screen)
+
+    def getFirstYVisible(self):
+        return self.rendering_section.upper[0]
+
+    def getFirstXVisible(self):
+        return self.rendering_section.upper[1]
 
     def getRenderingSection(self):
         return self.rendering_section

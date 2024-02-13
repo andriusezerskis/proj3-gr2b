@@ -5,6 +5,8 @@ from model.grid import Grid
 from model.terrains.tile import Tile
 from controller.entityInfoController import EntityInfoController
 
+from constants import GRID_HEIGHT, GRID_WIDTH
+
 
 class GridController:
     """Singleton"""
@@ -17,6 +19,8 @@ class GridController:
             cls.simulation = simulation
             cls.rendering_monitor = rendering_monitor
             cls.size = [2048, 2048]
+            cls.latest_vertical_value = rendering_monitor.getFirstYVisible()
+            cls.latest_horizontal_value = rendering_monitor.getFirstXVisible()
         return cls.instance
 
     @staticmethod
@@ -74,9 +78,11 @@ class GridController:
     def mousePressEvent(self, event):
         scene_pos = self.graphical_grid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+        print(scene_pos.y(), scene_pos.x())
         if tile and tile.hasEntity():
+            ...
             #self.controlEntity(tile)
-            EntityInfoController(tile.getEntity()).draw_entity_info()
+            #EntityInfoController(tile.getEntity()).draw_entity_info()
 
 
     def controlEntity(self, tile):
@@ -111,3 +117,15 @@ class GridController:
             self.rendering_monitor.zoom_factor *= 0.5
             self.rendering_monitor.multiplyRenderingSize(2)
             self.graphical_grid.scale(0.5, 0.5)
+
+    def verticalScroll(self, value):
+        print(self.latest_vertical_value)
+        scrolled_percent = self.graphical_grid.getVerticalScrollBar().maximum() // value
+        print(scrolled_percent)
+        #highest_tile_y_pos = int(GRID_HEIGHT * scrolled_percent)
+        #print(value, self.vertical_scrollbar.maximum())
+
+    def horizontalScroll(self, value):
+        scrolled_percent = self.graphical_grid.getHorizontalScrollBar().maximum() // value
+        highest_tile_x_pos = int(GRID_WIDTH * scrolled_percent)
+        #print(value, self.horizontal_scrollbar.maximum())

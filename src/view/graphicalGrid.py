@@ -64,6 +64,8 @@ class GraphicalGrid(QGraphicsView):
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
         self.rendering_monitor = rendering_monitor
+        self.latest_vertical_value = rendering_monitor.getFirstYVisible()
+        self.latest_horizontal_value = rendering_monitor.getFirstXVisible()
 
         self.setMouseTracking(True)
 
@@ -87,11 +89,9 @@ class GraphicalGrid(QGraphicsView):
 
         self.horizontal_scrollbar = self.horizontalScrollBar()
         self.vertical_scrollbar = self.verticalScrollBar()
-        print(self.horizontal_scrollbar.value(), self.horizontal_scrollbar.maximum())
-        print(self.vertical_scrollbar.value(), self.vertical_scrollbar.maximum())
 
-        self.horizontal_scrollbar.valueChanged.connect(self.verticalScroll)
-        self.vertical_scrollbar.valueChanged.connect(self.horizontalScroll)
+        self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
+        self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
 
     def changeStyleSheet(self):
         self.setStyleSheet("""
@@ -250,8 +250,26 @@ class GraphicalGrid(QGraphicsView):
     def wheelEvent(self, event):
         GridController.getInstance().wheelEvent(event)
 
+    def getVerticalScrollBar(self):
+        return self.vertical_scrollbar
+
+    def getHorizontalScrollBar(self):
+        return self.horizontal_scrollbar
+
     def verticalScroll(self, value):
-        print(value, self.vertical_scrollbar.maximum())
+        square_size = (10 * self.rendering_monitor.zoom_factor)
+        nb_scrolled_tiles = (value - self.latest_vertical_value) // square_size
+        self.latest_vertical_value = (value // square_size) * square_size
+        if nb_scrolled_tiles < 0:
+            self.rendering_monitor.up(abs(nb_scrolled_tiles))
+        else:
+            self.rendering_monitor.down(nb_scrolled_tiles)
 
     def horizontalScroll(self, value):
-        print(value, self.horizontal_scrollbar.maximum())
+        square_size = (10 * self.rendering_monitor.zoom_factor)
+        nb_scrolled_tiles = (value - self.latest_horizontal_value) // square_size
+        self.latest_horizontal_value = (value // square_size) * square_size
+        if nb_scrolled_tiles < 0:
+            self.rendering_monitor.left(abs(nb_scrolled_tiles))
+        else:
+            self.rendering_monitor.right(nb_scrolled_tiles)
