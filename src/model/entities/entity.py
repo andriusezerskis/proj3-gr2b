@@ -8,6 +8,7 @@ class Entity(ABC):
         Entity.count += 1
         self.age = 0
         self.hunger = 0
+        self.highlighted = False
 
     def __del__(self):
         Entity.count -= 1
@@ -16,6 +17,12 @@ class Entity(ABC):
     @abstractmethod
     def getTexturePath() -> str:
         ...
+
+    def getHighlighted(self) -> bool:
+        return self.highlighted
+
+    def setHighlighted(self, highlighted: bool):
+        self.highlighted = highlighted
 
     @staticmethod
     @abstractmethod
