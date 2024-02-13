@@ -262,9 +262,6 @@ class GraphicalGrid(QGraphicsView):
     def mousePressEvent(self, event):
         MainWindowController.getInstance().mousePressEvent(event)
 
-    def wheelEvent(self, event):
-        return
-
     def getVerticalScrollBar(self):
         return self.vertical_scrollbar
 
