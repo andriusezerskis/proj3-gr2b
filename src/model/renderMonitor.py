@@ -5,6 +5,7 @@ from model.grid import Grid
 
 from constants import RENDERING_HEIGHT, GRID_WIDTH, RENDERING_WIDTH, GRID_HEIGHT
 
+from src.utils import Point
 
 
 class Cuboid:
@@ -79,25 +80,42 @@ class Cuboid:
 
 class RenderMonitor:
     def __init__(self):
-        self.rendering_section = Cuboid([(GRID_HEIGHT - RENDERING_HEIGHT) // 2, (GRID_WIDTH - RENDERING_WIDTH) // 2],
-                                        [(GRID_HEIGHT + RENDERING_HEIGHT) // 2, (GRID_WIDTH + RENDERING_WIDTH) // 2])
+        self.rendering_size = Point(GRID_WIDTH, GRID_HEIGHT)
+        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
+                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
+                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
+                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
+        self.zoom_index = 0
+        self.zoom_factor = 1
+        self.zooms = [1, 4/3, 3/2, 2, 5/2]
 
-    def left(self, keep_on_screen=True):
-        return self.rendering_section.left_move(1, keep_on_screen)
+    def left(self, dist: int = 1, keep_on_screen: bool = True):
+        return self.rendering_section.left_move(dist, keep_on_screen)
 
-    def right(self, keep_on_screen=True):
-        return self.rendering_section.right_move(1, keep_on_screen)
+    def right(self, dist: int = 1, keep_on_screen: bool = True):
+        return self.rendering_section.right_move(dist, keep_on_screen)
 
-    def up(self, keep_on_screen=True):
-        return self.rendering_section.up_move(1, keep_on_screen)
+    def up(self, dist: int = 1, keep_on_screen: bool = True):
+        return self.rendering_section.up_move(dist, keep_on_screen)
 
-    def down(self, keep_on_screen=True):
-        return self.rendering_section.down_move(1, keep_on_screen)
+    def down(self, dist: int = 1, keep_on_screen: bool = True):
+        return self.rendering_section.down_move(dist, keep_on_screen)
+
+    def getFirstYVisible(self):
+        return self.rendering_section.upper[0]
+
+    def getFirstXVisible(self):
+        return self.rendering_section.upper[1]
 
     def getRenderingSection(self):
         return self.rendering_section
 
+    def setNewPoints(self, upper_point: List[int], lower_point: List[int], width: int, height: int):
+        self.rendering_section = Cuboid(upper_point, lower_point)
+        self.rendering_size = Point(width, height)
+
     def centerOnPoint(self, point: Tuple[int, int]):
         i, j = point
-        self.rendering_section = Cuboid([i - RENDERING_HEIGHT // 2, j - RENDERING_WIDTH // 2],
-                                        [i + RENDERING_HEIGHT // 2, j + RENDERING_WIDTH // 2])
+        self.rendering_size = Point(36, 36)
+        self.rendering_section = Cuboid([i - self.rendering_size.x() // 2, j - self.rendering_size.y() // 2],
+                                        [i + self.rendering_size.x() // 2, j + self.rendering_size.y() // 2])

@@ -1,6 +1,5 @@
 import time
 from typing import Tuple, Set, List
-from constants import *
 
 from utils import Point
 
@@ -16,6 +15,9 @@ from model.renderMonitor import Cuboid
 from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
 
+
+from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+    MIDDLE_OF_THE_NIGHT, GRID_HEIGHT, HIGHLIGHTED_TILE
 from src.model.simulation import Simulation
 
 
@@ -60,14 +62,15 @@ class GraphicalTile:
 class GraphicalGrid(QGraphicsView):
 
     def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
+        self.luminosityMode = None
         self.simulation = simulation
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
+        self.latest_vertical_value = renderingMonitor.getFirstYVisible()
+        self.latest_horizontal_value = renderingMonitor.getFirstXVisible()
         self.renderingMonitor = renderingMonitor
 
         self.setMouseTracking(True)
-        self.zoomFactor = 1.0
-        self.zoomStep = 0.1
 
         self.size = 2048, 2048
         self.gridSize = grid_size
@@ -83,14 +86,62 @@ class GraphicalGrid(QGraphicsView):
 
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
-        self.scale(0.01, 0.01)
+        self.scale(10/2048, 10/2048)  # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
+        #self.scene.moveToThread()
         self.initNightMode()
+
+        self.changeStyleSheet()
+
+        self.horizontal_scrollbar = self.horizontalScrollBar()
+        self.vertical_scrollbar = self.verticalScrollBar()
+
+        self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
+        self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
 
     def initHighlightedTile(self):
         self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
         self.highlitedTile.hide()
+
+    def changeStyleSheet(self):
+        self.setStyleSheet("""
+            QScrollBar:horizontal {
+                background-color: #808080; /* Couleur de fond */
+                height: 15px; /* Hauteur */
+            }
+
+            QScrollBar::handle:horizontal {
+                background-color: #C0C0C0; /* Couleur du curseur */
+                min-width: 50px; /* Largeur minimale */
+            }
+
+            QScrollBar::add-line:horizontal {
+                background: none;
+            }
+
+            QScrollBar::sub-line:horizontal {
+                background: none;
+            }
+
+            QScrollBar:vertical {
+                background-color: #808080; /* Couleur de fond */
+                width: 15px; /* Largeur */
+            }
+
+            QScrollBar::handle:vertical {
+                background-color: #C0C0C0; /* Couleur du curseur */
+                min-height: 50px; /* Hauteur minimale */
+            }
+
+            QScrollBar::add-line:vertical {
+                background: none;
+            }
+
+            QScrollBar::sub-line:vertical {
+                background: none;
+            }
+        """)
 
     def initNightMode(self):
         self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
@@ -111,7 +162,6 @@ class GraphicalGrid(QGraphicsView):
             if tile.getIndex() in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
                 if tile.hasEntity() and tile.getEntity().getHighlighted():
-                    print("ici")
                     self._drawHighlightedTile(tile)
                     highlightedFlag = True
         if not highlightedFlag and self.highlitedTile:
@@ -194,7 +244,6 @@ class GraphicalGrid(QGraphicsView):
 
     def renderEntities(self):
         for i, j in self.renderingMonitor.getRenderingSection():
-            print(i, j)
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
@@ -213,5 +262,26 @@ class GraphicalGrid(QGraphicsView):
     def mousePressEvent(self, event):
         MainWindowController.getInstance().mousePressEvent(event)
 
-    def wheelEvent(self, event):
-        MainWindowController.getInstance().wheelEvent(event)
+    def getVerticalScrollBar(self):
+        return self.vertical_scrollbar
+
+    def getHorizontalScrollBar(self):
+        return self.horizontal_scrollbar
+
+    def verticalScroll(self, value):
+        square_size = (10 * self.renderingMonitor.zoom_factor)
+        nb_scrolled_tiles: int = int((value - self.latest_vertical_value) // square_size)
+        self.latest_vertical_value: int = int((value // square_size) * square_size)
+        if nb_scrolled_tiles < 0:
+            self.renderingMonitor.up(abs(nb_scrolled_tiles))
+        else:
+            self.renderingMonitor.down(nb_scrolled_tiles)
+
+    def horizontalScroll(self, value):
+        square_size = (10 * self.renderingMonitor.zoom_factor)
+        nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
+        self.latest_horizontal_value: int = int((value // square_size) * square_size)
+        if nb_scrolled_tiles < 0:
+            self.renderingMonitor.left(abs(nb_scrolled_tiles))
+        else:
+            self.renderingMonitor.right(nb_scrolled_tiles)

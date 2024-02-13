@@ -4,6 +4,8 @@ from utils import Point
 from model.grid import Grid
 from model.terrains.tile import Tile
 
+from constants import GRID_HEIGHT, GRID_WIDTH
+
 
 class MainWindowController:
     """Singleton"""
@@ -17,6 +19,8 @@ class MainWindowController:
             cls.simulation = simulation
             cls.renderingMonitor = rendering_monitor
             cls.size = [2048, 2048]
+            cls.latest_vertical_value = rendering_monitor.getFirstYVisible()
+            cls.latest_horizontal_value = rendering_monitor.getFirstXVisible()
         return cls.instance
 
     @staticmethod
@@ -27,49 +31,31 @@ class MainWindowController:
 
     def keyPressEvent(self, event):
         match event.key():
-            # camera
-            case Qt.Key.Key_Up:
-                self.graphicalGrid.moveCamera(self.renderingMonitor.up())
-            case Qt.Key.Key_Left:
-                self.graphicalGrid.moveCamera(self.renderingMonitor.left())
-            case Qt.Key.Key_Down:
-                self.graphicalGrid.moveCamera(self.renderingMonitor.down())
-            case Qt.Key.Key_Right:
-                self.graphicalGrid.moveCamera(self.renderingMonitor.right())
-
             # player
             case Qt.Key.Key_Z:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((-1, 0)):
-                        self.graphicalGrid.movePlayer(
-                            pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(
-                            self.renderingMonitor.up(False))
+                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(self.renderingMonitor.up(False))
             case Qt.Key.Key_Q:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, -1)):
-                        self.graphicalGrid.movePlayer(
-                            pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(
-                            self.renderingMonitor.left(False))
+                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(self.renderingMonitor.left(False))
             case Qt.Key.Key_S:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((1, 0)):
-                        self.graphicalGrid.movePlayer(
-                            pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(
-                            self.renderingMonitor.down(False))
+                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(self.renderingMonitor.down(False))
             case Qt.Key.Key_D:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, 1)):
-                        self.graphicalGrid.movePlayer(
-                            pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(
-                            self.renderingMonitor.right(False))
+                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(self.renderingMonitor.right(False))
 
     def mousePressEvent(self, event):
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
@@ -97,10 +83,46 @@ class MainWindowController:
             return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
         return False
 
-    def wheelEvent(self, event):
-        # zoom_out = event.angleDelta().y() < 0
-        # zoom_factor = 1.1 if zoom_out else 0.9
+    def getGridCoordinate(self, x, y):
+        i, j = int(y // self.size[1]), int(x // self.size[0])
+        if Grid.isInGrid(i, j):
+            return i, j
+        elif i < 0 or j < 0:
+            return 0, 0
+        else:
+            return GRID_HEIGHT, GRID_WIDTH
 
-        # self.zoom_factor *= zoom_factor
-        # self.scale(zoom_factor, zoom_factor)
-        return
+    def zoomIn(self):
+        if self.renderingMonitor.zoom_index < len(self.renderingMonitor.zooms)-1:
+            self.renderingMonitor.zoom_index += 1
+            scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
+            self.renderingMonitor.zoom_factor *= scaler
+            self.graphicalGrid.scale(scaler, scaler)
+
+            self.recomputeCuboid()
+
+    def recomputeCuboid(self):
+        real_rendered_area = self.graphicalGrid.mapToScene(self.graphicalGrid.viewport().rect()).boundingRect()
+        upper, lower, width, height = self.getCuboid(real_rendered_area)
+        self.renderingMonitor.setNewPoints(upper, lower, width, height)
+
+    def getCuboid(self, dim: QRectF):
+        upper_tile_i, upper_tile_j = self.getGridCoordinate(dim.x(), dim.y())
+        lower_tile_i, lower_tile_j = self.getGridCoordinate(dim.x() + dim.width(), dim.y() + dim.height())
+        width, height = self.getGridCoordinate(dim.width(), dim.height())
+        return [upper_tile_i, upper_tile_j], [lower_tile_i, lower_tile_j], width, height
+
+    def zoomOut(self):
+        if self.renderingMonitor.zoom_index > 0:
+            scaler = 1/self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
+            self.renderingMonitor.zoom_factor *= scaler
+            self.graphicalGrid.scale(scaler, scaler)
+            self.renderingMonitor.zoom_index -= 1
+
+            self.recomputeCuboid()
+
+    def verticalScroll(self, value):
+        ...
+
+    def horizontalScroll(self, value):
+        ...
