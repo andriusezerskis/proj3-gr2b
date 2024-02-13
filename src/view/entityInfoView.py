@@ -1,5 +1,7 @@
 from PyQt6.QtWidgets import QDockWidget, QWidget, QVBoxLayout, QLabel, QProgressBar
 from model.entities.entity import Entity
+from model.entities.animal import Animal
+from model.entities.plant import Plant
 from constants import ENTITY_MAX_HUNGER
 
 
@@ -9,6 +11,7 @@ class EntityInfoView(QDockWidget):
         self.layout = QVBoxLayout()
         self.widget = QWidget()
         self.progressBar = QProgressBar()
+        self.infoLabel = QLabel()
         self.initialize()
         self.entity = None
 
@@ -16,6 +19,8 @@ class EntityInfoView(QDockWidget):
         self.widget.setLayout(self.layout)
         self.setWidget(self.widget)
         self.layout.addWidget(self.progressBar)
+        self.layout.addWidget(self.infoLabel)
+        
         self.progressBar.setRange(0, ENTITY_MAX_HUNGER)
         
     def setEntity(self, entity: Entity):
@@ -24,9 +29,18 @@ class EntityInfoView(QDockWidget):
     def __updateText(self, entity: Entity):
         """Shows information about an entity"""
         self.entity = entity
-        """entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}"
-        self.messageBox.setText(entity_info)"""
-        self.progressBar.setValue(entity.getHunger())
+        baseText = f"Age: {entity.getAge()}\n"
+        if isinstance(entity, Animal):
+            self.progressBar.show()
+            preys = entity.getPreys()
+            baseText += f"Preys: "
+            for prey in preys:
+                baseText += f"{prey.__name__}, "
+            self.progressBar.setFormat("Hunger")
+            self.progressBar.setValue(entity.getHunger())
+        else:
+            self.progressBar.hide()
+        self.infoLabel.setText(baseText)
         if entity.isDead():
             self.showDeadEntity()
 
@@ -36,8 +50,8 @@ class EntityInfoView(QDockWidget):
         else:
             self.progressBar.setValue(0)
             self.progressBar.setFormat("No entities selected")
-            #self.messageBox.setText("No entities selected")
             
     def showDeadEntity(self):
         self.progressBar.setValue(0)
         self.progressBar.setFormat("Entity is dead")
+        self.entity = None

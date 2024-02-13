@@ -1,7 +1,7 @@
 import time
 from typing import Tuple, Set, List
 
-from utils import Point
+from src.utils import Point
 
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import *
