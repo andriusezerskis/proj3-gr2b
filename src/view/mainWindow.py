@@ -4,9 +4,16 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
 
+from model.entities.human import Human
 from model.simulation import Simulation
+
 from view.graphicalGrid import GraphicalGrid
-from controller.gridController import GridController
+from view.entityInfoView import EntityInfoView
+from view.monitor import MonitorWindow
+
+from controller.mainWindowController import MainWindowController
+from controller.entityInfoController import EntityInfoController
+
 
 from src.controller import gridController
 
@@ -40,10 +47,13 @@ class Window(QMainWindow):
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
+        self.dockDebile = MonitorWindow("Monitor deb'île", self)
+        self.dock2 = EntityInfoController(self)
+
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
-        self.grid_controller = GridController(
-            self.view, simulation, self.rendering_monitor)
+        self.grid_controller = MainWindowController(
+            self.view, simulation, self.rendering_monitor, self)
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
@@ -58,9 +68,11 @@ class Window(QMainWindow):
         self.initTimer()
 
         self.commands = CommandWindow(self)
-        #self.showMaximized()
-
-        self.setGeometry(100, 100, 1000, 1000)
+        self.showMaximized()
+        #TODO
+        self.addDockWidget(
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2.view)
 
     def initTimer(self):
         self.timer = QTimer()
@@ -87,6 +99,10 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
+        self.dockDebile.getGraph().updatePlot(
+            Human.count)
+        self.dock2.update()
+        # yo deso demeter mais on reglera le probleme plus tard
         self.show_time()
 
     def show_time(self):

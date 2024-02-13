@@ -56,7 +56,6 @@ class Point:
     def euclidDistance(self, other):
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
-
     def getLowerCorner(self, lower_point: "Point"):
         # assert lower_point.y() <= self.y()
         return Point(self.x(), lower_point.y())
@@ -78,4 +77,4 @@ def euclidDistance(point1: Point, point2: Point) -> int:
 
 
 def getPointsAdjacentTo(point: Point) -> list[Point]:
-    return [Point(point.x() + x, point.y() + y) for x in [-1, 0, 1] for y in [-1, 0, 1] if x != 0 or y != 0]
+    return [Point(point.x() + x, point.y() + y) for y in [-1, 0, 1] for x in [-1, 0, 1] if x != 0 or y != 0]

@@ -6,25 +6,25 @@ Date: December 2023
 
 import random
 import time
-
-from constants import *
 import os
 import sys
 
+from constants import *
 from utils import Point
-from model.entities.animal import Animal
+from math import cos, pi
 
+from model.entities.animal import Animal
 from model.grid import Grid
+from model.gridGenerator import GridGenerator
+from model.entitiesGenerator import EntitiesGenerator
 from model.terrains.tile import Tile
 from model.entities.entity import Entity
 from model.entities.human import Human
-
 from model.pathfinder import Pathfinder
-from random import choice
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
+from model.action import Action
 
-from math import cos, pi
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.abspath("constants.py"))))
@@ -33,15 +33,19 @@ sys.path.append(os.path.dirname(
 class Simulation:
     def __init__(self):
         super().__init__()
-        self.grid = Grid(Point(GRID_WIDTH, GRID_HEIGHT))
+        self.grid = GridGenerator(Point(GRID_WIDTH, GRID_HEIGHT),
+                                  [2, 3, 4, 5, 6],
+                                  350).generateGrid()
+        EntitiesGenerator().generateEntities(self.grid)
 
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
-        self.entities = self.grid.initialize()
-        self.player = Player(self.grid)
+        self.player = None
         self.renderMonitor = RenderMonitor()
 
         self.water_level = WATER_LEVEL
+
+        Entity.setGrid(self.grid)
 
         # self._TEST_PATHFINDING()
 
@@ -53,7 +57,7 @@ class Simulation:
             if type(tile.getEntity()) is Human:
                 pathfinder = Pathfinder(self.grid)
                 current = tile.getPos()
-                dest = choice(list(self.grid.islands[0])).getPos()
+                dest = random.choice(list(self.grid.islands[0])).getPos()
                 t1 = time.time()
                 if pathfinder.findPath(tile.getEntity(), current, dest):
                     print(
@@ -71,21 +75,16 @@ class Simulation:
         print("Step " + str(self.stepCount))
         t = time.time()
         self.updateWaterLevel()
-        for line in self.grid.tiles:
-            for tile in line:
-                if tile.getEntity() and not isinstance(tile.getEntity(), Player):
-                    for entity in self.grid.entitiesInAdjacentTile(tile.getPos()):
-                        self.interaction(tile, entity)
-                if tile.getEntity() and not isinstance(tile.getEntity(), Player):
-                    self.evolution(tile)
+
+        for tile in self.grid:
+            entity = tile.getEntity()
+            if entity and not isinstance(entity, Player):
+                self.evolution(entity)
 
         print(f"compute time : {time.time() - t}")
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
-
-    def getNumberEntities(self):
-        return self.entities
 
     def updateWaterLevel(self) -> None:
         self.water_level = (WATER_LEVEL +
@@ -93,47 +92,49 @@ class Simulation:
         modified = self.grid.updateTilesWithWaterLevel(self.water_level)
         self.modifiedTiles |= modified
 
-    def interaction(self, tile: Tile, otherEntity: Entity):
-        entity = tile.getEntity()
-
-        if type(entity) is type(otherEntity) and entity.reproduce() and otherEntity.reproduce():
-            self.reproduce(tile)
-
-        elif isinstance(otherEntity, Animal):
-            if type(entity) in otherEntity.generateLocalPreys():
-                otherEntity.eat()
-                self.dead(tile)
-
-    def evolution(self, tile):
-        entity = tile.getEntity()
+    def evolution(self, entity: Entity) -> None:
         entity.evolve()
+
         if entity.isDead():
-            self.dead(tile)
-        elif isinstance(entity, Animal):
-            self.moveEntity(tile)
+            self.dead(self.grid.getTile(entity.getPos()))
+            return
 
-    def reproduce(self, tile: Tile):
-        entityType = type(tile.getEntity())
-        newEntity = entityType()
-        tileWithNoEntity = self.grid.randomTileWithoutEntity(tile.getPos())
-        if tileWithNoEntity:
-            x = random.randint(0, len(tileWithNoEntity) - 1)
-            tileWithNoEntity[x].addEntity(newEntity)
-            self.modifiedTiles.add(tileWithNoEntity[x])
+        chosenAction = entity.chooseAction()
 
-    def moveEntity(self, tile: Tile):
-        entity = tile.getEntity()
-        noEntity = self.grid.randomTileWithoutEntity(tile.getPos())
-        if noEntity:
-            x = random.randint(0, len(noEntity) - 1)
-            noEntity[x].addEntity(entity)
-            self.addModifiedTiles(noEntity[x])
-            tile.removeEntity()
-            self.addModifiedTiles(tile)
+        match chosenAction:
+            case Action.EAT:
+                self.eat(entity)
+            case Action.MOVE:
+                self.moveEntity(entity)
+            case Action.REPRODUCE:
+                self.reproduceEntity(entity)
+
+    def eat(self, entity: Entity):
+        assert isinstance(entity, Animal)
+        prey = entity.choosePrey()
+        entity.eat(prey)
+        self.addModifiedTiles(self.getEntityTile(prey))
+
+    def reproduceEntity(self, entity: Entity):
+        mate = None
+        if isinstance(entity, Animal):
+            mate = entity.getMate()
+        newBornTile = entity.reproduce(mate)
+        self.addModifiedTiles(newBornTile)
+
+    def moveEntity(self, entity: Entity) -> None:
+        movement = entity.chooseMove()
+
+        self.addModifiedTiles(self.getEntityTile(entity))
+        entity.move(movement)
+        self.addModifiedTiles(self.getEntityTile(entity))
 
     def dead(self, tile: Tile) -> None:
         tile.removeEntity()
         self.addModifiedTiles(tile)
+
+    def getEntityTile(self, entity: Entity) -> Tile:
+        return self.getGrid().getTile(entity.getPos())
 
     def getGrid(self) -> Grid:
         return self.grid
@@ -147,7 +148,7 @@ class Simulation:
     def hasPlayer(self) -> bool:
         return self.player.isPlaying()
 
-    def addModifiedTiles(self, tile):
+    def addModifiedTiles(self, tile: Tile):
         if tile in self.renderMonitor.getRenderingSection():
             self.modifiedTiles.add(tile)
 

@@ -1,17 +1,19 @@
 import time
 from typing import Tuple, Set, List
 
-from PyQt6.QtCore import QTimer
 from utils import Point
 
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+
 from model.grid import Grid
 from model.terrains.tile import Tile
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
-from controller.gridController import GridController
+
+from controller.mainWindowController import MainWindowController
+from controller.entityInfoController import EntityInfoController
 
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
@@ -59,27 +61,29 @@ class GraphicalTile:
 
 class GraphicalGrid(QGraphicsView):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, rendering_monitor: RenderMonitor):
+    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
         self.luminosityMode = None
         self.simulation = simulation
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
-        self.rendering_monitor = rendering_monitor
         self.latest_vertical_value = rendering_monitor.getFirstYVisible()
         self.latest_horizontal_value = rendering_monitor.getFirstXVisible()
+        self.renderingMonitor = renderingMonitor
 
         self.setMouseTracking(True)
 
         self.size = 2048, 2048
-        self.grid_size = grid_size
-        self.pixmap_items: List[List[GraphicalTile]] = \
-            [[GraphicalTile(i, j) for j in range(self.grid_size[0])]
-             for i in range(self.grid_size[1])]
+        self.gridSize = grid_size
+        self.pixmapItems: List[List[GraphicalTile]] = \
+            [[GraphicalTile(i, j) for j in range(self.gridSize[0])]
+             for i in range(self.gridSize[1])]
         self._addPixmapItems()
-        self.pixmap_from_path = {}
+        self.pixmapFromPath = {}
 
         start_time = time.time()
         self.drawGrid(grid)
+        self.initHighlightedTile()
+
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         self.scale(10/2048, 10/2048)  # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
@@ -94,8 +98,11 @@ class GraphicalGrid(QGraphicsView):
         self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
         self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
 
-        self.nb = 0
-        self.timer = None
+    def initHighlightedTile(self):
+        self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
+        self.scene.addItem(self.highlitedTile)
+        self.chosenEntity = None
+        self.highlitedTile.hide()
 
     def changeStyleSheet(self):
         self.setStyleSheet("""
@@ -141,18 +148,24 @@ class GraphicalGrid(QGraphicsView):
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
-        pixmap_width = self.luminosityMode.pixmap().width()
-        scene_width, scene_height = self.size
+        pixmapWidth = self.luminosityMode.pixmap().width()
+        sceneWidth, sceneHeight = self.size
 
-        scale = scene_width / pixmap_width if pixmap_width > 0 else 1
+        scale = sceneWidth / pixmapWidth if pixmapWidth > 0 else 1
         self.luminosityMode.setScale(scale * GRID_HEIGHT)
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
+        highlightedFlag = False
         for tile in updated_tiles:
-            if tile.getIndex() in self.rendering_monitor.getRenderingSection():
+            if tile.getIndex() in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
+                if tile.hasEntity() and tile.getEntity().getHighlighted():
+                    self._drawHighlightedTile(tile)
+                    highlightedFlag = True
+        if not highlightedFlag and self.highlitedTile:
+            self.highlitedTile.hide()
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
@@ -164,27 +177,33 @@ class GraphicalGrid(QGraphicsView):
 
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()
-        self.pixmap_items[i][j].getTerrain().setPixmap(self.getPixmap(tile))
+        self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
     def _drawEntities(self, tile):
-        if tile in self.rendering_monitor.getRenderingSection():
+        if tile in self.renderingMonitor.getRenderingSection():
             i, j = tile.getIndex()
             if tile.getEntity():
-                self.pixmap_items[i][j].getEntity().setPixmap(
+                self.pixmapItems[i][j].getEntity().setPixmap(
                     self.getPixmap(tile.getEntity()))
             else:
-                self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+                self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+
+    def _drawHighlightedTile(self, tile):
+        i, j = tile.getIndex()
+        self.highlitedTile.setPos(j * 2048, i * 2048)
+        self.highlitedTile.setScale(1)
+        self.highlitedTile.show()
 
     def _removeEntity(self, i, j):
-        self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
-            self.pixmap_items[i][j].DisableEntityRendering()
-            self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+            self.pixmapItems[i][j].DisableEntityRendering()
+            self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
         for i, j in won:
-            self.pixmap_items[i][j].EnableEntityRendering()
+            self.pixmapItems[i][j].EnableEntityRendering()
             self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
     def nightMode(self, hour):
@@ -200,79 +219,54 @@ class GraphicalGrid(QGraphicsView):
             self.luminosityMode.setPixmap(QPixmap())
         elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT:
             self.luminosityMode.setOpacity(opacity + 0.1)
-        elif MIDDLE_OF_THE_NIGHT < hour < NIGHT_MODE_FINISH:
+
+        elif hour > MIDDLE_OF_THE_NIGHT and hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, old_pos, new_pos):
         i, j = old_pos
-        self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(
             Point(new_pos[1], new_pos[0])))
 
     def getPixmap(self, tile):
-        if tile.getTexturePath() not in self.pixmap_from_path:
+        if tile.getTexturePath() not in self.pixmapFromPath:
             pixmap = QPixmap(tile.getTexturePath())
             pixmap = pixmap.scaled(self.size[0], self.size[1])
-            self.pixmap_from_path[tile.getTexturePath()] = pixmap
+            self.pixmapFromPath[tile.getTexturePath()] = pixmap
             return pixmap
-        return self.pixmap_from_path[tile.getTexturePath()]
+        return self.pixmapFromPath[tile.getTexturePath()]
 
     def removeRenderedEntities(self):
-        for i, j in self.rendering_monitor.getRenderingSection():
-            if self.pixmap_items[i][j][1] is not None:
+        for i, j in self.renderingMonitor.getRenderingSection():
+            if self.pixmapItems[i][j][1] is not None:
                 self._removeEntity(i, j)
 
     def renderEntities(self):
-        for i, j in self.rendering_monitor.getRenderingSection():
+        for i, j in self.renderingMonitor.getRenderingSection():
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
-        for i, line in enumerate(self.pixmap_items):
-            for j, graphical_tile in enumerate(line):
-                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
-                    graphical_tile.EnableEntityRendering()
-                for label in graphical_tile:
+        for i, line in enumerate(self.pixmapItems):
+            for j, graphicalTile in enumerate(line):
+                if (i, j) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
+                    graphicalTile.EnableEntityRendering()
+                for label in graphicalTile:
                     self.scene.addItem(label)
 
-    """@staticmethod
-    def drawEntityInfo(entity: Entity):
-        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}"
-        messageBox = QMessageBox()
-        messageBox.setWindowTitle("Entity Information")
-        messageBox.setText(entityInfo)
-        messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
-        messageBox.exec()"""
-
     # Redirection of PYQT events to the controller
+
     def keyPressEvent(self, event):
-        GridController.getInstance().keyPressEvent(event)
+        MainWindowController.getInstance().keyPressEvent(event)
 
     def mousePressEvent(self, event):
-        GridController.getInstance().mousePressEvent(event)
+        MainWindowController.getInstance().mousePressEvent(event)
 
     def wheelEvent(self, event):
-        GridController.getInstance().wheelEvent(event)
+        MainWindowController.getInstance().wheelEvent(event)
 
     def getVerticalScrollBar(self):
         return self.vertical_scrollbar
-
-    def moveVerticalScrollBar(self):
-        print("a")
-        if self.nb == 40:
-            self.timer.stop()
-        self.vertical_scrollbar.setValue(self.vertical_scrollbar.value() + 1)
-        self.nb += 1
-
-    def initSmoothScroll(self):
-        self.nb = 0
-        self.timer = QTimer()
-        self.timer.setInterval(1)
-        self.timer.timeout.connect(self.moveVerticalScrollBar)
-        self.timer.start()
-        #self.moveVerticalScrollBar()
-
-    def moveHorizontalScrollBar(self, nb_tiles):
-        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() + nb_tiles * 40)
 
     def getHorizontalScrollBar(self):
         return self.horizontal_scrollbar
