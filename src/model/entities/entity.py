@@ -1,8 +1,14 @@
 from abc import ABC, abstractmethod
-
+from constants import ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION
 from model.action import Action
-
+from typing import TypeVar
 from utils import Point
+
+from random import choice
+
+Entity_ = TypeVar("Entity_")
+Tile = TypeVar("Tile")
+Grid = TypeVar("Grid")
 
 
 class Entity(ABC):
@@ -13,8 +19,8 @@ class Entity(ABC):
         self.pos = pos
         Entity.count += 1
         self.age = 0
-        self.hunger = 0
         self.reproductionCooldown = 0
+        self._validMovementTiles = None
 
     def __del__(self):
         Entity.count -= 1
@@ -29,19 +35,35 @@ class Entity(ABC):
     def getValidTiles() -> set[type]:
         ...
 
+    def canReproduce(self) -> bool:
+        """
+        :return: whether the entity can reproduce and with which entity it can do so
+        """
+        return self.isFitForReproduction()
+
     @abstractmethod
-    def reproduce(self) -> None:
-        ...
+    def reproduce(self, other: Entity_ | None) -> Tile:
+        """
+        Reproduces and places the newborn in the grid
+        :return: the position of the newborn
+        """
+        self.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+        if other:
+            other.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+        freeTile = choice(self.getValidMovementTiles())
+        freeTile.addNewEntity(self.__class__)
+        return freeTile
 
     def isDeadByOldness(self):
-        return self.age >= 10
+        return self.age >= ENTITY_MAX_AGE
 
     def isDead(self):
         return self.isDeadByOldness()
 
     def evolve(self):
-        # self.age += 1
+        self.age += 1
         self.reproductionCooldown = max(0, self.reproductionCooldown - 1)
+        self._validMovementTiles = None
 
     def getAge(self):
         return self.age
@@ -49,29 +71,26 @@ class Entity(ABC):
     def setAge(self, age):
         self.age = age
 
-    def getHunger(self):
-        return self.hunger
-
-    def setHunger(self, hunger: int):
-        self.hunger = hunger
-
     def __str__(self):
         ...
 
-    def getAdjacentTiles(self) -> list["Tile"]:
+    def getAdjacentTiles(self) -> list[Tile]:
         """
         :return: The position of the tiles around the entity
         """
         return self.getGrid().getAdjacentTiles(self.getPos())
 
-    def getFreeAdjacentTiles(self) -> list["Tile"]:
+    def getFreeAdjacentTiles(self) -> list[Tile]:
         """
         :return: The position of the free tiles around the entity
         """
         return [tile for tile in self.getAdjacentTiles() if not tile.hasEntity()]
 
-    def getValidMovementTiles(self) -> list["Tile"]:
-        return [tile for tile in self.getFreeAdjacentTiles() if type(tile) in self.getValidTiles()]
+    def getValidMovementTiles(self) -> list[Tile]:
+        if not self._validMovementTiles:
+            self._validMovementTiles = [tile for tile in self.getFreeAdjacentTiles()
+                                        if type(tile) in self.getValidTiles()]
+        return self._validMovementTiles
 
     @abstractmethod
     def chooseAction(self) -> Action:
@@ -90,12 +109,18 @@ class Entity(ABC):
         self.getGrid().getTile(self.pos).setEntity(self)
 
     @staticmethod
-    def getGrid() -> "Grid":
+    def getGrid() -> Grid:
         return Entity._grid
 
     @staticmethod
-    def setGrid(grid: "Grid"):
+    def setGrid(grid: Grid):
         Entity._grid = grid
+
+    def isFitForReproduction(self) -> bool:
+        return self.getReproductionCooldown() == 0 and self.getAge() >= ENTITY_MIN_AGE_REPRODUCTION
+
+    def getReproductionCooldown(self) -> int:
+        return self.reproductionCooldown
 
     def getCount(self):
         return self.count

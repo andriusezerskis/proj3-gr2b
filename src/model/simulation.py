@@ -110,9 +110,11 @@ class Simulation:
                 self.reproduce(entity)
 
     def reproduce(self, entity: Entity):
-        entityType = type(entity)
-
-        newEntity = entityType()
+        mate = None
+        if isinstance(entity, Animal):
+            mate = entity.getMate()
+        newBornTile = entity.reproduce(mate)
+        self.addModifiedTiles(newBornTile)
 
     def moveEntity(self, entity: Entity) -> None:
         movement = entity.chooseMove()
