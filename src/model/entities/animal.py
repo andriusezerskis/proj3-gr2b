@@ -1,5 +1,3 @@
-from typing import List
-
 from utils import Point
 
 from model.entities.entity import Entity
@@ -7,7 +5,6 @@ from model.action import Action
 from abc import abstractmethod, ABC
 from overrides import override
 from random import choice
-import random
 
 
 class Animal(Entity, ABC):
@@ -16,8 +13,7 @@ class Animal(Entity, ABC):
     def __init__(self, pos: Point):
         super().__init__(pos)
         Animal.count += 1
-        self.hunger: float = 5
-        self.age = 0
+        self.hunger = 0
         self.freeTiles = []
 
     def __del__(self):
@@ -26,7 +22,7 @@ class Animal(Entity, ABC):
 
     @override
     def chooseAction(self) -> Action:
-        self.freeTiles = self.getFreeAdjacentTiles()
+        self.freeTiles = self.getValidMovementTiles()
         if len(self.freeTiles) == 0:
             return Action.IDLE
         return Action.MOVE
@@ -34,7 +30,7 @@ class Animal(Entity, ABC):
     @override
     def chooseMove(self) -> Point:
         assert len(self.freeTiles) > 0
-        return choice(self.freeTiles) - self.getPos()
+        return choice(self.freeTiles).getPos() - self.getPos()
 
     @staticmethod
     @abstractmethod
@@ -48,7 +44,7 @@ class Animal(Entity, ABC):
     @override
     def evolve(self):
         super().evolve()
-        self.hunger += 1
+        # self.hunger += 1
 
     def reproduce(self):
         return True if self.hunger < 5 < self.age else False

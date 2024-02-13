@@ -75,6 +75,7 @@ class Simulation:
         print("Step " + str(self.stepCount))
         t = time.time()
         self.updateWaterLevel()
+
         for tile in self.grid:
             entity = tile.getEntity()
             if entity and not isinstance(entity, Player):
@@ -91,17 +92,6 @@ class Simulation:
         modified = self.grid.updateTilesWithWaterLevel(self.water_level)
         self.modifiedTiles |= modified
 
-    def interaction(self, tile: Tile, otherEntity: Entity):
-        entity = tile.getEntity()
-
-        if type(entity) is type(otherEntity) and entity.reproduce() and otherEntity.reproduce():
-            self.reproduce(tile)
-
-        elif isinstance(otherEntity, Animal):
-            if type(entity) in otherEntity.getPreys():
-                otherEntity.eat()
-                self.dead(tile)
-
     def evolution(self, entity: Entity) -> None:
         entity.evolve()
 
@@ -117,16 +107,12 @@ class Simulation:
             case Action.MOVE:
                 self.moveEntity(entity)
             case Action.REPRODUCE:
-                ...
+                self.reproduce(entity)
 
-    def reproduce(self, tile: Tile):
-        entityType = type(tile.getEntity())
+    def reproduce(self, entity: Entity):
+        entityType = type(entity)
+
         newEntity = entityType()
-        tileWithNoEntity = self.grid.randomTileWithoutEntity(tile.getPos())
-        if tileWithNoEntity:
-            x = random.randint(0, len(tileWithNoEntity) - 1)
-            tileWithNoEntity[x].addEntity(newEntity)
-            self.modifiedTiles.add(tileWithNoEntity[x])
 
     def moveEntity(self, entity: Entity) -> None:
         movement = entity.chooseMove()

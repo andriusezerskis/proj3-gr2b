@@ -25,11 +25,11 @@ class Grid:
             if WATER_LEVEL < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
 
-    def getAdjacentTiles(self, currentTile: Point) -> List[Point]:
+    def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
         tiles = []
         for pos in getPointsAdjacentTo(currentTile):
             if self.isPosInGrid(pos):
-                tiles.append(pos)
+                tiles.append(self.getTile(pos))
         return tiles
 
     def updateTilesWithWaterLevel(self, newWaterLevel: float) -> set[Tile]:

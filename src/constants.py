@@ -6,6 +6,10 @@ Date: December 2023
 
 # Simulation
 STEP_TIME = 2000
+# number of timesteps before an entity can reproduce again
+ENTITY_REPRODUCTION_COOLDOWN = 10
+ENTITY_MAX_AGE = 10
+ENTITY_MAX_HUNGER = 10
 
 # Grid
 GRID_WIDTH = 100

@@ -14,6 +14,7 @@ class Entity(ABC):
         Entity.count += 1
         self.age = 0
         self.hunger = 0
+        self.reproductionCooldown = 0
 
     def __del__(self):
         Entity.count -= 1
@@ -39,7 +40,8 @@ class Entity(ABC):
         return self.isDeadByOldness()
 
     def evolve(self):
-        self.age += 1
+        # self.age += 1
+        self.reproductionCooldown = max(0, self.reproductionCooldown - 1)
 
     def getAge(self):
         return self.age
@@ -56,17 +58,20 @@ class Entity(ABC):
     def __str__(self):
         ...
 
-    def getAdjacentTiles(self) -> list[Point]:
+    def getAdjacentTiles(self) -> list["Tile"]:
         """
         :return: The position of the tiles around the entity
         """
         return self.getGrid().getAdjacentTiles(self.getPos())
 
-    def getFreeAdjacentTiles(self) -> list[Point]:
+    def getFreeAdjacentTiles(self) -> list["Tile"]:
         """
         :return: The position of the free tiles around the entity
         """
-        return [tile for tile in self.getAdjacentTiles() if not self.getGrid().getTile(tile).hasEntity()]
+        return [tile for tile in self.getAdjacentTiles() if not tile.hasEntity()]
+
+    def getValidMovementTiles(self) -> list["Tile"]:
+        return [tile for tile in self.getFreeAdjacentTiles() if type(tile) in self.getValidTiles()]
 
     @abstractmethod
     def chooseAction(self) -> Action:
@@ -84,13 +89,13 @@ class Entity(ABC):
         self.pos += movement
         self.getGrid().getTile(self.pos).setEntity(self)
 
-    def getCount(self):
-        return self.count
-
     @staticmethod
     def getGrid() -> "Grid":
         return Entity._grid
 
     @staticmethod
-    def setGrid(grid: "Grid") -> None:
+    def setGrid(grid: "Grid"):
         Entity._grid = grid
+
+    def getCount(self):
+        return self.count
