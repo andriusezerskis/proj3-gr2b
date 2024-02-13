@@ -1,13 +1,9 @@
-import random
 from typing import List
 from utils import Point, getPointsAdjacentTo
-from model.entitiesGenerator import EntitiesGenerator
 
-from model.gridGenerator import GridGenerator
 from model.terrains.tile import Tile
 from model.terrains.sand import Sand
 from model.terrains.water import Water
-from model.entities.entity import Entity
 
 from constants import GRID_HEIGHT, GRID_WIDTH, WATER_LEVEL, MAX_WATER_LEVEL
 
@@ -19,47 +15,22 @@ class Grid:
         self.coasts: set[Tile] = set()
         self.size: Point = size
 
-    def initialize(self):
+    def initialize(self, tiles: List[List[Tile]], islands: List[set[Tile]]) -> None:
         """Random initialization of the grid with perlin noise"""
-        self.tiles, self.islands = GridGenerator(self.size.x(), self.size.y(),
-                                                 [2, 3, 4, 5, 6], 350).generateGrid()
+        self.tiles = tiles
+        self.islands = islands
 
         # construct the set of tiles that will be affected by tides
         for tile in self:
             if WATER_LEVEL < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
 
-        entitiesGenerator = EntitiesGenerator()
-        entitiesGenerator.generateEntities(self.tiles)
-
-    def entitiesInAdjacentTile(self, currentTile: Point) -> List[Entity]:
-        """Checks if, given a current tile, there's an entity in an adjacent case to eventually interact with"""
-        entitiesList = []
+    def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
+        tiles = []
         for pos in getPointsAdjacentTo(currentTile):
-            if self.isPosInGrid(pos) and self.getTile(pos).getEntity():
-                entitiesList.append(self.getTile(pos).getEntity())
-
-        return entitiesList
-
-    def moveEntity(self, entity, currentTile: Point, nextTile: Point) -> None:
-        """Moves an entity from a tile to another"""
-        if not self.getTile(currentTile).hasEntity():
-            self.getTile(nextTile).addEntity(entity)
-            self.getTile(currentTile).removeEntity()
-
-    def randomTileWithoutEntity(self, currentTile: Point):
-        """Generate random tile to reproduce, it must be empty and must be the same tile type as the currentTile
-        """
-
-        no_entity = []
-        for tile in getPointsAdjacentTo(currentTile):
-            if self.isPosInGrid(tile):
-                randomTile = self.getTile(tile)
-                if not randomTile.getEntity():
-                    if type(self.getTile(currentTile)) is type(randomTile):
-                        no_entity.append(
-                            self.getTile(tile))
-        return no_entity
+            if self.isPosInGrid(pos):
+                tiles.append(self.getTile(pos))
+        return tiles
 
     def updateTilesWithWaterLevel(self, newWaterLevel: float) -> set[Tile]:
         modified = set()
