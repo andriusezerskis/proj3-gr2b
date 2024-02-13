@@ -3,6 +3,8 @@ from random import random
 
 from constants import FISH_TEXTURE_PATH
 
+from utils import Point
+
 from model.entities.animal import Animal
 from model.entities.algae import Algae
 
@@ -27,8 +29,8 @@ class Fish(Animal):
     def getPreys() -> set[type]:
         return {Algae}
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, pos: Point):
+        super().__init__(pos)
         Fish.count += 1
 
     def __del__(self):

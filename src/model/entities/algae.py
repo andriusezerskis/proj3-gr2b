@@ -3,6 +3,8 @@ from overrides import override
 from model.entities.plant import Plant
 from model.terrains.water import Water
 
+from utils import Point
+
 from constants import ALGAE_TEXTURE_PATH
 
 
@@ -19,8 +21,8 @@ class Algae(Plant):
     def getValidTiles() -> set[type]:
         return {Water}
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, pos: Point):
+        super().__init__(pos)
         Algae.count += 1
 
     def __del__(self):

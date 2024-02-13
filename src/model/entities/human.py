@@ -1,6 +1,8 @@
 from model.entities.animal import Animal
 from overrides import override
 
+from utils import Point
+
 from model.entities.fish import Fish
 from model.entities.tree import Tree
 
@@ -13,8 +15,8 @@ from constants import HUMAN_TEXTURE_PATH
 class Human(Animal):
     count = 0
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, pos: Point):
+        super().__init__(pos)
         Human.count += 1
 
     def __del__(self):

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from model.grid import Grid
 from model.action import Action
 
 from utils import Point
@@ -80,6 +79,7 @@ class Entity(ABC):
         return Point(0, 0)
 
     def move(self, movement: Point):
+        assert not self.getGrid().getTile(self.pos + movement).hasEntity()
         self.getGrid().getTile(self.pos).removeEntity()
         self.pos += movement
         self.getGrid().getTile(self.pos).setEntity(self)
@@ -88,9 +88,9 @@ class Entity(ABC):
         return self.count
 
     @staticmethod
-    def getGrid() -> Grid:
+    def getGrid() -> "Grid":
         return Entity._grid
 
     @staticmethod
-    def setGrid(grid: Grid) -> None:
-        Entity.grid = grid
+    def setGrid(grid: "Grid") -> None:
+        Entity._grid = grid

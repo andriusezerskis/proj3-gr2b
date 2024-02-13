@@ -26,14 +26,14 @@ class EntitiesGenerator:
 
     def generateWaterEntities(self, tile: Tile):
         if random.randint(0, 5) == 1:
-            tile.addEntity(Fish)
+            tile.addNewEntity(Fish)
 
         elif random.randint(0, 5) == 1:
-            tile.addEntity(Algae)
+            tile.addNewEntity(Algae)
 
     def generateLandEntities(self, tile: Tile):
         if random.randint(0, 5) == 1:
-            tile.addEntity(Human)
+            tile.addNewEntity(Human)
 
         elif random.randint(0, 3) == 1:
-            tile.addEntity(Tree)
+            tile.addNewEntity(Tree)

@@ -2,6 +2,8 @@ from model.entities.plant import Plant
 from overrides import override
 from random import random
 
+from utils import Point
+
 from model.terrains.land import Land
 
 from constants import TREE_TEXTURE_PATH
@@ -10,8 +12,8 @@ from constants import TREE_TEXTURE_PATH
 class Tree(Plant):
     count = 0
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, pos: Point):
+        super().__init__(pos)
         Tree.count += 1
 
     def __del__(self):

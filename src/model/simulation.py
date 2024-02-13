@@ -40,7 +40,7 @@ class Simulation:
 
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
-        self.player = Player(self.grid)
+        self.player = None
         self.renderMonitor = RenderMonitor()
 
         self.water_level = WATER_LEVEL
@@ -131,9 +131,9 @@ class Simulation:
     def moveEntity(self, entity: Entity) -> None:
         movement = entity.chooseMove()
 
-        self.addModifiedTiles(entity.getPos())
+        self.addModifiedTiles(self.getEntityTile(entity))
         entity.move(movement)
-        self.addModifiedTiles(entity.getPos())
+        self.addModifiedTiles(self.getEntityTile(entity))
 
     def dead(self, tile: Tile) -> None:
         tile.removeEntity()
@@ -154,7 +154,7 @@ class Simulation:
     def hasPlayer(self) -> bool:
         return self.player.isPlaying()
 
-    def addModifiedTiles(self, tile):
+    def addModifiedTiles(self, tile: Tile):
         if tile in self.renderMonitor.getRenderingSection():
             self.modifiedTiles.add(tile)
 
