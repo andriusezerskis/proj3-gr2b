@@ -1,6 +1,7 @@
 import time
 from typing import Tuple, Set, List
 
+from PyQt6.QtCore import QTimer
 from utils import Point
 
 from PyQt6.QtGui import QPixmap
@@ -81,7 +82,7 @@ class GraphicalGrid(QGraphicsView):
         self.drawGrid(grid)
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
-        self.scale(0.005, 0.005)
+        self.scale(10/2048, 10/2048)  # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
         #self.scene.moveToThread()
         self.initNightMode()
 
@@ -92,6 +93,9 @@ class GraphicalGrid(QGraphicsView):
 
         self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
         self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
+
+        self.nb = 0
+        self.timer = None
 
     def changeStyleSheet(self):
         self.setStyleSheet("""
@@ -251,6 +255,24 @@ class GraphicalGrid(QGraphicsView):
 
     def getVerticalScrollBar(self):
         return self.vertical_scrollbar
+
+    def moveVerticalScrollBar(self):
+        print("a")
+        if self.nb == 40:
+            self.timer.stop()
+        self.vertical_scrollbar.setValue(self.vertical_scrollbar.value() + 1)
+        self.nb += 1
+
+    def initSmoothScroll(self):
+        self.nb = 0
+        self.timer = QTimer()
+        self.timer.setInterval(1)
+        self.timer.timeout.connect(self.moveVerticalScrollBar)
+        self.timer.start()
+        #self.moveVerticalScrollBar()
+
+    def moveHorizontalScrollBar(self, nb_tiles):
+        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() + nb_tiles * 40)
 
     def getHorizontalScrollBar(self):
         return self.horizontal_scrollbar
