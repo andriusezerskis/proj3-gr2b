@@ -17,7 +17,7 @@ from controller.entityInfoController import EntityInfoController
 
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, GRID_HEIGHT
+    MIDDLE_OF_THE_NIGHT, GRID_HEIGHT, HIGHLIGHTED_TILE
 from src.model.simulation import Simulation
 
 
@@ -66,8 +66,8 @@ class GraphicalGrid(QGraphicsView):
         self.simulation = simulation
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
-        self.latest_vertical_value = rendering_monitor.getFirstYVisible()
-        self.latest_horizontal_value = rendering_monitor.getFirstXVisible()
+        self.latest_vertical_value = renderingMonitor.getFirstYVisible()
+        self.latest_horizontal_value = renderingMonitor.getFirstXVisible()
         self.renderingMonitor = renderingMonitor
 
         self.setMouseTracking(True)
@@ -263,7 +263,7 @@ class GraphicalGrid(QGraphicsView):
         MainWindowController.getInstance().mousePressEvent(event)
 
     def wheelEvent(self, event):
-        MainWindowController.getInstance().wheelEvent(event)
+        return
 
     def getVerticalScrollBar(self):
         return self.vertical_scrollbar
@@ -272,19 +272,19 @@ class GraphicalGrid(QGraphicsView):
         return self.horizontal_scrollbar
 
     def verticalScroll(self, value):
-        square_size = (10 * self.rendering_monitor.zoom_factor)
+        square_size = (10 * self.renderingMonitor.zoom_factor)
         nb_scrolled_tiles: int = int((value - self.latest_vertical_value) // square_size)
         self.latest_vertical_value: int = int((value // square_size) * square_size)
         if nb_scrolled_tiles < 0:
-            self.rendering_monitor.up(abs(nb_scrolled_tiles))
+            self.renderingMonitor.up(abs(nb_scrolled_tiles))
         else:
-            self.rendering_monitor.down(nb_scrolled_tiles)
+            self.renderingMonitor.down(nb_scrolled_tiles)
 
     def horizontalScroll(self, value):
-        square_size = (10 * self.rendering_monitor.zoom_factor)
+        square_size = (10 * self.renderingMonitor.zoom_factor)
         nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
         self.latest_horizontal_value: int = int((value // square_size) * square_size)
         if nb_scrolled_tiles < 0:
-            self.rendering_monitor.left(abs(nb_scrolled_tiles))
+            self.renderingMonitor.left(abs(nb_scrolled_tiles))
         else:
-            self.rendering_monitor.right(nb_scrolled_tiles)
+            self.renderingMonitor.right(nb_scrolled_tiles)

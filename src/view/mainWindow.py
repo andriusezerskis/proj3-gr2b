@@ -15,9 +15,6 @@ from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
 
 
-from src.controller import gridController
-
-
 class CommandWindow(QMainWindow):
     def __init__(self, parent=None):
         super(CommandWindow, self).__init__(parent)
@@ -68,7 +65,7 @@ class Window(QMainWindow):
         self.initTimer()
 
         self.commands = CommandWindow(self)
-        self.showMaximized()
+        #self.showMaximized()
         #TODO
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
@@ -157,9 +154,9 @@ class Window(QMainWindow):
         self.commandsButton.clicked.connect(self.commandsCallback)
 
         self.zoomInButton = QPushButton("+")
-        self.zoomInButton.clicked.connect(GridController.getInstance().zoomIn)
+        self.zoomInButton.clicked.connect(MainWindowController.getInstance().zoomIn)
         self.zoomOutButton = QPushButton("-")
-        self.zoomOutButton.clicked.connect(GridController.getInstance().zoomOut)
+        self.zoomOutButton.clicked.connect(MainWindowController.getInstance().zoomOut)
 
         self.layout.addStretch()
         self.layout.addWidget(self.pauseButton)

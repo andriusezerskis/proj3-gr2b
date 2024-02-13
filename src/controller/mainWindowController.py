@@ -93,18 +93,18 @@ class MainWindowController:
             return GRID_HEIGHT, GRID_WIDTH
 
     def zoomIn(self):
-        if self.rendering_monitor.zoom_index < len(self.rendering_monitor.zooms)-1:
-            self.rendering_monitor.zoom_index += 1
-            scaler = self.rendering_monitor.zooms[self.rendering_monitor.zoom_index]
-            self.rendering_monitor.zoom_factor *= scaler
-            self.graphical_grid.scale(scaler, scaler)
+        if self.renderingMonitor.zoom_index < len(self.renderingMonitor.zooms)-1:
+            self.renderingMonitor.zoom_index += 1
+            scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
+            self.renderingMonitor.zoom_factor *= scaler
+            self.graphicalGrid.scale(scaler, scaler)
 
             self.recomputeCuboid()
 
     def recomputeCuboid(self):
-        real_rendered_area = self.graphical_grid.mapToScene(self.graphical_grid.viewport().rect()).boundingRect()
+        real_rendered_area = self.graphicalGrid.mapToScene(self.graphicalGrid.viewport().rect()).boundingRect()
         upper, lower, width, height = self.getCuboid(real_rendered_area)
-        self.rendering_monitor.setNewPoints(upper, lower, width, height)
+        self.renderingMonitor.setNewPoints(upper, lower, width, height)
 
     def getCuboid(self, dim: QRectF):
         upper_tile_i, upper_tile_j = self.getGridCoordinate(dim.x(), dim.y())
@@ -113,11 +113,11 @@ class MainWindowController:
         return [upper_tile_i, upper_tile_j], [lower_tile_i, lower_tile_j], width, height
 
     def zoomOut(self):
-        if self.rendering_monitor.zoom_index > 0:
-            scaler = 1/self.rendering_monitor.zooms[self.rendering_monitor.zoom_index]
-            self.rendering_monitor.zoom_factor *= scaler
-            self.graphical_grid.scale(scaler, scaler)
-            self.rendering_monitor.zoom_index -= 1
+        if self.renderingMonitor.zoom_index > 0:
+            scaler = 1/self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
+            self.renderingMonitor.zoom_factor *= scaler
+            self.graphicalGrid.scale(scaler, scaler)
+            self.renderingMonitor.zoom_index -= 1
 
             self.recomputeCuboid()
 
