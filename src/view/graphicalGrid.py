@@ -220,7 +220,6 @@ class GraphicalGrid(QGraphicsView):
 
     def renderEntities(self):
         for i, j in self.rendering_monitor.getRenderingSection():
-            print(i, j)
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
@@ -258,8 +257,8 @@ class GraphicalGrid(QGraphicsView):
 
     def verticalScroll(self, value):
         square_size = (10 * self.rendering_monitor.zoom_factor)
-        nb_scrolled_tiles = (value - self.latest_vertical_value) // square_size
-        self.latest_vertical_value = (value // square_size) * square_size
+        nb_scrolled_tiles: int = int((value - self.latest_vertical_value) // square_size)
+        self.latest_vertical_value: int = int((value // square_size) * square_size)
         if nb_scrolled_tiles < 0:
             self.rendering_monitor.up(abs(nb_scrolled_tiles))
         else:
@@ -267,8 +266,8 @@ class GraphicalGrid(QGraphicsView):
 
     def horizontalScroll(self, value):
         square_size = (10 * self.rendering_monitor.zoom_factor)
-        nb_scrolled_tiles = (value - self.latest_horizontal_value) // square_size
-        self.latest_horizontal_value = (value // square_size) * square_size
+        nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
+        self.latest_horizontal_value: int = int((value // square_size) * square_size)
         if nb_scrolled_tiles < 0:
             self.rendering_monitor.left(abs(nb_scrolled_tiles))
         else:

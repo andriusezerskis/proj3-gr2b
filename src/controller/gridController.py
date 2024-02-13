@@ -78,17 +78,15 @@ class GridController:
     def mousePressEvent(self, event):
         scene_pos = self.graphical_grid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
-        print(scene_pos.y(), scene_pos.x())
         if tile and tile.hasEntity():
-            ...
-            #self.controlEntity(tile)
+            self.controlEntity(tile)
             #EntityInfoController(tile.getEntity()).draw_entity_info()
-
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
             self.graphical_grid.removeRenderedEntities()
+            print(tile.getIndex())
             self.rendering_monitor.centerOnPoint(tile.getIndex())
             self.graphical_grid.renderEntities()
 
@@ -98,6 +96,15 @@ class GridController:
         if Grid.isInGrid(i, j):
             return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
         return False
+
+    def getGridCoordinate(self, x, y):
+        i, j = int(y // self.size[1]), int(x // self.size[0])
+        if Grid.isInGrid(i, j):
+            return i, j
+        elif i < 0 or j < 0:
+            return 0, 0
+        else:
+            return GRID_HEIGHT, GRID_WIDTH
 
     def wheelEvent(self, event):
         """zoom_out = event.angleDelta().y() < 0
@@ -109,23 +116,27 @@ class GridController:
     def zoomIn(self):
         if self.rendering_monitor.zoom_factor < 16:
             self.rendering_monitor.zoom_factor *= 2
-            self.rendering_monitor.divideRenderingSize(2)
             self.graphical_grid.scale(2, 2)
+            real_rendered_area = self.graphical_grid.mapToScene(self.graphical_grid.viewport().rect()).boundingRect()
+            upper, lower, width, height = self.getCuboid(real_rendered_area)
+            self.rendering_monitor.setNewPoints(upper, lower, width, height)
+
+    def getCuboid(self, dim: QRectF):
+        upper_tile_i, upper_tile_j = self.getGridCoordinate(dim.x(), dim.y())
+        lower_tile_i, lower_tile_j = self.getGridCoordinate(dim.x() + dim.width(), dim.y() + dim.height())
+        width, height = self.getGridCoordinate(dim.width(), dim.height())
+        return [upper_tile_i, upper_tile_j], [lower_tile_i, lower_tile_j], width, height
 
     def zoomOut(self):
         if self.rendering_monitor.zoom_factor > 1/2:
             self.rendering_monitor.zoom_factor *= 0.5
-            self.rendering_monitor.multiplyRenderingSize(2)
             self.graphical_grid.scale(0.5, 0.5)
+            real_rendered_area = self.graphical_grid.mapToScene(self.graphical_grid.viewport().rect()).boundingRect()
+            upper, lower, width, height = self.getCuboid(real_rendered_area)
+            self.rendering_monitor.setNewPoints(upper, lower, width, height)
 
     def verticalScroll(self, value):
-        print(self.latest_vertical_value)
-        scrolled_percent = self.graphical_grid.getVerticalScrollBar().maximum() // value
-        print(scrolled_percent)
-        #highest_tile_y_pos = int(GRID_HEIGHT * scrolled_percent)
-        #print(value, self.vertical_scrollbar.maximum())
+        ...
 
     def horizontalScroll(self, value):
-        scrolled_percent = self.graphical_grid.getHorizontalScrollBar().maximum() // value
-        highest_tile_x_pos = int(GRID_WIDTH * scrolled_percent)
-        #print(value, self.horizontal_scrollbar.maximum())
+        ...

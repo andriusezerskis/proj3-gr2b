@@ -82,22 +82,22 @@ class RenderMonitor:
     def __init__(self):
         self.rendering_size = Point(GRID_WIDTH, GRID_HEIGHT)
         self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
-                                                        (GRID_WIDTH - self.rendering_size.x()) // 2],
+                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
                                         [(GRID_HEIGHT + self.rendering_size.y()) // 2,
-                                                        (GRID_WIDTH + self.rendering_size.x()) // 2])
+                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
         self.zoom_factor = 1.0
         self.zoom_step = 0.1
 
-    def left(self, dist=1, keep_on_screen=True):
+    def left(self, dist: int = 1, keep_on_screen: bool = True):
         return self.rendering_section.left_move(dist, keep_on_screen)
 
-    def right(self, dist=1, keep_on_screen=True):
+    def right(self, dist: int = 1, keep_on_screen: bool = True):
         return self.rendering_section.right_move(dist, keep_on_screen)
 
-    def up(self, dist=1, keep_on_screen=True):
+    def up(self, dist: int = 1, keep_on_screen: bool = True):
         return self.rendering_section.up_move(dist, keep_on_screen)
 
-    def down(self, dist=1, keep_on_screen=True):
+    def down(self, dist: int = 1, keep_on_screen: bool = True):
         return self.rendering_section.down_move(dist, keep_on_screen)
 
     def getFirstYVisible(self):
@@ -109,20 +109,9 @@ class RenderMonitor:
     def getRenderingSection(self):
         return self.rendering_section
 
-    def multiplyRenderingSize(self, factor):
-        self.rendering_size *= factor
-        #todo
-        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
-                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
-                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
-                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
-
-    def divideRenderingSize(self, factor):
-        self.rendering_size /= factor
-        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
-                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
-                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
-                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
+    def setNewPoints(self, upper_point: List[int], lower_point: List[int], width: int, height: int):
+        self.rendering_section = Cuboid(upper_point, lower_point)
+        self.rendering_size = Point(width, height)
 
     def centerOnPoint(self, point: Tuple[int, int]):
         i, j = point
