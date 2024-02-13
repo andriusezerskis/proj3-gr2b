@@ -103,13 +103,19 @@ class Simulation:
 
         match chosenAction:
             case Action.EAT:
-                ...
+                self.eat(entity)
             case Action.MOVE:
                 self.moveEntity(entity)
             case Action.REPRODUCE:
-                self.reproduce(entity)
+                self.reproduceEntity(entity)
 
-    def reproduce(self, entity: Entity):
+    def eat(self, entity: Entity):
+        assert isinstance(entity, Animal)
+        prey = entity.choosePrey()
+        entity.eat(prey)
+        self.addModifiedTiles(self.getEntityTile(prey))
+
+    def reproduceEntity(self, entity: Entity):
         mate = None
         if isinstance(entity, Animal):
             mate = entity.getMate()

@@ -21,6 +21,7 @@ class Entity(ABC):
         self.age = 0
         self.reproductionCooldown = 0
         self._validMovementTiles = None
+        self._adjacentEntities = None
 
     def __del__(self):
         Entity.count -= 1
@@ -39,9 +40,8 @@ class Entity(ABC):
         """
         :return: whether the entity can reproduce and with which entity it can do so
         """
-        return self.isFitForReproduction()
+        return self.isFitForReproduction() and len(self.getValidMovementTiles()) > 0
 
-    @abstractmethod
     def reproduce(self, other: Entity_ | None) -> Tile:
         """
         Reproduces and places the newborn in the grid
@@ -64,6 +64,7 @@ class Entity(ABC):
         self.age += 1
         self.reproductionCooldown = max(0, self.reproductionCooldown - 1)
         self._validMovementTiles = None
+        self._adjacentEntities = None
 
     def getAge(self):
         return self.age
@@ -79,6 +80,11 @@ class Entity(ABC):
         :return: The position of the tiles around the entity
         """
         return self.getGrid().getAdjacentTiles(self.getPos())
+
+    def getAdjacentEntities(self) -> list[Entity_]:
+        if not self._adjacentEntities:
+            self._adjacentEntities = [tile.getEntity() for tile in self.getAdjacentTiles() if tile.hasEntity()]
+        return self._adjacentEntities
 
     def getFreeAdjacentTiles(self) -> list[Tile]:
         """
@@ -115,6 +121,9 @@ class Entity(ABC):
     @staticmethod
     def setGrid(grid: Grid):
         Entity._grid = grid
+
+    def getTile(self) -> Tile:
+        return self.getGrid().getTile(self.getPos())
 
     def isFitForReproduction(self) -> bool:
         return self.getReproductionCooldown() == 0 and self.getAge() >= ENTITY_MIN_AGE_REPRODUCTION

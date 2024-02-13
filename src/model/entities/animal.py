@@ -5,7 +5,7 @@ from model.action import Action
 from abc import abstractmethod, ABC
 from overrides import override
 from random import choice
-from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION
+from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
 
 Tile = TypeVar("Tile")
 Animal_ = TypeVar("Animal_")
@@ -20,6 +20,14 @@ class Animal(Entity, ABC):
         self.hunger = 0
 
         self._potentialMates = None
+        self._adjacentPreys = None
+
+    @override
+    def evolve(self):
+        super().evolve()
+        self._potentialMates = None
+        self._adjacentPreys = None
+        self.hunger += 1
 
     def __del__(self):
         super().__del__()
@@ -27,6 +35,9 @@ class Animal(Entity, ABC):
 
     @override
     def chooseAction(self) -> Action:
+        if self.isHungry() and self.canEat():
+            return Action.EAT
+
         if self.canReproduce():
             return Action.REPRODUCE
 
@@ -35,6 +46,12 @@ class Animal(Entity, ABC):
             return Action.IDLE
 
         return Action.MOVE
+
+    def choosePrey(self) -> Entity:
+        return choice(self.getAdjacentPreys())
+
+    def canEat(self) -> bool:
+        return len(self.getAdjacentPreys()) > 0
 
     @override
     def chooseMove(self) -> Point:
@@ -47,35 +64,33 @@ class Animal(Entity, ABC):
     def getPreys() -> set[type]:
         ...
 
+    def eat(self, prey: Entity):
+        self.hunger = 0
+        prey.getTile().removeEntity()
+
     @override
     def isDead(self):
         return self.starvedToDeath() or self.isDeadByOldness()
 
-    @override
-    def evolve(self):
-        super().evolve()
-        self._potentialMates = None
-        # self.hunger += 1
-
     def getPotentialMates(self) -> list[Entity]:
         if not self._potentialMates:
-            self._potentialMates = [tile for tile in self.getAdjacentTiles()
-                                    if type(tile.getEntity()) == type(self) and tile.getEntity().isFitForReproduction()]
+            self._potentialMates = [entity for entity in self.getAdjacentEntities()
+                                    if type(entity) is type(self) and entity.isFitForReproduction()]
         return self._potentialMates
+
+    def getAdjacentPreys(self) -> list[Entity]:
+        if not self._adjacentPreys:
+            self._adjacentPreys = [entity for entity in self.getAdjacentEntities() if type(entity) in self.getPreys()]
+        return self._adjacentPreys
 
     @override
     def canReproduce(self) -> bool:
-        if not self.isFitForReproduction():
+        if not super().canReproduce():
             return False
 
         potentialMates = self.getPotentialMates()
         if len(potentialMates) == 0:
             # No potential mate
-            return False
-
-        babyTiles = self.getValidMovementTiles()
-        if len(babyTiles) == 0:
-            # No tile to place the newborn
             return False
 
         return True
@@ -100,7 +115,5 @@ class Animal(Entity, ABC):
     def getHunger(self) -> int:
         return self.hunger
 
-    def eat(self) -> None:
-        if self.hunger > 0:
-            # diminish hunger depending on the entity eaten (?)
-            self.hunger = 0
+    def isHungry(self) -> bool:
+        return self.getHunger() > ENTITY_HUNGRY_THRESHOLD

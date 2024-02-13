@@ -20,7 +20,6 @@ class Plant(Entity, ABC):
 
     @override
     def chooseAction(self) -> Action:
+        if random() < 0.1 and len(self.getValidMovementTiles()) > 0:
+            return Action.REPRODUCE
         return Action.IDLE
-
-    def reproduce(self) -> None:
-        return True if random() < 0.5 else False

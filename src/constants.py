@@ -8,6 +8,7 @@ Date: December 2023
 STEP_TIME = 2000
 
 # Entities
+ENTITY_HUNGRY_THRESHOLD = 10
 ENTITY_MAX_AGE = 24 * 5
 ENTITY_MAX_HUNGER = 24
 # Reproduction
