@@ -59,48 +59,63 @@ class GraphicalTile:
 
 class GraphicalGrid(QGraphicsView):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, rendering_monitor: RenderMonitor):
+    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
         self.simulation = simulation
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
-        self.rendering_monitor = rendering_monitor
+        self.renderingMonitor = renderingMonitor
 
         self.setMouseTracking(True)
-        self.zoom_factor = 1.0
-        self.zoom_step = 0.1
+        self.zoomFactor = 1.0
+        self.zoomStep = 0.1
 
         self.size = 2048, 2048
-        self.grid_size = grid_size
-        self.pixmap_items: List[List[GraphicalTile]] = \
-            [[GraphicalTile(i, j) for j in range(self.grid_size[0])]
-             for i in range(self.grid_size[1])]
+        self.gridSize = grid_size
+        self.pixmapItems: List[List[GraphicalTile]] = \
+            [[GraphicalTile(i, j) for j in range(self.gridSize[0])]
+             for i in range(self.gridSize[1])]
         self._addPixmapItems()
-        self.pixmap_from_path = {}
+        self.pixmapFromPath = {}
 
         start_time = time.time()
         self.drawGrid(grid)
+        self.initHighlightedTile()
+
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         self.scale(0.01, 0.01)
         self.initNightMode()
+
+    def initHighlightedTile(self):
+        self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
+        self.scene.addItem(self.highlitedTile)
+        self.chosenEntity = None
+        self.highlitedTile.hide()
 
     def initNightMode(self):
         self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
-        pixmap_width = self.luminosityMode.pixmap().width()
-        scene_width, scene_height = self.size
+        pixmapWidth = self.luminosityMode.pixmap().width()
+        sceneWidth, sceneHeight = self.size
 
-        scale = scene_width / pixmap_width if pixmap_width > 0 else 1
+        scale = sceneWidth / pixmapWidth if pixmapWidth > 0 else 1
         self.luminosityMode.setScale(scale * GRID_HEIGHT)
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
+        highlightedFlag = False
         for tile in updated_tiles:
-            if tile.getIndex() in self.rendering_monitor.getRenderingSection():
+            if tile.getIndex() in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
+                if tile.hasEntity() and tile.getEntity().getHighlighted():
+                    print("ici")
+                    self._drawHighlightedTile(tile)
+                    highlightedFlag = True
+        if not highlightedFlag and self.highlitedTile:
+            self.highlitedTile.hide()
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
@@ -112,27 +127,33 @@ class GraphicalGrid(QGraphicsView):
 
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()
-        self.pixmap_items[i][j].getTerrain().setPixmap(self.getPixmap(tile))
+        self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
     def _drawEntities(self, tile):
-        if tile in self.rendering_monitor.getRenderingSection():
+        if tile in self.renderingMonitor.getRenderingSection():
             i, j = tile.getIndex()
             if tile.getEntity():
-                self.pixmap_items[i][j].getEntity().setPixmap(
+                self.pixmapItems[i][j].getEntity().setPixmap(
                     self.getPixmap(tile.getEntity()))
             else:
-                self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+                self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+
+    def _drawHighlightedTile(self, tile):
+        i, j = tile.getIndex()
+        self.highlitedTile.setPos(j * 2048, i * 2048)
+        self.highlitedTile.setScale(1)
+        self.highlitedTile.show()
 
     def _removeEntity(self, i, j):
-        self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
-            self.pixmap_items[i][j].DisableEntityRendering()
-            self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+            self.pixmapItems[i][j].DisableEntityRendering()
+            self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
         for i, j in won:
-            self.pixmap_items[i][j].EnableEntityRendering()
+            self.pixmapItems[i][j].EnableEntityRendering()
             self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
     def nightMode(self, hour):
@@ -154,44 +175,35 @@ class GraphicalGrid(QGraphicsView):
 
     def movePlayer(self, old_pos, new_pos):
         i, j = old_pos
-        self.pixmap_items[i][j].getEntity().setPixmap(QPixmap())
+        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(
             Point(new_pos[1], new_pos[0])))
 
     def getPixmap(self, tile):
-        if tile.getTexturePath() not in self.pixmap_from_path:
+        if tile.getTexturePath() not in self.pixmapFromPath:
             pixmap = QPixmap(tile.getTexturePath())
             pixmap = pixmap.scaled(self.size[0], self.size[1])
-            self.pixmap_from_path[tile.getTexturePath()] = pixmap
+            self.pixmapFromPath[tile.getTexturePath()] = pixmap
             return pixmap
-        return self.pixmap_from_path[tile.getTexturePath()]
+        return self.pixmapFromPath[tile.getTexturePath()]
 
     def removeRenderedEntities(self):
-        for i, j in self.rendering_monitor.getRenderingSection():
-            if self.pixmap_items[i][j][1] is not None:
+        for i, j in self.renderingMonitor.getRenderingSection():
+            if self.pixmapItems[i][j][1] is not None:
                 self._removeEntity(i, j)
 
     def renderEntities(self):
-        for i, j in self.rendering_monitor.getRenderingSection():
+        for i, j in self.renderingMonitor.getRenderingSection():
             print(i, j)
             self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
-        for i, line in enumerate(self.pixmap_items):
-            for j, graphical_tile in enumerate(line):
-                if (i, j) in self.rendering_monitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
-                    graphical_tile.EnableEntityRendering()
-                for label in graphical_tile:
+        for i, line in enumerate(self.pixmapItems):
+            for j, graphicalTile in enumerate(line):
+                if (i, j) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
+                    graphicalTile.EnableEntityRendering()
+                for label in graphicalTile:
                     self.scene.addItem(label)
-
-    """@staticmethod
-    def drawEntityInfo(entity: Entity):
-        entity_info = f"Age: {entity.getAge()}\nHunger: {entity.getHunger()}"
-        messageBox = QMessageBox()
-        messageBox.setWindowTitle("Entity Information")
-        messageBox.setText(entityInfo)
-        messageBox.setWindowIcon(QIcon(entity.getTexturePath()))
-        messageBox.exec()"""
 
     # Redirection of PYQT events to the controller
 
