@@ -19,7 +19,7 @@ class Entity(ABC):
         self.pos = pos
         Entity.count += 1
         self.age = 0
-        self.hunger = 0
+        self.reproductionCooldown = 0
         self.highlighted = False
         self.reproductionCooldown = 0
         self._validMovementTiles = None
