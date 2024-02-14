@@ -40,10 +40,13 @@ class EntityInfoView(QDockWidget):
                 if i != len(preys) - 1:
                     baseText += ", "
                 i += 1
+            baseText += "\n"
+            baseText += f"{entity.count} {ENTITIES_NAMES_TRANSLATION[entity.__class__.__name__].lower()}s\n"
             self.progressBar.setFormat("Faim")
             self.progressBar.setValue(entity.getHunger())
         else:
             self.progressBar.hide()
+            baseText += f"{entity.count} {ENTITIES_NAMES_TRANSLATION[entity.__class__.__name__].lower()}s\n"
         self.infoLabel.setText(baseText)
         print(entity.getPos())
         if entity.isDead():
