@@ -41,6 +41,7 @@ class EntityInfoView(QDockWidget):
         else:
             self.progressBar.hide()
         self.infoLabel.setText(baseText)
+        print(entity.getPos())
         if entity.isDead():
             self.showDeadEntity()
 

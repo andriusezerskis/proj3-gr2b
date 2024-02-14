@@ -62,7 +62,7 @@ class MainWindowController:
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
             # self.controlEntity(tile)
-            if self.graphicalGrid.chosenEntity != tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
+            if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
                 self.graphicalGrid.chosenEntity.setHighlighted(False)
             self.mainWindow.dock2.setEntity(tile.getEntity())
             self.mainWindow.dock2.update()

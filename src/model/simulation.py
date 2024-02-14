@@ -40,6 +40,7 @@ class Simulation:
 
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
+        self.updatedEntities: set[Entity] = set()
         self.player = None
         self.renderMonitor = RenderMonitor()
 
@@ -71,6 +72,7 @@ class Simulation:
 
     def step(self) -> None:
         self.modifiedTiles = set()
+        self.updatedEntities = set()
         self.stepCount += 1
         print("Step " + str(self.stepCount))
         t = time.time()
@@ -78,8 +80,9 @@ class Simulation:
 
         for tile in self.grid:
             entity = tile.getEntity()
-            if entity and not isinstance(entity, Player):
+            if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
                 self.evolution(entity)
+                self.updatedEntities.add(entity)
 
         print(f"compute time : {time.time() - t}")
 
@@ -119,6 +122,8 @@ class Simulation:
         mate = None
         if isinstance(entity, Animal):
             mate = entity.getMate()
+            # the mate has done an action this timestep
+            self.updatedEntities.add(mate)
         newBornTile = entity.reproduce(mate)
         self.addModifiedTiles(newBornTile)
 
