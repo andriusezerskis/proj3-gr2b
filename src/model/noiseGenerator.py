@@ -9,6 +9,7 @@ class NoiseGenerator:
 
     def __init__(self):
         self.noises = []
+        self.noiseDict = dict()
         self.weightSum = 0
 
     def addNoise(self, octaves: int, weight: float) -> None:
@@ -25,11 +26,8 @@ class NoiseGenerator:
         if self.weightSum <= 0:
             raise "The sum of the weights of the noise functions must be > 0"
 
-        return sum([noise([x, y]) * weight for noise, weight in self.noises]) / self.weightSum
+        if (x, y) in self.noiseDict:
+            return self.noiseDict[x, y]
+        self.noiseDict[x, y] = sum([noise([x, y]) * weight for noise, weight in self.noises]) / self.weightSum
+        return self.noiseDict[x, y]
 
-    def sample3D(self, x: float, y: float, z: float) -> float:
-        assert 0 <= x <= 1 and 0 <= y <= 1 and 0 <= z <= 1
-        if self.weightSum <= 0:
-            raise "The sum of the weights of the noise functions must be > 0"
-
-        return sum([noise([x, y, z]) * weight for noise, weight in self.noises]) / self.weightSum

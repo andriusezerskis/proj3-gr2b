@@ -1,18 +1,18 @@
 from overrides import override
 from model.terrains.tile import Tile
 
-from constants import SAND_TEXTURE_PATH
+from constants import MOUNTAIN_TEXTURE_PATH
 
 
-class Sand(Tile):
+class Mountain(Tile):
 
     @staticmethod
     @override
     def getTexturePath() -> str:
-        return SAND_TEXTURE_PATH
+        return MOUNTAIN_TEXTURE_PATH
 
     def __repr__(self):
-        return f"Sand({self.pos})"
+        return f"Mountain({self.pos})"
 
     def __str__(self):
-        return "S"
+        return "M"
