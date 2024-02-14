@@ -40,7 +40,7 @@ class Simulation:
 
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
-        self.player = None
+        self.player = Player(Point(-1, -1))
         self.renderMonitor = RenderMonitor()
 
         self.water_level = WATER_LEVEL

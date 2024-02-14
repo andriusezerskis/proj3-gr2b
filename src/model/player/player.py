@@ -1,3 +1,4 @@
+from copy import copy
 from typing import Tuple
 
 from model.action import Action
@@ -15,30 +16,26 @@ class Player(Entity):
     def __init__(self, pos: Point):
         super().__init__(pos)
         self.claimed_entity: Entity | None = None
-        self.position: Tuple[int, int] | None = None
         self.health = 0
 
     def isPlaying(self):
         return self.claimed_entity is not None
 
-    def getPosition(self):
-        return self.position
-
     def setClaimedEntity(self, tile: Tile):
         self.claimed_entity = tile.getEntity()
-        self.position = tile.getIndex()
+        self.pos = tile.getPos()
         tile.removeEntity()
         tile.setEntity(self)
 
-    def move(self, movement: Tuple[int, int]):
-        old_position = Point(self.position[1], self.position[0])
-        wanted_position = Point(self.position[1] + movement[1], self.position[0] + movement[0])
+    def move(self, movement: Point):
+        old_position = copy(self.pos)
+        wanted_position = self.pos + movement
         if (self.getGrid().isInGrid(wanted_position.y(), wanted_position.x())
                 and not self.getGrid().getTile(wanted_position).hasEntity()
                 and type(self.getGrid().getTile(wanted_position)) in self.getValidTiles()):
             self.getGrid().getTile(old_position).removeEntity()
             self.getGrid().getTile(wanted_position).setEntity(self)
-            self.position = wanted_position.y(), wanted_position.x()
+            self.pos = wanted_position
             return True
         return False
 

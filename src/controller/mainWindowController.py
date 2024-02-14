@@ -33,41 +33,32 @@ class MainWindowController:
         match event.key():
             # player
             case Qt.Key.Key_Z:
-                if self.simulation.hasPlayer():
-                    pos = self.simulation.getPlayer().getPosition()
-                    if self.simulation.getPlayer().move((-1, 0)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.up(False))
+                self.move_player(Point(0, -1))
             case Qt.Key.Key_Q:
-                if self.simulation.hasPlayer():
-                    pos = self.simulation.getPlayer().getPosition()
-                    if self.simulation.getPlayer().move((0, -1)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.left(False))
+                self.move_player(Point(-1, 0))
             case Qt.Key.Key_S:
-                if self.simulation.hasPlayer():
-                    pos = self.simulation.getPlayer().getPosition()
-                    if self.simulation.getPlayer().move((1, 0)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.down(False))
+                self.move_player(Point(0, 1))
             case Qt.Key.Key_D:
-                if self.simulation.hasPlayer():
-                    pos = self.simulation.getPlayer().getPosition()
-                    if self.simulation.getPlayer().move((0, 1)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.right(False))
+                self.move_player(Point(1, 0))
+
+    def move_player(self, movement):
+        if self.simulation.hasPlayer():
+            pos = self.simulation.getPlayer().getPos()
+            if self.simulation.getPlayer().move(movement):
+                self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPos())
+                self.graphicalGrid.initSmoothScroll(movement)
 
     def mousePressEvent(self, event):
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
-            # self.controlEntity(tile)
-            if self.graphicalGrid.chosenEntity != tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
+            self.controlEntity(tile)
+            """if self.graphicalGrid.chosenEntity != tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
                 self.graphicalGrid.chosenEntity.setHighlighted(False)
             self.mainWindow.dock2.setEntity(tile.getEntity())
             self.mainWindow.dock2.update()
             tile.getEntity().setHighlighted(True)
-            self.graphicalGrid.chosenEntity = tile.getEntity()
+            self.graphicalGrid.chosenEntity = tile.getEntity()"""
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():

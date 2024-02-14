@@ -1,7 +1,9 @@
 import time
 from typing import Tuple, Set, List
 
-from src.utils import Point
+from PyQt6.QtCore import QTimer
+
+from utils import Point
 
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import *
@@ -97,6 +99,8 @@ class GraphicalGrid(QGraphicsView):
 
         self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
         self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
+
+        self.timers: List[List[QTimer | None | int]] = [[None, 0] for _ in range(4)]
 
     def initHighlightedTile(self):
         self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
@@ -226,15 +230,13 @@ class GraphicalGrid(QGraphicsView):
             self.luminosityMode.setPixmap(QPixmap())
         elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT:
             self.luminosityMode.setOpacity(opacity + 0.1)
-
-        elif hour > MIDDLE_OF_THE_NIGHT and hour < NIGHT_MODE_FINISH:
+        elif MIDDLE_OF_THE_NIGHT < hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, old_pos, new_pos):
-        i, j = old_pos
+        i, j = old_pos.y(), old_pos.x()
         self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
-        self._drawEntities(self.simulation.getGrid().getTile(
-            Point(new_pos[1], new_pos[0])))
+        self._drawEntities(self.simulation.getGrid().getTile(new_pos))
 
     def getPixmap(self, tile):
         if tile.getTexturePath() not in self.pixmapFromPath:
@@ -302,3 +304,54 @@ class GraphicalGrid(QGraphicsView):
         #else:
         #    self.renderingMonitor.right(nb_scrolled_tiles)
 
+    def moveVerticalScrollBarPositively(self):
+        if self.timers[0][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
+            self.timers[0][0].stop()
+        step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
+        self.vertical_scrollbar.setValue(self.vertical_scrollbar.value() + step)
+        self.timers[0][1] += step
+
+    def moveVerticalScrollBarNegatively(self):
+        if self.timers[1][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
+            self.timers[1][0].stop()
+        step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
+        self.vertical_scrollbar.setValue(self.vertical_scrollbar.value() - step)
+        self.timers[1][1] += step
+
+    def moveHorizontalScrollBarPositively(self):
+        if self.timers[2][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
+            self.timers[2][0].stop()
+        step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
+        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() + step)
+        self.timers[2][1] += step
+
+    def moveHorizontalScrollBarNegatively(self):
+        if self.timers[3][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
+            self.timers[3][0].stop()
+        step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
+        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() - step)
+        self.timers[3][1] += step
+
+    def initSmoothScroll(self, movement: Point):
+        # TODO si on appuie trop rapidemment, la caméra ne suivra pas assez bien
+        #  solutions : lock du clavier, ou augementer la distance avant la fin du timer à chaque input
+        timer = QTimer()
+        timer.setInterval(1)
+        if movement == Point(0, 1):
+            self.timers[0] = [timer, 0]
+            timer.timeout.connect(self.moveVerticalScrollBarPositively)
+        elif movement == Point(0, -1):
+            self.timers[1] = [timer, 0]
+            timer.timeout.connect(self.moveVerticalScrollBarNegatively)
+        elif movement == Point(1, 0):
+            self.timers[2] = [timer, 0]
+            timer.timeout.connect(self.moveHorizontalScrollBarPositively)
+        elif movement == Point(-1, 0):
+            self.timers[3] = [timer, 0]
+            timer.timeout.connect(self.moveHorizontalScrollBarNegatively)
+
+        timer.start()
+
+    def moveHorizontalScrollBar(self, nb_tiles):
+        tile_size = int((1000/100) * self.renderingMonitor.zoom_factor)
+        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() + nb_tiles * tile_size)
