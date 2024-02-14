@@ -72,9 +72,9 @@ class MainWindowController:
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
-            self.graphicalGrid.removeRenderedEntities()
+            self.graphicalGrid.removeRenderedSection()
             self.renderingMonitor.centerOnPoint(tile.getIndex())
-            self.graphicalGrid.renderEntities()
+            self.graphicalGrid.renderSection()
 
     def getClickedTile(self, x, y) -> Tile | bool:
         """return false if there is no tile at (x, y) coord"""

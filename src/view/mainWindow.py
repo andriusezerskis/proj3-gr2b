@@ -67,7 +67,7 @@ class Window(QMainWindow):
         self.commands = CommandWindow(self)
         #self.showMaximized()
         #TODO
-        self.setFixedSize(1920, 1080)
+        #self.setFixedSize(1920, 1080)
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2.view)

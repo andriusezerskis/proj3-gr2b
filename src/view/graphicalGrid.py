@@ -197,6 +197,13 @@ class GraphicalGrid(QGraphicsView):
     def _removeEntity(self, i, j):
         self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
 
+    def _removeTerrain(self, i, j):
+        self.pixmapItems[i][j].getTerrain().setPixmap(QPixmap())
+
+    def _removeTile(self, i, j):
+        self._removeEntity(i, j)
+        self._removeTerrain(i, j)
+
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
         lost, won = cuboids
         for i, j in lost:
@@ -237,14 +244,13 @@ class GraphicalGrid(QGraphicsView):
             return pixmap
         return self.pixmapFromPath[tile.getTexturePath()]
 
-    def removeRenderedEntities(self):
+    def removeRenderedSection(self):
         for i, j in self.renderingMonitor.getRenderingSection():
-            if self.pixmapItems[i][j][1] is not None:
-                self._removeEntity(i, j)
+            self._removeTile(i, j)
 
-    def renderEntities(self):
+    def renderSection(self):
         for i, j in self.renderingMonitor.getRenderingSection():
-            self._drawEntities(self.simulation.getGrid().getTile(Point(j, i)))
+            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
         for i, line in enumerate(self.pixmapItems):
@@ -269,19 +275,30 @@ class GraphicalGrid(QGraphicsView):
         return self.horizontal_scrollbar
 
     def verticalScroll(self, value):
-        square_size = (10 * self.renderingMonitor.zoom_factor)
-        nb_scrolled_tiles: int = int((value - self.latest_vertical_value) // square_size)
-        self.latest_vertical_value: int = int((value // square_size) * square_size)
-        if nb_scrolled_tiles < 0:
-            self.renderingMonitor.up(abs(nb_scrolled_tiles))
-        else:
-            self.renderingMonitor.down(nb_scrolled_tiles)
+        #square_size = (10 * self.renderingMonitor.zoom_factor)
+        #nb_scrolled_tiles: int = int((value - self.latest_vertical_value) // square_size)
+        #self.latest_vertical_value: int = int((value // square_size) * square_size)
+        #if nb_scrolled_tiles < 0:
+        #    self.renderingMonitor.up(abs(nb_scrolled_tiles))
+        #else:
+        #    self.renderingMonitor.down(nb_scrolled_tiles)
+        self.removeRenderedSection()
+        MainWindowController.getInstance().recomputeCuboid()
+        self.renderSection()
 
     def horizontalScroll(self, value):
-        square_size = (10 * self.renderingMonitor.zoom_factor)
-        nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
-        self.latest_horizontal_value: int = int((value // square_size) * square_size)
-        if nb_scrolled_tiles < 0:
-            self.renderingMonitor.left(abs(nb_scrolled_tiles))
-        else:
-            self.renderingMonitor.right(nb_scrolled_tiles)
+        # square_size = (10 * self.renderingMonitor.zoom_factor)
+        # nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
+        # self.latest_horizontal_value: int = int((value // square_size) * square_size)
+        # if nb_scrolled_tiles < 0:
+        self.removeRenderedSection()
+        MainWindowController.getInstance().recomputeCuboid()
+        self.renderSection()
+        #square_size = (10 * self.renderingMonitor.zoom_factor)
+        #nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
+        #self.latest_horizontal_value: int = int((value // square_size) * square_size)
+        #if nb_scrolled_tiles < 0:
+        #    self.renderingMonitor.left(abs(nb_scrolled_tiles))
+        #else:
+        #    self.renderingMonitor.right(nb_scrolled_tiles)
+
