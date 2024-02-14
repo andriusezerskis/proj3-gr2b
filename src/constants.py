@@ -87,3 +87,7 @@ MOUNTAIN_TEXTURE_PATH = f"{TILES_FOLDER_PATH}/mountain.png"
 NIGHT_MODE = f"{TEXTURE_FOLDER_PATH}/nightFilter.png"
 SUNSET_MODE = f"{TEXTURE_FOLDER_PATH}/sunset.png"
 HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
+
+
+# Translation of entities' names
+ENTITIES_NAMES_TRANSLATION = {"Algae": "Algue", "Fish": "Poisson", "Human": "Humain", "Tree": "Arbre", "Crab": "Crabe"}
