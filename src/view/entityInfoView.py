@@ -11,6 +11,7 @@ from controller.mainWindowController import MainWindowController
 
 class EntityInfoView(QDockWidget):
     def __init__(self, dock, container):
+        super().__init__()
         self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
