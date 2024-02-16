@@ -58,11 +58,11 @@ class GraphicalGrid(QGraphicsView):
 
         self.changeStyleSheet()
 
-        self.horizontal_scrollbar = self.horizontalScrollBar()
-        self.vertical_scrollbar = self.verticalScrollBar()
+        self.horizontalScrollbar = self.horizontalScrollBar()
+        self.verticalScrollbar = self.verticalScrollBar()
 
-        self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
-        self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
+        self.horizontalScrollbar.valueChanged.connect(self.horizontalScroll)
+        self.verticalScrollbar.valueChanged.connect(self.verticalScroll)
 
         self.timers: List[List[QTimer | None | int]] = [
             [None, 0] for _ in range(4)]
@@ -125,11 +125,14 @@ class GraphicalGrid(QGraphicsView):
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
-    def updateGrid(self, updated_tiles: Set[Tile]):
-        for tile in updated_tiles:
+    def updateGrid(self, updatedTiles: Set[Tile]):
+        for tile in updatedTiles:
             if tile.getIndex() in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
 
+        self.updateHighlighted()
+
+    def updateHighlighted(self):
         if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
         else:
@@ -235,10 +238,10 @@ class GraphicalGrid(QGraphicsView):
         MainWindowController.getInstance().mousePressEvent(event)
 
     def getVerticalScrollBar(self):
-        return self.vertical_scrollbar
+        return self.verticalScrollbar
 
     def getHorizontalScrollBar(self):
-        return self.horizontal_scrollbar
+        return self.horizontalScrollbar
 
     def verticalScroll(self):
         self.removeRenderedSection()
@@ -254,32 +257,32 @@ class GraphicalGrid(QGraphicsView):
         if self.timers[0][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[0][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.vertical_scrollbar.setValue(
-            self.vertical_scrollbar.value() + step)
+        self.verticalScrollbar.setValue(
+            self.verticalScrollbar.value() + step)
         self.timers[0][1] += step
 
     def moveVerticalScrollBarNegatively(self):
         if self.timers[1][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[1][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.vertical_scrollbar.setValue(
-            self.vertical_scrollbar.value() - step)
+        self.verticalScrollbar.setValue(
+            self.verticalScrollbar.value() - step)
         self.timers[1][1] += step
 
     def moveHorizontalScrollBarPositively(self):
         if self.timers[2][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[2][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.horizontal_scrollbar.setValue(
-            self.horizontal_scrollbar.value() + step)
+        self.horizontalScrollbar.setValue(
+            self.horizontalScrollbar.value() + step)
         self.timers[2][1] += step
 
     def moveHorizontalScrollBarNegatively(self):
         if self.timers[3][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[3][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.horizontal_scrollbar.setValue(
-            self.horizontal_scrollbar.value() - step)
+        self.horizontalScrollbar.setValue(
+            self.horizontalScrollbar.value() - step)
         self.timers[3][1] += step
 
     def initSmoothScroll(self, movement: Point):
@@ -304,5 +307,5 @@ class GraphicalGrid(QGraphicsView):
 
     def setScrollBars(self, point: Point):
         tile_size = int((1000/100) * self.renderingMonitor.zoom_factor)
-        self.horizontal_scrollbar.setValue(point.x() * tile_size)
-        self.vertical_scrollbar.setValue(point.y() * tile_size)
+        self.horizontalScrollbar.setValue(point.x() * tile_size)
+        self.verticalScrollbar.setValue(point.y() * tile_size)

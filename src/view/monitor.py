@@ -28,16 +28,16 @@ class MonitorWindow:
         # -> peut être le changer en stacked layout plus tard
         # ou ajouter un truc QSpinBox à côté de rayon
         # 1 case = rayon de 1 enfaite
-        self.layout_2 = QHBoxLayout()
-        self.check_zone = self.check_box()
-        self.check_cata = self.check_box_2()
+        self.layout2 = QHBoxLayout()
+        self.checkZone = self.check_box()
+        self.checkCata = self.check_box_2()
 
-        self.layout_2.addWidget(self.check_zone)
-        self.layout_2.addWidget(self.check_cata)
+        self.layout2.addWidget(self.checkZone)
+        self.layout2.addWidget(self.checkCata)
 
-        self.second_container = QWidget()
-        self.second_container.setLayout(self.layout_2)
-        self.layout.addWidget(self.second_container)
+        self.container2 = QWidget()
+        self.container2.setLayout(self.layout2)
+        self.layout.addWidget(self.container2)
 
         button = QPushButton("OK")
         button.clicked.connect(self.lol)

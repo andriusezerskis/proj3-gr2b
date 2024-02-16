@@ -13,16 +13,16 @@ class MainWindowController:
     """Singleton"""
     instance = None
 
-    def __new__(cls, graphical_grid, simulation, rendering_monitor, main_window):
+    def __new__(cls, graphical_grid, simulation, renderingMonitor, mainWindow):
         if cls.instance is None:
             cls.instance = object.__new__(cls)
             cls.graphicalGrid = graphical_grid
-            cls.mainWindow = main_window
+            cls.mainWindow = mainWindow
             cls.simulation = simulation
-            cls.renderingMonitor = rendering_monitor
+            cls.renderingMonitor = renderingMonitor
             cls.size = [2048, 2048]
-            cls.latest_vertical_value = rendering_monitor.getFirstYVisible()
-            cls.latest_horizontal_value = rendering_monitor.getFirstXVisible()
+            cls.latest_vertical_value = renderingMonitor.getFirstYVisible()
+            cls.latest_horizontal_value = renderingMonitor.getFirstXVisible()
         return cls.instance
 
     @staticmethod
@@ -72,6 +72,8 @@ class MainWindowController:
                 self.graphicalGrid.chosenEntity = None
                 self.mainWindow.entityController.setEntity(None)
                 self.mainWindow.entityController.update()
+
+            self.graphicalGrid.updateHighlighted()
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
