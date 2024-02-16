@@ -189,20 +189,16 @@ class Window(QMainWindow):
         self.layout.addWidget(self.buttonOpenDock,
                               alignment=Qt.AlignmentFlag.AlignLeft)
         self.layout.addStretch()
-        self.layout.addWidget(self.pauseButton)
-        self.layout.addWidget(self.fastFbutton)
-        self.layout.addWidget(self.timebutton)
-        self.layout.addWidget(self.commandsButton)
-        self.layout.addWidget(self.zoomInButton)
-        self.layout.addWidget(self.zoomOutButton)
+        self.layout.addWidget(
+            self.pauseButton, alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(
+            self.fastFbutton,  alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(
+            self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(
+            self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.layout.addWidget(
+            self.zoomInButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+        self.layout.addWidget(
+            self.zoomOutButton,   alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addStretch()
-
-        self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(
-            self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        self.layout.setAlignment(
-            self.zoomInButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
-        self.layout.setAlignment(
-            self.zoomOutButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
