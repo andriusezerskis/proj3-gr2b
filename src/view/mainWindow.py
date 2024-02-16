@@ -152,7 +152,7 @@ class Window(QMainWindow):
     def commandsCallback(self):
         self.commands.show()
 
-    def pauseMusicButton(self):
+    def pauseMusic(self):
         if self.pauseMusic:
             mixer.music.unpause()
             self.pauseMusic = False
@@ -174,7 +174,7 @@ class Window(QMainWindow):
         self.timebutton = QPushButton("00:00:00")
 
         self.pauseMusicButton = QPushButton("Mute Music")
-        self.pauseMusicButton.clicked.connect(self.pauseMusicButton)
+        self.pauseMusicButton.clicked.connect(self.pauseMusic)
 
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)
