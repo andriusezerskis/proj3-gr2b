@@ -7,30 +7,13 @@ from constants import *
 
 from model.entities.human import Human
 from model.simulation import Simulation
+from view.commandsWindow import CommandWindow
 
 from view.graphicalGrid import GraphicalGrid
-from view.entityInfoView import EntityInfoView
 from view.monitor import MonitorWindow
 
 from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
-
-
-class CommandWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(CommandWindow, self).__init__(parent)
-        self.layout = QHBoxLayout()
-        self.setWindowTitle(COMMANDS_WINDOW_TITLE)
-
-        self.central_widget: QWidget = QWidget()
-        self.central_widget.setLayout(self.layout)
-        self.setCentralWidget(self.central_widget)
-
-        self.createCommands()
-
-    def createCommands(self):
-        self.firstCommand = QLabel(MOVE_CAMERA_UP)
-        self.layout.addWidget(self.firstCommand)
 
 
 class CustomQDock(QDockWidget):

@@ -16,48 +16,12 @@ from model.renderMonitor import Cuboid
 
 from controller.mainWindowController import MainWindowController
 
+from view.graphicalTile import GraphicalTile
+
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
     MIDDLE_OF_THE_NIGHT, GRID_HEIGHT, HIGHLIGHTED_TILE
 from src.model.simulation import Simulation
-
-
-class GraphicalTile:
-    def __init__(self, i: int, j: int):
-        self.position = (i, j)
-        self.terrain = QGraphicsPixmapItem()
-        self.terrain.setPos(j * 2048, i * 2048)
-        self.entity = QGraphicsPixmapItem()
-        self.entity.setPos(j * 2048, i * 2048)
-
-        self.allows_entity_rendering = False
-
-    def getTerrain(self):
-        return self.terrain
-
-    def getEntity(self):
-        return self.entity
-
-    def mayRenderEntity(self):
-        return self.allows_entity_rendering
-
-    def EnableEntityRendering(self):
-        self.allows_entity_rendering = True
-
-    def DisableEntityRendering(self):
-        self.allows_entity_rendering = False
-
-    def __iter__(self):
-        yield self.terrain
-        yield self.entity
-
-    def __getitem__(self, item):
-        if item == 0:
-            return self.terrain
-        elif item == 1:
-            return self.entity
-        else:
-            raise IndexError
 
 
 class GraphicalGrid(QGraphicsView):
@@ -87,8 +51,9 @@ class GraphicalGrid(QGraphicsView):
 
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
-        self.scale(10/2048, 10/2048)  # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
-        #self.scene.moveToThread()
+        # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
+        self.scale(10/2048, 10/2048)
+        # self.scene.moveToThread()
         self.initNightMode()
 
         self.changeStyleSheet()
@@ -99,7 +64,8 @@ class GraphicalGrid(QGraphicsView):
         self.horizontal_scrollbar.valueChanged.connect(self.horizontalScroll)
         self.vertical_scrollbar.valueChanged.connect(self.verticalScroll)
 
-        self.timers: List[List[QTimer | None | int]] = [[None, 0] for _ in range(4)]
+        self.timers: List[List[QTimer | None | int]] = [
+            [None, 0] for _ in range(4)]
 
     def initHighlightedTile(self):
         self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
@@ -291,28 +257,32 @@ class GraphicalGrid(QGraphicsView):
         if self.timers[0][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[0][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.vertical_scrollbar.setValue(self.vertical_scrollbar.value() + step)
+        self.vertical_scrollbar.setValue(
+            self.vertical_scrollbar.value() + step)
         self.timers[0][1] += step
 
     def moveVerticalScrollBarNegatively(self):
         if self.timers[1][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[1][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.vertical_scrollbar.setValue(self.vertical_scrollbar.value() - step)
+        self.vertical_scrollbar.setValue(
+            self.vertical_scrollbar.value() - step)
         self.timers[1][1] += step
 
     def moveHorizontalScrollBarPositively(self):
         if self.timers[2][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[2][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() + step)
+        self.horizontal_scrollbar.setValue(
+            self.horizontal_scrollbar.value() + step)
         self.timers[2][1] += step
 
     def moveHorizontalScrollBarNegatively(self):
         if self.timers[3][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
             self.timers[3][0].stop()
         step = int((1000/100) * self.renderingMonitor.zoom_factor / 10)
-        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() - step)
+        self.horizontal_scrollbar.setValue(
+            self.horizontal_scrollbar.value() - step)
         self.timers[3][1] += step
 
     def initSmoothScroll(self, movement: Point):
@@ -339,4 +309,3 @@ class GraphicalGrid(QGraphicsView):
         tile_size = int((1000/100) * self.renderingMonitor.zoom_factor)
         self.horizontal_scrollbar.setValue(point.x() * tile_size)
         self.vertical_scrollbar.setValue(point.y() * tile_size)
-
