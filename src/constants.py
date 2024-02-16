@@ -41,13 +41,22 @@ NB_STEP_BEFORE_UPDATE = 10
 # for instance, Water tiles are found from height -1 to WATER_LEVEL
 # Sand tiles are found from height WATER_LEVEL to SAND_LEVEL
 WATER_LEVEL = 0
-SAND_LEVEL = 0.03
+SAND_LEVEL = 0.1
 LAND_LEVEL = 0.75
 MOUNTAIN_LEVEL = 1
 # the water level will oscillate between WATER_LEVEL and MAX_WATER_LEVEL in a sinusoidal manner
 # WATER_LEVEL < MAX_WATER_LEVEL < SAND_LEVEL
 MAX_WATER_LEVEL = 0.015
 DAY_DURATION = 24
+
+# # Entity generation
+# the probability that a tile does not contain any entity at generation
+EMPTY_TILE_PROBABILITY_GENERATION = 0.75
+ENTITY_WEIGHTS = {"Human": 0.5,
+                  "Fish": 0.5,
+                  "Algae": 1,
+                  "Tree": 1,
+                  "Crab": 0.2}
 
 # NIGHT MODE
 NIGHT_MODE_START = 20

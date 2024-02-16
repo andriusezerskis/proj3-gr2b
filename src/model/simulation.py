@@ -90,8 +90,9 @@ class Simulation:
         return self.modifiedTiles
 
     def updateWaterLevel(self) -> None:
+        # two oscillations a day
         self.water_level = (WATER_LEVEL +
-                            (-cos(2 * pi * self.stepCount / DAY_DURATION) + 1) * (MAX_WATER_LEVEL - WATER_LEVEL) / 2)
+                            (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1) * (MAX_WATER_LEVEL - WATER_LEVEL) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.water_level)
         self.modifiedTiles |= modified
 
