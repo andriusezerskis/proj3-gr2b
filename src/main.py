@@ -6,7 +6,6 @@ Date: December 2023
 from contextlib import contextmanager
 import locale
 import threading
-import traceback
 import os
 import sys
 import signal
