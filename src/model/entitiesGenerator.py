@@ -1,39 +1,52 @@
 import random
 from typing import Dict, Type
 
+from constants import EMPTY_TILE_PROBABILITY_GENERATION, ENTITY_WEIGHTS
+
+from random import random, choices
+
 from model.grid import Grid
 
 from model.entities.algae import Algae
 from model.entities.fish import Fish
 from model.entities.human import Human
 from model.entities.tree import Tree
+from model.entities.crab import Crab
+
 from model.terrains.land import Land
 from model.terrains.tile import Tile
 from model.terrains.water import Water
 
 
 class EntitiesGenerator:
+    ENTITIES_LIST = [Algae, Fish, Human, Tree, Crab]
+
+    def __init__(self):
+        self._validEntitiesForTileType = {}
 
     def generateEntities(self, grid: Grid):
         for tile in grid:
-            self.addRandomEntity(tile)
+            if random() >= EMPTY_TILE_PROBABILITY_GENERATION:
+                self.addRandomEntity(tile)
+
+    def getValidEntities(self, tile: type) -> list[type]:
+
+        if tile not in self._validEntitiesForTileType:
+            res = []
+            for entityType in self.ENTITIES_LIST:
+                if tile in entityType.getValidTiles():
+                    res.append(entityType)
+
+            self._validEntitiesForTileType[tile] = res
+
+        return self._validEntitiesForTileType[tile]
 
     def addRandomEntity(self, tile: Tile):
-        if type(tile) is Water:
-            self.generateWaterEntities(tile)
-        if type(tile) is Land:
-            self.generateLandEntities(tile)
+        validEntities = self.getValidEntities(type(tile))
+        if len(validEntities) == 0:
+            return
+        weights = [ENTITY_WEIGHTS[entityType.__name__] for entityType in validEntities]
+        return tile.addNewEntity(choices(population=validEntities, weights=weights)[0])
 
-    def generateWaterEntities(self, tile: Tile):
-        if random.randint(0, 5) == 1:
-            tile.addNewEntity(Fish)
 
-        elif random.randint(0, 5) == 1:
-            tile.addNewEntity(Algae)
 
-    def generateLandEntities(self, tile: Tile):
-        if random.randint(0, 5) == 1:
-            tile.addNewEntity(Human)
-
-        elif random.randint(0, 3) == 1:
-            tile.addNewEntity(Tree)
