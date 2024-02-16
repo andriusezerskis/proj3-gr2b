@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from constants import ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION
+from constants import ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION
 from model.action import Action
 from typing import TypeVar
 from utils import Point
@@ -75,7 +75,7 @@ class Entity(ABC):
         self._adjacentEntities = None
 
     def getAge(self):
-        return self.age
+        return self.age//DAY_DURATION  # shows age in days instead of steps
 
     def setAge(self, age):
         self.age = age
