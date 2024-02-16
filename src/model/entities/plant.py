@@ -5,6 +5,7 @@ from utils import Point
 from overrides import override
 from random import random
 from model.action import Action
+from constants import PLANT_REPRODUCTION_PROBABILITY
 
 
 class Plant(Entity, ABC):
@@ -20,6 +21,6 @@ class Plant(Entity, ABC):
 
     @override
     def chooseAction(self) -> Action:
-        if random() < 0.1 and len(self.getValidMovementTiles()) > 0:
+        if random() < PLANT_REPRODUCTION_PROBABILITY and len(self.getValidMovementTiles()) > 0:
             return Action.REPRODUCE
         return Action.IDLE

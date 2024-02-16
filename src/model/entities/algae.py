@@ -5,7 +5,7 @@ from model.terrains.water import Water
 
 from utils import Point
 
-from constants import ALGAE_TEXTURE_PATH
+from constants import ALGAE_TEXTURE_PATH, PREFERRED_TEMPERATURE_ALGAE
 
 
 class Algae(Plant):
@@ -20,6 +20,10 @@ class Algae(Plant):
     @override
     def getValidTiles() -> set[type]:
         return {Water}
+
+    @staticmethod
+    def getPreferredTemperature() -> float:
+        return PREFERRED_TEMPERATURE_ALGAE
 
     def __init__(self, pos: Point):
         super().__init__(pos)

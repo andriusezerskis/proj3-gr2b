@@ -45,6 +45,9 @@ class Player(Entity):
     def getValidTiles(self):
         return self.claimed_entity.getValidTiles()
 
+    def getPreferredTemperature(self) -> float:
+        return self.claimed_entity.getPreferredTemperature()
+
     @override
     def chooseAction(self) -> Action:
         return Action.IDLE

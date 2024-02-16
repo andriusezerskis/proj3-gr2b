@@ -17,7 +17,7 @@ class Animal(Entity, ABC):
     def __init__(self, pos: Point):
         super().__init__(pos)
         Animal.count += 1
-        self.hunger = 0
+        self.hunger: float = 0
 
         self._potentialMates = None
         self._adjacentPreys = None
@@ -27,11 +27,15 @@ class Animal(Entity, ABC):
         super().evolve()
         self._potentialMates = None
         self._adjacentPreys = None
-        self.hunger += 1
+        self.hunger += 1 + self.getTemperatureDifference() / 10
 
     def __del__(self):
         super().__del__()
         Animal.count -= 1
+
+    def pickTileToMove(self) -> Tile:
+        tiles = self.getGrid().getAdjacentTiles(self.getPos())
+
 
     @override
     def chooseAction(self) -> Action:

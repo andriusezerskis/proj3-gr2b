@@ -5,6 +5,8 @@ from model.terrains.tile import Tile
 from model.terrains.sand import Sand
 from model.terrains.water import Water
 
+from model.regionHandler import RegionHandler
+
 from constants import GRID_HEIGHT, GRID_WIDTH, WATER_LEVEL, MAX_WATER_LEVEL
 
 
@@ -14,6 +16,7 @@ class Grid:
         self.islands: List[List[Tile]] = []
         self.coasts: set[Tile] = set()
         self.size: Point = size
+        self.regionHandler = RegionHandler(self.size.x(), self.size.y())
 
     def initialize(self, tiles: List[List[Tile]], islands: List[set[Tile]]) -> None:
         """Random initialization of the grid with perlin noise"""
@@ -50,6 +53,9 @@ class Grid:
             self.tiles[tile.getPos().y()][tile.getPos().x()] = newTile
             modified.add(newTile)
         return modified
+
+    def getTemperature(self, pos: Point) -> float:
+        return self.regionHandler.sampleTemperature(pos.x(), pos.y())
 
     def getTile(self, pos: Point) -> Tile:
         if not self.isPosInGrid(pos):

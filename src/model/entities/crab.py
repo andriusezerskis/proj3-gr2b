@@ -1,6 +1,6 @@
 from overrides import override
 
-from constants import CRAB_TEXTURE_PATH
+from constants import CRAB_TEXTURE_PATH, PREFERRED_TEMPERATURE_CRAB
 
 from utils import Point
 
@@ -31,6 +31,10 @@ class Crab(Animal):
     @override
     def getValidTiles() -> set[type]:
         return {Sand, Water}
+
+    @staticmethod
+    def getPreferredTemperature() -> float:
+        return PREFERRED_TEMPERATURE_CRAB
 
     @staticmethod
     @override

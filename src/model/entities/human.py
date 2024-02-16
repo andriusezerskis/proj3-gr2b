@@ -9,7 +9,7 @@ from model.entities.tree import Tree
 from model.terrains.land import Land
 from model.terrains.sand import Sand
 
-from constants import HUMAN_TEXTURE_PATH
+from constants import HUMAN_TEXTURE_PATH, PREFERRED_TEMPERATURE_HUMAN
 
 
 class Human(Animal):
@@ -32,6 +32,10 @@ class Human(Animal):
     @override
     def getValidTiles() -> set[type]:
         return {Land, Sand}
+
+    @staticmethod
+    def getPreferredTemperature() -> float:
+        return PREFERRED_TEMPERATURE_HUMAN
 
     @staticmethod
     @override

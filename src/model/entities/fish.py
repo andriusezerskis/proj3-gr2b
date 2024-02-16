@@ -1,7 +1,7 @@
 from overrides import override
 from random import random
 
-from constants import FISH_TEXTURE_PATH
+from constants import FISH_TEXTURE_PATH, PREFERRED_TEMPERATURE_FISH
 
 from utils import Point
 
@@ -23,6 +23,10 @@ class Fish(Animal):
     @override
     def getValidTiles() -> set[type]:
         return {Water}
+
+    @staticmethod
+    def getPreferredTemperature() -> float:
+        return PREFERRED_TEMPERATURE_FISH
 
     @staticmethod
     @override

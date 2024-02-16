@@ -6,7 +6,7 @@ from utils import Point
 
 from model.terrains.land import Land
 
-from constants import TREE_TEXTURE_PATH
+from constants import TREE_TEXTURE_PATH, PREFERRED_TEMPERATURE_TREE
 
 
 class Tree(Plant):
@@ -29,6 +29,10 @@ class Tree(Plant):
     @override
     def getValidTiles() -> set[type]:
         return {Land}
+
+    @staticmethod
+    def getPreferredTemperature() -> float:
+        return PREFERRED_TEMPERATURE_TREE
 
     def __str__(self):
         return 'T'

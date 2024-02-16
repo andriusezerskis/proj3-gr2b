@@ -32,7 +32,10 @@ class Entity(ABC):
     def getTexturePath() -> str:
         ...
 
-
+    @staticmethod
+    @abstractmethod
+    def getPreferredTemperature() -> float:
+        ...
 
     @staticmethod
     @abstractmethod
@@ -70,10 +73,7 @@ class Entity(ABC):
         self._adjacentEntities = None
 
     def getAge(self):
-        return self.age//DAY_DURATION  # shows age in days instead of steps
-
-    def setAge(self, age):
-        self.age = age
+        return self.age // DAY_DURATION  # shows age in days instead of steps
 
     def __str__(self):
         ...
@@ -117,6 +117,9 @@ class Entity(ABC):
         self.getGrid().getTile(self.pos).removeEntity()
         self.pos += movement
         self.getGrid().getTile(self.pos).setEntity(self)
+
+    def getTemperatureDifference(self) -> float:
+        return abs(self.getPreferredTemperature() - self.getGrid().getTemperature(self.getPos()))
 
     @staticmethod
     def getGrid() -> Grid:
