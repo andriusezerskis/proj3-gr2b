@@ -1,5 +1,6 @@
 import time
 from typing import Tuple
+from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
@@ -32,6 +33,29 @@ class CommandWindow(QMainWindow):
         self.layout.addWidget(self.firstCommand)
 
 
+class CustomQDock(QDockWidget):
+    def __init__(self, mainWindowController, mainWindow):
+        super().__init__("ehhhh", mainWindow)
+        self.mainWindowController = mainWindowController
+        self.setGeometry(100, 100, 300, 200)
+        self.dockLayout = QVBoxLayout()
+        container = QWidget()
+        container.setLayout(self.dockLayout)
+        self.setWidget(container)
+
+        container1 = QWidget()
+        container2 = QWidget()
+        self.dockLayout.addWidget(container1)
+        self.dockLayout.addWidget(container2)
+
+        self.monitor = MonitorWindow(self, container1)
+        self.entityController = EntityInfoController(self, container2)
+
+    def closeEvent(self, event: QCloseEvent | None) -> None:
+        super().closeEvent(event)
+        self.mainWindowController.closeDockEvent()
+
+
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
@@ -44,12 +68,13 @@ class Window(QMainWindow):
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
-        self.initialiseDock()
 
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
         self.grid_controller = MainWindowController(
             self.view, simulation, self.rendering_monitor, self)
+        self.initialiseDock()
+
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
@@ -66,24 +91,31 @@ class Window(QMainWindow):
         self.commands = CommandWindow(self)
 
     def initialiseDock(self):
-        self.dock = QDockWidget("BigDock", self)
+        self.dock = CustomQDock(self.grid_controller, self)
+        self.addDockWidget(
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
+        """
+        self.dock = QDockWidget("bouuu", self)
         self.dock.setGeometry(100, 100, 300, 200)
-
+        event = QCloseEvent()
         self.dockLayout = QVBoxLayout()
         container = QWidget()
         container.setLayout(self.dockLayout)
         self.dock.setWidget(container)
 
         self.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)"""
 
         container1 = QWidget()
         container2 = QWidget()
-        self.dockLayout.addWidget(container1)
-        self.dockLayout.addWidget(container2)
+        self.dock.dockLayout.addWidget(container1)
+        self.dock.dockLayout.addWidget(container2)
 
         self.monitor = MonitorWindow(self.dock, container1)
         self.entityController = EntityInfoController(self.dock, container2)
+
+    def dock_closed(self):
+        print("bouuu")
 
     def initTimer(self):
         self.timer = QTimer()
@@ -174,6 +206,11 @@ class Window(QMainWindow):
         self.zoomOutButton.clicked.connect(
             MainWindowController.getInstance().zoomOut)
 
+        self.buttonOpenDock = QPushButton(">")
+        self.buttonOpenDock.hide()
+
+        self.layout.addWidget(self.buttonOpenDock,
+                              alignment=Qt.AlignmentFlag.AlignLeft)
         self.layout.addStretch()
         self.layout.addWidget(self.pauseButton)
         self.layout.addWidget(self.fastFbutton)

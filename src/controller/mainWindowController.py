@@ -137,3 +137,6 @@ class MainWindowController:
 
     def horizontalScroll(self, value):
         ...
+
+    def closeDockEvent(self):
+        self.mainWindow.buttonOpenDock.show()
