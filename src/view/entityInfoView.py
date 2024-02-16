@@ -4,15 +4,17 @@ from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.entities.plant import Plant
 from constants import ENTITY_MAX_HUNGER, ENTITIES_NAMES_TRANSLATION
+from PyQt6.QtWidgets import QHBoxLayout
 
 from controller.mainWindowController import MainWindowController
 
 
 class EntityInfoView(QDockWidget):
-    def __init__(self, title: str, mainWindow: QWidget):
-        super().__init__(title, mainWindow)
+    def __init__(self, dock, container):
+        self.dock = dock
+        self.container = container
         self.layout = QVBoxLayout()
-        self.widget = QWidget()
+        self.container.setLayout(self.layout)
         self.progressBar = QProgressBar()
         self.infoLabel = QLabel()
         self.button_layout = QHBoxLayout()
@@ -22,8 +24,6 @@ class EntityInfoView(QDockWidget):
         self.entity = None
 
     def initialize(self):
-        self.widget.setLayout(self.layout)
-        self.setWidget(self.widget)
         self.layout.addWidget(self.progressBar)
         self.layout.addWidget(self.infoLabel)
         self.control_button.clicked.connect(self.controlEntity)
@@ -35,7 +35,7 @@ class EntityInfoView(QDockWidget):
         self.button_layout.setParent(None)
         self.layout.addLayout(self.button_layout)
         self.layout.setAlignment(self.button_layout, Qt.AlignmentFlag.AlignBottom)
-        
+
         self.progressBar.setRange(0, ENTITY_MAX_HUNGER)
         self.progressBar.hide()
 
@@ -79,7 +79,7 @@ class EntityInfoView(QDockWidget):
         else:
             self.progressBar.setValue(0)
             self.progressBar.setFormat("Pas d'entité sélectionnée")
-            
+
     def showDeadEntity(self):
         self.progressBar.setValue(0)
         self.progressBar.setFormat("L'entité est morte")

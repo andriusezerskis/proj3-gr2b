@@ -6,17 +6,17 @@ from model.entityInfoModel import EntityInfoModel
 
 
 class EntityInfoController:
-    def __init__(self, mainWindow: QWidget):
+    def __init__(self, dock, container):
         self.entity = None
-        self.view = EntityInfoView("Entity Info", mainWindow)
+        self.view = EntityInfoView(dock, container)
         self.initialize()
-        
+
     def initialize(self):
         self.view.initialize()
 
     def update(self):
         self.view.updateOnStep()
-        
+
     def setEntity(self, entity: Entity):
         self.entity = entity
         self.view.setEntity(entity)

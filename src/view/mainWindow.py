@@ -1,5 +1,6 @@
 import time
 from typing import Tuple
+from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
@@ -32,25 +33,34 @@ class CommandWindow(QMainWindow):
         self.layout.addWidget(self.firstCommand)
 
 
+class CustomQDock(QDockWidget):
+    def __init__(self, mainWindowController, mainWindow):
+        super().__init__("ehhhh", mainWindow)
+        self.mainWindowController = mainWindowController
+        self.setGeometry(100, 100, 300, 200)
+        self.dockLayout = QVBoxLayout()
+        container = QWidget()
+        container.setLayout(self.dockLayout)
+        self.setWidget(container)
+
+    def closeEvent(self, event: QCloseEvent | None) -> None:
+        super().closeEvent(event)
+        self.mainWindowController.closeDockEvent()
+
+
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
-        self.commandsButton = None
-        self.timebutton = None
-        self.fastFbutton = None
-        self.pauseButton = None
-        self.zoomInButton = None
-        self.zoomOutButton = None
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
-        self.dockDebile = MonitorWindow("Monitor deb'île", self)
-        self.dock2 = EntityInfoController(self)
 
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
         self.grid_controller = MainWindowController(
             self.view, simulation, self.rendering_monitor, self)
+        self.initialiseDock()
+
         self.setCentralWidget(self.view)
         self.simulation = simulation
         self.total_time = 0
@@ -65,9 +75,22 @@ class Window(QMainWindow):
         self.initTimer()
 
         self.commands = CommandWindow(self)
+
+    def initialiseDock(self):
+        self.dock = CustomQDock(self.grid_controller, self)
         self.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2.view)
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
+
+        container1 = QWidget()
+        container2 = QWidget()
+        self.dock.dockLayout.addWidget(container1)
+        self.dock.dockLayout.addWidget(container2)
+
+        self.monitor = MonitorWindow(self.dock, container1)
+        self.entityController = EntityInfoController(self.dock, container2)
+
+    def dock_closed(self):
+        print("bouuu")
 
     def initTimer(self):
         self.timer = QTimer()
@@ -94,9 +117,9 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
-        self.dockDebile.getGraph().updatePlot(
+        self.monitor.getGraph().updatePlot(
             Human.count)
-        self.dock2.update()
+        self.entityController.update()
         # yo deso demeter mais on reglera le probleme plus tard
         self.show_time()
 
@@ -152,10 +175,19 @@ class Window(QMainWindow):
         self.commandsButton.clicked.connect(self.commandsCallback)
 
         self.zoomInButton = QPushButton("+")
-        self.zoomInButton.clicked.connect(MainWindowController.getInstance().zoomIn)
+        self.zoomInButton.clicked.connect(
+            MainWindowController.getInstance().zoomIn)
         self.zoomOutButton = QPushButton("-")
-        self.zoomOutButton.clicked.connect(MainWindowController.getInstance().zoomOut)
+        self.zoomOutButton.clicked.connect(
+            MainWindowController.getInstance().zoomOut)
 
+        self.buttonOpenDock = QPushButton(">")
+        self.buttonOpenDock.hide()
+        self.buttonOpenDock.clicked.connect(
+            MainWindowController.getInstance().openDockEvent)
+
+        self.layout.addWidget(self.buttonOpenDock,
+                              alignment=Qt.AlignmentFlag.AlignLeft)
         self.layout.addStretch()
         self.layout.addWidget(self.pauseButton)
         self.layout.addWidget(self.fastFbutton)
@@ -168,6 +200,9 @@ class Window(QMainWindow):
         self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
         self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
         self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        self.layout.setAlignment(self.zoomInButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
-        self.layout.setAlignment(self.zoomOutButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+        self.layout.setAlignment(
+            self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.layout.setAlignment(
+            self.zoomInButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+        self.layout.setAlignment(
+            self.zoomOutButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)

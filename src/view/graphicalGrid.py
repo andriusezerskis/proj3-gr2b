@@ -15,7 +15,6 @@ from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 
 from controller.mainWindowController import MainWindowController
-from controller.entityInfoController import EntityInfoController
 
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
@@ -161,15 +160,17 @@ class GraphicalGrid(QGraphicsView):
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
-        highlightedFlag = False
+        # highlightedFlag = False
         for tile in updated_tiles:
             if tile.getIndex() in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
-                if tile.hasEntity() and tile.getEntity().getHighlighted():
-                    self._drawHighlightedTile(tile)
-                    highlightedFlag = True
-        if not highlightedFlag and self.highlitedTile:
-            self.highlitedTile.hide()
+                # if tile.hasEntity() and tile.getEntity().getHighlighted():
+                #    self._drawHighlightedTile(tile)
+                #    highlightedFlag = True
+        if self.chosenEntity:
+            self._drawHighlightedTile(self.chosenEntity.getTile())
+        # if not highlightedFlag and self.highlitedTile and not self.chosenEntity:
+        #    self.highlitedTile.hide()
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
