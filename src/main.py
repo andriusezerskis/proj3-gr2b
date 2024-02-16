@@ -13,7 +13,7 @@ import signal
 
 from PyQt6.QtWidgets import QApplication
 
-from constants import GRID_WIDTH, GRID_HEIGHT
+#from constants import GRID_WIDTH, GRID_HEIGHT
 
 from model.simulation import Simulation
 
@@ -42,12 +42,10 @@ def setlocale(name):
 
 
 def main():
-    simulation = Simulation()
-    app = QApplication(sys.argv)
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-
-    window = Window((GRID_WIDTH, GRID_HEIGHT), simulation)
-    window.show()
+    app = QApplication(sys.argv)
+    start_window = StartWindow()
+    start_window.show()
     app.exec()
 
 

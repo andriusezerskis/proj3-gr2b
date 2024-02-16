@@ -5,7 +5,7 @@ from model.terrains.tile import Tile
 from model.terrains.sand import Sand
 from model.terrains.water import Water
 
-from constants import GRID_HEIGHT, GRID_WIDTH, WATER_LEVEL, MAX_WATER_LEVEL
+from constants import WATER_LEVEL, MAX_WATER_LEVEL
 
 
 class Grid:
@@ -59,9 +59,9 @@ class Grid:
     def isPosInGrid(self, pos: Point) -> bool:
         return 0 <= pos.x() < self.size.x() and 0 <= pos.y() < self.size.y()
 
-    @staticmethod
-    def isInGrid(i, j):
-        return 0 <= i < GRID_HEIGHT and 0 <= j < GRID_WIDTH
+    #@staticmethod
+    def isInGrid(self, i, j):
+        return 0 <= i < self.size.x() and 0 <= j < self.size.y()
 
     def __iter__(self):
         for line in self.tiles:

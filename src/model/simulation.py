@@ -31,9 +31,9 @@ sys.path.append(os.path.dirname(
 
 
 class Simulation:
-    def __init__(self):
+    def __init__(self, size):
         super().__init__()
-        self.grid = GridGenerator(Point(GRID_WIDTH, GRID_HEIGHT),
+        self.grid = GridGenerator(Point(size[0], size[1]),
                                   [2, 3, 4, 5, 6],
                                   350).generateGrid()
         EntitiesGenerator().generateEntities(self.grid)
