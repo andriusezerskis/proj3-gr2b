@@ -10,11 +10,18 @@ matplotlib.use('QtAgg')
 
 
 class MonitorWindow:
-    def __init__(self, dock):
+    def __init__(self, dock, container):
         self.rayon = 20
         self.dock = dock
+        self.container = container
+        self.layout = QVBoxLayout()
+        self.container.setLayout(self.layout)
 
         # --- main layout settings ---
+        title = QLabel('Tableau de bord-inator')
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setStyleSheet("QLabel{font-size: 20pt;}")
+        self.layout.addWidget(title)
 
         # ---- second layout for selection ----
         # Hlayout containing 2 Vlayout (check button)
@@ -28,14 +35,13 @@ class MonitorWindow:
         self.layout_2.addWidget(self.check_zone)
         self.layout_2.addWidget(self.check_cata)
 
-        self.container = QWidget()
-        self.container.setLayout(self.layout_2)
-        self.dock.layout().addWidget(self.container)
+        self.second_container = QWidget()
+        self.second_container.setLayout(self.layout_2)
+        self.layout.addWidget(self.second_container)
 
         button = QPushButton("OK")
         button.clicked.connect(self.lol)
-        self.dock.layout().addWidget(button)
-
+        self.layout.addWidget(button)
         self.initGraph()
 
     def initGraph(self):

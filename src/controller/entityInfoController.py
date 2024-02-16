@@ -6,9 +6,9 @@ from model.entityInfoModel import EntityInfoModel
 
 
 class EntityInfoController:
-    def __init__(self, dock):
+    def __init__(self, dock, container):
         self.entity = None
-        self.view = EntityInfoView(dock)
+        self.view = EntityInfoView(dock, container)
         self.initialize()
 
     def initialize(self):

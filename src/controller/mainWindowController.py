@@ -36,26 +36,34 @@ class MainWindowController:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((-1, 0)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.up(False))
+                        self.graphicalGrid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(
+                            self.renderingMonitor.up(False))
             case Qt.Key.Key_Q:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, -1)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.left(False))
+                        self.graphicalGrid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(
+                            self.renderingMonitor.left(False))
             case Qt.Key.Key_S:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((1, 0)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.down(False))
+                        self.graphicalGrid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(
+                            self.renderingMonitor.down(False))
             case Qt.Key.Key_D:
                 if self.simulation.hasPlayer():
                     pos = self.simulation.getPlayer().getPosition()
                     if self.simulation.getPlayer().move((0, 1)):
-                        self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPosition())
-                        self.graphicalGrid.moveCamera(self.renderingMonitor.right(False))
+                        self.graphicalGrid.movePlayer(
+                            pos, self.simulation.getPlayer().getPosition())
+                        self.graphicalGrid.moveCamera(
+                            self.renderingMonitor.right(False))
 
     def mousePressEvent(self, event):
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
@@ -64,8 +72,8 @@ class MainWindowController:
             # self.controlEntity(tile)
             if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
                 self.graphicalGrid.chosenEntity.setHighlighted(False)
-            self.mainWindow.dock2.setEntity(tile.getEntity())
-            self.mainWindow.dock2.update()
+            self.mainWindow.entityController.setEntity(tile.getEntity())
+            self.mainWindow.entityController.update()
             tile.getEntity().setHighlighted(True)
             self.graphicalGrid.chosenEntity = tile.getEntity()
 
@@ -102,19 +110,22 @@ class MainWindowController:
             self.recomputeCuboid()
 
     def recomputeCuboid(self):
-        real_rendered_area = self.graphicalGrid.mapToScene(self.graphicalGrid.viewport().rect()).boundingRect()
+        real_rendered_area = self.graphicalGrid.mapToScene(
+            self.graphicalGrid.viewport().rect()).boundingRect()
         upper, lower, width, height = self.getCuboid(real_rendered_area)
         self.renderingMonitor.setNewPoints(upper, lower, width, height)
 
     def getCuboid(self, dim: QRectF):
         upper_tile_i, upper_tile_j = self.getGridCoordinate(dim.x(), dim.y())
-        lower_tile_i, lower_tile_j = self.getGridCoordinate(dim.x() + dim.width(), dim.y() + dim.height())
+        lower_tile_i, lower_tile_j = self.getGridCoordinate(
+            dim.x() + dim.width(), dim.y() + dim.height())
         width, height = self.getGridCoordinate(dim.width(), dim.height())
         return [upper_tile_i, upper_tile_j], [lower_tile_i, lower_tile_j], width, height
 
     def zoomOut(self):
         if self.renderingMonitor.zoom_index > 0:
-            scaler = 1/self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
+            scaler = 1 / \
+                self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
             self.renderingMonitor.zoom_factor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
             self.renderingMonitor.zoom_index -= 1

@@ -3,19 +3,23 @@ from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.entities.plant import Plant
 from constants import ENTITY_MAX_HUNGER, ENTITIES_NAMES_TRANSLATION
+from PyQt6.QtWidgets import QHBoxLayout
 
 
 class EntityInfoView(QDockWidget):
-    def __init__(self, dock):
+    def __init__(self, dock, container):
         self.dock = dock
+        self.container = container
+        self.layout = QVBoxLayout()
+        self.container.setLayout(self.layout)
         self.progressBar = QProgressBar()
         self.infoLabel = QLabel()
         self.initialize()
         self.entity = None
 
     def initialize(self):
-        self.dock.layout().addWidget(self.progressBar)
-        self.dock.layout().addWidget(self.infoLabel)
+        self.layout.addWidget(self.progressBar)
+        self.layout.addWidget(self.infoLabel)
 
         self.progressBar.setRange(0, ENTITY_MAX_HUNGER)
 

@@ -46,9 +46,6 @@ class Window(QMainWindow):
         self.rendering_monitor = simulation.getRenderMonitor()
         self.initialiseDock()
 
-        self.monitor = MonitorWindow(self.dock)
-        self.entityController = EntityInfoController(self.dock)
-
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
         self.grid_controller = MainWindowController(
@@ -72,13 +69,21 @@ class Window(QMainWindow):
         self.dock = QDockWidget("BigDock", self)
         self.dock.setGeometry(100, 100, 300, 200)
 
-        self.layout = QVBoxLayout()
+        self.dockLayout = QVBoxLayout()
         container = QWidget()
-        container.setLayout(self.layout)
+        container.setLayout(self.dockLayout)
         self.dock.setWidget(container)
 
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
+
+        container1 = QWidget()
+        container2 = QWidget()
+        self.dockLayout.addWidget(container1)
+        self.dockLayout.addWidget(container2)
+
+        self.monitor = MonitorWindow(self.dock, container1)
+        self.entityController = EntityInfoController(self.dock, container2)
 
     def initTimer(self):
         self.timer = QTimer()
