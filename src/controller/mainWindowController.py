@@ -55,8 +55,8 @@ class MainWindowController:
             # self.controlEntity(tile)
             if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
                 self.graphicalGrid.chosenEntity.setHighlighted(False)
-            self.mainWindow.dock2.setEntity(tile.getEntity())
-            self.mainWindow.dock2.update()
+            self.mainWindow.entityController.setEntity(tile.getEntity())
+            self.mainWindow.entityController.update()
             tile.getEntity().setHighlighted(True)
             self.graphicalGrid.chosenEntity = tile.getEntity()
 
@@ -117,3 +117,11 @@ class MainWindowController:
 
     def horizontalScroll(self, value):
         ...
+
+    def closeDockEvent(self):
+        self.mainWindow.buttonOpenDock.show()
+
+    def openDockEvent(self):
+        print("ahhh")
+        self.mainWindow.buttonOpenDock.hide()
+        self.mainWindow.dock.show()
