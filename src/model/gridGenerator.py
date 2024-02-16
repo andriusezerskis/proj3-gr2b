@@ -3,20 +3,20 @@ from model.terrains.tile import Tile
 from model.terrains.water import Water
 from model.terrains.land import Land
 from model.terrains.sand import Sand
+from model.terrains.mountain import Mountain
 from model.grid import Grid
 
 from utils import Point
 
-from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL
+from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL, MOUNTAIN_LEVEL
 
 
 class GridGenerator:
 
     def __init__(self, size: Point, island_nb: list[int], island_size: int,
-                 thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL))):
+                 thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL), (Mountain, MOUNTAIN_LEVEL))):
         """
-        :param w: width of the map in #tiles
-        :param h: height of the map in #tiles
+        :param size: x: width of the map, y: height of the map
         :param island_nb: number of islands in the grid (an array of possible values)
         :param island_size: minimal number of land tiles in an island
         :param thresholds: mapping of height (in [-1;1]) to type of tile
@@ -28,9 +28,10 @@ class GridGenerator:
         self.island_nb = island_nb
         self.island_size = island_size
         self.thresholds = thresholds
+        self.maxAbsHeight = 0
 
     def _getTile(self, x: int, y: int) -> Tile:
-        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h)
+        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h) / self.maxAbsHeight
         for tileType, threshold in self.thresholds:
 
             if sample <= threshold:
@@ -73,6 +74,13 @@ class GridGenerator:
                     visited.add(self.matrix[newy][newx])
                     stack.append((newx, newy))
 
+    def getNormalizationBorns(self) -> None:
+        self.maxAbsHeight = 0
+        for y in range(self.h):
+            for x in range(self.w):
+                sample = self.noiseGenerator.sample2D(x/self.w, y/self.h)
+                self.maxAbsHeight = max(self.maxAbsHeight, abs(sample))
+
     def generateGrid(self) -> Grid:
         islands = []
         size_ok = False
@@ -81,6 +89,7 @@ class GridGenerator:
             self.noiseGenerator = NoiseGenerator()
             self.noiseGenerator.addNoise(2, 1)
             self.noiseGenerator.addNoise(4, 0.5)
+            self.getNormalizationBorns()
             self.matrix = self._generateMatrix()
             islands = self.getIslands()
             size_ok = True

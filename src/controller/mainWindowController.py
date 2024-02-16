@@ -52,13 +52,13 @@ class MainWindowController:
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
-            self.controlEntity(tile)
-            """if self.graphicalGrid.chosenEntity != tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
+            # self.controlEntity(tile)
+            if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
                 self.graphicalGrid.chosenEntity.setHighlighted(False)
             self.mainWindow.dock2.setEntity(tile.getEntity())
             self.mainWindow.dock2.update()
             tile.getEntity().setHighlighted(True)
-            self.graphicalGrid.chosenEntity = tile.getEntity()"""
+            self.graphicalGrid.chosenEntity = tile.getEntity()
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
