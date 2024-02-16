@@ -9,25 +9,12 @@ from PyQt6.QtWidgets import QDockWidget
 matplotlib.use('QtAgg')
 
 
-class MonitorWindow(QDockWidget):
-    def __init__(self, titleDock, jsp):
-        super().__init__(titleDock, jsp)
-        self.setGeometry(100, 100, 300, 200)
+class MonitorWindow:
+    def __init__(self, dock):
         self.rayon = 20
+        self.dock = dock
 
         # --- main layout settings ---
-        self.layout = QVBoxLayout()
-
-        widget = QWidget()
-        widget.setLayout(self.layout)
-        # self.setCentralWidget(widget)
-
-        # --- add widget on Vlayout ---
-        title = QLabel('Tableau de bord-inator')
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("QLabel{font-size: 20pt;}")
-        self.layout.addWidget(title)
-        self.setWidget(widget)
 
         # ---- second layout for selection ----
         # Hlayout containing 2 Vlayout (check button)
@@ -43,11 +30,11 @@ class MonitorWindow(QDockWidget):
 
         self.container = QWidget()
         self.container.setLayout(self.layout_2)
-        self.layout.addWidget(self.container)
+        self.dock.layout().addWidget(self.container)
 
         button = QPushButton("OK")
         button.clicked.connect(self.lol)
-        self.layout.addWidget(button)
+        self.dock.layout().addWidget(button)
 
         self.initGraph()
 

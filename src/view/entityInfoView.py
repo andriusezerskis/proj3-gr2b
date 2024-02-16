@@ -6,23 +6,19 @@ from constants import ENTITY_MAX_HUNGER, ENTITIES_NAMES_TRANSLATION
 
 
 class EntityInfoView(QDockWidget):
-    def __init__(self, title: str, mainWindow: QWidget):
-        super().__init__(title, mainWindow)
-        self.layout = QVBoxLayout()
-        self.widget = QWidget()
+    def __init__(self, dock):
+        self.dock = dock
         self.progressBar = QProgressBar()
         self.infoLabel = QLabel()
         self.initialize()
         self.entity = None
 
     def initialize(self):
-        self.widget.setLayout(self.layout)
-        self.setWidget(self.widget)
-        self.layout.addWidget(self.progressBar)
-        self.layout.addWidget(self.infoLabel)
-        
+        self.dock.layout().addWidget(self.progressBar)
+        self.dock.layout().addWidget(self.infoLabel)
+
         self.progressBar.setRange(0, ENTITY_MAX_HUNGER)
-        
+
     def setEntity(self, entity: Entity):
         self.entity = entity
 
@@ -58,7 +54,7 @@ class EntityInfoView(QDockWidget):
         else:
             self.progressBar.setValue(0)
             self.progressBar.setFormat("Pas d'entité sélectionnée")
-            
+
     def showDeadEntity(self):
         self.progressBar.setValue(0)
         self.progressBar.setFormat("L'entité est morte")

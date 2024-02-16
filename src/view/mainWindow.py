@@ -44,8 +44,10 @@ class Window(QMainWindow):
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
-        self.dockDebile = MonitorWindow("Monitor deb'île", self)
-        self.dock2 = EntityInfoController(self)
+        self.initialiseDock()
+
+        self.monitor = MonitorWindow(self.dock)
+        self.entityController = EntityInfoController(self.dock)
 
         self.view = GraphicalGrid(
             grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
@@ -65,9 +67,18 @@ class Window(QMainWindow):
         self.initTimer()
 
         self.commands = CommandWindow(self)
+
+    def initialiseDock(self):
+        self.dock = QDockWidget("BigDock", self)
+        self.dock.setGeometry(100, 100, 300, 200)
+
+        self.layout = QVBoxLayout()
+        container = QWidget()
+        container.setLayout(self.layout)
+        self.dock.setWidget(container)
+
         self.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.dockDebile)
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2.view)
+            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
 
     def initTimer(self):
         self.timer = QTimer()
@@ -94,9 +105,9 @@ class Window(QMainWindow):
         self.total_time += 1
         self.simulation.step()
         self.updateGrid()
-        self.dockDebile.getGraph().updatePlot(
+        self.monitor.getGraph().updatePlot(
             Human.count)
-        self.dock2.update()
+        self.entityController.update()
         # yo deso demeter mais on reglera le probleme plus tard
         self.show_time()
 
@@ -152,9 +163,11 @@ class Window(QMainWindow):
         self.commandsButton.clicked.connect(self.commandsCallback)
 
         self.zoomInButton = QPushButton("+")
-        self.zoomInButton.clicked.connect(MainWindowController.getInstance().zoomIn)
+        self.zoomInButton.clicked.connect(
+            MainWindowController.getInstance().zoomIn)
         self.zoomOutButton = QPushButton("-")
-        self.zoomOutButton.clicked.connect(MainWindowController.getInstance().zoomOut)
+        self.zoomOutButton.clicked.connect(
+            MainWindowController.getInstance().zoomOut)
 
         self.layout.addStretch()
         self.layout.addWidget(self.pauseButton)
@@ -168,6 +181,9 @@ class Window(QMainWindow):
         self.layout.setAlignment(self.pauseButton, Qt.AlignmentFlag.AlignTop)
         self.layout.setAlignment(self.fastFbutton, Qt.AlignmentFlag.AlignTop)
         self.layout.setAlignment(self.timebutton, Qt.AlignmentFlag.AlignTop)
-        self.layout.setAlignment(self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        self.layout.setAlignment(self.zoomInButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
-        self.layout.setAlignment(self.zoomOutButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+        self.layout.setAlignment(
+            self.commandsButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.layout.setAlignment(
+            self.zoomInButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+        self.layout.setAlignment(
+            self.zoomOutButton, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
