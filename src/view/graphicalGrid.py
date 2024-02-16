@@ -133,10 +133,10 @@ class GraphicalGrid(QGraphicsView):
                 # if tile.hasEntity() and tile.getEntity().getHighlighted():
                 #    self._drawHighlightedTile(tile)
                 #    highlightedFlag = True
-        if self.chosenEntity:
+        if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
-        # if not highlightedFlag and self.highlitedTile and not self.chosenEntity:
-        #    self.highlitedTile.hide()
+        else:
+            self.highlitedTile.hide()
 
     def drawGrid(self, grid: Grid):
         for tile in grid:
