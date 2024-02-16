@@ -15,7 +15,6 @@ from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 
 from controller.mainWindowController import MainWindowController
-from controller.entityInfoController import EntityInfoController
 
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
