@@ -43,14 +43,6 @@ class CustomQDock(QDockWidget):
         container.setLayout(self.dockLayout)
         self.setWidget(container)
 
-        container1 = QWidget()
-        container2 = QWidget()
-        self.dockLayout.addWidget(container1)
-        self.dockLayout.addWidget(container2)
-
-        self.monitor = MonitorWindow(self, container1)
-        self.entityController = EntityInfoController(self, container2)
-
     def closeEvent(self, event: QCloseEvent | None) -> None:
         super().closeEvent(event)
         self.mainWindowController.closeDockEvent()
@@ -59,12 +51,6 @@ class CustomQDock(QDockWidget):
 class Window(QMainWindow):
     def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
         super().__init__()
-        self.commandsButton = None
-        self.timebutton = None
-        self.fastFbutton = None
-        self.pauseButton = None
-        self.zoomInButton = None
-        self.zoomOutButton = None
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.rendering_monitor = simulation.getRenderMonitor()
@@ -94,17 +80,6 @@ class Window(QMainWindow):
         self.dock = CustomQDock(self.grid_controller, self)
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
-        """
-        self.dock = QDockWidget("bouuu", self)
-        self.dock.setGeometry(100, 100, 300, 200)
-        event = QCloseEvent()
-        self.dockLayout = QVBoxLayout()
-        container = QWidget()
-        container.setLayout(self.dockLayout)
-        self.dock.setWidget(container)
-
-        self.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)"""
 
         container1 = QWidget()
         container2 = QWidget()
@@ -208,6 +183,8 @@ class Window(QMainWindow):
 
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
+        self.buttonOpenDock.clicked.connect(
+            MainWindowController.getInstance().openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
                               alignment=Qt.AlignmentFlag.AlignLeft)

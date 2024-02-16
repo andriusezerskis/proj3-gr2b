@@ -140,3 +140,8 @@ class MainWindowController:
 
     def closeDockEvent(self):
         self.mainWindow.buttonOpenDock.show()
+
+    def openDockEvent(self):
+        print("ahhh")
+        self.mainWindow.buttonOpenDock.hide()
+        self.mainWindow.dock.show()
