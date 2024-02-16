@@ -56,14 +56,6 @@ class Point:
     def euclidDistance(self, other):
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
-    def getLowerCorner(self, lower_point: "Point"):
-        # assert lower_point.y() <= self.y()
-        return Point(self.x(), lower_point.y())
-
-    def getUpperCorner(self, upper_point: "Point"):
-        # assert upper_point.y() >= self.y()
-        return Point(upper_point.x(), self.y())
-
 
 # https://docs.python.org/3/library/queue.html
 @dataclass(order=True)

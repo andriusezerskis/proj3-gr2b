@@ -334,6 +334,8 @@ class GraphicalGrid(QGraphicsView):
 
         timer.start()
 
-    def moveHorizontalScrollBar(self, nb_tiles):
+    def setScrollBars(self, point: Point):
         tile_size = int((1000/100) * self.renderingMonitor.zoom_factor)
-        self.horizontal_scrollbar.setValue(self.horizontal_scrollbar.value() + nb_tiles * tile_size)
+        self.horizontal_scrollbar.setValue(point.x() * tile_size)
+        self.vertical_scrollbar.setValue(point.y() * tile_size)
+

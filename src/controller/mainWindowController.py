@@ -6,6 +6,8 @@ from model.terrains.tile import Tile
 
 from constants import GRID_HEIGHT, GRID_WIDTH
 
+from src.utils import getPointsAdjacentTo
+
 
 class MainWindowController:
     """Singleton"""
@@ -51,20 +53,29 @@ class MainWindowController:
     def mousePressEvent(self, event):
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
-        if tile and tile.hasEntity():
-            # self.controlEntity(tile)
-            if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
-                self.graphicalGrid.chosenEntity.setHighlighted(False)
-            self.mainWindow.dock2.setEntity(tile.getEntity())
-            self.mainWindow.dock2.update()
-            tile.getEntity().setHighlighted(True)
-            self.graphicalGrid.chosenEntity = tile.getEntity()
+        if not self.simulation.hasPlayer():
+            if tile and tile.hasEntity():
+                if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
+                    self.graphicalGrid.chosenEntity.setHighlighted(False)
+                self.mainWindow.dock2.setEntity(tile.getEntity())
+                self.mainWindow.dock2.update()
+                tile.getEntity().setHighlighted(True)
+                self.graphicalGrid.chosenEntity = tile.getEntity()
+        else:
+            if tile and tile.hasEntity():
+                if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
+                    tile.removeEntity()
+                    self.graphicalGrid._removeEntity(tile.getPos().y(), tile.getPos().x())
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
+            scaler = self.renderingMonitor.zoomForPlayer()
+            self.graphicalGrid.scale(scaler, scaler)
+            self.recomputeCuboid()
             self.graphicalGrid.removeRenderedSection()
             self.renderingMonitor.centerOnPoint(tile.getIndex())
+            self.graphicalGrid.setScrollBars(self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
     def getClickedTile(self, x, y) -> Tile | bool:

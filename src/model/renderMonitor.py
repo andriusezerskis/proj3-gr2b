@@ -1,3 +1,4 @@
+from functools import reduce
 from typing import List, Tuple
 
 from model.terrains.tile import Tile
@@ -101,6 +102,9 @@ class RenderMonitor:
     def down(self, dist: int = 1, keep_on_screen: bool = True):
         return self.rendering_section.down_move(dist, keep_on_screen)
 
+    def getUpperPoint(self):
+        return Point(self.rendering_section.upper[1], self.rendering_section.upper[0])
+
     def getFirstYVisible(self):
         return self.rendering_section.upper[0]
 
@@ -116,6 +120,19 @@ class RenderMonitor:
 
     def centerOnPoint(self, point: Tuple[int, int]):
         i, j = point
-        self.rendering_size = Point(36, 36)
         self.rendering_section = Cuboid([i - self.rendering_size.x() // 2, j - self.rendering_size.y() // 2],
                                         [i + self.rendering_size.x() // 2, j + self.rendering_size.y() // 2])
+
+    def zoomForPlayer(self):
+        old_zoom = self.zoom_index
+        self.zoom_index = 3
+        difference = self.zoom_index - old_zoom
+        if difference > 0:
+            new_zoom = reduce(lambda x, y: x * y, self.zooms[old_zoom + 1:self.zoom_index + 1])
+            self.zoom_factor *= new_zoom
+        elif difference < 0:
+            new_zoom = 1 / reduce(lambda x, y: x * y, self.zooms[old_zoom + 1 + difference:old_zoom+1])
+            self.zoom_factor *= new_zoom
+        else:
+            new_zoom = 1
+        return new_zoom
