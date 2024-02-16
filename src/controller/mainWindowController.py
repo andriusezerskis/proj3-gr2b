@@ -13,16 +13,13 @@ class MainWindowController:
     """Singleton"""
     instance = None
 
-    def __new__(cls, graphical_grid, simulation, renderingMonitor, mainWindow):
+    def __new__(cls, graphicalGrid, simulation, mainWindow):
         if cls.instance is None:
             cls.instance = object.__new__(cls)
-            cls.graphicalGrid = graphical_grid
+            cls.graphicalGrid = graphicalGrid
             cls.mainWindow = mainWindow
             cls.simulation = simulation
-            cls.renderingMonitor = renderingMonitor
             cls.size = [2048, 2048]
-            cls.latest_vertical_value = renderingMonitor.getFirstYVisible()
-            cls.latest_horizontal_value = renderingMonitor.getFirstXVisible()
         return cls.instance
 
     @staticmethod
@@ -31,25 +28,12 @@ class MainWindowController:
             raise TypeError
         return MainWindowController.instance
 
-    def keyPressEvent(self, event):
-        match event.key():
-            # player
-            case Qt.Key.Key_Z:
-                self.move_player(Point(0, -1))
-            case Qt.Key.Key_Q:
-                self.move_player(Point(-1, 0))
-            case Qt.Key.Key_S:
-                self.move_player(Point(0, 1))
-            case Qt.Key.Key_D:
-                self.move_player(Point(1, 0))
-
-    def move_player(self, movement):
-        if self.simulation.hasPlayer():
-            pos = self.simulation.getPlayer().getPos()
-            if self.simulation.getPlayer().move(movement):
-                self.graphicalGrid.movePlayer(
-                    pos, self.simulation.getPlayer().getPos())
-                self.graphicalGrid.initSmoothScroll(movement)
+    def getClickedTile(self, x, y) -> Tile | bool:
+        """return false if there is no tile at (x, y) coord"""
+        i, j = int(y // self.size[1]), int(x // self.size[0])
+        if Grid.isInGrid(i, j):
+            return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
+        return False
 
     def mousePressEvent(self, event):
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
@@ -61,7 +45,6 @@ class MainWindowController:
 
                     self.mainWindow.entityController.setEntity(
                         tile.getEntity())
-                    self.mainWindow.entityController.update()
                     self.graphicalGrid.chosenEntity = tile.getEntity()
                 else:
                     if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
@@ -71,75 +54,9 @@ class MainWindowController:
             else:
                 self.graphicalGrid.chosenEntity = None
                 self.mainWindow.entityController.setEntity(None)
-                self.mainWindow.entityController.update()
 
+            self.mainWindow.entityController.update()
             self.graphicalGrid.updateHighlighted()
-
-    def controlEntity(self, tile):
-        if not self.simulation.hasPlayer():
-            self.simulation.setPlayerEntity(tile)
-            scaler = self.renderingMonitor.zoomForPlayer()
-            self.graphicalGrid.scale(scaler, scaler)
-            self.recomputeCuboid()
-            self.graphicalGrid.removeRenderedSection()
-            self.renderingMonitor.centerOnPoint(tile.getIndex())
-            self.graphicalGrid.setScrollBars(
-                self.renderingMonitor.getUpperPoint())
-            self.graphicalGrid.renderSection()
-
-    def getClickedTile(self, x, y) -> Tile | bool:
-        """return false if there is no tile at (x, y) coord"""
-        i, j = int(y // self.size[1]), int(x // self.size[0])
-        if Grid.isInGrid(i, j):
-            return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
-        return False
-
-    def getGridCoordinate(self, x, y):
-        i, j = int(y // self.size[1]), int(x // self.size[0])
-        if Grid.isInGrid(i, j):
-            return i, j
-        elif i < 0 or j < 0:
-            return 0, 0
-        else:
-            return GRID_HEIGHT, GRID_WIDTH
-
-    def zoomIn(self):
-        if self.renderingMonitor.zoom_index < len(self.renderingMonitor.zooms)-1:
-            self.renderingMonitor.zoom_index += 1
-            scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
-            self.renderingMonitor.zoom_factor *= scaler
-            self.graphicalGrid.scale(scaler, scaler)
-
-            self.recomputeCuboid()
-
-    def recomputeCuboid(self):
-        real_rendered_area = self.graphicalGrid.mapToScene(
-            self.graphicalGrid.viewport().rect()).boundingRect()
-        upper, lower, width, height = self.getCuboid(real_rendered_area)
-        self.renderingMonitor.setNewPoints(upper, lower, width, height)
-
-    def getCuboid(self, dim: QRectF):
-        upper_tile_i, upper_tile_j = self.getGridCoordinate(dim.x(), dim.y())
-        lower_tile_i, lower_tile_j = self.getGridCoordinate(
-            dim.x() + dim.width(), dim.y() + dim.height())
-        width, height = self.getGridCoordinate(dim.width(), dim.height())
-        return [upper_tile_i, upper_tile_j], [lower_tile_i, lower_tile_j], width, height
-
-    def zoomOut(self):
-        if self.renderingMonitor.zoom_index > 0:
-            scaler = 1 / \
-                self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
-            self.renderingMonitor.zoom_factor *= scaler
-            self.graphicalGrid.scale(scaler, scaler)
-            self.renderingMonitor.zoom_index -= 1
-
-            self.recomputeCuboid()
-
-    def verticalScroll(self, value):
-        ...
-
-    def horizontalScroll(self, value):
-        ...
 
     def closeDockEvent(self):
         self.mainWindow.buttonOpenDock.show()

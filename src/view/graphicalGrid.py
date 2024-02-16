@@ -2,6 +2,7 @@ import time
 from typing import Tuple, Set, List
 
 from PyQt6.QtCore import QTimer
+from controller.gridController import GridController
 
 from utils import Point
 
@@ -31,8 +32,8 @@ class GraphicalGrid(QGraphicsView):
         self.simulation = simulation
         self.scene = QGraphicsScene()
         super().__init__(self.scene)
-        self.latest_vertical_value = renderingMonitor.getFirstYVisible()
-        self.latest_horizontal_value = renderingMonitor.getFirstXVisible()
+        self.latestVerticalValue = renderingMonitor.getFirstYVisible()
+        self.latestHorizontalValue = renderingMonitor.getFirstXVisible()
         self.renderingMonitor = renderingMonitor
 
         self.setMouseTracking(True)
@@ -232,7 +233,7 @@ class GraphicalGrid(QGraphicsView):
     # Redirection of PYQT events to the controller
 
     def keyPressEvent(self, event):
-        MainWindowController.getInstance().keyPressEvent(event)
+        GridController.getInstance().keyPressEvent(event)
 
     def mousePressEvent(self, event):
         MainWindowController.getInstance().mousePressEvent(event)
@@ -245,12 +246,12 @@ class GraphicalGrid(QGraphicsView):
 
     def verticalScroll(self):
         self.removeRenderedSection()
-        MainWindowController.getInstance().recomputeCuboid()
+        GridController.getInstance().recomputeCuboid()
         self.renderSection()
 
     def horizontalScroll(self):
         self.removeRenderedSection()
-        MainWindowController.getInstance().recomputeCuboid()
+        GridController.getInstance().recomputeCuboid()
         self.renderSection()
 
     def moveVerticalScrollBarPositively(self):

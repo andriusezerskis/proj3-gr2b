@@ -23,6 +23,7 @@ class Entity(ABC):
         self.reproductionCooldown = 0
         self._validMovementTiles = None
         self._adjacentEntities = None
+        self.dead = False
 
     def __del__(self):
         Entity.count -= 1
@@ -31,8 +32,6 @@ class Entity(ABC):
     @abstractmethod
     def getTexturePath() -> str:
         ...
-
-
 
     @staticmethod
     @abstractmethod
@@ -61,7 +60,7 @@ class Entity(ABC):
         return self.age >= ENTITY_MAX_AGE
 
     def isDead(self):
-        return self.isDeadByOldness()
+        return self.isDeadByOldness() or self.dead
 
     def evolve(self):
         self.age += 1
@@ -101,6 +100,9 @@ class Entity(ABC):
             self._validMovementTiles = [tile for tile in self.getFreeAdjacentTiles()
                                         if type(tile) in self.getValidTiles()]
         return self._validMovementTiles
+
+    def setDead(self, dead):
+        self.dead = dead
 
     @abstractmethod
     def chooseAction(self) -> Action:

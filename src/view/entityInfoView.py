@@ -1,8 +1,7 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QDockWidget, QWidget, QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
+from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
 from model.entities.entity import Entity
 from model.entities.animal import Animal
-from model.entities.plant import Plant
 from constants import ENTITY_MAX_HUNGER, ENTITIES_NAMES_TRANSLATION
 from PyQt6.QtWidgets import QHBoxLayout
 
@@ -18,25 +17,25 @@ class EntityInfoView(QDockWidget):
         self.container.setLayout(self.layout)
         self.progressBar = QProgressBar()
         self.infoLabel = QLabel()
-        self.button_layout = QHBoxLayout()
-        self.control_button = QPushButton("Contrôler")
-        self.lage_button = QPushButton("Relâcher")
+        self.buttonLayout = QHBoxLayout()
+        self.controlButton = QPushButton("Contrôler")
+        self.lageButton = QPushButton("Relâcher")
         self.initialize()
         self.entity = None
 
     def initialize(self):
         self.layout.addWidget(self.progressBar)
         self.layout.addWidget(self.infoLabel)
-        self.control_button.clicked.connect(self.controlEntity)
-        self.lage_button.clicked.connect(self.controlEntity)
-        self.control_button.hide()
-        self.lage_button.hide()
-        self.button_layout.addWidget(self.control_button)
-        self.button_layout.addWidget(self.lage_button)
-        self.button_layout.setParent(None)
-        self.layout.addLayout(self.button_layout)
+        self.controlButton.clicked.connect(self.controlEntity)
+        self.lageButton.clicked.connect(self.controlEntity)
+        self.controlButton.hide()
+        self.lageButton.hide()
+        self.buttonLayout.addWidget(self.controlButton)
+        self.buttonLayout.addWidget(self.lageButton)
+        self.buttonLayout.setParent(None)
+        self.layout.addLayout(self.buttonLayout)
         self.layout.setAlignment(
-            self.button_layout, Qt.AlignmentFlag.AlignBottom)
+            self.buttonLayout, Qt.AlignmentFlag.AlignBottom)
 
         self.progressBar.setRange(0, ENTITY_MAX_HUNGER)
         self.progressBar.hide()
@@ -50,8 +49,8 @@ class EntityInfoView(QDockWidget):
     def __updateText(self, entity: Entity):
         """Shows information about an entity"""
         self.entity = entity
-        self.control_button.show()
-        self.lage_button.show()
+        self.controlButton.show()
+        self.lageButton.show()
         baseText = f"Âge: {entity.getAge()} jours\n"
         if isinstance(entity, Animal):
             self.progressBar.show()
