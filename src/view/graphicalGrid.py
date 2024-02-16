@@ -199,14 +199,14 @@ class GraphicalGrid(QGraphicsView):
         self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
-    def _removeEntity(self, i, j):
+    def removeEntity(self, i, j):
         self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
 
     def _removeTerrain(self, i, j):
         self.pixmapItems[i][j].getTerrain().setPixmap(QPixmap())
 
     def _removeTile(self, i, j):
-        self._removeEntity(i, j)
+        self.removeEntity(i, j)
         self._removeTerrain(i, j)
 
     def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
