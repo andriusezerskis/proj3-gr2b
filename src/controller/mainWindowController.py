@@ -1,10 +1,7 @@
 from PyQt6.QtCore import *
 from utils import Point
 
-from model.grid import Grid
 from model.terrains.tile import Tile
-
-from constants import GRID_HEIGHT, GRID_WIDTH
 
 from src.utils import getPointsAdjacentTo
 
@@ -31,7 +28,7 @@ class MainWindowController:
     def getClickedTile(self, x, y) -> Tile | bool:
         """return false if there is no tile at (x, y) coord"""
         i, j = int(y // self.size[1]), int(x // self.size[0])
-        if Grid.isInGrid(i, j):
+        if 0 <= i < self.size[1] and 0 <= j < self.size[0]:
             return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
         return False
 

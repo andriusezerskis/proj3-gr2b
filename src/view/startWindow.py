@@ -3,6 +3,10 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 
+from model.simulation import Simulation
+from view.mainWindow import Window
+
+
 class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -10,7 +14,6 @@ class StartWindow(QMainWindow):
         label = QLabel("Deb'île")
         self.layout.addWidget(label)
 
-        
         container = QWidget()
         container.setLayout(self.layout)
 
@@ -31,18 +34,16 @@ class StartWindow(QMainWindow):
         container_2.setLayout(self.layout_2)
         self.layout.addWidget(container_2)
 
-        #miaou
+        # miaou
         label = QLabel(self)
         pixmap = QPixmap("../assets/textures"+"/entities"+"/cow.png")
         label.setPixmap(pixmap)
-        self.layout.addWidget(label)
+        # self.layout.addWidget(label)
 
         # ---- bouton OK ----
         self.button = QPushButton("c parti youpi")
         self.button.clicked.connect(self.initMainWindow)
         self.layout.addWidget(self.button)
-
-        
 
     def update_spinbox(self, value):
         self.size = value
@@ -53,5 +54,5 @@ class StartWindow(QMainWindow):
 
         simulation = Simulation((self.size, self.size))
         window = Window((self.size, self.size), simulation)
-        self.hide
-
+        window.show()
+        self.hide()

@@ -162,16 +162,14 @@ class Window(QMainWindow):
         self.commandsButton.clicked.connect(self.commandsCallback)
 
         self.zoomInButton = QPushButton("+")
-        self.zoomInButton.clicked.connect(
-            GridController.getInstance().zoomIn)
+        self.zoomInButton.clicked.connect(self.gridController.zoomIn)
         self.zoomOutButton = QPushButton("-")
-        self.zoomOutButton.clicked.connect(
-            GridController.getInstance().zoomOut)
+        self.zoomOutButton.clicked.connect(self.gridController.zoomOut)
 
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
-            MainWindowController.getInstance().openDockEvent)
+            self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
                               alignment=Qt.AlignmentFlag.AlignLeft)

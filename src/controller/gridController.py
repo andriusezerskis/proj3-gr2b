@@ -1,11 +1,6 @@
 from PyQt6.QtCore import *
 from utils import Point
 
-from model.grid import Grid
-from model.terrains.tile import Tile
-
-from constants import GRID_HEIGHT, GRID_WIDTH
-
 
 class GridController:
     """Singleton"""
@@ -60,22 +55,20 @@ class GridController:
                 self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
-    
-
     def getGridCoordinate(self, x, y):
         i, j = int(y // self.size[1]), int(x // self.size[0])
-        if Grid.isInGrid(i, j):
+        if 0 <= i < self.size[1] and 0 <= j < self.size[0]:
             return i, j
         elif i < 0 or j < 0:
             return 0, 0
         else:
-            return GRID_HEIGHT, GRID_WIDTH
+            return self.size[1], self.size[0]
 
     def zoomIn(self):
-        if self.renderingMonitor.zoom_index < len(self.renderingMonitor.zooms)-1:
-            self.renderingMonitor.zoom_index += 1
-            scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
-            self.renderingMonitor.zoom_factor *= scaler
+        if self.renderingMonitor.zoomIndex < len(self.renderingMonitor.zooms)-1:
+            self.renderingMonitor.zoomIndex += 1
+            scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
+            self.renderingMonitor.zoomFactor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
 
             self.recomputeCuboid()
@@ -94,11 +87,11 @@ class GridController:
         return [upperTileI, upperTileJ], [lowerTileI, lowerTileJ], width, height
 
     def zoomOut(self):
-        if self.renderingMonitor.zoom_index > 0:
+        if self.renderingMonitor.zoomIndex > 0:
             scaler = 1 / \
-                self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
-            self.renderingMonitor.zoom_factor *= scaler
+                self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
+            self.renderingMonitor.zoomFactor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
-            self.renderingMonitor.zoom_index -= 1
+            self.renderingMonitor.zoomIndex -= 1
 
             self.recomputeCuboid()

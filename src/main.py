@@ -9,11 +9,12 @@ import threading
 import os
 import sys
 import signal
+from view.startWindow import StartWindow
 
 
 from PyQt6.QtWidgets import QApplication
 
-#from constants import GRID_WIDTH, GRID_HEIGHT
+# from constants import GRID_WIDTH, GRID_HEIGHT
 
 from model.simulation import Simulation
 
@@ -44,8 +45,8 @@ def setlocale(name):
 def main():
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     app = QApplication(sys.argv)
-    start_window = StartWindow()
-    start_window.show()
+    startWindow = StartWindow()
+    startWindow.show()
     app.exec()
 
 
