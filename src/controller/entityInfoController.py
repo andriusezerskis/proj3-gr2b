@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import QDockWidget, QWidget, QVBoxLayout, QLabel
 
 from model.entities.entity import Entity
 from view.entityInfoView import EntityInfoView
-from model.entityInfoModel import EntityInfoModel
 
 
 class EntityInfoController:

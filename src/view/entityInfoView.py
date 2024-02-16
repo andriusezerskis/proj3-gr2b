@@ -35,7 +35,8 @@ class EntityInfoView(QDockWidget):
         self.button_layout.addWidget(self.lage_button)
         self.button_layout.setParent(None)
         self.layout.addLayout(self.button_layout)
-        self.layout.setAlignment(self.button_layout, Qt.AlignmentFlag.AlignBottom)
+        self.layout.setAlignment(
+            self.button_layout, Qt.AlignmentFlag.AlignBottom)
 
         self.progressBar.setRange(0, ENTITY_MAX_HUNGER)
         self.progressBar.hide()
@@ -55,7 +56,10 @@ class EntityInfoView(QDockWidget):
         if isinstance(entity, Animal):
             self.progressBar.show()
             preys = entity.getPreys()
-            baseText += f"Proie{"s" if len(preys) > 1 else ""}: "
+            baseText += "Proie"
+            if len(preys) > 1:
+                baseText += f"s"
+            baseText += ": "
             i = 0
             for prey in preys:
                 baseText += f"{ENTITIES_NAMES_TRANSLATION[prey.__name__]}"

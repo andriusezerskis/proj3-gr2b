@@ -47,7 +47,8 @@ class MainWindowController:
         if self.simulation.hasPlayer():
             pos = self.simulation.getPlayer().getPos()
             if self.simulation.getPlayer().move(movement):
-                self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPos())
+                self.graphicalGrid.movePlayer(
+                    pos, self.simulation.getPlayer().getPos())
                 self.graphicalGrid.initSmoothScroll(movement)
 
     def mousePressEvent(self, event):
@@ -55,6 +56,8 @@ class MainWindowController:
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile and tile.hasEntity():
             if not self.simulation.hasPlayer():
+                self.openDockEvent()
+
                 if self.graphicalGrid.chosenEntity is not tile.getEntity() and self.graphicalGrid.chosenEntity is not None:
                     self.graphicalGrid.chosenEntity.setHighlighted(False)
                 self.mainWindow.entityController.setEntity(tile.getEntity())
@@ -64,7 +67,8 @@ class MainWindowController:
             else:
                 if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
                     tile.removeEntity()
-                    self.graphicalGrid.removeEntity(tile.getPos().y(), tile.getPos().x())
+                    self.graphicalGrid.removeEntity(
+                        tile.getPos().y(), tile.getPos().x())
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
@@ -74,7 +78,8 @@ class MainWindowController:
             self.recomputeCuboid()
             self.graphicalGrid.removeRenderedSection()
             self.renderingMonitor.centerOnPoint(tile.getIndex())
-            self.graphicalGrid.setScrollBars(self.renderingMonitor.getUpperPoint())
+            self.graphicalGrid.setScrollBars(
+                self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
     def getClickedTile(self, x, y) -> Tile | bool:
@@ -103,19 +108,22 @@ class MainWindowController:
             self.recomputeCuboid()
 
     def recomputeCuboid(self):
-        real_rendered_area = self.graphicalGrid.mapToScene(self.graphicalGrid.viewport().rect()).boundingRect()
+        real_rendered_area = self.graphicalGrid.mapToScene(
+            self.graphicalGrid.viewport().rect()).boundingRect()
         upper, lower, width, height = self.getCuboid(real_rendered_area)
         self.renderingMonitor.setNewPoints(upper, lower, width, height)
 
     def getCuboid(self, dim: QRectF):
         upper_tile_i, upper_tile_j = self.getGridCoordinate(dim.x(), dim.y())
-        lower_tile_i, lower_tile_j = self.getGridCoordinate(dim.x() + dim.width(), dim.y() + dim.height())
+        lower_tile_i, lower_tile_j = self.getGridCoordinate(
+            dim.x() + dim.width(), dim.y() + dim.height())
         width, height = self.getGridCoordinate(dim.width(), dim.height())
         return [upper_tile_i, upper_tile_j], [lower_tile_i, lower_tile_j], width, height
 
     def zoomOut(self):
         if self.renderingMonitor.zoom_index > 0:
-            scaler = 1/self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
+            scaler = 1 / \
+                self.renderingMonitor.zooms[self.renderingMonitor.zoom_index]
             self.renderingMonitor.zoom_factor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
             self.renderingMonitor.zoom_index -= 1
@@ -132,6 +140,5 @@ class MainWindowController:
         self.mainWindow.buttonOpenDock.show()
 
     def openDockEvent(self):
-        print("ahhh")
         self.mainWindow.buttonOpenDock.hide()
         self.mainWindow.dock.show()
