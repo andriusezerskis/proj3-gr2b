@@ -276,33 +276,15 @@ class GraphicalGrid(QGraphicsView):
     def getHorizontalScrollBar(self):
         return self.horizontal_scrollbar
 
-    def verticalScroll(self, value):
-        #square_size = (10 * self.renderingMonitor.zoom_factor)
-        #nb_scrolled_tiles: int = int((value - self.latest_vertical_value) // square_size)
-        #self.latest_vertical_value: int = int((value // square_size) * square_size)
-        #if nb_scrolled_tiles < 0:
-        #    self.renderingMonitor.up(abs(nb_scrolled_tiles))
-        #else:
-        #    self.renderingMonitor.down(nb_scrolled_tiles)
+    def verticalScroll(self):
         self.removeRenderedSection()
         MainWindowController.getInstance().recomputeCuboid()
         self.renderSection()
 
-    def horizontalScroll(self, value):
-        # square_size = (10 * self.renderingMonitor.zoom_factor)
-        # nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
-        # self.latest_horizontal_value: int = int((value // square_size) * square_size)
-        # if nb_scrolled_tiles < 0:
+    def horizontalScroll(self):
         self.removeRenderedSection()
         MainWindowController.getInstance().recomputeCuboid()
         self.renderSection()
-        #square_size = (10 * self.renderingMonitor.zoom_factor)
-        #nb_scrolled_tiles: int = int((value - self.latest_horizontal_value) // square_size)
-        #self.latest_horizontal_value: int = int((value // square_size) * square_size)
-        #if nb_scrolled_tiles < 0:
-        #    self.renderingMonitor.left(abs(nb_scrolled_tiles))
-        #else:
-        #    self.renderingMonitor.right(nb_scrolled_tiles)
 
     def moveVerticalScrollBarPositively(self):
         if self.timers[0][1] >= (1000/100) * self.renderingMonitor.zoom_factor:
