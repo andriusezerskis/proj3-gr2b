@@ -20,7 +20,6 @@ class Entity(ABC):
         Entity.count += 1
         self.age = 0
         self.reproductionCooldown = 0
-        self.highlighted = False
         self.reproductionCooldown = 0
         self._validMovementTiles = None
         self._adjacentEntities = None
@@ -33,11 +32,7 @@ class Entity(ABC):
     def getTexturePath() -> str:
         ...
 
-    def getHighlighted(self) -> bool:
-        return self.highlighted
 
-    def setHighlighted(self, highlighted: bool):
-        self.highlighted = highlighted
 
     @staticmethod
     @abstractmethod

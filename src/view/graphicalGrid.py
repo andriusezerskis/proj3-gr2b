@@ -126,13 +126,10 @@ class GraphicalGrid(QGraphicsView):
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updated_tiles: Set[Tile]):
-        # highlightedFlag = False
         for tile in updated_tiles:
             if tile.getIndex() in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
-                # if tile.hasEntity() and tile.getEntity().getHighlighted():
-                #    self._drawHighlightedTile(tile)
-                #    highlightedFlag = True
+
         if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
         else:
