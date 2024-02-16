@@ -1,5 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
+from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from constants import ENTITY_MAX_HUNGER, ENTITIES_NAMES_TRANSLATION
@@ -41,7 +42,7 @@ class EntityInfoView(QDockWidget):
         self.progressBar.hide()
 
     def controlEntity(self):
-        MainWindowController.getInstance().controlEntity(self.entity.getTile())
+        GridController.getInstance().controlEntity(self.entity.getTile())
 
     def setEntity(self, entity: Entity):
         self.entity = entity
