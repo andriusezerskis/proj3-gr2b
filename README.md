@@ -15,3 +15,8 @@ Python version: 3.12
 
 `pip install matplotlib`
 
+
+# Licenses
+Track: Popcorn
+Music by https://www.fiftysounds.com
+

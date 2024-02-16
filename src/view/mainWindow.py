@@ -3,6 +3,9 @@ from typing import Tuple
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
+from pygame import mixer
+
+
 from constants import *
 from controller.gridController import GridController
 
@@ -35,6 +38,10 @@ class CustomQDock(QDockWidget):
 class Window(QMainWindow):
     def __init__(self, gridSize: Tuple[int, int], simulation: Simulation):
         super().__init__()
+        mixer.init()
+        mixer.music.load(MUSIC_PATH)
+        mixer.music.play()
+        self.pauseMusic = False
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
@@ -145,6 +152,14 @@ class Window(QMainWindow):
     def commandsCallback(self):
         self.commands.show()
 
+    def pauseMusicButton(self):
+        if self.pauseMusic:
+            mixer.music.unpause()
+            self.pauseMusic = False
+        else:
+            mixer.music.pause()
+            self.pauseMusic = True
+
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
         self.pauseButton.setStyleSheet(
@@ -157,6 +172,9 @@ class Window(QMainWindow):
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")
+
+        self.pauseMusicButton = QPushButton("Mute Music")
+        self.pauseMusicButton.clicked.connect(self.pauseMusicButton)
 
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)

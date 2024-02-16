@@ -98,5 +98,9 @@ SUNSET_MODE = f"{TEXTURE_FOLDER_PATH}/sunset.png"
 HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
 
 
+# Music
+MUSIC_PATH = "../assets/music/Popcorn.mp3"
+
+
 # Translation of entities' names
 ENTITIES_NAMES_TRANSLATION = {"Algae": "Algue", "Fish": "Poisson", "Human": "Humain", "Tree": "Arbre", "Crab": "Crabe"}
