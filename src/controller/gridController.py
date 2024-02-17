@@ -57,12 +57,12 @@ class GridController:
 
     def getGridCoordinate(self, x, y):
         i, j = int(y // self.size[1]), int(x // self.size[0])
-        if 0 <= i < self.size[1] and 0 <= j < self.size[0]:
+        if self.simulation.getGrid().isInGrid(Point(j, i)):
             return i, j
         elif i < 0 or j < 0:
             return 0, 0
         else:
-            return self.size[1], self.size[0]
+            return self.simulation.getGrid().getSize() - Point(1, 1)
 
     def zoomIn(self):
         if self.renderingMonitor.zoomIndex < len(self.renderingMonitor.zooms)-1:

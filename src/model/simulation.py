@@ -42,7 +42,7 @@ class Simulation:
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
         self.player = Player(Point(-1, -1))
-        self.renderMonitor = RenderMonitor(size)
+        self.renderMonitor = RenderMonitor(Point(size[0], size[1]), Point(size[0], size[1]))
 
         self.water_level = WATER_LEVEL
 
