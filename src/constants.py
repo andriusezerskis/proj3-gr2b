@@ -3,6 +3,8 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
+import json
+
 
 # Simulation
 STEP_TIME = 2000
@@ -52,11 +54,6 @@ DAY_DURATION = 24
 # # Entity generation
 # the probability that a tile does not contain any entity at generation
 EMPTY_TILE_PROBABILITY_GENERATION = 0.75
-ENTITY_WEIGHTS = {"Human": 0.5,
-                  "Fish": 0.5,
-                  "Algae": 1,
-                  "Tree": 1,
-                  "Crab": 0.2}
 
 # NIGHT MODE
 NIGHT_MODE_START = 20
@@ -76,27 +73,26 @@ MOVE_CAMERA_UP = "Move Camera UP : UP ARROW"
 
 # # Textures
 TEXTURE_FOLDER_PATH = "../assets/textures"
-ENTITIES_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
-TILES_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
-
-# Entities
-HUMAN_TEXTURE_PATH = f"{ENTITIES_FOLDER_PATH}/human.png"
-FISH_TEXTURE_PATH = f"{ENTITIES_FOLDER_PATH}/fish.png"
-ALGAE_TEXTURE_PATH = f"{ENTITIES_FOLDER_PATH}/algae.png"
-TREE_TEXTURE_PATH = f"{ENTITIES_FOLDER_PATH}/tree.png"
-CRAB_TEXTURE_PATH = f"{ENTITIES_FOLDER_PATH}/crab.png"
+ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
+TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
 
 # Tiles
-LAND_TEXTURE_PATH = f"{TILES_FOLDER_PATH}/land.png"
-WATER_TEXTURE_PATH = f"{TILES_FOLDER_PATH}/water.png"
-SAND_TEXTURE_PATH = f"{TILES_FOLDER_PATH}/sand.png"
-MOUNTAIN_TEXTURE_PATH = f"{TILES_FOLDER_PATH}/mountain.png"
+LAND_TEXTURE_PATH = f"{TILES_TEXTURE_FOLDER_PATH}/land.png"
+WATER_TEXTURE_PATH = f"{TILES_TEXTURE_FOLDER_PATH}/water.png"
+SAND_TEXTURE_PATH = f"{TILES_TEXTURE_FOLDER_PATH}/sand.png"
+MOUNTAIN_TEXTURE_PATH = f"{TILES_TEXTURE_FOLDER_PATH}/mountain.png"
 
 # Special
 NIGHT_MODE = f"{TEXTURE_FOLDER_PATH}/nightFilter.png"
 SUNSET_MODE = f"{TEXTURE_FOLDER_PATH}/sunset.png"
 HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
 
+# jsons
+ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
+TILE_PARAMETERS_FILE_PATH = "tile_parameters.json"
 
-# Translation of entities' names
-ENTITIES_NAMES_TRANSLATION = {"Algae": "Algue", "Fish": "Poisson", "Human": "Humain", "Tree": "Arbre", "Crab": "Crabe"}
+with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
+    ENTITY_PARAMETERS: dict = json.load(f)
+
+with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
+    TILE_PARAMETERS: dict = json.load(f)

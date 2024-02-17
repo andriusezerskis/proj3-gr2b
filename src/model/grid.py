@@ -1,5 +1,5 @@
 from typing import List
-from utils import Point, getPointsAdjacentTo
+from utils import Point, getPointsInRadius
 
 from model.terrains.tile import Tile
 from model.terrains.sand import Sand
@@ -25,12 +25,25 @@ class Grid:
             if WATER_LEVEL < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
 
-    def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
+    def getTilesInRadius(self, center: Point, radius: int):
+        """
+        :param center: the center of the circle
+        :param radius: the maximum distance from the center
+        :return: every point at a distance <= radius from the center WITHOUT including the center
+        """
         tiles = []
-        for pos in getPointsAdjacentTo(currentTile):
+        for pos in getPointsInRadius(center, radius):
             if self.isPosInGrid(pos):
                 tiles.append(self.getTile(pos))
         return tiles
+
+    def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
+        """
+        Equivalent to getTilesInRadius(currentTile, 1)
+        :param currentTile: a Point
+        :return: every adjacent tiles of currentTile
+        """
+        return self.getTilesInRadius(currentTile, 1)
 
     def updateTilesWithWaterLevel(self, newWaterLevel: float) -> set[Tile]:
         modified = set()

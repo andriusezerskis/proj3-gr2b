@@ -1,6 +1,5 @@
 from model.entities.entity import Entity
 from abc import ABC
-from abc import abstractmethod
 from utils import Point
 from overrides import override
 from random import random

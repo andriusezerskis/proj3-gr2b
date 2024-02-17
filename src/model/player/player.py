@@ -42,12 +42,12 @@ class Player(Entity):
     def getTexturePath(self) -> str:
         return self.claimed_entity.getTexturePath()
 
-    def getValidTiles(self):
-        return self.claimed_entity.getValidTiles()
+    def isValidTileType(self, tileType: type):
+        return self.claimed_entity.isValidTileType(tileType)
 
     @override
     def chooseAction(self) -> Action:
         return Action.IDLE
 
-    def reproduce(self) -> None:
+    def reproduce(self, other: Entity | None) -> None:
         return None

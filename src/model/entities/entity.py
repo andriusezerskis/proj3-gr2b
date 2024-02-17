@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
-from constants import ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION
+from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
+                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH)
 from model.action import Action
 from typing import TypeVar
 from utils import Point
+from model.drawable import ParametrizedDrawable
+from overrides import override
 
 from random import choice
 
@@ -11,7 +14,7 @@ Tile = TypeVar("Tile")
 Grid = TypeVar("Grid")
 
 
-class Entity(ABC):
+class Entity(ParametrizedDrawable, ABC):
     count = 0
     _grid = None
 
@@ -28,15 +31,27 @@ class Entity(ABC):
     def __del__(self):
         Entity.count -= 1
 
-    @staticmethod
-    @abstractmethod
-    def getTexturePath() -> str:
-        ...
+    @classmethod
+    @override
+    def _getParameters(cls) -> dict:
+        return ENTITY_PARAMETERS
 
-    @staticmethod
-    @abstractmethod
-    def getValidTiles() -> set[type]:
-        ...
+    @classmethod
+    @override
+    def _getFilePathPrefix(cls) -> str:
+        return ENTITIES_TEXTURE_FOLDER_PATH
+
+    @classmethod
+    def getSpawnWeight(cls) -> float:
+        return cls._getParameter("spawn_weight")
+
+    @classmethod
+    def _getValidTiles(cls) -> list[str]:
+        return cls._getParameter("valid_tiles")
+
+    @classmethod
+    def isValidTileType(cls, tileType: type) -> bool:
+        return tileType.__name__ in cls._getValidTiles()
 
     def canReproduce(self) -> bool:
         """
@@ -98,7 +113,7 @@ class Entity(ABC):
     def getValidMovementTiles(self) -> list[Tile]:
         if not self._validMovementTiles:
             self._validMovementTiles = [tile for tile in self.getFreeAdjacentTiles()
-                                        if type(tile) in self.getValidTiles()]
+                                        if self.isValidTileType(type(tile))]
         return self._validMovementTiles
 
     def setDead(self, dead):
