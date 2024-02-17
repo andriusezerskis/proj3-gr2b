@@ -27,7 +27,7 @@ class Pathfinder:
         res = []
         for move in getPointsAdjacentTo(Point(0, 0)):
             newPos = source + move
-            if self._grid.isPosInGrid(newPos) and type(self._grid.getTile(newPos)) in entity.getValidTiles():
+            if self._grid.isInGrid(newPos) and type(self._grid.getTile(newPos)) in entity.getValidTiles():
                 res.append(move)
         return res
 

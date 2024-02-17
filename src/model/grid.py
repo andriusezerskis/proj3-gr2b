@@ -28,7 +28,7 @@ class Grid:
     def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
         tiles = []
         for pos in getPointsAdjacentTo(currentTile):
-            if self.isPosInGrid(pos):
+            if self.isInGrid(pos):
                 tiles.append(self.getTile(pos))
         return tiles
 
@@ -52,19 +52,15 @@ class Grid:
         return modified
 
     def getTile(self, pos: Point) -> Tile:
-        if not self.isPosInGrid(pos):
+        if not self.isInGrid(pos):
             raise IndexError
         return self.tiles[pos.y()][pos.x()]
 
     def getSize(self):
         return self.size
 
-    def isPosInGrid(self, pos: Point) -> bool:
+    def isInGrid(self, pos: Point) -> bool:
         return 0 <= pos.x() < self.size.x() and 0 <= pos.y() < self.size.y()
-
-    #@staticmethod
-    def isInGrid(self, i, j):
-        return 0 <= i < self.size.x() and 0 <= j < self.size.y()
 
     def __iter__(self):
         for line in self.tiles:

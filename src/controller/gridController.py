@@ -57,7 +57,7 @@ class GridController:
 
     def getGridCoordinate(self, x, y):
         i, j = int(y // self.size[1]), int(x // self.size[0])
-        if self.simulation.getGrid().isPosInGrid(Point(j, i)):
+        if self.simulation.getGrid().isInGrid(Point(j, i)):
             return i, j
         elif i < 0 or j < 0:
             return 0, 0
