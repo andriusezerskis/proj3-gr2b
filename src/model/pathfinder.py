@@ -1,3 +1,9 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from model.grid import Grid
 from model.entities.entity import Entity
 from utils import Point, getPointsAdjacentTo, PrioritizedItem
@@ -84,6 +90,7 @@ class Pathfinder:
 
                     # we put the new pos without looking whether it was already in the queue or not, this could be
                     # optimized but there is no direct interface to check the elements of the queue
-                    pqueue.put(PrioritizedItem(self._dists[newPos] + self._heuristic(newPos, destination), newPos))
+                    pqueue.put(PrioritizedItem(
+                        self._dists[newPos] + self._heuristic(newPos, destination), newPos))
 
         return False

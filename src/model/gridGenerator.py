@@ -13,7 +13,7 @@ from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL, MOUNTAIN_LEVEL
 
 class GridGenerator:
 
-    def __init__(self, size: Point, island_nb: list[int], island_size: int,
+    def __init__(self, size: Point, islandNb: list[int], islandSize: int,
                  thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL), (Mountain, MOUNTAIN_LEVEL))):
         """
         :param size: x: width of the map, y: height of the map
@@ -25,13 +25,14 @@ class GridGenerator:
         self.w = size.x()
         self.h = size.y()
         self.matrix = None
-        self.island_nb = island_nb
-        self.island_size = island_size
+        self.islandNb = islandNb
+        self.islandSize = islandSize
         self.thresholds = thresholds
         self.maxAbsHeight = 0
 
     def _getTile(self, x: int, y: int) -> Tile:
-        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h) / self.maxAbsHeight
+        sample = self.noiseGenerator.sample2D(
+            x/self.w, y/self.h) / self.maxAbsHeight
         for tileType, threshold in self.thresholds:
 
             if sample <= threshold:
@@ -48,7 +49,7 @@ class GridGenerator:
                 if type(tile) is not Water and tile not in visited:
 
                     # new island found
-                    if len(islands) >= max(self.island_nb):
+                    if len(islands) >= max(self.islandNb):
                         # no need to look further, we've found too many islands
                         return []
 
@@ -85,7 +86,7 @@ class GridGenerator:
         islands = []
         size_ok = False
         print("Generating terrain...")
-        while len(islands) not in self.island_nb or not size_ok:
+        while len(islands) not in self.islandNb or not size_ok:
             self.noiseGenerator = NoiseGenerator()
             self.noiseGenerator.addNoise(2, 1)
             self.noiseGenerator.addNoise(4, 0.5)
@@ -94,7 +95,7 @@ class GridGenerator:
             islands = self.getIslands()
             size_ok = True
             for island in islands:
-                if len(island) < self.island_size:
+                if len(island) < self.islandSize:
                     size_ok = False
                     break
 
