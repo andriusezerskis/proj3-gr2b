@@ -1,14 +1,5 @@
-from overrides import override
-
-from constants import CRAB_TEXTURE_PATH, PREFERRED_TEMPERATURE_CRAB
-
 from utils import Point
-
 from model.entities.animal import Animal
-from model.terrains.water import Water
-from model.terrains.sand import Sand
-from model.entities.algae import Algae
-from model.entities.fish import Fish
 
 
 class Crab(Animal):
@@ -21,22 +12,3 @@ class Crab(Animal):
     def __del__(self):
         super().__del__()
         Crab.count -= 1
-
-    @staticmethod
-    @override
-    def getTexturePath() -> str:
-        return CRAB_TEXTURE_PATH
-
-    @staticmethod
-    @override
-    def getValidTiles() -> set[type]:
-        return {Sand, Water}
-
-    @staticmethod
-    def getPreferredTemperature() -> float:
-        return PREFERRED_TEMPERATURE_CRAB
-
-    @staticmethod
-    @override
-    def getPreys() -> set[type]:
-        return {Algae, Fish}

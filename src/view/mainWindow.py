@@ -4,6 +4,7 @@ from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
+from controller.gridController import GridController
 
 from model.entities.human import Human
 from model.simulation import Simulation
@@ -32,21 +33,24 @@ class CustomQDock(QDockWidget):
 
 
 class Window(QMainWindow):
-    def __init__(self, grid_size: Tuple[int, int], simulation: Simulation):
+    def __init__(self, gridSize: Tuple[int, int], simulation: Simulation):
         super().__init__()
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
-        self.rendering_monitor = simulation.getRenderMonitor()
+        self.renderingMonitor = simulation.getRenderMonitor()
 
         self.view = GraphicalGrid(
-            grid_size, simulation.getGrid(), simulation, self.rendering_monitor)
-        self.grid_controller = MainWindowController(
-            self.view, simulation, self.rendering_monitor, self)
+            gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
+        self.mainWindowController = MainWindowController(
+            self.view, simulation, self)
         self.initialiseDock()
+
+        self.gridController = GridController(
+            self.view, simulation, self.renderingMonitor)
 
         self.setCentralWidget(self.view)
         self.simulation = simulation
-        self.total_time = 0
+        self.totalTime = 0
 
         self.fastF = False
         self.paused = False
@@ -60,7 +64,7 @@ class Window(QMainWindow):
         self.commands = CommandWindow(self)
 
     def initialiseDock(self):
-        self.dock = CustomQDock(self.grid_controller, self)
+        self.dock = CustomQDock(self.mainWindowController, self)
         self.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
 
@@ -97,23 +101,23 @@ class Window(QMainWindow):
                 "background-color: blue; color: white;")
 
     def recurringTimer(self):
-        self.total_time += 1
+        self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
         self.monitor.getGraph().updatePlot(
             Human.count)
         self.entityController.update()
         # yo deso demeter mais on reglera le probleme plus tard
-        self.show_time()
+        self.showTime()
 
-    def show_time(self):
+    def showTime(self):
         """
         Display the time passed, one step is one hour
         """
 
         convert = time.strftime(
-            "%A %e:%H hours", time.gmtime(self.total_time * 3600))
-        hour = time.strftime("%H", time.gmtime(self.total_time * 3600))
+            "%A %e:%H hours", time.gmtime(self.totalTime * 3600))
+        hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
 
@@ -159,10 +163,10 @@ class Window(QMainWindow):
 
         self.zoomInButton = QPushButton("+")
         self.zoomInButton.clicked.connect(
-            MainWindowController.getInstance().zoomIn)
+            GridController.getInstance().zoomIn)
         self.zoomOutButton = QPushButton("-")
         self.zoomOutButton.clicked.connect(
-            MainWindowController.getInstance().zoomOut)
+            GridController.getInstance().zoomOut)
 
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()

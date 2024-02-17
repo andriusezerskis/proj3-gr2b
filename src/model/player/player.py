@@ -42,8 +42,8 @@ class Player(Entity):
     def getTexturePath(self) -> str:
         return self.claimed_entity.getTexturePath()
 
-    def getValidTiles(self):
-        return self.claimed_entity.getValidTiles()
+    def isValidTileType(self, tileType: type):
+        return self.claimed_entity.isValidTileType(tileType)
 
     def getPreferredTemperature(self) -> float:
         return self.claimed_entity.getPreferredTemperature()
@@ -52,5 +52,5 @@ class Player(Entity):
     def chooseAction(self) -> Action:
         return Action.IDLE
 
-    def reproduce(self) -> None:
+    def reproduce(self, other: Entity | None) -> None:
         return None

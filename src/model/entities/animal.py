@@ -2,7 +2,7 @@ from utils import Point
 from typing import TypeVar
 from model.entities.entity import Entity
 from model.action import Action
-from abc import abstractmethod, ABC
+from abc import ABC
 from overrides import override
 from random import choice
 from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
@@ -21,6 +21,18 @@ class Animal(Entity, ABC):
 
         self._potentialMates = None
         self._adjacentPreys = None
+
+    @classmethod
+    def _getPreys(cls) -> list[str]:
+        return cls._getParameter("preys")
+
+    @classmethod
+    def getPreysNames(cls) -> list[str]:
+        return cls._getPreys()
+
+    @classmethod
+    def isPrey(cls, prey: type):
+        return prey.__name__ in cls._getPreys()
 
     @override
     def evolve(self):
@@ -63,18 +75,14 @@ class Animal(Entity, ABC):
         assert len(freeTiles) > 0
         return choice(freeTiles).getPos() - self.getPos()
 
-    @staticmethod
-    @abstractmethod
-    def getPreys() -> set[type]:
-        ...
-
     def eat(self, prey: Entity):
         self.hunger = 0
+        prey.setDead(True)
         prey.getTile().removeEntity()
 
     @override
     def isDead(self):
-        return self.starvedToDeath() or self.isDeadByOldness()
+        return self.starvedToDeath() or self.isDeadByOldness() or self.dead
 
     def getPotentialMates(self) -> list[Entity]:
         if not self._potentialMates:
@@ -84,7 +92,7 @@ class Animal(Entity, ABC):
 
     def getAdjacentPreys(self) -> list[Entity]:
         if not self._adjacentPreys:
-            self._adjacentPreys = [entity for entity in self.getAdjacentEntities() if type(entity) in self.getPreys()]
+            self._adjacentPreys = [entity for entity in self.getAdjacentEntities() if self.isPrey(type(entity))]
         return self._adjacentPreys
 
     @override

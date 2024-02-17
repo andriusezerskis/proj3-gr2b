@@ -69,4 +69,10 @@ def euclidDistance(point1: Point, point2: Point) -> int:
 
 
 def getPointsAdjacentTo(point: Point) -> list[Point]:
-    return [Point(point.x() + x, point.y() + y) for y in [-1, 0, 1] for x in [-1, 0, 1] if x != 0 or y != 0]
+    return getPointsInRadius(point, 1)
+
+
+def getPointsInRadius(point: Point, radius: int) -> list[Point]:
+    assert radius > 0 and isinstance(radius, int)
+    return [Point(point.x() + x, point.y() + y) for y in range(-radius, radius + 1) for x in range(-radius, radius + 1)
+            if x != 0 or y != 0]
