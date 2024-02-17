@@ -10,7 +10,8 @@ from utils import Point
 
 
 class Cuboid:
-    def __init__(self, upper_left_point: List, lower_right_point: List, size):
+    def __init__(self, upper_left_point: List, lower_right_point: List, size: Point):
+        assert isinstance(size, Point)
         self.upper = upper_left_point
         self.lower = lower_right_point
         self.size = size
@@ -74,10 +75,12 @@ class Cuboid:
         return lost_area, won_area
 
     def __iter__(self):
+        print(self.upper, self.lower)
         for i in range(self.upper[0], self.lower[0] + 1):
             for j in range(self.upper[1], self.lower[1] + 1):
-                if 0 <= i < self.size[1] and 0 <= j < self.size[0]:
-                    yield i, j
+                #if Grid.isInGrid(i, j)
+                #if 0 <= i < 100 and 0 <= j < 100:
+                yield i, j
 
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
@@ -91,13 +94,12 @@ class Cuboid:
 
 
 class RenderMonitor:
-    def __init__(self, size):
-        self.size = size
-        self.renderingSize = Point(self.size, self.size)
-        self.renderingSection = Cuboid([(self.size - self.renderingSize.y()) // 2,
-                                        (self.size - self.renderingSize.x()) // 2],
-                                       [(self.size + self.renderingSize.y()) // 2,
-                                        (self.size + self.renderingSize.x()) // 2], self.size)
+    def __init__(self, grid_size: Point, size: Point):
+        self.renderingSize = size
+        self.renderingSection = Cuboid([(grid_size.y() - self.renderingSize.y()) // 2,
+                                        (grid_size.x() - self.renderingSize.x()) // 2],
+                                       [(grid_size.y() + self.renderingSize.y()) // 2 - 1,
+                                        (grid_size.x() + self.renderingSize.x()) // 2 - 1], self.renderingSize)
         self.zoomIndex = 0
         self.zoomFactor = 1
         self.zooms = [1, 4/3, 3/2, 2, 5/2]
@@ -127,13 +129,15 @@ class RenderMonitor:
         return self.renderingSection
 
     def setNewPoints(self, upper_point: List[int], lower_point: List[int], width: int, height: int):
-        self.renderingSection = Cuboid(upper_point, lower_point)
+        #assert 0 <= lower_point[0] < 100 and 0 <= lower_point[1] < 100
+        self.renderingSection = Cuboid(upper_point, lower_point, Point(width, height))
         self.renderingSize = Point(width, height)
 
     def centerOnPoint(self, point: Tuple[int, int]):
         i, j = point
         self.renderingSection = Cuboid([i - self.renderingSize.x() // 2, j - self.renderingSize.y() // 2],
-                                       [i + self.renderingSize.x() // 2, j + self.renderingSize.y() // 2], self.size)
+                                       [i + self.renderingSize.x() // 2, j + self.renderingSize.y() // 2],
+                                       self.renderingSize)
 
     def zoomForPlayer(self):
         old_zoom = self.zoomIndex

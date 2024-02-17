@@ -56,6 +56,9 @@ class Grid:
             raise IndexError
         return self.tiles[pos.y()][pos.x()]
 
+    def getSize(self):
+        return self.size
+
     def isPosInGrid(self, pos: Point) -> bool:
         return 0 <= pos.x() < self.size.x() and 0 <= pos.y() < self.size.y()
 

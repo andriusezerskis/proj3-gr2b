@@ -56,6 +56,10 @@ class Point:
     def euclidDistance(self, other):
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
+    def __iter__(self):
+        yield self.x()
+        yield self.y()
+
 
 # https://docs.python.org/3/library/queue.html
 @dataclass(order=True)
