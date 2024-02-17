@@ -15,12 +15,19 @@ Grid = TypeVar("Grid")
 
 
 class Entity(ParametrizedDrawable, ABC):
-    count = 0
+    # https://stackoverflow.com/a/75663885
+    counts = dict()
     _grid = None
 
     def __init__(self, pos: Point):
+        super().__init__()
+
+        for cls in self.__class__.__mro__:
+            if cls not in self.counts.keys():
+                self.counts[cls] = 0
+            self.counts[cls] += 1
+
         self.pos = pos
-        Entity.count += 1
         self.age = 0
         self.reproductionCooldown = 0
         self.reproductionCooldown = 0
@@ -29,7 +36,8 @@ class Entity(ParametrizedDrawable, ABC):
         self.dead = False
 
     def __del__(self):
-        Entity.count -= 1
+        for cls in self.__class__.__mro__:
+            self.counts[cls] -= 1
 
     @classmethod
     @override
@@ -90,7 +98,7 @@ class Entity(ParametrizedDrawable, ABC):
         self.age = age
 
     def __str__(self):
-        ...
+        return self.__class__.__name__[0]
 
     def getAdjacentTiles(self) -> list[Tile]:
         """
@@ -152,5 +160,6 @@ class Entity(ParametrizedDrawable, ABC):
     def getReproductionCooldown(self) -> int:
         return self.reproductionCooldown
 
-    def getCount(self):
-        return self.count
+    @classmethod
+    def getCount(cls) -> int:
+        return cls.counts[cls]

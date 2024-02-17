@@ -12,11 +12,9 @@ Animal_ = TypeVar("Animal_")
 
 
 class Animal(Entity, ABC):
-    count = 0
 
     def __init__(self, pos: Point):
         super().__init__(pos)
-        Animal.count += 1
         self.hunger: float = 0
 
         self._potentialMates = None
@@ -31,8 +29,15 @@ class Animal(Entity, ABC):
         return cls._getPreys()
 
     @classmethod
+    def getPreferredTemperature(cls) -> float:
+        return cls._getParameter("preferred_temperature")
+
+    @classmethod
     def isPrey(cls, prey: type):
         return prey.__name__ in cls._getPreys()
+
+    def getTemperatureDifference(self) -> float:
+        return abs(self.getGrid().getTemperature(self.getPos()) - self.getPreferredTemperature())
 
     @override
     def evolve(self):
@@ -41,13 +46,8 @@ class Animal(Entity, ABC):
         self._adjacentPreys = None
         self.hunger += 1 + self.getTemperatureDifference() / 10
 
-    def __del__(self):
-        super().__del__()
-        Animal.count -= 1
-
     def pickTileToMove(self) -> Tile:
         tiles = self.getGrid().getAdjacentTiles(self.getPos())
-
 
     @override
     def chooseAction(self) -> Action:
@@ -124,7 +124,7 @@ class Animal(Entity, ABC):
     def starvedToDeath(self) -> bool:
         return self.hunger >= ENTITY_MAX_HUNGER
 
-    def getHunger(self) -> int:
+    def getHunger(self) -> float:
         return self.hunger
 
     def isHungry(self) -> bool:

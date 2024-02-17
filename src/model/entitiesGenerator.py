@@ -1,28 +1,38 @@
 import random
-from typing import Dict, Type
-
 from constants import EMPTY_TILE_PROBABILITY_GENERATION
 
 from random import random, choices
 
 from model.grid import Grid
 
-from model.entities.algae import Algae
-from model.entities.fish import Fish
-from model.entities.human import Human
-from model.entities.tree import Tree
-from model.entities.crab import Crab
-
-from model.terrains.land import Land
+from model.entities.entity import Entity
+from model.player.player import Player
 from model.terrains.tile import Tile
-from model.terrains.water import Water
+
+# those imports are actually necessary, do not trust your IDE
+import model.entities.plants
+import model.entities.animals
 
 
 class EntitiesGenerator:
-    ENTITIES_LIST = [Algae, Fish, Human, Tree, Crab]
 
     def __init__(self):
+        self.entitySet: set[type] = self._getAllInstanciableEntities()
+        print(self.entitySet)
         self._validEntitiesForTileType = {}
+
+    @staticmethod
+    def _getAllInstanciableEntities() -> set[type]:
+        res = set()
+        stack = [Entity]
+        while len(stack) > 0:
+            current = stack.pop()
+            subclasses = current.__subclasses__()
+            if len(subclasses) == 0:
+                res.add(current)
+            else:
+                stack.extend(subclasses)
+        return res - {Player}
 
     def generateEntities(self, grid: Grid):
         for tile in grid:
@@ -33,7 +43,8 @@ class EntitiesGenerator:
 
         if tile not in self._validEntitiesForTileType:
             res = []
-            for entityType in self.ENTITIES_LIST:
+            for entityType in self.entitySet:
+                assert issubclass(entityType, Entity)
                 if entityType.isValidTileType(tile):
                     res.append(entityType)
 
