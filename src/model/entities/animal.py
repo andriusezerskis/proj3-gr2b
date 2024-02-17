@@ -4,7 +4,7 @@ from model.entities.entity import Entity
 from model.action import Action
 from abc import ABC
 from overrides import override
-from random import choice
+from random import choice, choices
 from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
 
 Tile = TypeVar("Tile")
@@ -17,8 +17,7 @@ class Animal(Entity, ABC):
         super().__init__(pos)
         self.hunger: float = 0
 
-        self._potentialMates = None
-        self._adjacentPreys = None
+        self._local_information = {}
 
     @classmethod
     def _getPreys(cls) -> list[str]:
@@ -27,6 +26,10 @@ class Animal(Entity, ABC):
     @classmethod
     def getPreysNames(cls) -> list[str]:
         return cls._getPreys()
+
+    @classmethod
+    def getViewDistance(cls) -> int:
+        return cls._getParameter("view_distance")
 
     @classmethod
     def getPreferredTemperature(cls) -> float:
@@ -42,15 +45,54 @@ class Animal(Entity, ABC):
     @override
     def evolve(self):
         super().evolve()
-        self._potentialMates = None
-        self._adjacentPreys = None
+        self._local_information = {"mates": {"adjacent": set(), "viewable": set()},
+                                   "preys": {"adjacent": set(), "viewable": set()},
+                                   "predators": {"adjacent": set(), "viewable": set()}}
         self.hunger += 1 + self.getTemperatureDifference() / 10
 
-    def pickTileToMove(self) -> Tile:
-        tiles = self.getGrid().getAdjacentTiles(self.getPos())
+    def _scanSurroundings(self) -> None:
+        for tile in self.getGrid().getTilesInRadius(self.getPos(), self.getViewDistance()):
+            entity = tile.getEntity()
+            if not entity:
+                continue
+
+            if self.isPrey(type(entity)):
+                self._local_information["preys"]["viewable"].add(entity)
+                if self.getPos().octileDistance(tile.getPos()) == 1:
+                    self._local_information["preys"]["adjacent"].add(entity)
+
+            if isinstance(entity, Animal) and entity.isPrey(type(self)):
+                self._local_information["predators"]["viewable"].add(entity)
+                if self.getPos().octileDistance(tile.getPos()) == 1:
+                    self._local_information["predators"]["adjacent"].add(entity)
+
+            if type(entity) is type(self) and entity.isFitForReproduction():
+                self._local_information["mates"]["viewable"].add(entity)
+                if self.getPos().octileDistance(tile.getPos()) == 1:
+                    self._local_information["mates"]["adjacent"].add(entity)
+
+    def _scoreMove(self) -> float:
+        return 1
+
+    def _scoreEat(self) -> float:
+        return 1
+
+    def _scoreReproduce(self) -> float:
+        return 1
+
+    @staticmethod
+    def _scoreIdle() -> float:
+        return 1
 
     @override
     def chooseAction(self) -> Action:
+        self._scanSurroundings()
+
+        move = self._scoreMove()
+        eat = self._scoreEat()
+        reproduce = self._scoreReproduce()
+        idle = self._scoreIdle()
+
         if self.isHungry() and self.canEat():
             return Action.EAT
 
@@ -63,11 +105,14 @@ class Animal(Entity, ABC):
 
         return Action.MOVE
 
+        return choices([Action.MOVE, Action.EAT, Action.REPRODUCE, Action.IDLE],
+                       [move, eat, reproduce, idle])[0]
+
     def choosePrey(self) -> Entity:
-        return choice(self.getAdjacentPreys())
+        return choice(list(self._local_information["preys"]["adjacent"]))
 
     def canEat(self) -> bool:
-        return len(self.getAdjacentPreys()) > 0
+        return len(self._local_information["preys"]["adjacent"]) > 0
 
     @override
     def chooseMove(self) -> Point:
@@ -84,23 +129,12 @@ class Animal(Entity, ABC):
     def isDead(self):
         return self.starvedToDeath() or self.isDeadByOldness() or self.dead
 
-    def getPotentialMates(self) -> list[Entity]:
-        if not self._potentialMates:
-            self._potentialMates = [entity for entity in self.getAdjacentEntities()
-                                    if type(entity) is type(self) and entity.isFitForReproduction()]
-        return self._potentialMates
-
-    def getAdjacentPreys(self) -> list[Entity]:
-        if not self._adjacentPreys:
-            self._adjacentPreys = [entity for entity in self.getAdjacentEntities() if self.isPrey(type(entity))]
-        return self._adjacentPreys
-
     @override
     def canReproduce(self) -> bool:
         if not super().canReproduce():
             return False
 
-        potentialMates = self.getPotentialMates()
+        potentialMates = self._local_information["mates"]["adjacent"]
         if len(potentialMates) == 0:
             # No potential mate
             return False
@@ -108,7 +142,7 @@ class Animal(Entity, ABC):
         return True
 
     def getMate(self) -> Entity:
-        potentialMates = self.getPotentialMates()
+        potentialMates = self._local_information["mates"]["adjacent"]
         assert len(potentialMates) > 0
         return choice(potentialMates)
 

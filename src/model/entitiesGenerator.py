@@ -9,7 +9,7 @@ from model.entities.entity import Entity
 from model.player.player import Player
 from model.terrains.tile import Tile
 
-# those imports are actually necessary, do not trust your IDE
+# these imports are actually necessary, do not trust your IDE
 import model.entities.plants
 import model.entities.animals
 
