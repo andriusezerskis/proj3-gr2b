@@ -1,5 +1,10 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from perlin_noise import perlin_noise
-from overrides import override
 
 
 class NoiseGenerator:
@@ -28,6 +33,6 @@ class NoiseGenerator:
 
         if (x, y) in self.noiseDict:
             return self.noiseDict[x, y]
-        self.noiseDict[x, y] = sum([noise([x, y]) * weight for noise, weight in self.noises]) / self.weightSum
+        self.noiseDict[x, y] = sum(
+            [noise([x, y]) * weight for noise, weight in self.noises]) / self.weightSum
         return self.noiseDict[x, y]
-

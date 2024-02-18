@@ -1,5 +1,10 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from model.noiseGenerator import NoiseGenerator
-from overrides import override
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -36,7 +41,8 @@ class RegionHandler:
 
     def _sampleTemperatureFlat(self, x: int, y: int):
         s = AVERAGE_TEMPERATURE
-        s += self.flatTemperatureNoise.sample2D(x/self.w, y/self.h) * MAX_TEMPERATURE_DIFFERENCE
+        s += self.flatTemperatureNoise.sample2D(
+            x/self.w, y/self.h) * MAX_TEMPERATURE_DIFFERENCE
         return s
 
     def _sampleHumidity(self, x: int, y: int):
@@ -49,8 +55,10 @@ class RegionHandler:
         return self.humidityMap[y][x]
 
     def renderTemperatureMap(self):
-        vmin = (AVERAGE_TEMPERATURE - MAX_TEMPERATURE_DIFFERENCE - SEASON_TEMPERATURE_DIFFERENCE / 2)
-        vmax = (AVERAGE_TEMPERATURE + MAX_TEMPERATURE_DIFFERENCE + SEASON_TEMPERATURE_DIFFERENCE / 2)
+        vmin = (AVERAGE_TEMPERATURE - MAX_TEMPERATURE_DIFFERENCE -
+                SEASON_TEMPERATURE_DIFFERENCE / 2)
+        vmax = (AVERAGE_TEMPERATURE + MAX_TEMPERATURE_DIFFERENCE +
+                SEASON_TEMPERATURE_DIFFERENCE / 2)
         plt.imshow(self.temperatureMap + self._sampleSineTemperature(),
                    vmin=vmin, vmax=vmax)
         plt.text(1, 4, f"t={self.t}", backgroundcolor="white")

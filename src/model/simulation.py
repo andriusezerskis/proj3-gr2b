@@ -32,9 +32,9 @@ sys.path.append(os.path.dirname(
 
 
 class Simulation:
-    def __init__(self):
+    def __init__(self, size):
         super().__init__()
-        self.grid = GridGenerator(Point(GRID_WIDTH, GRID_HEIGHT),
+        self.grid = GridGenerator(Point(size[0], size[1]),
                                   [2, 3, 4, 5, 6],
                                   350).generateGrid()
         EntitiesGenerator().generateEntities(self.grid)
@@ -43,7 +43,7 @@ class Simulation:
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
         self.player = Player(Point(-1, -1))
-        self.renderMonitor = RenderMonitor()
+        self.renderMonitor = RenderMonitor(Point(size[0], size[1]), Point(size[0], size[1]))
 
         self.water_level = Water.getLevel()
 

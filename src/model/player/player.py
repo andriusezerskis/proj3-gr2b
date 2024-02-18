@@ -31,7 +31,7 @@ class Player(Entity):
     def move(self, movement: Point):
         old_position = copy(self.pos)
         wanted_position = self.pos + movement
-        if (self.getGrid().isInGrid(wanted_position.y(), wanted_position.x())
+        if (self.getGrid().isInGrid(wanted_position)
                 and not self.getGrid().getTile(wanted_position).hasEntity()
                 and self.isValidTileType(type(self.getGrid().getTile(wanted_position)))):
             self.getGrid().getTile(old_position).removeEntity()

@@ -42,14 +42,6 @@ class MonitorWindow:
         button = QPushButton("OK")
         button.clicked.connect(self.lol)
         self.layout.addWidget(button)
-        self.initGraph()
-
-    def initGraph(self):
-        self.ww = GraphWindow()
-        self.ww.show()
-
-    def getGraph(self):
-        return self.ww
 
     def lol(self):
         # bouton OK handler
@@ -72,7 +64,7 @@ class MonitorWindow:
         layout.addWidget(b2)
 
         spin_box = QSpinBox(minimum=1, maximum=100, value=20)
-        spin_box.valueChanged.connect(self.update_spinbox)
+        spin_box.valueChanged.connect(self.updateSpinbox)
         layout.addWidget(spin_box)
 
         b3 = QRadioButton("Ile")
@@ -91,15 +83,15 @@ class MonitorWindow:
 
         b1 = QRadioButton("Froid glacial")
         b1.setChecked(True)
-        b1.toggled.connect(lambda: self.btn_cata(b1))
+        b1.toggled.connect(lambda: self.btnCata(b1))
         layout.addWidget(b1)
 
         b2 = QRadioButton("Super hot")
-        b2.toggled.connect(lambda: self.btn_cata(b2))
+        b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
         b3 = QRadioButton("EXPLOSION")
-        b3.toggled.connect(lambda: self.btn_cata(b3))
+        b3.toggled.connect(lambda: self.btnCata(b3))
         layout.addWidget(b3)
 
         container = QWidget()
@@ -126,10 +118,10 @@ class MonitorWindow:
             else:
                 print(b.text()+" is deselected")
 
-    def update_spinbox(self, value):
+    def updateSpinbox(self, value):
         self.rayon = value
 
-    def btn_cata(self, b):
+    def btnCata(self, b):
         # handler de catastrophe selectionné
         if b.text() == "Froid glacial":
             if b.isChecked() == True:
@@ -157,40 +149,38 @@ class MplCanvas(FigureCanvas):
         super(MplCanvas, self).__init__(fig)
 
 
-class GraphWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Graphe deb'ile")
-        self.setGeometry(500, 100, 500, 300)
+class GraphWindow:
+    def __init__(self, dock, container):
+        # self.setGeometry(500, 100, 500, 300)
 
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
-        self.setCentralWidget(self.canvas)
-
-        n_data = 50
-        self.xdata = list(range(n_data))
-        self.ydata = [0 for i in range(n_data)]
+        self.layout = QVBoxLayout()
+        container.setLayout(self.layout)
+        self.layout.addWidget(self.canvas)
+        nData = 50
+        self.xdata = list(range(nData))
+        self.ydata = [0 for i in range(nData)]
 
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
-        self._plot_ref = None
+        self._plotRef = None
         # self.update_plot()
-        self.show()
 
-    def updatePlot(self, new_number):
+    def updatePlot(self, newNumber):
         # Drop off the first y element, append a new one.
-        self.ydata = self.ydata[1:] + [new_number]
+        self.ydata = self.ydata[1:] + [newNumber]
 
         # Note: we no longer need to clear the axis.
-        if self._plot_ref is None:
+        if self._plotRef is None:
             # First time we have no plot reference, so do a normal plot.
             # .plot returns a list of line <reference>s, as we're
             # only getting one we can take the first element.
             plot_refs = self.canvas.axes.plot(self.xdata, self.ydata, 'r')
-            self._plot_ref = plot_refs[0]
+            self._plotRef = plot_refs[0]
         else:
             # We have a reference, we can use it to update the data for that line.
-            self._plot_ref.set_ydata(self.ydata)
+            self._plotRef.set_ydata(self.ydata)
 
         # Trigger the canvas to update and redraw.
         self.canvas.draw()

@@ -14,18 +14,18 @@ from utils import Point
 
 class GridGenerator(AutomaticGenerator):
 
-    def __init__(self, size: Point, island_nb: list[int], island_size: int):
+    def __init__(self, size: Point, islandNb: list[int], islandSize: int):
         """
         :param size: x: width of the map, y: height of the map
-        :param island_nb: number of islands in the grid (an array of possible values)
-        :param island_size: minimal number of land tiles in an island
+        :param islandNb: number of islands in the grid (an array of possible values)
+        :param islandSize: minimal number of land tiles in an island
         """
         self.noiseGenerator = None
         self.w = size.x()
         self.h = size.y()
         self.matrix = None
-        self.island_nb = island_nb
-        self.island_size = island_size
+        self.islandNb = islandNb
+        self.islandSize = islandSize
         self.thresholds = self.generateThresholds()
         self.maxAbsHeight = 0
 
@@ -45,7 +45,8 @@ class GridGenerator(AutomaticGenerator):
         return sorted(res, key=lambda x: x[1])
 
     def _getTile(self, x: int, y: int) -> Tile:
-        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h) / self.maxAbsHeight
+        sample = self.noiseGenerator.sample2D(
+            x/self.w, y/self.h) / self.maxAbsHeight
         for tileType, threshold in self.thresholds:
 
             if sample <= threshold:
@@ -62,7 +63,7 @@ class GridGenerator(AutomaticGenerator):
                 if type(tile) is not Water and tile not in visited:
 
                     # new island found
-                    if len(islands) >= max(self.island_nb):
+                    if len(islands) >= max(self.islandNb):
                         # no need to look further, we've found too many islands
                         return []
 
@@ -99,7 +100,7 @@ class GridGenerator(AutomaticGenerator):
         islands = []
         size_ok = False
         print("Generating terrain...")
-        while len(islands) not in self.island_nb or not size_ok:
+        while len(islands) not in self.islandNb or not size_ok:
             self.noiseGenerator = NoiseGenerator()
             self.noiseGenerator.addNoise(2, 1)
             self.noiseGenerator.addNoise(4, 0.5)
@@ -108,7 +109,7 @@ class GridGenerator(AutomaticGenerator):
             islands = self.getIslands()
             size_ok = True
             for island in islands:
-                if len(island) < self.island_size:
+                if len(island) < self.islandSize:
                     size_ok = False
                     break
 

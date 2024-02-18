@@ -1,72 +1,89 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from functools import reduce
 from typing import List, Tuple
 
 from model.terrains.tile import Tile
-from model.grid import Grid
-
-from constants import RENDERING_HEIGHT, GRID_WIDTH, RENDERING_WIDTH, GRID_HEIGHT
 
 from utils import Point
 
 
 class Cuboid:
-    def __init__(self, upper_left_point: List, lower_right_point: List):
-        self.upper = upper_left_point
-        self.lower = lower_right_point
+    def __init__(self, upperLeftPoint: List, lowerRightPoint: List, size: Point):
+        assert isinstance(size, Point)
+        self.upper = upperLeftPoint
+        self.lower = lowerRightPoint
+        self.size = size
 
-    def left_move(self, dist: int, keep_on_screen: bool):
-        save_upper = self.upper[:]
-        save_lower = self.lower[:]
-        left_movement = min(dist, self.upper[1]) if keep_on_screen else dist
+    def leftMove(self, dist: int, keepOnScreen: bool):
+        saveUpper = self.upper[:]
+        saveLower = self.lower[:]
+        leftMovement = min(dist, self.upper[1]) if keepOnScreen else dist
 
-        self.upper[1] -= left_movement
-        self.lower[1] -= left_movement
+        self.upper[1] -= leftMovement
+        self.lower[1] -= leftMovement
 
-        lost_area = Cuboid([self.upper[0], self.lower[1] + 1], save_lower)
-        won_area = Cuboid(self.upper, [self.lower[0], save_upper[1] - 1])
-        return lost_area, won_area
+        lostArea = Cuboid(
+            [self.upper[0], self.lower[1] + 1], saveLower, self.size)
+        wonArea = Cuboid(
+            self.upper, [self.lower[0], saveUpper[1] - 1], self.size)
+        return lostArea, wonArea
 
-    def right_move(self, dist: int, keep_on_screen: bool):
-        save_upper = self.upper[:]
-        save_lower = self.lower[:]
-        right_movement = min(dist, GRID_WIDTH - 1 - self.lower[1]) if keep_on_screen else dist
+    def rightMove(self, dist: int, keepOnScreen: bool):
+        saveUpper = self.upper[:]
+        saveLower = self.lower[:]
+        rightMovement = min(dist, self.size[0] - 1 -
+                            self.lower[1]) if keepOnScreen else dist
 
-        self.upper[1] += right_movement
-        self.lower[1] += right_movement
+        self.upper[1] += rightMovement
+        self.lower[1] += rightMovement
 
-        lost_area = Cuboid(save_upper, [self.lower[0], self.upper[1] - 1])
-        won_area = Cuboid([self.upper[0], save_lower[1] + 1], self.lower)
-        return lost_area, won_area
+        lostArea = Cuboid(
+            saveUpper, [self.lower[0], self.upper[1] - 1], self.size)
+        wonArea = Cuboid([self.upper[0], saveLower[1] + 1],
+                         self.lower, self.size)
+        return lostArea, wonArea
 
-    def up_move(self, dist: int, keep_on_screen: bool):
-        save_upper = self.upper[:]
-        save_lower = self.lower[:]
-        up_movement = min(dist, self.upper[0]) if keep_on_screen else dist
+    def upMove(self, dist: int, keepOnScreen: bool):
+        saveUpper = self.upper[:]
+        saveLower = self.lower[:]
+        upMovement = min(dist, self.upper[0]) if keepOnScreen else dist
 
-        self.upper[0] -= up_movement
-        self.lower[0] -= up_movement
+        self.upper[0] -= upMovement
+        self.lower[0] -= upMovement
 
-        lost_area = Cuboid([self.lower[0] + 1, self.upper[1]], save_lower)
-        won_area = Cuboid(self.upper, [save_upper[0] - 1, self.lower[1]])
-        return lost_area, won_area
+        lostArea = Cuboid(
+            [self.lower[0] + 1, self.upper[1]], saveLower, self.size)
+        wonArea = Cuboid(
+            self.upper, [saveUpper[0] - 1, self.lower[1]], self.size)
+        return lostArea, wonArea
 
-    def down_move(self, dist: int, keep_on_screen: bool):
-        save_upper = self.upper[:]
-        save_lower = self.lower[:]
-        down_movement = min(dist, GRID_HEIGHT - 1 - self.lower[0]) if keep_on_screen else dist
+    def downMove(self, dist: int, keepOnScreen: bool):
+        saveUpper = self.upper[:]
+        saveLower = self.lower[:]
+        downMovement = min(dist, self.size[1] - 1 -
+                           self.lower[0]) if keepOnScreen else dist
 
-        self.upper[0] += down_movement
-        self.lower[0] += down_movement
+        self.upper[0] += downMovement
+        self.lower[0] += downMovement
 
-        lost_area = Cuboid(save_upper, [self.upper[0] - 1, self.lower[1]])
-        won_area = Cuboid([save_lower[0] + 1, self.upper[1]], self.lower)
-        return lost_area, won_area
+        lostArea = Cuboid(
+            saveUpper, [self.upper[0] - 1, self.lower[1]], self.size)
+        wonArea = Cuboid([saveLower[0] + 1, self.upper[1]],
+                         self.lower, self.size)
+        return lostArea, wonArea
 
     def __iter__(self):
+        print(self.upper, self.lower)
         for i in range(self.upper[0], self.lower[0] + 1):
             for j in range(self.upper[1], self.lower[1] + 1):
-                if Grid.isInGrid(i, j):
-                    yield i, j
+                # if Grid.isInGrid(i, j)
+                # if 0 <= i < 100 and 0 <= j < 100:
+                yield i, j
 
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
@@ -80,59 +97,66 @@ class Cuboid:
 
 
 class RenderMonitor:
-    def __init__(self):
-        self.rendering_size = Point(GRID_WIDTH, GRID_HEIGHT)
-        self.rendering_section = Cuboid([(GRID_HEIGHT - self.rendering_size.y()) // 2,
-                                         (GRID_WIDTH - self.rendering_size.x()) // 2],
-                                        [(GRID_HEIGHT + self.rendering_size.y()) // 2,
-                                         (GRID_WIDTH + self.rendering_size.x()) // 2])
-        self.zoom_index = 0
-        self.zoom_factor = 1
+    def __init__(self, gridSize: Point, size: Point):
+        self.renderingSize = size
+        self.renderingSection = Cuboid([(gridSize.y() - self.renderingSize.y()) // 2,
+                                        (gridSize.x() - self.renderingSize.x()) // 2],
+                                       [(gridSize.y() + self.renderingSize.y()) // 2 - 1,
+                                        (gridSize.x() + self.renderingSize.x()) // 2 - 1], self.renderingSize)
+        self.zoomIndex = 0
+        self.zoomFactor = 1
         self.zooms = [1, 4/3, 3/2, 2, 5/2]
 
-    def left(self, dist: int = 1, keep_on_screen: bool = True):
-        return self.rendering_section.left_move(dist, keep_on_screen)
+    def left(self, dist: int = 1, keepOnScreen: bool = True):
+        return self.renderingSection.leftMove(dist, keepOnScreen)
 
-    def right(self, dist: int = 1, keep_on_screen: bool = True):
-        return self.rendering_section.right_move(dist, keep_on_screen)
+    def right(self, dist: int = 1, keepOnScreen: bool = True):
+        return self.renderingSection.rightMove(dist, keepOnScreen)
 
-    def up(self, dist: int = 1, keep_on_screen: bool = True):
-        return self.rendering_section.up_move(dist, keep_on_screen)
+    def up(self, dist: int = 1, keepOnScreen: bool = True):
+        return self.renderingSection.upMove(dist, keepOnScreen)
 
-    def down(self, dist: int = 1, keep_on_screen: bool = True):
-        return self.rendering_section.down_move(dist, keep_on_screen)
+    def down(self, dist: int = 1, keepOnScreen: bool = True):
+        return self.renderingSection.downMove(dist, keepOnScreen)
 
     def getUpperPoint(self):
-        return Point(self.rendering_section.upper[1], self.rendering_section.upper[0])
+        return Point(self.renderingSection.upper[1], self.renderingSection.upper[0])
 
     def getFirstYVisible(self):
-        return self.rendering_section.upper[0]
+        return self.renderingSection.upper[0]
 
     def getFirstXVisible(self):
-        return self.rendering_section.upper[1]
+        return self.renderingSection.upper[1]
 
     def getRenderingSection(self):
-        return self.rendering_section
+        return self.renderingSection
 
-    def setNewPoints(self, upper_point: List[int], lower_point: List[int], width: int, height: int):
-        self.rendering_section = Cuboid(upper_point, lower_point)
-        self.rendering_size = Point(width, height)
+    def setNewPoints(self, upperPoint: List[int], lowerPoint: List[int], width: int, height: int):
+        # assert 0 <= lower_point[0] < 100 and 0 <= lower_point[1] < 100
+        self.renderingSection = Cuboid(
+            upperPoint, lowerPoint, Point(width, height))
+        self.renderingSize = Point(width, height)
 
     def centerOnPoint(self, point: Tuple[int, int]):
         i, j = point
-        self.rendering_section = Cuboid([i - self.rendering_size.x() // 2, j - self.rendering_size.y() // 2],
-                                        [i + self.rendering_size.x() // 2, j + self.rendering_size.y() // 2])
+        self.renderingSection = Cuboid([i - self.renderingSize.x() // 2, j - self.renderingSize.y() // 2],
+                                       [i + self.renderingSize.x() // 2, j +
+                                        self.renderingSize.y() // 2],
+                                       self.renderingSize)
 
     def zoomForPlayer(self):
-        old_zoom = self.zoom_index
-        self.zoom_index = 3
-        difference = self.zoom_index - old_zoom
+        oldZoom = self.zoomIndex
+        self.zoomIndex = 3
+        difference = self.zoomIndex - oldZoom
         if difference > 0:
-            new_zoom = reduce(lambda x, y: x * y, self.zooms[old_zoom + 1:self.zoom_index + 1])
-            self.zoom_factor *= new_zoom
+            newZoom = reduce(lambda x, y: x * y,
+                             self.zooms[oldZoom + 1:self.zoomIndex + 1])
+            self.zoomFactor *= newZoom
         elif difference < 0:
-            new_zoom = 1 / reduce(lambda x, y: x * y, self.zooms[old_zoom + 1 + difference:old_zoom+1])
-            self.zoom_factor *= new_zoom
+            newZoom = 1 / \
+                reduce(lambda x, y: x * y,
+                       self.zooms[oldZoom + 1 + difference:oldZoom+1])
+            self.zoomFactor *= newZoom
         else:
-            new_zoom = 1
-        return new_zoom
+            newZoom = 1
+        return newZoom

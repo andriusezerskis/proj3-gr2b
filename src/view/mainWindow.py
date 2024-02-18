@@ -11,7 +11,7 @@ from model.simulation import Simulation
 from view.commandsWindow import CommandWindow
 
 from view.graphicalGrid import GraphicalGrid
-from view.monitor import MonitorWindow
+from view.monitor import GraphWindow, MonitorWindow
 
 from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
@@ -70,14 +70,14 @@ class Window(QMainWindow):
 
         container1 = QWidget()
         container2 = QWidget()
+        container3 = QWidget()
         self.dock.dockLayout.addWidget(container1)
+        self.dock.dockLayout.addWidget(container3)
         self.dock.dockLayout.addWidget(container2)
 
         self.monitor = MonitorWindow(self.dock, container1)
+        self.graph = GraphWindow(self.dock, container3)
         self.entityController = EntityInfoController(self.dock, container2)
-
-    def dock_closed(self):
-        print("bouuu")
 
     def initTimer(self):
         self.timer = QTimer()
@@ -104,7 +104,7 @@ class Window(QMainWindow):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
-        self.monitor.getGraph().updatePlot(
+        self.monitor.graph.updatePlot(
             Human.getCount())
         self.entityController.update()
         # yo deso demeter mais on reglera le probleme plus tard
@@ -162,16 +162,14 @@ class Window(QMainWindow):
         self.commandsButton.clicked.connect(self.commandsCallback)
 
         self.zoomInButton = QPushButton("+")
-        self.zoomInButton.clicked.connect(
-            GridController.getInstance().zoomIn)
+        self.zoomInButton.clicked.connect(self.gridController.zoomIn)
         self.zoomOutButton = QPushButton("-")
-        self.zoomOutButton.clicked.connect(
-            GridController.getInstance().zoomOut)
+        self.zoomOutButton.clicked.connect(self.gridController.zoomOut)
 
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
-            MainWindowController.getInstance().openDockEvent)
+            self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
                               alignment=Qt.AlignmentFlag.AlignLeft)
