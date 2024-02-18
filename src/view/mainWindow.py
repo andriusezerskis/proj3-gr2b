@@ -104,7 +104,7 @@ class Window(QMainWindow):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
-        self.monitor.graph.updatePlot(
+        self.graph.updatePlot(
             Human.getCount())
         self.entityController.update()
         # yo deso demeter mais on reglera le probleme plus tard
