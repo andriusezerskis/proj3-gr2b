@@ -52,7 +52,7 @@ class EntityInfoView(QDockWidget):
         self.entity = entity
         self.controlButton.show()
         self.lageButton.show()
-        baseText = f"Âge: {entity.getAge()} jours\n"
+        baseText = f"Âge: {entity.getDisplayAge()} jours\n"
         if isinstance(entity, Animal):
             self.progressBar.show()
             preys = entity.getPreysNames()

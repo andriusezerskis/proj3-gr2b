@@ -96,11 +96,11 @@ class Entity(ParametrizedDrawable, ABC):
             if not tile.hasEntity() and self.getPos().isNextTo(tile.getPos()) and self.isValidTileType(type(tile)):
                 self._local_information["valid_movement_tiles"].append(tile)
 
-    def getAge(self):
-        return self.age // DAY_DURATION  # shows age in days instead of steps
+    def getAge(self) -> int:
+        return self.age
 
-    def setAge(self, age):
-        self.age = age
+    def getDisplayAge(self) -> int:
+        return self.getAge() // DAY_DURATION
 
     def __str__(self):
         return self.__class__.__name__[0]

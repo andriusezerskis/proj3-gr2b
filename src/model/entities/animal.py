@@ -78,13 +78,49 @@ class Animal(Entity, ABC):
                     self._local_information["mates"]["adjacent"].add(entity)
 
     def _scoreMove(self) -> float:
-        return 1
+        if not self.canMove():
+            return 0
+
+        score = 1
+
+        # incentive to move if predators are nearby
+        if len(self._local_information["predators"]["adjacent"]) > 0:
+            score += 10
+        elif len(self._local_information["predators"]["viewable"]) > 0:
+            score += 5
+
+        # incentive to move if the temperature is too bad
+        score += self.getTemperatureDifference() / 2
+
+        # incentive to move to find food if hungry
+        if len(self._local_information["preys"]["adjacent"]) == 0:
+            score += self.getHunger() / 10 + 3 * self.isHungry()
+
+        return score
 
     def _scoreEat(self) -> float:
-        return 1
+        if not self.canEat():
+            return 0
+
+        score = 1
+
+        # incentive to eat if hungry
+        score += self.isHungry() * 10
+        score += self.getHunger() / 5
+
+        return score
 
     def _scoreReproduce(self) -> float:
-        return 1
+        if not self.canReproduce():
+            return 0
+
+        # incentive to reproduce if possible
+        score = 10
+
+        # disincentive to reproduce if hungry (note that self.canReproduce() is false if the hunger is too high)
+        score -= self.hunger / 5
+
+        return max(score, 0)
 
     @staticmethod
     def _scoreIdle() -> float:
@@ -97,32 +133,46 @@ class Animal(Entity, ABC):
         reproduce = self._scoreReproduce()
         idle = self._scoreIdle()
 
-        if self.isHungry() and self.canEat():
-            return Action.EAT
-
-        if self.canReproduce():
-            return Action.REPRODUCE
-
-        freeTiles = self.getValidMovementTiles()
-        if len(freeTiles) == 0:
-            return Action.IDLE
-
-        return Action.MOVE
-
         return choices([Action.MOVE, Action.EAT, Action.REPRODUCE, Action.IDLE],
                        [move, eat, reproduce, idle])[0]
 
     def choosePrey(self) -> Entity:
         return choice(list(self._local_information["preys"]["adjacent"]))
 
+    def canMove(self) -> bool:
+        return len(self.getValidMovementTiles()) > 0
+
     def canEat(self) -> bool:
         return len(self._local_information["preys"]["adjacent"]) > 0
+
+    def _scorePosition(self, pos: Point) -> float:
+        assert pos.octileDistance(self.getPos()) == 1
+        score = 1
+
+        for predator in self._local_information["predators"]["viewable"]:
+            if pos.octileDistance(predator.getPos()) == 1:
+                return 0.1
+
+        for prey in self._local_information["preys"]["viewable"]:
+            if pos.octileDistance(prey.getPos()) == 1:
+                score += 5
+
+        for mates in self._local_information["mates"]["viewable"]:
+            if pos.octileDistance(mates.getPos()) == 1:
+                score += 1
+
+        return score
 
     @override
     def chooseMove(self) -> Point:
         freeTiles = self.getValidMovementTiles()
         assert len(freeTiles) > 0
-        return choice(freeTiles).getPos() - self.getPos()
+
+        scores = []
+        for tile in freeTiles:
+            scores.append(self._scorePosition(tile.getPos()))
+
+        return choices(freeTiles, scores)[0].getPos() - self.getPos()
 
     def eat(self, prey: Entity):
         self.hunger = 0
@@ -138,8 +188,7 @@ class Animal(Entity, ABC):
         if not super().canReproduce():
             return False
 
-        potentialMates = self._local_information["mates"]["adjacent"]
-        if len(potentialMates) == 0:
+        if len(self._local_information["mates"]["adjacent"]) == 0:
             # No potential mate
             return False
 
@@ -148,7 +197,7 @@ class Animal(Entity, ABC):
     def getMate(self) -> Entity:
         potentialMates = self._local_information["mates"]["adjacent"]
         assert len(potentialMates) > 0
-        return choice(potentialMates)
+        return choice(list(potentialMates))
 
     @override
     def reproduce(self, other: Animal_) -> Tile:
