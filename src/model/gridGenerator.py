@@ -1,25 +1,24 @@
 from model.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
-from model.terrains.water import Water
-from model.terrains.land import Land
-from model.terrains.sand import Sand
-from model.terrains.mountain import Mountain
 from model.grid import Grid
+
+from model.automaticGenerator import AutomaticGenerator
+from overrides import override
+
+# again, this import seems useless but is not
+import model.terrains.tiles
+from model.terrains.tiles import Water
 
 from utils import Point
 
-from constants import WATER_LEVEL, SAND_LEVEL, LAND_LEVEL, MOUNTAIN_LEVEL
 
+class GridGenerator(AutomaticGenerator):
 
-class GridGenerator:
-
-    def __init__(self, size: Point, island_nb: list[int], island_size: int,
-                 thresholds=((Water, WATER_LEVEL), (Sand, SAND_LEVEL), (Land, LAND_LEVEL), (Mountain, MOUNTAIN_LEVEL))):
+    def __init__(self, size: Point, island_nb: list[int], island_size: int):
         """
         :param size: x: width of the map, y: height of the map
         :param island_nb: number of islands in the grid (an array of possible values)
         :param island_size: minimal number of land tiles in an island
-        :param thresholds: mapping of height (in [-1;1]) to type of tile
         """
         self.noiseGenerator = None
         self.w = size.x()
@@ -27,8 +26,23 @@ class GridGenerator:
         self.matrix = None
         self.island_nb = island_nb
         self.island_size = island_size
-        self.thresholds = thresholds
+        self.thresholds = self.generateThresholds()
         self.maxAbsHeight = 0
+
+    @classmethod
+    @override
+    def getBaseClass(cls) -> type:
+        return Tile
+
+    @classmethod
+    def generateThresholds(cls) -> list[tuple[type, float]]:
+        tileTypes = cls.getTerminalChildrenOfBaseClass()
+        res = []
+        for tileType in tileTypes:
+            assert issubclass(tileType, Tile)
+            res.append((tileType, tileType.getLevel()))
+
+        return sorted(res, key=lambda x: x[1])
 
     def _getTile(self, x: int, y: int) -> Tile:
         sample = self.noiseGenerator.sample2D(x/self.w, y/self.h) / self.maxAbsHeight

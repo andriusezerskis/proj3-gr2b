@@ -18,6 +18,7 @@ from model.grid import Grid
 from model.gridGenerator import GridGenerator
 from model.entitiesGenerator import EntitiesGenerator
 from model.terrains.tile import Tile
+from model.terrains.tiles import Water
 from model.entities.entity import Entity
 from model.entities.human import Human
 from model.pathfinder import Pathfinder
@@ -44,7 +45,7 @@ class Simulation:
         self.player = Player(Point(-1, -1))
         self.renderMonitor = RenderMonitor()
 
-        self.water_level = WATER_LEVEL
+        self.water_level = Water.getLevel()
 
         Entity.setGrid(self.grid)
 
@@ -91,8 +92,9 @@ class Simulation:
 
     def updateWaterLevel(self) -> None:
         # two oscillations a day
-        self.water_level = (WATER_LEVEL +
-                            (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1) * (MAX_WATER_LEVEL - WATER_LEVEL) / 2)
+        self.water_level = (Water.getLevel() +
+                            (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
+                            * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.water_level)
         self.modifiedTiles |= modified
 

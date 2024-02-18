@@ -56,6 +56,9 @@ class Point:
     def euclidDistance(self, other):
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
+    def isNextTo(self, other) -> bool:
+        return self.octileDistance(other) == 1
+
     def octileDistance(self, other):
         return max(abs(self.x() - other.x()), abs(self.y() - other.y()))
 

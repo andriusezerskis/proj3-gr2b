@@ -44,31 +44,37 @@ class Animal(Entity, ABC):
 
     @override
     def evolve(self):
-        super().evolve()
-        self._local_information = {"mates": {"adjacent": set(), "viewable": set()},
-                                   "preys": {"adjacent": set(), "viewable": set()},
-                                   "predators": {"adjacent": set(), "viewable": set()}}
         self.hunger += 1 + self.getTemperatureDifference() / 10
 
+        super().evolve()
+
+    @override
     def _scanSurroundings(self) -> None:
+        self._local_information = {"mates": {"adjacent": set(), "viewable": set()},
+                                   "preys": {"adjacent": set(), "viewable": set()},
+                                   "predators": {"adjacent": set(), "viewable": set()},
+                                   "valid_movement_tiles": []}
+
         for tile in self.getGrid().getTilesInRadius(self.getPos(), self.getViewDistance()):
             entity = tile.getEntity()
             if not entity:
+                if self.getPos().isNextTo(tile.getPos()) and self.isValidTileType(type(tile)):
+                    self._local_information["valid_movement_tiles"].append(tile)
                 continue
 
             if self.isPrey(type(entity)):
                 self._local_information["preys"]["viewable"].add(entity)
-                if self.getPos().octileDistance(tile.getPos()) == 1:
+                if self.getPos().isNextTo(tile.getPos()):
                     self._local_information["preys"]["adjacent"].add(entity)
 
             if isinstance(entity, Animal) and entity.isPrey(type(self)):
                 self._local_information["predators"]["viewable"].add(entity)
-                if self.getPos().octileDistance(tile.getPos()) == 1:
+                if self.getPos().isNextTo(tile.getPos()):
                     self._local_information["predators"]["adjacent"].add(entity)
 
             if type(entity) is type(self) and entity.isFitForReproduction():
                 self._local_information["mates"]["viewable"].add(entity)
-                if self.getPos().octileDistance(tile.getPos()) == 1:
+                if self.getPos().isNextTo(tile.getPos()):
                     self._local_information["mates"]["adjacent"].add(entity)
 
     def _scoreMove(self) -> float:
@@ -86,8 +92,6 @@ class Animal(Entity, ABC):
 
     @override
     def chooseAction(self) -> Action:
-        self._scanSurroundings()
-
         move = self._scoreMove()
         eat = self._scoreEat()
         reproduce = self._scoreReproduce()

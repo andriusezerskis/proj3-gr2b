@@ -43,10 +43,7 @@ NB_STEP_BEFORE_UPDATE = 10
 # the height is in [-1, 1]
 # for instance, Water tiles are found from height -1 to WATER_LEVEL
 # Sand tiles are found from height WATER_LEVEL to SAND_LEVEL
-WATER_LEVEL = 0
-SAND_LEVEL = 0.1
-LAND_LEVEL = 0.75
-MOUNTAIN_LEVEL = 1
+
 # the water level will oscillate between WATER_LEVEL and MAX_WATER_LEVEL in a sinusoidal manner
 # WATER_LEVEL < MAX_WATER_LEVEL < SAND_LEVEL
 MAX_WATER_LEVEL = 0.05

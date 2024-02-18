@@ -5,6 +5,9 @@ from random import random, choices
 
 from model.grid import Grid
 
+from model.automaticGenerator import AutomaticGenerator
+from overrides import override
+
 from model.entities.entity import Entity
 from model.player.player import Player
 from model.terrains.tile import Tile
@@ -14,25 +17,21 @@ import model.entities.plants
 import model.entities.animals
 
 
-class EntitiesGenerator:
+class EntitiesGenerator(AutomaticGenerator):
 
     def __init__(self):
-        self.entitySet: set[type] = self._getAllInstanciableEntities()
-        print(self.entitySet)
+        self.entitySet: set[type] = self.getTerminalChildrenOfBaseClass()
         self._validEntitiesForTileType = {}
 
-    @staticmethod
-    def _getAllInstanciableEntities() -> set[type]:
-        res = set()
-        stack = [Entity]
-        while len(stack) > 0:
-            current = stack.pop()
-            subclasses = current.__subclasses__()
-            if len(subclasses) == 0:
-                res.add(current)
-            else:
-                stack.extend(subclasses)
-        return res - {Player}
+    @classmethod
+    @override
+    def getBaseClass(cls) -> type:
+        return Entity
+
+    @classmethod
+    @override
+    def getTerminalChildrenOfBaseClass(cls) -> set[type]:
+        return super().getTerminalChildrenOfBaseClass() - {Player}
 
     def generateEntities(self, grid: Grid):
         for tile in grid:

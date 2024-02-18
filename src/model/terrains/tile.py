@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import TypeVar
 
 from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
@@ -7,6 +8,8 @@ from utils import Point
 from constants import TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH
 
 from overrides import override
+
+Tile_ = TypeVar("Tile_")
 
 
 class Tile(ParametrizedDrawable, ABC):
@@ -20,6 +23,10 @@ class Tile(ParametrizedDrawable, ABC):
     @override
     def _getFilePathPrefix(cls) -> str:
         return TILES_TEXTURE_FOLDER_PATH
+
+    @classmethod
+    def getLevel(cls) -> float:
+        return cls._getParameter("level")
 
     def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
         self.pos = pos
@@ -65,7 +72,7 @@ class Tile(ParametrizedDrawable, ABC):
         return self.pos.y(), self.pos.x()
 
     @staticmethod
-    def copyWithDifferentTypeOf(toCopy: "Tile", type_: type) -> "Tile":
+    def copyWithDifferentTypeOf(toCopy: Tile_, type_: type) -> Tile_:
         return type_(toCopy.pos, toCopy.height, toCopy.entity)
 
     def __repr__(self):

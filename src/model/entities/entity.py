@@ -30,9 +30,7 @@ class Entity(ParametrizedDrawable, ABC):
         self.pos = pos
         self.age = 0
         self.reproductionCooldown = 0
-        self.reproductionCooldown = 0
-        self._validMovementTiles = None
-        self._adjacentEntities = None
+        self._local_information = {}
         self.dead = False
 
     def __del__(self):
@@ -88,11 +86,18 @@ class Entity(ParametrizedDrawable, ABC):
     def evolve(self):
         self.age += 1
         self.reproductionCooldown = max(0, self.reproductionCooldown - 1)
-        self._validMovementTiles = None
-        self._adjacentEntities = None
+
+        self._scanSurroundings()
+
+    def _scanSurroundings(self) -> None:
+        self._local_information = {"valid_movement_tiles": []}
+
+        for tile in self.getAdjacentTiles():
+            if not tile.hasEntity() and self.getPos().isNextTo(tile.getPos()) and self.isValidTileType(type(tile)):
+                self._local_information["valid_movement_tiles"].append(tile)
 
     def getAge(self):
-        return self.age//DAY_DURATION  # shows age in days instead of steps
+        return self.age // DAY_DURATION  # shows age in days instead of steps
 
     def setAge(self, age):
         self.age = age
@@ -106,23 +111,8 @@ class Entity(ParametrizedDrawable, ABC):
         """
         return self.getGrid().getAdjacentTiles(self.getPos())
 
-    def getAdjacentEntities(self) -> list[Entity_]:
-        if not self._adjacentEntities:
-            self._adjacentEntities = [
-                tile.getEntity() for tile in self.getAdjacentTiles() if tile.hasEntity()]
-        return self._adjacentEntities
-
-    def getFreeAdjacentTiles(self) -> list[Tile]:
-        """
-        :return: The position of the free tiles around the entity
-        """
-        return [tile for tile in self.getAdjacentTiles() if not tile.hasEntity()]
-
     def getValidMovementTiles(self) -> list[Tile]:
-        if not self._validMovementTiles:
-            self._validMovementTiles = [tile for tile in self.getFreeAdjacentTiles()
-                                        if self.isValidTileType(type(tile))]
-        return self._validMovementTiles
+        return self._local_information["valid_movement_tiles"]
 
     def setDead(self, dead):
         self.dead = dead
