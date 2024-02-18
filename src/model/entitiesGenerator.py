@@ -1,28 +1,37 @@
 import random
-from typing import Dict, Type
-
-from constants import EMPTY_TILE_PROBABILITY_GENERATION, ENTITY_WEIGHTS
+from constants import EMPTY_TILE_PROBABILITY_GENERATION
 
 from random import random, choices
 
 from model.grid import Grid
 
-from model.entities.algae import Algae
-from model.entities.fish import Fish
-from model.entities.human import Human
-from model.entities.tree import Tree
-from model.entities.crab import Crab
+from model.automaticGenerator import AutomaticGenerator
+from overrides import override
 
-from model.terrains.land import Land
+from model.entities.entity import Entity
+from model.player.player import Player
 from model.terrains.tile import Tile
-from model.terrains.water import Water
+
+# these imports are actually necessary, do not trust your IDE
+import model.entities.plants
+import model.entities.animals
 
 
-class EntitiesGenerator:
-    ENTITIES_LIST = [Algae, Fish, Human, Tree, Crab]
+class EntitiesGenerator(AutomaticGenerator):
 
     def __init__(self):
+        self.entitySet: set[type] = self.getTerminalChildrenOfBaseClass()
         self._validEntitiesForTileType = {}
+
+    @classmethod
+    @override
+    def getBaseClass(cls) -> type:
+        return Entity
+
+    @classmethod
+    @override
+    def getTerminalChildrenOfBaseClass(cls) -> set[type]:
+        return super().getTerminalChildrenOfBaseClass() - {Player}
 
     def generateEntities(self, grid: Grid):
         for tile in grid:
@@ -33,8 +42,9 @@ class EntitiesGenerator:
 
         if tile not in self._validEntitiesForTileType:
             res = []
-            for entityType in self.ENTITIES_LIST:
-                if tile in entityType.getValidTiles():
+            for entityType in self.entitySet:
+                assert issubclass(entityType, Entity)
+                if entityType.isValidTileType(tile):
                     res.append(entityType)
 
             self._validEntitiesForTileType[tile] = res
@@ -45,7 +55,7 @@ class EntitiesGenerator:
         validEntities = self.getValidEntities(type(tile))
         if len(validEntities) == 0:
             return
-        weights = [ENTITY_WEIGHTS[entityType.__name__] for entityType in validEntities]
+        weights = [entityType.getSpawnWeight() for entityType in validEntities]
         return tile.addNewEntity(choices(population=validEntities, weights=weights)[0])
 
 

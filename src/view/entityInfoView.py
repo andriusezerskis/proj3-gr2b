@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPu
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
-from constants import ENTITY_MAX_HUNGER, ENTITIES_NAMES_TRANSLATION
+from constants import ENTITY_MAX_HUNGER, ENTITY_PARAMETERS
 from PyQt6.QtWidgets import QHBoxLayout
 
 from controller.mainWindowController import MainWindowController
@@ -52,27 +52,27 @@ class EntityInfoView(QDockWidget):
         self.entity = entity
         self.controlButton.show()
         self.lageButton.show()
-        baseText = f"Âge: {entity.getAge()} jours\n"
+        baseText = f"Âge: {entity.getDisplayAge()} jours\n"
         if isinstance(entity, Animal):
             self.progressBar.show()
-            preys = entity.getPreys()
+            preys = entity.getPreysNames()
             baseText += "Proie"
             if len(preys) > 1:
                 baseText += f"s"
             baseText += ": "
             i = 0
             for prey in preys:
-                baseText += f"{ENTITIES_NAMES_TRANSLATION[prey.__name__]}"
+                baseText += f"{ENTITY_PARAMETERS[prey]["french_name"]}"
                 if i != len(preys) - 1:
                     baseText += ", "
                 i += 1
             baseText += "\n"
-            baseText += f"{entity.count} {ENTITIES_NAMES_TRANSLATION[entity.__class__.__name__].lower()}s\n"
+            baseText += f"{entity.getCount()} {ENTITY_PARAMETERS[entity.__class__.__name__]["french_name"].lower()}s\n"
             self.progressBar.setFormat("Faim")
-            self.progressBar.setValue(entity.getHunger())
+            self.progressBar.setValue(int(entity.getHunger()))
         else:
             self.progressBar.hide()
-            baseText += f"{entity.count} {ENTITIES_NAMES_TRANSLATION[entity.__class__.__name__].lower()}s\n"
+            baseText += f"{entity.getCount()} {ENTITY_PARAMETERS[entity.__class__.__name__]["french_name"].lower()}s\n"
         self.infoLabel.setText(baseText)
         print(entity.getPos())
         if entity.isDead():

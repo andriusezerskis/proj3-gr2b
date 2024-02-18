@@ -8,8 +8,8 @@ from model.noiseGenerator import NoiseGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 
-from constants import (SEASON_TEMPERATURE_DIFFERENCE, YEAR_DURATION, MAX_TIMESTEP, NB_STEP_BEFORE_UPDATE,
-                       AVERAGE_TEMPERATURE, MAX_TEMPERATURE_DIFFERENCE, MAX_RANDOM_TEMPERATURE_DIFFERENCE)
+from constants import (SEASON_TEMPERATURE_DIFFERENCE, YEAR_DURATION,
+                       AVERAGE_TEMPERATURE, MAX_TEMPERATURE_DIFFERENCE)
 from math import sin, pi
 
 

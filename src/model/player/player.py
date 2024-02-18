@@ -5,6 +5,7 @@ from model.action import Action
 from utils import Point
 
 from model.entities.entity import Entity
+from model.entities.animal import Animal
 from model.terrains.tile import Tile
 from model.grid import Grid
 
@@ -32,7 +33,7 @@ class Player(Entity):
         wanted_position = self.pos + movement
         if (self.getGrid().isInGrid(wanted_position)
                 and not self.getGrid().getTile(wanted_position).hasEntity()
-                and type(self.getGrid().getTile(wanted_position)) in self.getValidTiles()):
+                and self.isValidTileType(type(self.getGrid().getTile(wanted_position)))):
             self.getGrid().getTile(old_position).removeEntity()
             self.getGrid().getTile(wanted_position).setEntity(self)
             self.pos = wanted_position
@@ -42,12 +43,16 @@ class Player(Entity):
     def getTexturePath(self) -> str:
         return self.claimed_entity.getTexturePath()
 
-    def getValidTiles(self):
-        return self.claimed_entity.getValidTiles()
+    def isValidTileType(self, tileType: type):
+        return self.claimed_entity.isValidTileType(tileType)
+
+    def getPreferredTemperature(self) -> float:
+        assert isinstance(self.claimed_entity, Animal)
+        return self.claimed_entity.getPreferredTemperature()
 
     @override
     def chooseAction(self) -> Action:
         return Action.IDLE
 
-    def reproduce(self) -> None:
+    def reproduce(self, other: Entity | None) -> None:
         return None

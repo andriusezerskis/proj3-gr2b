@@ -1,11 +1,12 @@
 from typing import List
-from utils import Point, getPointsAdjacentTo
+from utils import Point, getPointsInRadius
 
 from model.terrains.tile import Tile
-from model.terrains.sand import Sand
-from model.terrains.water import Water
+from model.terrains.tiles import Water, Sand
 
-from constants import WATER_LEVEL, MAX_WATER_LEVEL
+from model.regionHandler import RegionHandler
+
+from constants import MAX_WATER_LEVEL
 
 
 class Grid:
@@ -14,6 +15,7 @@ class Grid:
         self.islands: List[List[Tile]] = []
         self.coasts: set[Tile] = set()
         self.size: Point = size
+        self.regionHandler = RegionHandler(self.size.x(), self.size.y())
 
     def initialize(self, tiles: List[List[Tile]], islands: List[set[Tile]]) -> None:
         """Random initialization of the grid with perlin noise"""
@@ -22,15 +24,28 @@ class Grid:
 
         # construct the set of tiles that will be affected by tides
         for tile in self:
-            if WATER_LEVEL < tile.height < MAX_WATER_LEVEL:
+            if Water.getLevel() < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
 
-    def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
+    def getTilesInRadius(self, center: Point, radius: int):
+        """
+        :param center: the center of the circle
+        :param radius: the maximum distance from the center
+        :return: every point at a distance <= radius from the center WITHOUT including the center
+        """
         tiles = []
-        for pos in getPointsAdjacentTo(currentTile):
+        for pos in getPointsInRadius(center, radius):
             if self.isInGrid(pos):
                 tiles.append(self.getTile(pos))
         return tiles
+
+    def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
+        """
+        Equivalent to getTilesInRadius(currentTile, 1)
+        :param currentTile: a Point
+        :return: every adjacent tiles of currentTile
+        """
+        return self.getTilesInRadius(currentTile, 1)
 
     def updateTilesWithWaterLevel(self, newWaterLevel: float) -> set[Tile]:
         modified = set()
@@ -50,6 +65,9 @@ class Grid:
             self.tiles[tile.getPos().y()][tile.getPos().x()] = newTile
             modified.add(newTile)
         return modified
+
+    def getTemperature(self, pos: Point) -> float:
+        return self.regionHandler.sampleTemperature(pos.x(), pos.y())
 
     def getTile(self, pos: Point) -> Tile:
         if not self.isInGrid(pos):

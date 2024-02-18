@@ -1,16 +1,32 @@
-from abc import abstractmethod, ABC
+from abc import ABC
+from typing import TypeVar
 
 from model.entities.entity import Entity
+from model.drawable import ParametrizedDrawable
 
 from utils import Point
+from constants import TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH
+
+from overrides import override
+
+Tile_ = TypeVar("Tile_")
 
 
-class Tile(ABC):
+class Tile(ParametrizedDrawable, ABC):
 
-    @staticmethod
-    @abstractmethod
-    def getTexturePath() -> str:
-        ...
+    @classmethod
+    @override
+    def _getParameters(cls) -> dict:
+        return TILE_PARAMETERS
+
+    @classmethod
+    @override
+    def _getFilePathPrefix(cls) -> str:
+        return TILES_TEXTURE_FOLDER_PATH
+
+    @classmethod
+    def getLevel(cls) -> float:
+        return cls._getParameter("level")
 
     def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
         self.pos = pos
@@ -30,7 +46,7 @@ class Tile(ABC):
 
     def setEntity(self, entity: Entity) -> None:
         # we only set the entity if the tile is of a valid type
-        if entity and self.__class__ in entity.getValidTiles():
+        if entity and entity.isValidTileType(self.__class__):
             self.entity = entity
 
     def addNewEntity(self, entity: type) -> None:
@@ -56,11 +72,11 @@ class Tile(ABC):
         return self.pos.y(), self.pos.x()
 
     @staticmethod
-    def copyWithDifferentTypeOf(toCopy: "Tile", type_: type) -> "Tile":
+    def copyWithDifferentTypeOf(toCopy: Tile_, type_: type) -> Tile_:
         return type_(toCopy.pos, toCopy.height, toCopy.entity)
 
     def __repr__(self):
-        return f"Tile({self.pos})"
+        return f"{self.__class__.__name__}({self.pos})"
 
     def __str__(self):
-        ...
+        return f"{self.__class__.__name__[0]}"

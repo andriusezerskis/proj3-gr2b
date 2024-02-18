@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
-from constants import ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION
+from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
+                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH)
 from model.action import Action
 from typing import TypeVar
 from utils import Point
+from model.drawable import ParametrizedDrawable
+from overrides import override
 
 from random import choice
 
@@ -11,32 +14,50 @@ Tile = TypeVar("Tile")
 Grid = TypeVar("Grid")
 
 
-class Entity(ABC):
-    count = 0
+class Entity(ParametrizedDrawable, ABC):
+    # https://stackoverflow.com/a/75663885
+    counts = dict()
     _grid = None
 
     def __init__(self, pos: Point):
+        super().__init__()
+
+        for cls in self.__class__.__mro__:
+            if cls not in self.counts.keys():
+                self.counts[cls] = 0
+            self.counts[cls] += 1
+
         self.pos = pos
-        Entity.count += 1
         self.age = 0
         self.reproductionCooldown = 0
-        self.reproductionCooldown = 0
-        self._validMovementTiles = None
-        self._adjacentEntities = None
+        self._local_information = {}
         self.dead = False
 
     def __del__(self):
-        Entity.count -= 1
+        for cls in self.__class__.__mro__:
+            self.counts[cls] -= 1
 
-    @staticmethod
-    @abstractmethod
-    def getTexturePath() -> str:
-        ...
+    @classmethod
+    @override
+    def _getParameters(cls) -> dict:
+        return ENTITY_PARAMETERS
 
-    @staticmethod
-    @abstractmethod
-    def getValidTiles() -> set[type]:
-        ...
+    @classmethod
+    @override
+    def _getFilePathPrefix(cls) -> str:
+        return ENTITIES_TEXTURE_FOLDER_PATH
+
+    @classmethod
+    def getSpawnWeight(cls) -> float:
+        return cls._getParameter("spawn_weight")
+
+    @classmethod
+    def _getValidTiles(cls) -> list[str]:
+        return cls._getParameter("valid_tiles")
+
+    @classmethod
+    def isValidTileType(cls, tileType: type) -> bool:
+        return tileType.__name__ in cls._getValidTiles()
 
     def canReproduce(self) -> bool:
         """
@@ -65,17 +86,24 @@ class Entity(ABC):
     def evolve(self):
         self.age += 1
         self.reproductionCooldown = max(0, self.reproductionCooldown - 1)
-        self._validMovementTiles = None
-        self._adjacentEntities = None
 
-    def getAge(self):
-        return self.age//DAY_DURATION  # shows age in days instead of steps
+        self._scanSurroundings()
 
-    def setAge(self, age):
-        self.age = age
+    def _scanSurroundings(self) -> None:
+        self._local_information = {"valid_movement_tiles": []}
+
+        for tile in self.getAdjacentTiles():
+            if not tile.hasEntity() and self.getPos().isNextTo(tile.getPos()) and self.isValidTileType(type(tile)):
+                self._local_information["valid_movement_tiles"].append(tile)
+
+    def getAge(self) -> int:
+        return self.age
+
+    def getDisplayAge(self) -> int:
+        return self.getAge() // DAY_DURATION
 
     def __str__(self):
-        ...
+        return self.__class__.__name__[0]
 
     def getAdjacentTiles(self) -> list[Tile]:
         """
@@ -83,23 +111,8 @@ class Entity(ABC):
         """
         return self.getGrid().getAdjacentTiles(self.getPos())
 
-    def getAdjacentEntities(self) -> list[Entity_]:
-        if not self._adjacentEntities:
-            self._adjacentEntities = [
-                tile.getEntity() for tile in self.getAdjacentTiles() if tile.hasEntity()]
-        return self._adjacentEntities
-
-    def getFreeAdjacentTiles(self) -> list[Tile]:
-        """
-        :return: The position of the free tiles around the entity
-        """
-        return [tile for tile in self.getAdjacentTiles() if not tile.hasEntity()]
-
     def getValidMovementTiles(self) -> list[Tile]:
-        if not self._validMovementTiles:
-            self._validMovementTiles = [tile for tile in self.getFreeAdjacentTiles()
-                                        if type(tile) in self.getValidTiles()]
-        return self._validMovementTiles
+        return self._local_information["valid_movement_tiles"]
 
     def setDead(self, dead):
         self.dead = dead
@@ -137,5 +150,6 @@ class Entity(ABC):
     def getReproductionCooldown(self) -> int:
         return self.reproductionCooldown
 
-    def getCount(self):
-        return self.count
+    @classmethod
+    def getCount(cls) -> int:
+        return cls.counts[cls]
