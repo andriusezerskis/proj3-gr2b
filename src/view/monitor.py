@@ -4,17 +4,18 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
+from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 
 
 import matplotlib
 from model.entities.animals import Crab
 from model.entities.entity import Entity
 
-from model.entities.human import Human
 matplotlib.use('QtAgg')
 
 
@@ -167,6 +168,22 @@ class GraphWindow:
         self.layout = QVBoxLayout()
         container.setLayout(self.layout)
         self.layout.addWidget(self.canvas)
+        iconWidget = QWidget()
+        iconLayout = QHBoxLayout()
+        iconWidget.setLayout(iconLayout)
+        self.layout.addWidget(iconWidget)
+        self.iconButtonSelected = None
+
+        for i in Entity.__subclasses__():
+            for j in i.__subclasses__():
+                iconbutton = QPushButton(j.__name__)
+                iconbutton.clicked.connect(
+                    partial(self.setChosenEntity, j, iconbutton))
+                iconbutton.setStyleSheet(
+                    "background-color: green; color: white;")
+
+                iconLayout.addWidget(iconbutton)
+
         nData = 50
         self.xdata = list(range(nData))
         self.nData = nData
@@ -180,6 +197,27 @@ class GraphWindow:
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
         self.chosenEntity = Crab
+
+    def setChosenEntity(self, entity, iconbutton):
+        if iconbutton.styleSheet() == "background-color: green; color: white;":  # not chosen
+            iconbutton.setStyleSheet(
+                "background-color: blue; color: white;")  # chosen
+            if self.iconButtonSelected:
+                self.iconButtonSelected.setStyleSheet(
+                    "background-color: green; color: white;")
+            self.iconButtonSelected = iconbutton
+        else:
+            iconbutton.setStyleSheet("background-color: green; color: white;")
+        self.chosenEntity = entity
+        print("changed", self.chosenEntity.__name__)
+        self.drawPlot()
+
+    def drawPlot(self):
+        self.canvas.axes.clear()
+        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], 'r')
+        self.canvas.axes.set_ylim(
+            0, max(max(self.ydata[self.chosenEntity]), 1))
+        self.canvas.draw()
 
     def updatePlot(self, newNumber, entity):
         self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
@@ -195,7 +233,4 @@ class GraphWindow:
         else:
             # We have a reference, we can use it to update the data for that line.
             self._plotRef.set_ydata(self.ydata[self.chosenEntity])
-        self.canvas.axes.set_ylim(
-            0, max(max(self.ydata[self.chosenEntity]), 1))
-        # Trigger the canvas to update and redraw.
-        self.canvas.draw()
+        self.drawPlot()
