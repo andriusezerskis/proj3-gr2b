@@ -42,9 +42,9 @@ class MainWindowController:
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile:
-            if self.mainWindow.monitorWindow.getIsMonitor():
-                self.mainWindow.monitorWindow.offIsMonitor()
-                zone, rayon, cata = self.mainWindow.monitorWindow.getInfo()
+            if self.mainWindow.monitor.getIsMonitor():
+                self.mainWindow.monitor.offIsMonitor()
+                zone, rayon, cata = self.mainWindow.monitor.getInfo()
                 self.simulation.bordinatorExecution(
                     zone,  rayon, cata, tile.getPos())
 

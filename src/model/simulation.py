@@ -4,12 +4,16 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
+import itertools
 import random
 import time
 import os
 import sys
 
+import numpy as np
+
 from constants import *
+from model.entities.animals import Crab
 from utils import Point
 from math import cos, pi
 
@@ -76,7 +80,31 @@ class Simulation:
         """
         BORDINATOR EXECUTION
         """
+        # if zone == "Ile":
+        #     self.grid.islands[0].bordinatorExecution(
+        #         zone, rayon, cata, pos, "bordinator")
+        if zone == "Rayon":
+            for i in self.grid.getTilesInRadius(pos, rayon):
+                i.setEntity(Crab(i.getPos()))
+                print("ok")
+
         print(zone, rayon, cata, pos, "bordinator")
+
+    def getTilesInRadius(self, pos: Point, radius: int):
+        """
+        Return the tiles in the radius of the given position
+        """
+        r = 2
+        neighbor_coords = []
+        for j in list(itertools.product(range(-r, r+1), repeat=2)):
+            if any(j) and np.sqrt(j[0]**2 + j[1]**2) <= r:
+                neighbor_coords.append(j)
+
+        for i in neighbor_coords:
+            i = Point(i[0] + pos.x(), i[1] + pos.y())
+            if not (0 <= i.x() < self.grid.getSize().x() and 0 <= i.y() < self.grid.getSize().y()):
+                neighbor_coords.remove(i)
+            yield self.grid.getTile(i)
 
     def step(self) -> None:
         self.modifiedTiles = set()
