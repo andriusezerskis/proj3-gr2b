@@ -97,14 +97,12 @@ class Window(QMainWindow):
         if self.paused:
             self.paused = False
             self.timer.start()
-            self.pauseButton.setStyleSheet(
-                "background-color: green; color: white;")
+            self.pauseButton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
             self.timer.stop()
             self.paused = True
-            self.pauseButton.setStyleSheet(
-                "background-color: blue; color: white;")
+            self.pauseButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
     def recurringTimer(self):
         self.totalTime += 1
@@ -131,14 +129,12 @@ class Window(QMainWindow):
         if self.fastF:
             self.timer.setInterval(STEP_TIME)
             self.fastF = False
-            self.fastFbutton.setStyleSheet(
-                "background-color: green; color: white;")
+            self.fastFbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
             self.timer.setInterval(STEP_TIME // 2)
             self.fastF = True
-            self.fastFbutton.setStyleSheet(
-                "background-color: blue; color: white;")
+            self.fastFbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
     def getGraphicalGrid(self):
         return self.view
@@ -153,13 +149,11 @@ class Window(QMainWindow):
 
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
-        self.pauseButton.setStyleSheet(
-            "background-color: green; color: white;")
+        self.pauseButton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
         self.fastFbutton = QPushButton("fast forward")
-        self.fastFbutton.setStyleSheet(
-            "background-color: green; color: white;")
+        self.fastFbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")

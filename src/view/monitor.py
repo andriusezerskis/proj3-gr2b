@@ -10,9 +10,11 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+import os
 
 
 import matplotlib
+from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET
 from model.entities.animals import Crab
 from model.entities.entity import Entity
 
@@ -179,8 +181,11 @@ class GraphWindow:
                 iconbutton = QPushButton(j.__name__)
                 iconbutton.clicked.connect(
                     partial(self.setChosenEntity, j, iconbutton))
-                iconbutton.setStyleSheet(
-                    "background-color: green; color: white;")
+                icon = j.getTexturePath()
+                iconbutton.setIcon(
+                    QIcon(icon))
+                iconbutton.setIconSize(QSize(15, 15))
+                iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
                 iconLayout.addWidget(iconbutton)
 
@@ -199,15 +204,14 @@ class GraphWindow:
         self.chosenEntity = Crab
 
     def setChosenEntity(self, entity, iconbutton):
-        if iconbutton.styleSheet() == "background-color: green; color: white;":  # not chosen
-            iconbutton.setStyleSheet(
-                "background-color: blue; color: white;")  # chosen
+        if iconbutton.styleSheet() == NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
+            iconbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)  # chosen
             if self.iconButtonSelected:
                 self.iconButtonSelected.setStyleSheet(
-                    "background-color: green; color: white;")
+                    NOT_CLICKED_BUTTON_STYLESHEET)
             self.iconButtonSelected = iconbutton
         else:
-            iconbutton.setStyleSheet("background-color: green; color: white;")
+            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.chosenEntity = entity
         print("changed", self.chosenEntity.__name__)
         self.drawPlot()

@@ -5,6 +5,9 @@ Date: December 2023
 """
 import json
 
+# STYLESHEET
+CLICKED_BUTTON_STYLESHEET = "background-color: blue; color: white;"
+NOT_CLICKED_BUTTON_STYLESHEET = "background-color: green; color: white;"
 
 # Simulation
 STEP_TIME = 2000
