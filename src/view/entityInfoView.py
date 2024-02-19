@@ -1,3 +1,9 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
 from controller.gridController import GridController
@@ -5,8 +11,6 @@ from model.entities.entity import Entity
 from model.entities.animal import Animal
 from constants import ENTITY_MAX_HUNGER, ENTITY_PARAMETERS
 from PyQt6.QtWidgets import QHBoxLayout
-
-from controller.mainWindowController import MainWindowController
 
 
 class EntityInfoView(QDockWidget):
