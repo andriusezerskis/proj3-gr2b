@@ -76,7 +76,7 @@ class Simulation:
         """
         BORDINATOR EXECUTION
         """
-        print("bordinator")
+        print(zone, rayon, cata, pos, "bordinator")
 
     def step(self) -> None:
         self.modifiedTiles = set()
