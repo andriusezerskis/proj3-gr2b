@@ -23,7 +23,6 @@ matplotlib.use('QtAgg')
 
 class MonitorWindow:
     def __init__(self, dock, container):
-        self.rayon = 20
         self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
@@ -36,10 +35,11 @@ class MonitorWindow:
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----
+        self.info_zone = "Rayon"
+        self.info_rayon = 20
+        self.info_catastrophe = "Froid glacial"
+        self.is_monitor = False 
         # Hlayout containing 2 Vlayout (check button)
-        # -> peut être le changer en stacked layout plus tard
-        # ou ajouter un truc QSpinBox à côté de rayon
-        # 1 case = rayon de 1 enfaite
         self.layout2 = QHBoxLayout()
         self.checkZone = self.check_box()
         self.checkCata = self.check_box_2()
@@ -51,24 +51,34 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
-        button = QPushButton("OK")
-        button.clicked.connect(self.lol)
-        self.layout.addWidget(button)
+        self.button = QPushButton("OK")
+        self.button.clicked.connect(self.lol)    #handler du inator
+        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.layout.addWidget(self.button)
 
     def lol(self):
         # bouton OK handler
         print('lol')
+        # doit mettre à true un truc dans click sur map 
+        self.is_monitor = True
+        self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
+    def getIsMonitor(self):
+        return self.is_monitor
+
+    def offIsMonitor(self):
+        self.is_monitor = False
+        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+
+    def getInfo(self):
+        return self.info_zone, self.info_rayon, self.info_catastrophe
+
+    # --- init des check box ---
     def check_box(self):
         layout = QVBoxLayout()
 
         label = QLabel("Choix de zone")
         layout.addWidget(label)
-
-        # b1 = QRadioButton("Case unique")
-        # b1.setChecked(True)
-        # b1.toggled.connect(lambda:self.btn_zone(b1))
-        # layout.addWidget(b1)
 
         b2 = QRadioButton("Rayon")
         b2.setChecked(True)
@@ -110,50 +120,27 @@ class MonitorWindow:
         container.setLayout(layout)
         return container
 
+    # --- handler des checkbox ---
     def btn_zone(self, b):
         # handler de zone selectionné
-        # if b.text() == "Case unique":
-        #     if b.isChecked() == True:
-        #         print(b.text()+" is selected")
-        #     else:
-        #         print(b.text()+" is deselected")
 
-        if b.text() == "Rayon":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
+        if b.isChecked() == True:
+            print(b.text()+" is selected")
+            self.info_zone = b.text()
 
-        if b.text() == "Ile":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
 
     def updateSpinbox(self, value):
-        self.rayon = value
+        self.info_rayon = value
 
     def btnCata(self, b):
         # handler de catastrophe selectionné
-        if b.text() == "Froid glacial":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
 
-        if b.text() == "Super hot":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
-
-        if b.text() == "EXPLOSION":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
+        if b.isChecked() == True:
+            print(b.text()+" is selected")
+            self.info_catastrophe = b.text()
 
 
+# --- for graph plot --- 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
