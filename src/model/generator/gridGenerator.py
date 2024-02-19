@@ -4,11 +4,11 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from model.noiseGenerator import NoiseGenerator
+from model.generator.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
 from model.grid import Grid
 
-from model.automaticGenerator import AutomaticGenerator
+from model.generator.automaticGenerator import AutomaticGenerator
 from overrides import override
 
 # again, this import seems useless but is not

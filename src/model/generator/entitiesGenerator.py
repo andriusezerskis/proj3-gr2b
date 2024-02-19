@@ -11,7 +11,7 @@ from random import random, choices
 
 from model.grid import Grid
 
-from model.automaticGenerator import AutomaticGenerator
+from model.generator.automaticGenerator import AutomaticGenerator
 from overrides import override
 
 from model.entities.entity import Entity
@@ -63,6 +63,3 @@ class EntitiesGenerator(AutomaticGenerator):
             return
         weights = [entityType.getSpawnWeight() for entityType in validEntities]
         return tile.addNewEntity(choices(population=validEntities, weights=weights)[0])
-
-
-

@@ -15,8 +15,8 @@ from math import cos, pi
 
 from model.entities.animal import Animal
 from model.grid import Grid
-from model.gridGenerator import GridGenerator
-from model.entitiesGenerator import EntitiesGenerator
+from model.generator.gridGenerator import GridGenerator
+from model.generator.entitiesGenerator import EntitiesGenerator
 from model.terrains.tile import Tile
 from model.terrains.tiles import Water
 from model.entities.entity import Entity
@@ -43,7 +43,8 @@ class Simulation:
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
         self.player = Player(Point(-1, -1))
-        self.renderMonitor = RenderMonitor(Point(size[0], size[1]), Point(size[0], size[1]))
+        self.renderMonitor = RenderMonitor(
+            Point(size[0], size[1]), Point(size[0], size[1]))
 
         self.water_level = Water.getLevel()
 

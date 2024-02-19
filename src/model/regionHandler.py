@@ -4,7 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from model.noiseGenerator import NoiseGenerator
+from model.generator.noiseGenerator import NoiseGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 

@@ -20,5 +20,8 @@ class CommandWindow(QMainWindow):
         self.drawCommands()
 
     def drawCommands(self):
+        """
+        Draw the commands that the user can use to move the player
+        """
         self.firstCommand = QLabel(MOVE_CAMERA_UP)
         self.layout.addWidget(self.firstCommand)
