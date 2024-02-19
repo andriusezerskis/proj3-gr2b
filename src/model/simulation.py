@@ -32,7 +32,7 @@ sys.path.append(os.path.dirname(
 
 
 class Simulation:
-    def __init__(self, size):
+    def __init__(self, size: tuple[int, int]):
         super().__init__()
         self.grid = GridGenerator(Point(size[0], size[1]),
                                   [2, 3, 4, 5, 6],

@@ -11,6 +11,10 @@ from PyQt6.QtCore import Qt
 
 
 import matplotlib
+from model.entities.animals import Crab
+from model.entities.entity import Entity
+
+from model.entities.human import Human
 matplotlib.use('QtAgg')
 
 
@@ -165,27 +169,33 @@ class GraphWindow:
         self.layout.addWidget(self.canvas)
         nData = 50
         self.xdata = list(range(nData))
-        self.ydata = [0 for i in range(nData)]
+        self.nData = nData
+        self.ydata = {}
+
+        for i in Entity.__subclasses__():
+            for j in i.__subclasses__():
+                self.ydata[j] = [0 for k in range(nData)]
 
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
-        # self.update_plot()
+        self.chosenEntity = Crab
 
-    def updatePlot(self, newNumber):
-        # Drop off the first y element, append a new one.
-        self.ydata = self.ydata[1:] + [newNumber]
+    def updatePlot(self, newNumber, entity):
+        self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
 
         # Note: we no longer need to clear the axis.
         if self._plotRef is None:
             # First time we have no plot reference, so do a normal plot.
             # .plot returns a list of line <reference>s, as we're
             # only getting one we can take the first element.
-            plot_refs = self.canvas.axes.plot(self.xdata, self.ydata, 'r')
+            plot_refs = self.canvas.axes.plot(
+                self.xdata, self.ydata[self.chosenEntity], 'r')
             self._plotRef = plot_refs[0]
         else:
             # We have a reference, we can use it to update the data for that line.
-            self._plotRef.set_ydata(self.ydata)
-
+            self._plotRef.set_ydata(self.ydata[self.chosenEntity])
+        self.canvas.axes.set_ylim(
+            0, max(max(self.ydata[self.chosenEntity]), 1))
         # Trigger the canvas to update and redraw.
         self.canvas.draw()

@@ -11,8 +11,8 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from constants import *
 from controller.gridController import GridController
+from model.entities.entity import Entity
 
-from model.entities.human import Human
 from model.simulation import Simulation
 from view.commandsWindow import CommandWindow
 
@@ -110,10 +110,10 @@ class Window(QMainWindow):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
-        self.graph.updatePlot(
-            Human.getCount())
+        for i in Entity.__subclasses__():
+            for j in i.__subclasses__():
+                self.graph.updatePlot(j.getCount(), j)
         self.entityController.update()
-        # yo deso demeter mais on reglera le probleme plus tard
         self.showTime()
 
     def showTime(self):
