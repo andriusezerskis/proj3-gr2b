@@ -72,6 +72,12 @@ class Simulation:
                         current = current + move
                 break
 
+    def bordinatorExecution(self, zone,  rayon, cata, pos):
+        """
+        BORDINATOR EXECUTION
+        """
+        print("bordinator")
+
     def step(self) -> None:
         self.modifiedTiles = set()
         self.updatedEntities = set()
