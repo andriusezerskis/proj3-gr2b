@@ -184,11 +184,10 @@ class Animal(Entity, ABC):
     def eat(self, prey: Entity):
         self.hunger = 0
         prey.setDead(True)
-        prey.getTile().removeEntity()
 
     @override
     def isDead(self):
-        return self.starvedToDeath() or self.isDeadByOldness() or self.dead
+        return self.starvedToDeath() or self.isDeadByOldness() or self._dead
 
     @override
     def canReproduce(self) -> bool:
