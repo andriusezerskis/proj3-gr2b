@@ -75,6 +75,9 @@ class GraphicalGrid(QGraphicsView):
             [None, 0] for _ in range(4)]
 
     def initHighlightedTile(self):
+        """
+        Initialize the border of the tile to know which tile is selected
+        """
         self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
@@ -120,6 +123,9 @@ class GraphicalGrid(QGraphicsView):
         """)
 
     def initNightMode(self):
+        """
+        Initialize a pixmap with the night mode
+        """
         self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
@@ -202,9 +208,9 @@ class GraphicalGrid(QGraphicsView):
 
         elif hour == NIGHT_MODE_FINISH:
             self.luminosityMode.setPixmap(QPixmap())
-        elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT:
+        elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT - 2:
             self.luminosityMode.setOpacity(opacity + 0.1)
-        elif MIDDLE_OF_THE_NIGHT < hour < NIGHT_MODE_FINISH:
+        elif MIDDLE_OF_THE_NIGHT + 2 < hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, old_pos, new_pos):
