@@ -18,6 +18,8 @@ from PyQt6.QtWidgets import *
 
 from model.grid import Grid
 from model.terrains.tile import Tile
+from model.terrains.tiles import Water
+from model.drawable import ParametrizedDrawable
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
 
@@ -27,7 +29,7 @@ from view.graphicalTile import GraphicalTile
 
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE
+    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_OCEAN_DEPTH_FILTER_OPACITY
 from src.model.simulation import Simulation
 
 
@@ -163,6 +165,19 @@ class GraphicalGrid(QGraphicsView):
         i, j = tile.getIndex()
         self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
+        # to move in a different spot?
+        if isinstance(tile, Water):
+            depthFilter = self.pixmapItems[i][j].getFilter()
+            depthFilter.show()
+            depthFilter.setPixmap(self.getPixmap(NIGHT_MODE))
+            # linear mapping from 0 <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to 0.7 <-> -1
+            p = MAX_OCEAN_DEPTH_FILTER_OPACITY * Water.getLevel() / (Water.getLevel() + 1)
+            m = p - MAX_OCEAN_DEPTH_FILTER_OPACITY
+            opacity = m * tile.getHeight() + p
+            depthFilter.setOpacity(opacity)
+        else:
+            self.pixmapItems[i][j].getFilter().hide()
+
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
             i, j = tile.getIndex()
@@ -218,13 +233,19 @@ class GraphicalGrid(QGraphicsView):
         self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(new_pos))
 
-    def getPixmap(self, tile):
-        if tile.getTexturePath() not in self.pixmapFromPath:
-            pixmap = QPixmap(tile.getTexturePath())
+    def getPixmap(self, graphicalObject: ParametrizedDrawable | str):
+        if isinstance(graphicalObject, ParametrizedDrawable):
+            path = graphicalObject.getTexturePath()
+        else:
+            path = graphicalObject
+
+        if path not in self.pixmapFromPath:
+            pixmap = QPixmap(path)
             pixmap = pixmap.scaled(self.size[0], self.size[1])
-            self.pixmapFromPath[tile.getTexturePath()] = pixmap
+            self.pixmapFromPath[path] = pixmap
             return pixmap
-        return self.pixmapFromPath[tile.getTexturePath()]
+
+        return self.pixmapFromPath[path]
 
     def removeRenderedSection(self):
         for i, j in self.renderingMonitor.getRenderingSection():
