@@ -4,7 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-
+from faker import Faker
 from abc import ABC, abstractmethod
 from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
                        ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH)
@@ -41,6 +41,7 @@ class Entity(ParametrizedDrawable, ABC):
         self._dead = False
         self._killed = False
 
+        self._name = Faker().name()
 
     @classmethod
     @override
@@ -112,6 +113,9 @@ class Entity(ParametrizedDrawable, ABC):
 
     def getAge(self) -> int:
         return self._age
+
+    def getName(self) -> str:
+        return self._name
 
     def getDisplayAge(self) -> int:
         return self.getAge() // DAY_DURATION
