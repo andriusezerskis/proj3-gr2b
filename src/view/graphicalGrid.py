@@ -22,6 +22,7 @@ from model.terrains.tiles import Water
 from model.drawable import ParametrizedDrawable
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
+from model.generator.gridGenerator import GridGenerator
 
 from controller.mainWindowController import MainWindowController
 
@@ -166,17 +167,26 @@ class GraphicalGrid(QGraphicsView):
         self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
 
         # to move in a different spot?
+        depthFilter = self.pixmapItems[i][j].getFilter()
+        # depthFilter.show()
+        # depthFilter.setPixmap(self.getPixmap(SUNSET_MODE))
+
         if isinstance(tile, Water):
-            depthFilter = self.pixmapItems[i][j].getFilter()
             depthFilter.show()
             depthFilter.setPixmap(self.getPixmap(NIGHT_MODE))
-            # linear mapping from 0 <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to 0.7 <-> -1
+            # linear mapping from Water.getLevel() <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to MAX_OCEAN_DEPTH_FILTER <-> -1
             p = MAX_OCEAN_DEPTH_FILTER_OPACITY * Water.getLevel() / (Water.getLevel() + 1)
             m = p - MAX_OCEAN_DEPTH_FILTER_OPACITY
             opacity = m * tile.getHeight() + p
-            depthFilter.setOpacity(opacity)
         else:
-            self.pixmapItems[i][j].getFilter().hide()
+            return
+            # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
+            levelRange = GridGenerator.getRange(type(tile))
+            m = MAX_OCEAN_DEPTH_FILTER_OPACITY / (levelRange[1] - levelRange[0])
+            p = -levelRange[0] * m
+            opacity = m * tile.getHeight() + p
+
+        depthFilter.setOpacity(opacity)
 
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
