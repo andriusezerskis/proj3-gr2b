@@ -54,6 +54,7 @@ class GraphicalGrid(QGraphicsView):
              for i in range(self.gridSize[1])]
         self._addPixmapItems()
         self.pixmapFromPath = {}
+        self.pixmapFromRGB = {}
 
         start_time = time.time()
         self.drawGrid(grid)
@@ -178,18 +179,15 @@ class GraphicalGrid(QGraphicsView):
 
         # to move in a different spot?
         depthFilter = self.pixmapItems[i][j].getFilter()
-        # depthFilter.show()
-        # depthFilter.setPixmap(self.getPixmap(SUNSET_MODE))
+        depthFilter.show()
+        depthFilter.setPixmap(self.getPixmapFromRGBHex(tile.getFilterColor()))
 
         if isinstance(tile, Water):
-            depthFilter.show()
-            depthFilter.setPixmap(self.getPixmap(NIGHT_MODE))
             # linear mapping from Water.getLevel() <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to MAX_OCEAN_DEPTH_FILTER <-> -1
             p = MAX_OCEAN_DEPTH_FILTER_OPACITY * Water.getLevel() / (Water.getLevel() + 1)
             m = p - MAX_OCEAN_DEPTH_FILTER_OPACITY
             opacity = m * tile.getHeight() + p
         else:
-            return
             # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
             levelRange = GridGenerator.getRange(type(tile))
             m = MAX_OCEAN_DEPTH_FILTER_OPACITY / \
@@ -264,9 +262,18 @@ class GraphicalGrid(QGraphicsView):
             pixmap = QPixmap(path)
             pixmap = pixmap.scaled(self.size[0], self.size[1])
             self.pixmapFromPath[path] = pixmap
-            return pixmap
 
         return self.pixmapFromPath[path]
+
+    def getPixmapFromRGBHex(self, rgbHex: str) -> QPixmap:
+        if rgbHex not in self.pixmapFromRGB:
+            im = QImage(1, 1, QImage.Format_RGB32)
+            im.setPixel(1, 1, QColor(rgbHex))
+            pixmap = QPixmap(im)
+            pixmap = pixmap.scaled(self.size[0], self.size[1])
+            self.pixmapFromRGB[rgbHex] = pixmap
+
+        return self.pixmapFromRGB[rgbHex]
 
     def removeRenderedSection(self):
         for i, j in self.renderingMonitor.getRenderingSection():

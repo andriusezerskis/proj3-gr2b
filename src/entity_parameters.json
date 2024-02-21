@@ -1,7 +1,7 @@
 {
     "Human": {
         "view_distance": 2,
-        "texture_path": ["human3.png", "humans/loïc.png", "humans/moïra.png"],
+        "texture_path": ["humans/loïc.png", "humans/moïra.png"],
         "valid_tiles": ["Land", "Sand"],
         "french_name": "Humain",
         "preys": ["Crab", "Tree", "Fish"],
