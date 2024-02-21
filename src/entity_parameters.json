@@ -15,14 +15,14 @@
         "spawn_weight": 1
     },
     "Algae": {
-        "texture_path": "algae.png",
+        "texture_path": "algae3.png",
         "french_name": "Algue",
         "valid_tiles": ["Water"],
         "spawn_weight": 1
     },
     "Crab": {
         "view_distance": 1,
-        "texture_path": "crab.png",
+        "texture_path": "crab2.png",
         "french_name": "Crabe",
         "valid_tiles": ["Water", "Sand"],
         "preys": ["Fish", "Algae"],
@@ -31,7 +31,7 @@
     },
     "Fish": {
         "view_distance": 1,
-        "texture_path": "fish.png",
+        "texture_path": "fish2.png",
         "french_name": "Poisson",
         "valid_tiles": ["Water"],
         "preys": ["Algae"],

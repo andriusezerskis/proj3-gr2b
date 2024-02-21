@@ -1,11 +1,18 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+""" 
+
 from utils import Point
 from typing import TypeVar
-from model.entities.entity import Entity
-from model.action import Action
 from abc import ABC
 from overrides import override
 from random import choice, choices
+
 from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
+from model.entities.entity import Entity
+from model.action import Action
 
 Tile = TypeVar("Tile")
 Animal_ = TypeVar("Animal_")
@@ -177,11 +184,10 @@ class Animal(Entity, ABC):
     def eat(self, prey: Entity):
         self.hunger = 0
         prey.setDead(True)
-        prey.getTile().removeEntity()
 
     @override
     def isDead(self):
-        return self.starvedToDeath() or self.isDeadByOldness() or self.dead
+        return self.starvedToDeath() or self.isDeadByOldness() or self._dead
 
     @override
     def canReproduce(self) -> bool:

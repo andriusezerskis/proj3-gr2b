@@ -1,4 +1,9 @@
-import sys
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
@@ -26,7 +31,7 @@ class StartWindow(QMainWindow):
         label_2 = QLabel("Taille fenêtre longueur")
         self.layout_2.addWidget(label_2)
         self.spin_box = QSpinBox(minimum=10, maximum=200, value=100)
-        self.spin_box.valueChanged.connect(self.update_spinbox)
+        self.spin_box.valueChanged.connect(self.updateSpinbox)
         self.layout_2.addWidget(self.spin_box)
 
         # --- ajout layout H ---
@@ -45,7 +50,7 @@ class StartWindow(QMainWindow):
         self.button.clicked.connect(self.initMainWindow)
         self.layout.addWidget(self.button)
 
-    def update_spinbox(self, value):
+    def updateSpinbox(self, value):
         self.size = value
 
     def initMainWindow(self):

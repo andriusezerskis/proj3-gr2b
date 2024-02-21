@@ -1,3 +1,10 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
+
 from abc import ABC, abstractmethod
 from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
                        ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH)
@@ -16,26 +23,23 @@ Grid = TypeVar("Grid")
 
 class Entity(ParametrizedDrawable, ABC):
     # https://stackoverflow.com/a/75663885
-    counts = dict()
+    _counts = dict()
     _grid = None
 
     def __init__(self, pos: Point):
         super().__init__()
 
         for cls in self.__class__.__mro__:
-            if cls not in self.counts.keys():
-                self.counts[cls] = 0
-            self.counts[cls] += 1
+            if cls not in self._counts.keys():
+                self._counts[cls] = 0
+            self._counts[cls] += 1
 
-        self.pos = pos
-        self.age = 0
-        self.reproductionCooldown = 0
+        self._pos = pos
+        self._age = 0
+        self._reproductionCooldown = 0
         self._local_information = {}
-        self.dead = False
-
-    def __del__(self):
-        for cls in self.__class__.__mro__:
-            self.counts[cls] -= 1
+        self._dead = False
+        self._killed = False
 
     @classmethod
     @override
@@ -70,7 +74,7 @@ class Entity(ParametrizedDrawable, ABC):
         Reproduces and places the newborn in the grid
         :return: the position of the newborn
         """
-        self.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+        self._reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
         if other:
             other.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
         freeTile = choice(self.getValidMovementTiles())
@@ -78,14 +82,23 @@ class Entity(ParametrizedDrawable, ABC):
         return freeTile
 
     def isDeadByOldness(self):
-        return self.age >= ENTITY_MAX_AGE
+        return self._age >= ENTITY_MAX_AGE
 
     def isDead(self):
-        return self.isDeadByOldness() or self.dead
+        return self.isDeadByOldness() or self._dead
+
+    def kill(self) -> None:
+        if self._killed:
+            return
+
+        for cls in self.__class__.__mro__:
+            self._counts[cls] -= 1
+
+        self._killed = True
 
     def evolve(self):
-        self.age += 1
-        self.reproductionCooldown = max(0, self.reproductionCooldown - 1)
+        self._age += 1
+        self._reproductionCooldown = max(0, self._reproductionCooldown - 1)
 
         self._scanSurroundings()
 
@@ -97,7 +110,7 @@ class Entity(ParametrizedDrawable, ABC):
                 self._local_information["valid_movement_tiles"].append(tile)
 
     def getAge(self) -> int:
-        return self.age
+        return self._age
 
     def getDisplayAge(self) -> int:
         return self.getAge() // DAY_DURATION
@@ -115,23 +128,23 @@ class Entity(ParametrizedDrawable, ABC):
         return self._local_information["valid_movement_tiles"]
 
     def setDead(self, dead):
-        self.dead = dead
+        self._dead = dead
 
     @abstractmethod
     def chooseAction(self) -> Action:
         ...
 
     def getPos(self) -> Point:
-        return self.pos
+        return self._pos
 
     def chooseMove(self) -> Point:
         return Point(0, 0)
 
     def move(self, movement: Point):
-        assert not self.getGrid().getTile(self.pos + movement).hasEntity()
-        self.getGrid().getTile(self.pos).removeEntity()
-        self.pos += movement
-        self.getGrid().getTile(self.pos).setEntity(self)
+        assert not self.getGrid().getTile(self._pos + movement).hasEntity()
+        self.getGrid().getTile(self._pos).removeEntity()
+        self._pos += movement
+        self.getGrid().getTile(self._pos).setEntity(self)
 
     @staticmethod
     def getGrid() -> Grid:
@@ -148,8 +161,8 @@ class Entity(ParametrizedDrawable, ABC):
         return self.getReproductionCooldown() == 0 and self.getAge() >= ENTITY_MIN_AGE_REPRODUCTION
 
     def getReproductionCooldown(self) -> int:
-        return self.reproductionCooldown
+        return self._reproductionCooldown
 
     @classmethod
     def getCount(cls) -> int:
-        return cls.counts[cls]
+        return cls._counts[cls]

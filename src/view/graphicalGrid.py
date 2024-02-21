@@ -1,3 +1,9 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 import time
 from typing import Tuple, Set, List
 
@@ -12,8 +18,11 @@ from PyQt6.QtWidgets import *
 
 from model.grid import Grid
 from model.terrains.tile import Tile
+from model.terrains.tiles import Water
+from model.drawable import ParametrizedDrawable
 from model.renderMonitor import RenderMonitor
 from model.renderMonitor import Cuboid
+from model.generator.gridGenerator import GridGenerator
 
 from controller.mainWindowController import MainWindowController
 
@@ -21,7 +30,7 @@ from view.graphicalTile import GraphicalTile
 
 
 from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE
+    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_OCEAN_DEPTH_FILTER_OPACITY
 from src.model.simulation import Simulation
 
 
@@ -69,6 +78,9 @@ class GraphicalGrid(QGraphicsView):
             [None, 0] for _ in range(4)]
 
     def initHighlightedTile(self):
+        """
+        Initialize the border of the tile to know which tile is selected
+        """
         self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
@@ -114,6 +126,9 @@ class GraphicalGrid(QGraphicsView):
         """)
 
     def initNightMode(self):
+        """
+        Initialize a pixmap with the night mode
+        """
         self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
@@ -150,6 +165,28 @@ class GraphicalGrid(QGraphicsView):
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()
         self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
+
+        # to move in a different spot?
+        depthFilter = self.pixmapItems[i][j].getFilter()
+        # depthFilter.show()
+        # depthFilter.setPixmap(self.getPixmap(SUNSET_MODE))
+
+        if isinstance(tile, Water):
+            depthFilter.show()
+            depthFilter.setPixmap(self.getPixmap(NIGHT_MODE))
+            # linear mapping from Water.getLevel() <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to MAX_OCEAN_DEPTH_FILTER <-> -1
+            p = MAX_OCEAN_DEPTH_FILTER_OPACITY * Water.getLevel() / (Water.getLevel() + 1)
+            m = p - MAX_OCEAN_DEPTH_FILTER_OPACITY
+            opacity = m * tile.getHeight() + p
+        else:
+            return
+            # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
+            levelRange = GridGenerator.getRange(type(tile))
+            m = MAX_OCEAN_DEPTH_FILTER_OPACITY / (levelRange[1] - levelRange[0])
+            p = -levelRange[0] * m
+            opacity = m * tile.getHeight() + p
+
+        depthFilter.setOpacity(opacity)
 
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
@@ -196,9 +233,9 @@ class GraphicalGrid(QGraphicsView):
 
         elif hour == NIGHT_MODE_FINISH:
             self.luminosityMode.setPixmap(QPixmap())
-        elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT:
+        elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT - 2:
             self.luminosityMode.setOpacity(opacity + 0.1)
-        elif MIDDLE_OF_THE_NIGHT < hour < NIGHT_MODE_FINISH:
+        elif MIDDLE_OF_THE_NIGHT + 2 < hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, old_pos, new_pos):
@@ -206,13 +243,19 @@ class GraphicalGrid(QGraphicsView):
         self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(new_pos))
 
-    def getPixmap(self, tile):
-        if tile.getTexturePath() not in self.pixmapFromPath:
-            pixmap = QPixmap(tile.getTexturePath())
+    def getPixmap(self, graphicalObject: ParametrizedDrawable | str):
+        if isinstance(graphicalObject, ParametrizedDrawable):
+            path = graphicalObject.getTexturePath()
+        else:
+            path = graphicalObject
+
+        if path not in self.pixmapFromPath:
+            pixmap = QPixmap(path)
             pixmap = pixmap.scaled(self.size[0], self.size[1])
-            self.pixmapFromPath[tile.getTexturePath()] = pixmap
+            self.pixmapFromPath[path] = pixmap
             return pixmap
-        return self.pixmapFromPath[tile.getTexturePath()]
+
+        return self.pixmapFromPath[path]
 
     def removeRenderedSection(self):
         for i, j in self.renderingMonitor.getRenderingSection():

@@ -15,8 +15,8 @@ from math import cos, pi
 
 from model.entities.animal import Animal
 from model.grid import Grid
-from model.gridGenerator import GridGenerator
-from model.entitiesGenerator import EntitiesGenerator
+from model.generator.gridGenerator import GridGenerator
+from model.generator.entitiesGenerator import EntitiesGenerator
 from model.terrains.tile import Tile
 from model.terrains.tiles import Water
 from model.entities.entity import Entity
@@ -32,7 +32,7 @@ sys.path.append(os.path.dirname(
 
 
 class Simulation:
-    def __init__(self, size):
+    def __init__(self, size: tuple[int, int]):
         super().__init__()
         self.grid = GridGenerator(Point(size[0], size[1]),
                                   [2, 3, 4, 5, 6],
@@ -43,7 +43,8 @@ class Simulation:
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
         self.player = Player(Point(-1, -1))
-        self.renderMonitor = RenderMonitor(Point(size[0], size[1]), Point(size[0], size[1]))
+        self.renderMonitor = RenderMonitor(
+            Point(size[0], size[1]), Point(size[0], size[1]))
 
         self.water_level = Water.getLevel()
 
@@ -119,7 +120,7 @@ class Simulation:
         assert isinstance(entity, Animal)
         prey = entity.choosePrey()
         entity.eat(prey)
-        self.addModifiedTiles(self.getEntityTile(prey))
+        self.dead(prey.getTile())
 
     def reproduceEntity(self, entity: Entity):
         mate = None
@@ -138,6 +139,7 @@ class Simulation:
         self.addModifiedTiles(self.getEntityTile(entity))
 
     def dead(self, tile: Tile) -> None:
+        tile.getEntity().kill()
         tile.removeEntity()
         self.addModifiedTiles(tile)
 

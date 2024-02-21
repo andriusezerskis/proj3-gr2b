@@ -1,8 +1,14 @@
-from model.noiseGenerator import NoiseGenerator
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
+from model.generator.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
 from model.grid import Grid
 
-from model.automaticGenerator import AutomaticGenerator
+from model.generator.automaticGenerator import AutomaticGenerator
 from overrides import override
 
 # again, this import seems useless but is not
@@ -13,6 +19,9 @@ from utils import Point
 
 
 class GridGenerator(AutomaticGenerator):
+
+    _thresholds: list[tuple[type, float]] = []
+    _ranges: dict[type: tuple[float, float]] = {}
 
     def __init__(self, size: Point, islandNb: list[int], islandSize: int):
         """
@@ -26,7 +35,7 @@ class GridGenerator(AutomaticGenerator):
         self.matrix = None
         self.islandNb = islandNb
         self.islandSize = islandSize
-        self.thresholds = self.generateThresholds()
+        self.generateThresholds()
         self.maxAbsHeight = 0
 
     @classmethod
@@ -35,20 +44,38 @@ class GridGenerator(AutomaticGenerator):
         return Tile
 
     @classmethod
-    def generateThresholds(cls) -> list[tuple[type, float]]:
+    def generateThresholds(cls) -> None:
         tileTypes = cls.getTerminalChildrenOfBaseClass()
         res = []
         for tileType in tileTypes:
             assert issubclass(tileType, Tile)
             res.append((tileType, tileType.getLevel()))
 
-        return sorted(res, key=lambda x: x[1])
+        cls._thresholds = sorted(res, key=lambda x: x[1])
+
+    # maybe move this inside an attribute/property of the future Constant class?
+    @classmethod
+    def getRange(cls, tileType: type) -> tuple[float, float]:
+        if tileType in cls._ranges:
+            return cls._ranges[tileType]
+
+        if len(cls._thresholds) == 0:
+            cls.generateThresholds()
+
+        res: tuple[float, float] = (-1, -1)
+        for tile, level in cls._thresholds:
+            old_max = res[1]
+            res = old_max, level
+            if tile is tileType:
+                break
+
+        cls._ranges[tileType] = res
+        return tuple(res)
 
     def _getTile(self, x: int, y: int) -> Tile:
-        sample = self.noiseGenerator.sample2D(
-            x/self.w, y/self.h) / self.maxAbsHeight
-        for tileType, threshold in self.thresholds:
+        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h) / self.maxAbsHeight
 
+        for tileType, threshold in self._thresholds:
             if sample <= threshold:
                 return tileType(Point(x, y), sample)
 

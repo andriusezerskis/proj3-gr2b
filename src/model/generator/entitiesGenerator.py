@@ -1,3 +1,9 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 import random
 from constants import EMPTY_TILE_PROBABILITY_GENERATION
 
@@ -5,7 +11,7 @@ from random import random, choices
 
 from model.grid import Grid
 
-from model.automaticGenerator import AutomaticGenerator
+from model.generator.automaticGenerator import AutomaticGenerator
 from overrides import override
 
 from model.entities.entity import Entity
@@ -57,6 +63,3 @@ class EntitiesGenerator(AutomaticGenerator):
             return
         weights = [entityType.getSpawnWeight() for entityType in validEntities]
         return tile.addNewEntity(choices(population=validEntities, weights=weights)[0])
-
-
-

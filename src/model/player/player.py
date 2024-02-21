@@ -1,5 +1,10 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from copy import copy
-from typing import Tuple
 
 from model.action import Action
 from utils import Point
@@ -7,7 +12,6 @@ from utils import Point
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
-from model.grid import Grid
 
 from overrides import override
 
