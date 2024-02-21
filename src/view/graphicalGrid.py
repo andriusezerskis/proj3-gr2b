@@ -29,7 +29,7 @@ from controller.mainWindowController import MainWindowController
 from view.graphicalTile import GraphicalTile
 
 
-from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+from constants import FIRE, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
     MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_OCEAN_DEPTH_FILTER_OPACITY
 from src.model.simulation import Simulation
 
@@ -161,6 +161,12 @@ class GraphicalGrid(QGraphicsView):
     def _drawTiles(self, tile):
         self._drawTerrains(tile)
         self._drawEntities(tile)
+        i, j = tile.getIndex()
+        if tile.cata != None:
+            cataFilter = self.pixmapItems[i][j].getCataFilter()
+            cataFilter.show()
+            cataFilter.setOpacity(tile.cataOpacity)
+            cataFilter.setPixmap(self.getPixmap(FIRE))
 
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()
@@ -182,7 +188,8 @@ class GraphicalGrid(QGraphicsView):
             return
             # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
             levelRange = GridGenerator.getRange(type(tile))
-            m = MAX_OCEAN_DEPTH_FILTER_OPACITY / (levelRange[1] - levelRange[0])
+            m = MAX_OCEAN_DEPTH_FILTER_OPACITY / \
+                (levelRange[1] - levelRange[0])
             p = -levelRange[0] * m
             opacity = m * tile.getHeight() + p
 

@@ -4,7 +4,9 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
+from cmath import sqrt
 import itertools
+import math
 import random
 import time
 import os
@@ -76,6 +78,9 @@ class Simulation:
                         current = current + move
                 break
 
+    def manhattan_distance(self, pos1, pos2):
+        return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
+
     def bordinatorExecution(self, zone,  rayon, cata, pos):
         """
         BORDINATOR EXECUTION
@@ -85,26 +90,11 @@ class Simulation:
         #         zone, rayon, cata, pos, "bordinator")
         if zone == "Rayon":
             for i in self.grid.getTilesInRadius(pos, rayon):
-                i.setEntity(Crab(i.getPos()))
-                print("ok")
+                i.cata = Cata.FIRE
+                i.cataOpacity = abs(
+                    1 - self.manhattan_distance(pos, i.getPos())/(rayon*2))
 
         print(zone, rayon, cata, pos, "bordinator")
-
-    def getTilesInRadius(self, pos: Point, radius: int):
-        """
-        Return the tiles in the radius of the given position
-        """
-        r = 2
-        neighbor_coords = []
-        for j in list(itertools.product(range(-r, r+1), repeat=2)):
-            if any(j) and np.sqrt(j[0]**2 + j[1]**2) <= r:
-                neighbor_coords.append(j)
-
-        for i in neighbor_coords:
-            i = Point(i[0] + pos.x(), i[1] + pos.y())
-            if not (0 <= i.x() < self.grid.getSize().x() and 0 <= i.y() < self.grid.getSize().y()):
-                neighbor_coords.remove(i)
-            yield self.grid.getTile(i)
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -115,6 +105,8 @@ class Simulation:
         self.updateWaterLevel()
 
         for tile in self.grid:
+            if tile.cataOpacity > 0:
+                tile.cataOpacity -= 0.1
             entity = tile.getEntity()
             if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
                 self.evolution(entity)

@@ -41,6 +41,7 @@ class Entity(ParametrizedDrawable, ABC):
         self._dead = False
         self._killed = False
 
+
     @classmethod
     @override
     def _getParameters(cls) -> dict:

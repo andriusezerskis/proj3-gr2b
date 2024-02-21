@@ -36,9 +36,9 @@ class MonitorWindow:
 
         # ---- second layout for selection ----
         self.info_zone = "Rayon"
-        self.info_rayon = 20
+        self.info_rayon = 10
         self.info_catastrophe = "Froid glacial"
-        self.is_monitor = False 
+        self.is_monitor = False
         # Hlayout containing 2 Vlayout (check button)
         self.layout2 = QHBoxLayout()
         self.checkZone = self.check_box()
@@ -52,14 +52,14 @@ class MonitorWindow:
         self.layout.addWidget(self.container2)
 
         self.button = QPushButton("OK")
-        self.button.clicked.connect(self.lol)    #handler du inator
+        self.button.clicked.connect(self.lol)  # handler du inator
         self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
 
     def lol(self):
         # bouton OK handler
         print('lol')
-        # doit mettre à true un truc dans click sur map 
+        # doit mettre à true un truc dans click sur map
         self.is_monitor = True
         self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
@@ -128,7 +128,6 @@ class MonitorWindow:
             print(b.text()+" is selected")
             self.info_zone = b.text()
 
-
     def updateSpinbox(self, value):
         self.info_rayon = value
 
@@ -140,7 +139,7 @@ class MonitorWindow:
             self.info_catastrophe = b.text()
 
 
-# --- for graph plot --- 
+# --- for graph plot ---
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
