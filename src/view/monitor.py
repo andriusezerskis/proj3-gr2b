@@ -164,7 +164,7 @@ class GraphWindow:
                 iconbutton = QPushButton(j.__name__)
                 iconbutton.clicked.connect(
                     partial(self.setChosenEntity, j, iconbutton))
-                icon = j.getTexturePath()
+                icon = j.getDefaultTexturePath()
                 iconbutton.setIcon(
                     QIcon(icon))
                 iconbutton.setIconSize(QSize(15, 15))

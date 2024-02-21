@@ -21,6 +21,7 @@ Tile_ = TypeVar("Tile_")
 class Tile(ParametrizedDrawable, ABC):
 
     def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
+        super().__init__()
         self.pos = pos
         self.height = height
         self.entity = None
