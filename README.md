@@ -15,5 +15,5 @@ Python version: 3.12
 
 `pip install matplotlib`
 
-`pip install faker`
+`pip install mimesis`
 
