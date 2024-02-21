@@ -20,6 +20,12 @@ Tile_ = TypeVar("Tile_")
 
 class Tile(ParametrizedDrawable, ABC):
 
+    def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
+        self.pos = pos
+        self.height = height
+        self.entity = None
+        self.setEntity(entity)
+
     @classmethod
     @override
     def _getParameters(cls) -> dict:
@@ -34,12 +40,13 @@ class Tile(ParametrizedDrawable, ABC):
     def getLevel(cls) -> float:
         return cls._getParameter("level")
 
-    def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
-        self.pos = pos
-        self.height = height
-        self.entity = None
-        self.setEntity(entity)
-        
+    @classmethod
+    def getFilterColor(cls) -> str:
+        return cls._getParameter("filter_color")
+
+    def getHeight(self) -> float:
+        return self.height
+
     # @abstractmethod
     def step(self):
         pass

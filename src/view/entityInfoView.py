@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPu
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
-from constants import ENTITY_MAX_HUNGER, ENTITY_PARAMETERS
+from constants import ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, ENTITY_PARAMETERS
 from PyQt6.QtWidgets import QHBoxLayout
 
 
@@ -87,9 +87,12 @@ class EntityInfoView(QDockWidget):
             self.__updateText(self.entity)
         else:
             self.progressBar.setValue(0)
-            self.progressBar.setFormat("Pas d'entité sélectionnée")
+            self.progressBar.setFormat(ENTITY_NOT_SELECTED)
 
     def showDeadEntity(self):
+        """
+        When the entity dies, the progress bar shows that the entity is dead
+        """
         self.progressBar.setValue(0)
-        self.progressBar.setFormat("L'entité est morte")
+        self.progressBar.setFormat(ENTITY_DEAD_MESSAGE)
         self.entity = None

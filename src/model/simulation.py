@@ -154,7 +154,7 @@ class Simulation:
         assert isinstance(entity, Animal)
         prey = entity.choosePrey()
         entity.eat(prey)
-        self.addModifiedTiles(self.getEntityTile(prey))
+        self.dead(prey.getTile())
 
     def reproduceEntity(self, entity: Entity):
         mate = None
@@ -173,6 +173,7 @@ class Simulation:
         self.addModifiedTiles(self.getEntityTile(entity))
 
     def dead(self, tile: Tile) -> None:
+        tile.getEntity().kill()
         tile.removeEntity()
         self.addModifiedTiles(tile)
 
