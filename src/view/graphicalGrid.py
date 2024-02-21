@@ -30,7 +30,7 @@ from view.graphicalTile import GraphicalTile
 
 
 from constants import FIRE, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_OCEAN_DEPTH_FILTER_OPACITY
+    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
 from src.model.simulation import Simulation
 
 
@@ -130,7 +130,7 @@ class GraphicalGrid(QGraphicsView):
         """
         Initialize a pixmap with the night mode
         """
-        self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
+        self.luminosityMode = QGraphicsPixmapItem(self.getPixmapFromRGBHex(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
@@ -179,23 +179,19 @@ class GraphicalGrid(QGraphicsView):
 
         # to move in a different spot?
         depthFilter = self.pixmapItems[i][j].getFilter()
-        depthFilter.show()
         depthFilter.setPixmap(self.getPixmapFromRGBHex(tile.getFilterColor()))
 
-        if isinstance(tile, Water):
-            # linear mapping from Water.getLevel() <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to MAX_OCEAN_DEPTH_FILTER <-> -1
-            p = MAX_OCEAN_DEPTH_FILTER_OPACITY * Water.getLevel() / (Water.getLevel() + 1)
-            m = p - MAX_OCEAN_DEPTH_FILTER_OPACITY
-            opacity = m * tile.getHeight() + p
-        else:
-            # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
-            levelRange = GridGenerator.getRange(type(tile))
-            m = MAX_OCEAN_DEPTH_FILTER_OPACITY / \
-                (levelRange[1] - levelRange[0])
-            p = -levelRange[0] * m
-            opacity = m * tile.getHeight() + p
+        # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
+        levelRange = GridGenerator.getRange(type(tile))
+        m = MAX_TILE_FILTER_OPACITY / (levelRange[1] - levelRange[0])
+        p = -levelRange[0] * m
+        opacity = m * tile.getHeight() + p
+
+        if not tile.isGradientAscending():
+            opacity = MAX_TILE_FILTER_OPACITY - opacity
 
         depthFilter.setOpacity(opacity)
+        depthFilter.show()
 
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
@@ -234,10 +230,10 @@ class GraphicalGrid(QGraphicsView):
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
         if hour == SUNSET_MODE_START:
-            self.luminosityMode.setPixmap(QPixmap(SUNSET_MODE))
+            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(SUNSET_MODE))
             self.luminosityMode.setOpacity(0.1)
         if hour == NIGHT_MODE_START:
-            self.luminosityMode.setPixmap(QPixmap(NIGHT_MODE))
+            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(NIGHT_MODE))
             self.luminosityMode.setOpacity(0.1)
 
         elif hour == NIGHT_MODE_FINISH:
@@ -267,8 +263,8 @@ class GraphicalGrid(QGraphicsView):
 
     def getPixmapFromRGBHex(self, rgbHex: str) -> QPixmap:
         if rgbHex not in self.pixmapFromRGB:
-            im = QImage(1, 1, QImage.Format_RGB32)
-            im.setPixel(1, 1, QColor(rgbHex))
+            im = QImage(1, 1, QImage.Format.Format_RGB32)
+            im.setPixel(0, 0, QColor(rgbHex).rgb())
             pixmap = QPixmap(im)
             pixmap = pixmap.scaled(self.size[0], self.size[1])
             self.pixmapFromRGB[rgbHex] = pixmap

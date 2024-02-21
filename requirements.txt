@@ -4,4 +4,4 @@ overrides>=7.4.0
 perlin_noise>=1.12
 PyQt6>=6.6.1
 PyQt6_sip>=13.6.0
-faker>=23.2.1
+mimesis>=14.0.0
