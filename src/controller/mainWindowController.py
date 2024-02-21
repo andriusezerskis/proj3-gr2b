@@ -44,9 +44,9 @@ class MainWindowController:
         if tile:
             if self.mainWindow.monitor.getIsMonitor():
                 self.mainWindow.monitor.offIsMonitor()
-                zone, rayon, cata = self.mainWindow.monitor.getInfo()
+                zone, radius, disaster = self.mainWindow.monitor.getInfo()
                 self.simulation.bordinatorExecution(
-                    zone,  rayon, cata, tile.getPos())
+                    zone,  radius, disaster, tile.getPos())
 
             elif tile.hasEntity():
                 if not self.simulation.hasPlayer():

@@ -161,12 +161,16 @@ class GraphicalGrid(QGraphicsView):
     def _drawTiles(self, tile):
         self._drawTerrains(tile)
         self._drawEntities(tile)
+        self._drawDisaster(tile)
+
+    def _drawDisaster(self, tile):
         i, j = tile.getIndex()
-        if tile.cata != None:
-            cataFilter = self.pixmapItems[i][j].getCataFilter()
-            cataFilter.show()
-            cataFilter.setOpacity(tile.cataOpacity)
-            cataFilter.setPixmap(self.getPixmap(FIRE))
+
+        if tile.disaster != None:
+            disasterFilter = self.pixmapItems[i][j].getDisasterFilter()
+            disasterFilter.show()
+            disasterFilter.setOpacity(tile.disasterOpacity)
+            disasterFilter.setPixmap(self.getPixmap(FIRE))
 
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()

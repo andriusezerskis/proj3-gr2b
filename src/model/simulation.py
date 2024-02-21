@@ -81,20 +81,18 @@ class Simulation:
     def manhattan_distance(self, pos1, pos2):
         return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
 
-    def bordinatorExecution(self, zone,  rayon, cata, pos):
+    def bordinatorExecution(self, zone, radius, disaster, pos):
         """
         BORDINATOR EXECUTION
         """
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
-        #         zone, rayon, cata, pos, "bordinator")
+        #         zone, radius, disaster, pos, "bordinator")
         if zone == "Rayon":
-            for i in self.grid.getTilesInRadius(pos, rayon):
-                i.cata = Cata.FIRE
-                i.cataOpacity = abs(
-                    1 - self.manhattan_distance(pos, i.getPos())/(rayon*2))
-
-        print(zone, rayon, cata, pos, "bordinator")
+            for i in self.grid.getTilesInRadius(pos, radius):
+                i.disaster = disaster
+                i.disasterOpacity = abs(
+                    1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -105,14 +103,17 @@ class Simulation:
         self.updateWaterLevel()
 
         for tile in self.grid:
-            if tile.cataOpacity > 0:
-                tile.cataOpacity -= 0.1
+            self.diminishDisaster(tile)
             entity = tile.getEntity()
             if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
                 self.evolution(entity)
                 self.updatedEntities.add(entity)
 
         print(f"compute time : {time.time() - t}")
+
+    def diminishDisaster(self, tile):
+        if tile.disasterOpacity > 0:
+            tile.disasterOpacity -= 0.1
 
     def getUpdatedTiles(self):
         return self.modifiedTiles

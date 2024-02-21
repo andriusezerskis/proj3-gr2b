@@ -99,7 +99,7 @@ with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
 with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
     TILE_PARAMETERS: dict = json.load(f)
 
-class Cata(Enum):
-    FIRE = 1,
-    ICE = 2
-    
+
+class Disaster(str, Enum):
+    FIRE = "Explosion",
+    ICE = "Froid glacial"

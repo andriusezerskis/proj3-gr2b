@@ -25,8 +25,8 @@ class Tile(ParametrizedDrawable, ABC):
         self.height = height
         self.entity = None
         self.setEntity(entity)
-        self.cata = None
-        self.cataOpacity = 0
+        self.disaster = None
+        self.disasterOpacity = 0
 
     @classmethod
     @override

@@ -78,7 +78,6 @@ class EntityInfoView(QDockWidget):
             self.progressBar.hide()
             baseText += f"{entity.getCount()} {ENTITY_PARAMETERS[entity.__class__.__name__]['french_name'].lower()}s\n"
         self.infoLabel.setText(baseText)
-        print(entity.getPos())
         if entity.isDead():
             self.showDeadEntity()
 
