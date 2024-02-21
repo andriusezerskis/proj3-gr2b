@@ -1,7 +1,7 @@
 {
     "Human": {
         "view_distance": 2,
-        "texture_path": "human.png",
+        "texture_path": "human3.png",
         "valid_tiles": ["Land", "Sand"],
         "french_name": "Humain",
         "preys": ["Crab", "Tree", "Fish"],
@@ -9,7 +9,7 @@
         "preferred_temperature": 18
     },
     "Tree": {
-        "texture_path": "tree.png",
+        "texture_path": "tree4.png",
         "french_name": "Arbre",
         "valid_tiles": ["Land"],
         "spawn_weight": 1

@@ -32,6 +32,7 @@ class Grid:
         for tile in self:
             if Water.getLevel() < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
+        print(self)
 
     def getTilesInRadius(self, center: Point, radius: int):
         """
