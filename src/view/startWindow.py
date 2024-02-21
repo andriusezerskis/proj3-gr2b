@@ -55,8 +55,6 @@ class StartWindow(QMainWindow):
 
     def initMainWindow(self):
         # handler de oke bouton
-        print('lol')
-
         simulation = Simulation((self.size, self.size))
         window = Window((self.size, self.size), simulation)
         window.show()

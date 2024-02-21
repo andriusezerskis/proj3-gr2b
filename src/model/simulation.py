@@ -4,12 +4,18 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
+from cmath import sqrt
+import itertools
+import math
 import random
 import time
 import os
 import sys
 
+import numpy as np
+
 from constants import *
+from model.entities.animals import Crab
 from utils import Point
 from math import cos, pi
 
@@ -72,6 +78,22 @@ class Simulation:
                         current = current + move
                 break
 
+    def manhattan_distance(self, pos1, pos2):
+        return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
+
+    def bordinatorExecution(self, zone, radius, disaster, pos):
+        """
+        BORDINATOR EXECUTION
+        """
+        # if zone == "Ile":
+        #     self.grid.islands[0].bordinatorExecution(
+        #         zone, radius, disaster, pos, "bordinator")
+        if zone == "Rayon":
+            for i in self.grid.getTilesInRadius(pos, radius):
+                i.disaster = disaster
+                i.disasterOpacity = abs(
+                    1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
+
     def step(self) -> None:
         self.modifiedTiles = set()
         self.updatedEntities = set()
@@ -81,12 +103,17 @@ class Simulation:
         self.updateWaterLevel()
 
         for tile in self.grid:
+            self.diminishDisaster(tile)
             entity = tile.getEntity()
             if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
                 self.evolution(entity)
                 self.updatedEntities.add(entity)
 
         print(f"compute time : {time.time() - t}")
+
+    def diminishDisaster(self, tile):
+        if tile.disasterOpacity > 0:
+            tile.disasterOpacity -= 0.1
 
     def getUpdatedTiles(self):
         return self.modifiedTiles

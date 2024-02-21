@@ -25,6 +25,8 @@ class Tile(ParametrizedDrawable, ABC):
         self.height = height
         self.entity = None
         self.setEntity(entity)
+        self.disaster = None
+        self.disasterOpacity = 0
 
     @classmethod
     @override
@@ -50,7 +52,7 @@ class Tile(ParametrizedDrawable, ABC):
     # @abstractmethod
     def step(self):
         pass
-        
+
     def getEntity(self) -> Entity | None:
         return self.entity
 
@@ -69,7 +71,7 @@ class Tile(ParametrizedDrawable, ABC):
         """
         if not self.entity:
             self.setEntity(entity(self.getPos()))
-        
+
     def removeEntity(self) -> None:
         if self.entity:
             self.entity = None
