@@ -3,6 +3,7 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
+from enum import Enum
 import json
 
 # STYLESHEET
@@ -66,7 +67,7 @@ MIDDLE_OF_THE_NIGHT = 1
 NIGHT_MODE_FINISH = 8
 SUNSET_MODE_START = 16
 
-MAX_OCEAN_DEPTH_FILTER_OPACITY = 0.7
+MAX_TILE_FILTER_OPACITY = 0.7
 
 # WINDOWS
 # MAIN_WINDOW
@@ -83,9 +84,10 @@ ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
 TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
 
 # Special
-NIGHT_MODE = f"{TEXTURE_FOLDER_PATH}/nightFilter.png"
-SUNSET_MODE = f"{TEXTURE_FOLDER_PATH}/sunset.png"
+NIGHT_MODE = "#090957"
+SUNSET_MODE = "#fc995b"
 HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
+FIRE = f"{TEXTURE_FOLDER_PATH}/fire.png"
 
 # jsons
 ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
@@ -96,3 +98,8 @@ with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
 
 with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
     TILE_PARAMETERS: dict = json.load(f)
+
+
+class Disaster(str, Enum):
+    FIRE = "Explosion",
+    ICE = "Froid glacial"

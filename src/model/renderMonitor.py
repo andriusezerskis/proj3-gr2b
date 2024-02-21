@@ -78,7 +78,6 @@ class Cuboid:
         return lostArea, wonArea
 
     def __iter__(self):
-        print(self.upper, self.lower)
         for i in range(self.upper[0], self.lower[0] + 1):
             for j in range(self.upper[1], self.lower[1] + 1):
                 # if Grid.isInGrid(i, j)

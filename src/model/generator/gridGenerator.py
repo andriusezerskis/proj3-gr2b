@@ -4,6 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
+import time
 from model.generator.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
 from model.grid import Grid
@@ -73,7 +74,8 @@ class GridGenerator(AutomaticGenerator):
         return tuple(res)
 
     def _getTile(self, x: int, y: int) -> Tile:
-        sample = self.noiseGenerator.sample2D(x/self.w, y/self.h) / self.maxAbsHeight
+        sample = self.noiseGenerator.sample2D(
+            x/self.w, y/self.h) / self.maxAbsHeight
 
         for tileType, threshold in self._thresholds:
             if sample <= threshold:
@@ -126,6 +128,7 @@ class GridGenerator(AutomaticGenerator):
     def generateGrid(self) -> Grid:
         islands = []
         size_ok = False
+        start = time.time()
         print("Generating terrain...")
         while len(islands) not in self.islandNb or not size_ok:
             self.noiseGenerator = NoiseGenerator()
@@ -142,5 +145,5 @@ class GridGenerator(AutomaticGenerator):
 
         grid = Grid(Point(self.w, self.h))
         grid.initialize(self.matrix, islands)
-        print("Terrain generated")
+        print("Terrain generated in ", time.time() - start, "s")
         return grid

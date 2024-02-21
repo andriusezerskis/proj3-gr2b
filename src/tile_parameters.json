@@ -1,22 +1,26 @@
 {
     "Water": {
-        "texture_path": "water3.png",
+        "texture_path": ["water3.png"],
         "level": 0,
-        "filter_color": "#090957"
+        "filter_color": "#090957",
+        "ascending_gradient": 0
     },
     "Sand": {
-        "texture_path": "sand2.png",
+        "texture_path": ["sand2.png"],
         "level": 0.1,
-        "filter_color": "#c27800"
+        "filter_color": "#c27800",
+        "ascending_gradient": 1
     },
     "Land": {
-        "texture_path": "land6.png",
+        "texture_path": ["land6.png"],
         "level": 0.75,
-        "filter_color": "#015705"
+        "filter_color": "#015705",
+        "ascending_gradient": 1
     },
     "Mountain": {
-        "texture_path": "mountain2.png",
+        "texture_path": ["mountain2.png"],
         "level": 1,
-        "filter_color": "#ffffff"
+        "filter_color": "#ffffff",
+        "ascending_gradient": 1
     }
 }

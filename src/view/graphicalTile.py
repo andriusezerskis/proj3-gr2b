@@ -18,7 +18,9 @@ class GraphicalTile:
 
         self.filter = QGraphicsPixmapItem()
         self.filter.setPos(j * 2048, i * 2048)
-        self.allows_entity_rendering = False
+        self.disasterFilter = QGraphicsPixmapItem()
+        self.disasterFilter.setPos(j * 2048, i * 2048)
+        self.allowsEntityRendering = False
 
     def getTerrain(self):
         return self.terrain
@@ -29,19 +31,23 @@ class GraphicalTile:
     def getFilter(self):
         return self.filter
 
+    def getDisasterFilter(self):
+        return self.disasterFilter
+
     def mayRenderEntity(self):
-        return self.allows_entity_rendering
+        return self.allowsEntityRendering
 
     def EnableEntityRendering(self):
-        self.allows_entity_rendering = True
+        self.allowsEntityRendering = True
 
     def DisableEntityRendering(self):
-        self.allows_entity_rendering = False
+        self.allowsEntityRendering = False
 
     def __iter__(self):
         yield self.terrain
         yield self.filter
         yield self.entity
+        yield self.disasterFilter
 
     def __getitem__(self, item):
         if item == 0:

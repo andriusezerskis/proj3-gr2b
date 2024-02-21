@@ -56,7 +56,8 @@ class EntityInfoView(QDockWidget):
         self.entity = entity
         self.controlButton.show()
         self.lageButton.show()
-        baseText = f"Âge: {entity.getDisplayAge()} jours\n"
+        baseText = f"Prénom: {entity.getName()}\n"
+        baseText += f"Âge: {entity.getDisplayAge()} jours\n"
         if isinstance(entity, Animal):
             self.progressBar.show()
             preys = entity.getPreysNames()
@@ -78,7 +79,6 @@ class EntityInfoView(QDockWidget):
             self.progressBar.hide()
             baseText += f"{entity.getCount()} {ENTITY_PARAMETERS[entity.__class__.__name__]['french_name'].lower()}s\n"
         self.infoLabel.setText(baseText)
-        print(entity.getPos())
         if entity.isDead():
             self.showDeadEntity()
 

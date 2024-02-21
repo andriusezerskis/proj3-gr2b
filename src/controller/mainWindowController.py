@@ -42,7 +42,13 @@ class MainWindowController:
         scene_pos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
         if tile:
-            if tile.hasEntity():
+            if self.mainWindow.monitor.getIsMonitor():
+                self.mainWindow.monitor.offIsMonitor()
+                zone, radius, disaster = self.mainWindow.monitor.getInfo()
+                self.simulation.bordinatorExecution(
+                    zone,  radius, disaster, tile.getPos())
+
+            elif tile.hasEntity():
                 if not self.simulation.hasPlayer():
                     self.openDockEvent()
 

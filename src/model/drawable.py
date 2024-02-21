@@ -6,6 +6,7 @@ Date: December 2023
 
 
 from abc import ABC, abstractmethod
+from random import choice
 
 
 class ParametrizedDrawable(ABC):
@@ -29,5 +30,22 @@ class ParametrizedDrawable(ABC):
         return cls.getParameters()[parameter]
 
     @classmethod
-    def getTexturePath(cls) -> str:
-        return cls._getFilePathPrefix() + "/" + cls._getParameter("texture_path")
+    def _constructFullTexturePath(cls, suffix: str) -> str:
+        return cls._getFilePathPrefix() + "/" + suffix
+
+    @classmethod
+    def getDefaultTexturePath(cls) -> str:
+        return cls._constructFullTexturePath(cls._getParameter("texture_path")[0])
+
+    @classmethod
+    def pickRandomTexturePath(cls) -> str:
+        return cls._constructFullTexturePath(choice(cls._getParameter("texture_path")))
+
+    def getTexturePath(self) -> str:
+        return self._texture_path
+
+    def __init__(self):
+        if self.__class__.__name__ == "Player":
+            return
+
+        self._texture_path = self.pickRandomTexturePath()

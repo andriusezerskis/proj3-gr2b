@@ -14,7 +14,7 @@ import os
 
 
 import matplotlib
-from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET
+from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
 from model.entities.animals import Crab
 from model.entities.entity import Entity
 
@@ -23,7 +23,6 @@ matplotlib.use('QtAgg')
 
 class MonitorWindow:
     def __init__(self, dock, container):
-        self.rayon = 20
         self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
@@ -36,10 +35,11 @@ class MonitorWindow:
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----
+        self.infoZone = "Rayon"
+        self.infoRayon = 10
+        self.infoDisaster = "Froid glacial"
+        self.isMonitor = False
         # Hlayout containing 2 Vlayout (check button)
-        # -> peut être le changer en stacked layout plus tard
-        # ou ajouter un truc QSpinBox à côté de rayon
-        # 1 case = rayon de 1 enfaite
         self.layout2 = QHBoxLayout()
         self.checkZone = self.check_box()
         self.checkCata = self.check_box_2()
@@ -51,36 +51,45 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
-        button = QPushButton("OK")
-        button.clicked.connect(self.lol)
-        self.layout.addWidget(button)
+        self.button = QPushButton("OK")
+        self.button.clicked.connect(self.okButtonCallback)  # handler du inator
+        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.layout.addWidget(self.button)
 
-    def lol(self):
+    def okButtonCallback(self):
         # bouton OK handler
-        print('lol')
+        # doit mettre à true un truc dans click sur map
+        self.isMonitor = True
+        self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
+    def getIsMonitor(self):
+        return self.isMonitor
+
+    def offIsMonitor(self):
+        self.isMonitor = False
+        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+
+    def getInfo(self):
+        return self.infoZone, self.infoRayon, self.infoDisaster
+
+    # --- init des check box ---
     def check_box(self):
         layout = QVBoxLayout()
 
         label = QLabel("Choix de zone")
         layout.addWidget(label)
 
-        # b1 = QRadioButton("Case unique")
-        # b1.setChecked(True)
-        # b1.toggled.connect(lambda:self.btn_zone(b1))
-        # layout.addWidget(b1)
-
         b2 = QRadioButton("Rayon")
         b2.setChecked(True)
-        b2.toggled.connect(lambda: self.btn_zone(b2))
+        b2.toggled.connect(lambda: self.btnZone(b2))
         layout.addWidget(b2)
 
-        spin_box = QSpinBox(minimum=1, maximum=100, value=20)
-        spin_box.valueChanged.connect(self.updateSpinbox)
-        layout.addWidget(spin_box)
+        spinBox = QSpinBox(minimum=1, maximum=100, value=10)
+        spinBox.valueChanged.connect(self.updateSpinbox)
+        layout.addWidget(spinBox)
 
         b3 = QRadioButton("Ile")
-        b3.toggled.connect(lambda: self.btn_zone(b3))
+        b3.toggled.connect(lambda: self.btnZone(b3))
         layout.addWidget(b3)
 
         container = QWidget()
@@ -93,12 +102,12 @@ class MonitorWindow:
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        b1 = QRadioButton("Froid glacial")
+        b1 = QRadioButton(Disaster.ICE)
         b1.setChecked(True)
         b1.toggled.connect(lambda: self.btnCata(b1))
         layout.addWidget(b1)
 
-        b2 = QRadioButton("Super hot")
+        b2 = QRadioButton(Disaster.FIRE)
         b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
@@ -110,50 +119,24 @@ class MonitorWindow:
         container.setLayout(layout)
         return container
 
-    def btn_zone(self, b):
+    # --- handler des checkbox ---
+    def btnZone(self, b):
         # handler de zone selectionné
-        # if b.text() == "Case unique":
-        #     if b.isChecked() == True:
-        #         print(b.text()+" is selected")
-        #     else:
-        #         print(b.text()+" is deselected")
 
-        if b.text() == "Rayon":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
-
-        if b.text() == "Ile":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
+        if b.isChecked() == True:
+            self.infoZone = b.text()
 
     def updateSpinbox(self, value):
-        self.rayon = value
+        self.infoRayon = value
 
     def btnCata(self, b):
         # handler de catastrophe selectionné
-        if b.text() == "Froid glacial":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
 
-        if b.text() == "Super hot":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
-
-        if b.text() == "EXPLOSION":
-            if b.isChecked() == True:
-                print(b.text()+" is selected")
-            else:
-                print(b.text()+" is deselected")
+        if b.isChecked() == True:
+            self.infoDisaster = b.text()
 
 
+# --- for graph plot ---
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
@@ -181,7 +164,7 @@ class GraphWindow:
                 iconbutton = QPushButton(j.__name__)
                 iconbutton.clicked.connect(
                     partial(self.setChosenEntity, j, iconbutton))
-                icon = j.getTexturePath()
+                icon = j.getDefaultTexturePath()
                 iconbutton.setIcon(
                     QIcon(icon))
                 iconbutton.setIconSize(QSize(15, 15))
@@ -213,7 +196,6 @@ class GraphWindow:
         else:
             iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.chosenEntity = entity
-        print("changed", self.chosenEntity.__name__)
         self.drawPlot()
 
     def drawPlot(self):

@@ -21,10 +21,13 @@ Tile_ = TypeVar("Tile_")
 class Tile(ParametrizedDrawable, ABC):
 
     def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
+        super().__init__()
         self.pos = pos
         self.height = height
         self.entity = None
         self.setEntity(entity)
+        self.disaster = None
+        self.disasterOpacity = 0
 
     @classmethod
     @override
@@ -44,13 +47,17 @@ class Tile(ParametrizedDrawable, ABC):
     def getFilterColor(cls) -> str:
         return cls._getParameter("filter_color")
 
+    @classmethod
+    def isGradientAscending(cls) -> bool:
+        return bool(cls._getParameter("ascending_gradient"))
+
     def getHeight(self) -> float:
         return self.height
 
     # @abstractmethod
     def step(self):
         pass
-        
+
     def getEntity(self) -> Entity | None:
         return self.entity
 
@@ -69,7 +76,7 @@ class Tile(ParametrizedDrawable, ABC):
         """
         if not self.entity:
             self.setEntity(entity(self.getPos()))
-        
+
     def removeEntity(self) -> None:
         if self.entity:
             self.entity = None

@@ -29,8 +29,8 @@ from controller.mainWindowController import MainWindowController
 from view.graphicalTile import GraphicalTile
 
 
-from constants import NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_OCEAN_DEPTH_FILTER_OPACITY
+from constants import FIRE, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
 from src.model.simulation import Simulation
 
 
@@ -54,6 +54,7 @@ class GraphicalGrid(QGraphicsView):
              for i in range(self.gridSize[1])]
         self._addPixmapItems()
         self.pixmapFromPath = {}
+        self.pixmapFromRGB = {}
 
         start_time = time.time()
         self.drawGrid(grid)
@@ -129,7 +130,7 @@ class GraphicalGrid(QGraphicsView):
         """
         Initialize a pixmap with the night mode
         """
-        self.luminosityMode = QGraphicsPixmapItem(QPixmap(NIGHT_MODE))
+        self.luminosityMode = QGraphicsPixmapItem(self.getPixmapFromRGBHex(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
@@ -161,6 +162,16 @@ class GraphicalGrid(QGraphicsView):
     def _drawTiles(self, tile):
         self._drawTerrains(tile)
         self._drawEntities(tile)
+        self._drawDisaster(tile)
+
+    def _drawDisaster(self, tile):
+        i, j = tile.getIndex()
+
+        if tile.disaster != None:
+            disasterFilter = self.pixmapItems[i][j].getDisasterFilter()
+            disasterFilter.show()
+            disasterFilter.setOpacity(tile.disasterOpacity)
+            disasterFilter.setPixmap(self.getPixmap(FIRE))
 
     def _drawTerrains(self, tile):
         i, j = tile.getIndex()
@@ -168,25 +179,19 @@ class GraphicalGrid(QGraphicsView):
 
         # to move in a different spot?
         depthFilter = self.pixmapItems[i][j].getFilter()
-        # depthFilter.show()
-        # depthFilter.setPixmap(self.getPixmap(SUNSET_MODE))
+        depthFilter.setPixmap(self.getPixmapFromRGBHex(tile.getFilterColor()))
 
-        if isinstance(tile, Water):
-            depthFilter.show()
-            depthFilter.setPixmap(self.getPixmap(NIGHT_MODE))
-            # linear mapping from Water.getLevel() <-> MAX_OCEAN_DEPTH_FILTER_OPACITY to MAX_OCEAN_DEPTH_FILTER <-> -1
-            p = MAX_OCEAN_DEPTH_FILTER_OPACITY * Water.getLevel() / (Water.getLevel() + 1)
-            m = p - MAX_OCEAN_DEPTH_FILTER_OPACITY
-            opacity = m * tile.getHeight() + p
-        else:
-            return
-            # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
-            levelRange = GridGenerator.getRange(type(tile))
-            m = MAX_OCEAN_DEPTH_FILTER_OPACITY / (levelRange[1] - levelRange[0])
-            p = -levelRange[0] * m
-            opacity = m * tile.getHeight() + p
+        # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
+        levelRange = GridGenerator.getRange(type(tile))
+        m = MAX_TILE_FILTER_OPACITY / (levelRange[1] - levelRange[0])
+        p = -levelRange[0] * m
+        opacity = m * tile.getHeight() + p
+
+        if not tile.isGradientAscending():
+            opacity = MAX_TILE_FILTER_OPACITY - opacity
 
         depthFilter.setOpacity(opacity)
+        depthFilter.show()
 
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
@@ -225,10 +230,10 @@ class GraphicalGrid(QGraphicsView):
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
         if hour == SUNSET_MODE_START:
-            self.luminosityMode.setPixmap(QPixmap(SUNSET_MODE))
+            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(SUNSET_MODE))
             self.luminosityMode.setOpacity(0.1)
         if hour == NIGHT_MODE_START:
-            self.luminosityMode.setPixmap(QPixmap(NIGHT_MODE))
+            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(NIGHT_MODE))
             self.luminosityMode.setOpacity(0.1)
 
         elif hour == NIGHT_MODE_FINISH:
@@ -253,9 +258,18 @@ class GraphicalGrid(QGraphicsView):
             pixmap = QPixmap(path)
             pixmap = pixmap.scaled(self.size[0], self.size[1])
             self.pixmapFromPath[path] = pixmap
-            return pixmap
 
         return self.pixmapFromPath[path]
+
+    def getPixmapFromRGBHex(self, rgbHex: str) -> QPixmap:
+        if rgbHex not in self.pixmapFromRGB:
+            im = QImage(1, 1, QImage.Format.Format_RGB32)
+            im.setPixel(0, 0, QColor(rgbHex).rgb())
+            pixmap = QPixmap(im)
+            pixmap = pixmap.scaled(self.size[0], self.size[1])
+            self.pixmapFromRGB[rgbHex] = pixmap
+
+        return self.pixmapFromRGB[rgbHex]
 
     def removeRenderedSection(self):
         for i, j in self.renderingMonitor.getRenderingSection():
