@@ -1,18 +1,22 @@
 {
     "Water": {
         "texture_path": "water.png",
-        "level": 0
+        "level": 0,
+        "filter_color": "#090957"
     },
     "Sand": {
         "texture_path": "sand.png",
-        "level": 0.1
+        "level": 0.1,
+        "filter_color": "#c27800"
     },
     "Land": {
         "texture_path": "land.png",
-        "level": 0.75
+        "level": 0.75,
+        "filter_color": "#015705"
     },
     "Mountain": {
         "texture_path": "mountain.png",
-        "level": 1
+        "level": 1,
+        "filter_color": "#ffffff"
     }
 }

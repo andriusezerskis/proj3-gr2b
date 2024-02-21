@@ -40,6 +40,10 @@ class Tile(ParametrizedDrawable, ABC):
     def getLevel(cls) -> float:
         return cls._getParameter("level")
 
+    @classmethod
+    def getFilterColor(cls) -> str:
+        return cls._getParameter("filter_color")
+
     def getHeight(self) -> float:
         return self.height
 
