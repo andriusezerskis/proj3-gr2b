@@ -47,6 +47,10 @@ class Tile(ParametrizedDrawable, ABC):
     def getFilterColor(cls) -> str:
         return cls._getParameter("filter_color")
 
+    @classmethod
+    def isGradientAscending(cls) -> bool:
+        return bool(cls._getParameter("ascending_gradient"))
+
     def getHeight(self) -> float:
         return self.height
 

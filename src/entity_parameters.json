@@ -1,7 +1,7 @@
 {
     "Human": {
         "view_distance": 2,
-        "texture_path": ["human3.png", "humans/loïc.png", "humans/moïra.png"],
+        "texture_path": ["humans/loïc.png", "humans/moïra.png"],
         "valid_tiles": ["Land", "Sand"],
         "french_name": "Humain",
         "preys": ["Crab", "Tree", "Fish"],
@@ -9,13 +9,13 @@
         "preferred_temperature": 18
     },
     "Tree": {
-        "texture_path": ["tree4.png"],
+        "texture_path": ["tree.png"],
         "french_name": "Arbre",
         "valid_tiles": ["Land"],
         "spawn_weight": 1
     },
     "Algae": {
-        "texture_path": ["algae3.png"],
+        "texture_path": ["algae.png"],
         "french_name": "Algue",
         "valid_tiles": ["Water"],
         "spawn_weight": 1
