@@ -41,6 +41,7 @@ class Entity(ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
+        self._hp = self._getMaxHealthPoints()  # initialize health points to max
 
         self._name = Person(Locale.FR).first_name()
 
@@ -59,7 +60,7 @@ class Entity(ParametrizedDrawable, ABC):
         return cls._getParameter("spawn_weight")
     
     @classmethod
-    def getHealthPoints(cls) -> float:
+    def _getMaxHealthPoints(cls) -> float:
         return cls._getParameter("health_points")
 
     @classmethod
@@ -102,6 +103,11 @@ class Entity(ParametrizedDrawable, ABC):
             self._counts[cls] -= 1
 
         self._killed = True
+    
+    def inflictDamage(self, damage: float) -> None:
+        self._hp -= damage
+        if self._hp <= 0:
+            self.kill()
 
     def evolve(self):
         self._age += 1
