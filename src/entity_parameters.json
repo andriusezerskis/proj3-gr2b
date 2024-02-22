@@ -6,19 +6,22 @@
         "french_name": "Humain",
         "preys": ["Crab", "Tree", "Fish"],
         "spawn_weight": 0.5,
-        "preferred_temperature": 18
+        "preferred_temperature": 18,
+        "health_points": 100
     },
     "Tree": {
         "texture_path": ["tree4.png"],
         "french_name": "Arbre",
         "valid_tiles": ["Land"],
-        "spawn_weight": 1
+        "spawn_weight": 1,
+        "health_points": 300
     },
     "Algae": {
         "texture_path": ["algae3.png"],
         "french_name": "Algue",
         "valid_tiles": ["Water"],
-        "spawn_weight": 1
+        "spawn_weight": 1,
+        "health_points": 25
     },
     "Crab": {
         "view_distance": 1,
@@ -27,7 +30,8 @@
         "valid_tiles": ["Water", "Sand"],
         "preys": ["Fish", "Algae"],
         "spawn_weight": 0.2,
-        "preferred_temperature": 20
+        "preferred_temperature": 20,
+        "health_points": 75
     },
     "Fish": {
         "view_distance": 1,
@@ -36,6 +40,7 @@
         "valid_tiles": ["Water"],
         "preys": ["Algae"],
         "spawn_weight": 0.5,
-        "preferred_temperature": 20
+        "preferred_temperature": 20,
+        "health_points": 50
     }
 }
