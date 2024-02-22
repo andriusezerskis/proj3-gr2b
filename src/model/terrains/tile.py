@@ -20,12 +20,11 @@ Tile_ = TypeVar("Tile_")
 
 class Tile(ParametrizedDrawable, ABC):
 
-    def __init__(self, pos: Point, height: float, entity: Entity = None) -> None:
+    def __init__(self, pos: Point, height: float) -> None:
         super().__init__()
         self.pos = pos
         self.height = height
         self.entity = None
-        self.setEntity(entity)
         self.disaster = None
         self.disasterOpacity = 0
 
@@ -64,10 +63,17 @@ class Tile(ParametrizedDrawable, ABC):
     def hasEntity(self) -> bool:
         return self.entity is not None
 
-    def setEntity(self, entity: Entity) -> None:
+    def setEntity(self, entity: Entity) -> bool:
+        """
+        Sets the entity in the tile
+        :param entity: the entity that you want to place
+        :return: whether the assignment was successful
+        """
         # we only set the entity if the tile is of a valid type
         if entity and entity.isValidTileType(self.__class__):
             self.entity = entity
+            return True
+        return False
 
     def addNewEntity(self, entity: type) -> None:
         """
@@ -93,7 +99,16 @@ class Tile(ParametrizedDrawable, ABC):
 
     @staticmethod
     def copyWithDifferentTypeOf(toCopy: Tile_, type_: type) -> Tile_:
-        return type_(toCopy.pos, toCopy.height, toCopy.entity)
+        """
+        Copies the passed tile in a new tile of a different tile.
+        Attemps to copy the potential entity but might not succeed.
+        :param toCopy: The tile to copy
+        :param type_: The type of the new tile
+        :return:
+        """
+        tile = type_(toCopy.pos, toCopy.height)
+        tile.setEntity(toCopy.entity)
+        return tile
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.pos})"

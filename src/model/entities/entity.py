@@ -102,6 +102,7 @@ class Entity(ParametrizedDrawable, ABC):
             self._counts[cls] -= 1
 
         self._killed = True
+        self._dead = True
 
     def evolve(self):
         self._age += 1
@@ -154,7 +155,8 @@ class Entity(ParametrizedDrawable, ABC):
         assert not self.getGrid().getTile(self._pos + movement).hasEntity()
         self.getGrid().getTile(self._pos).removeEntity()
         self._pos += movement
-        self.getGrid().getTile(self._pos).setEntity(self)
+        if not self.getGrid().getTile(self._pos).setEntity(self):
+            self.kill()
 
     @staticmethod
     def getGrid() -> Grid:

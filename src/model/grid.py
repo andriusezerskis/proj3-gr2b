@@ -33,7 +33,6 @@ class Grid:
         for tile in self:
             if Water.getLevel() < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
-        print(self)
 
     def dist(self, x1, y1, x2, y2):
         return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
@@ -66,6 +65,9 @@ class Grid:
 
             if not newTile:
                 continue
+
+            if tile.hasEntity() and not newTile.hasEntity():
+                tile.getEntity().kill()
 
             self.coasts.remove(tile)
             self.coasts.add(newTile)
