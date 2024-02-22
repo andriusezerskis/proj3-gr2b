@@ -111,7 +111,7 @@ class MonitorWindow:
         b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
-        b3 = QRadioButton("EXPLOSION")
+        b3 = QRadioButton(Disaster.INVASION)
         b3.toggled.connect(lambda: self.btnCata(b3))
         layout.addWidget(b3)
 

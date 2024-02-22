@@ -90,9 +90,14 @@ class Simulation:
         #         zone, radius, disaster, pos, "bordinator")
         if zone == "Rayon":
             for i in self.grid.getTilesInRadius(pos, radius):
-                i.disaster = disaster
-                i.disasterOpacity = abs(
-                    1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
+                if disaster == Disaster.FIRE:
+                    i.disaster = disaster
+                    i.disasterOpacity = abs(
+                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
+                elif disaster == Disaster.ICE:
+                    pass
+                elif disaster == Disaster.INVASION:
+                    i.setEntity(Crab(i.getPos()))
 
     def step(self) -> None:
         self.modifiedTiles = set()

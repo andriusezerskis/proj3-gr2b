@@ -103,3 +103,4 @@ with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
 class Disaster(str, Enum):
     FIRE = "Explosion",
     ICE = "Froid glacial"
+    INVASION = "Invasion de crabes"
