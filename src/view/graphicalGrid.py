@@ -10,11 +10,13 @@ from typing import Tuple, Set, List
 from PyQt6.QtCore import QTimer
 from controller.gridController import GridController
 
-from utils import Point
+from utils import Point, Point3D
 
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+
+from math import sin, sqrt
 
 from model.grid import Grid
 from model.terrains.tile import Tile
@@ -27,7 +29,6 @@ from model.generator.gridGenerator import GridGenerator
 from controller.mainWindowController import MainWindowController
 
 from view.graphicalTile import GraphicalTile
-
 
 from constants import FIRE, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
     MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
@@ -55,6 +56,7 @@ class GraphicalGrid(QGraphicsView):
         self._addPixmapItems()
         self.pixmapFromPath = {}
         self.pixmapFromRGB = {}
+        self.sunPos = Point3D(self.gridSize[0] / 2, -50, 2)
 
         start_time = time.time()
         self.drawGrid(grid)
@@ -63,9 +65,9 @@ class GraphicalGrid(QGraphicsView):
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
-        self.scale(10/2048, 10/2048)
+        self.scale(10 / 2048, 10 / 2048)
         # self.scene.moveToThread()
-        self.initNightMode()
+        # self.initNightMode()
 
         self.changeStyleSheet()
 
@@ -149,6 +151,82 @@ class GraphicalGrid(QGraphicsView):
 
         self.updateHighlighted()
 
+    def _updateSunlight(self, tile: Tile):
+        maxt = 100
+        # if tile.getPos() != Point(10, 10):
+        #     return
+        tilePos3D = Point3D(tile.getPos().x(), tile.getPos().y(), tile.height)
+
+        # the equations of the line from the sun to tile (t in [0; maxt]):
+        # x = lambda t: (self.sunPos.x() - tilePos3D.x()) / maxt * t + tilePos3D.x()
+        # y = lambda t: (self.sunPos.y() - tilePos3D.y()) / maxt * t + tilePos3D.y()
+        # z = lambda t: self.sunPos.x() / maxt * t
+
+        # simplification
+        # find all intersections of this line on all lines from tile.y() to 0 on the x axis
+        # then, we get the highest tile of these
+        highest = None
+        for y in range(tile.getPos().y() - 1, -1, -1):
+            t = (y - tilePos3D.y()) * maxt / (self.sunPos.y() - tilePos3D.y())
+            x = (self.sunPos.x() - tilePos3D.x()) / maxt * t + tilePos3D.x()
+            currentTile = self.simulation.getGrid().getTile(Point(round(x), y))
+            if not highest or currentTile.height > highest.height:
+                highest = currentTile
+
+        # depthFilter = self.pixmapItems[tile.getPos().x()][tile.getPos().x()].getFilter()
+        # depthFilter.setPixmap(self.getPixmapFromRGBHex("#00ffff"))
+        # depthFilter.setOpacity(1)
+        # depthFilter.show()
+        #
+        # depthFilter = self.pixmapItems[highest.getPos().y()][highest.getPos().x()].getFilter()
+        # depthFilter.setPixmap(self.getPixmapFromRGBHex("#ff0000"))
+        # depthFilter.setOpacity(1)
+        # depthFilter.show()
+
+        # i cannot make this work
+        # angle = (Point3D(highest.getPos().x(), highest.getPos().y(), highest.height) - tilePos3D)
+        # .angle(self.sunPos - tilePos3D)
+
+        angle = -1
+        if highest and highest.height > Water.getLevel() and self.sunPos.z() > 0 and highest.height < self.sunPos.z():
+
+            angleHighest = (Point3D(highest.getPos().x(), highest.getPos().y(), 0) -
+                            Point3D(tile.getPos().x(), tile.getPos().y(), 0)).angle(
+                Point3D(highest.getPos().x(), highest.getPos().y(), highest.height) - tilePos3D)
+
+            angleSun = (Point3D(self.sunPos.x(), self.sunPos.y(), 0) -
+                        Point3D(tile.getPos().x(), tile.getPos().y(), 0)).angle(self.sunPos - tilePos3D)
+
+            angle = angleSun - angleHighest
+
+        solarFilter = self.pixmapItems[tile.getPos().y()][tile.getPos().x()].getSolarFilter()
+
+        # print(f"height of tile to shade: {tile.height}")
+        # print(f"height of potentially shading tile: {highest.height}")
+        # print(f"vector from tile to potential shading tile: "
+        #       f"{Point3D(highest.getPos().x(), highest.getPos().y(), highest.height) - tilePos3D}")
+        # print(f"vector from tile to sun: {self.sunPos - tilePos3D}")
+        # print(f"angle between the two {angle} rad")
+
+        sunny = True
+        if not highest:
+            sunny = self.sunPos.z() > 0
+        else:
+            sunny = (self.sunPos.z() > 0 and ((angle > 0 and highest.height < self.sunPos.z()) or
+                                              highest.height < Water.getLevel() or tile.height > highest.height))
+
+        if sunny:
+            solarFilter.hide()
+        else:
+            solarFilter.setPixmap(self.getPixmapFromRGBHex(NIGHT_MODE))
+
+            scale = 1
+            if highest:
+                scale = 1 / highest.getPos().euclidDistance(tile.getPos())
+            print(self.sunPos.z() / sqrt(self.sunPos.z()**2 + self.sunPos.y()**2))
+            solarFilter.setOpacity(0.7 - 6 * self.sunPos.z() / sqrt(self.sunPos.z()**2 + self.sunPos.y()**2))
+            solarFilter.show()
+
     def updateHighlighted(self):
         if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
@@ -163,6 +241,7 @@ class GraphicalGrid(QGraphicsView):
         self._drawTerrains(tile)
         self._drawEntities(tile)
         self._drawDisaster(tile)
+        self._updateSunlight(tile)
 
     def _drawDisaster(self, tile):
         i, j = tile.getIndex()
@@ -228,6 +307,8 @@ class GraphicalGrid(QGraphicsView):
             self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
     def nightMode(self, hour):
+        return
+
         opacity = self.luminosityMode.opacity()
         if hour == SUNSET_MODE_START:
             self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(SUNSET_MODE))
@@ -282,7 +363,8 @@ class GraphicalGrid(QGraphicsView):
     def _addPixmapItems(self):
         for i, line in enumerate(self.pixmapItems):
             for j, graphicalTile in enumerate(line):
-                if (i, j) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
+                if (i, j) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(
+                        Point(j, i)).hasEntity():
                     graphicalTile.EnableEntityRendering()
                 for label in graphicalTile:
                     self.scene.addItem(label)
@@ -312,33 +394,33 @@ class GraphicalGrid(QGraphicsView):
         self.renderSection()
 
     def moveVerticalScrollBarPositively(self):
-        if self.timers[0][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[0][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[0][0].stop()
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.verticalScrollbar.setValue(
             self.verticalScrollbar.value() + step)
         self.timers[0][1] += step
 
     def moveVerticalScrollBarNegatively(self):
-        if self.timers[1][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[1][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[1][0].stop()
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.verticalScrollbar.setValue(
             self.verticalScrollbar.value() - step)
         self.timers[1][1] += step
 
     def moveHorizontalScrollBarPositively(self):
-        if self.timers[2][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[2][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[2][0].stop()
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.horizontalScrollbar.setValue(
             self.horizontalScrollbar.value() + step)
         self.timers[2][1] += step
 
     def moveHorizontalScrollBarNegatively(self):
-        if self.timers[3][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[3][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[3][0].stop()
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.horizontalScrollbar.setValue(
             self.horizontalScrollbar.value() - step)
         self.timers[3][1] += step
@@ -364,6 +446,6 @@ class GraphicalGrid(QGraphicsView):
         timer.start()
 
     def setScrollBars(self, point: Point):
-        tile_size = int((1000/100) * self.renderingMonitor.zoomFactor)
+        tile_size = int((1000 / 100) * self.renderingMonitor.zoomFactor)
         self.horizontalScrollbar.setValue(point.x() * tile_size)
         self.verticalScrollbar.setValue(point.y() * tile_size)

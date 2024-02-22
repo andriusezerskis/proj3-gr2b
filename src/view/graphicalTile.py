@@ -18,6 +18,8 @@ class GraphicalTile:
 
         self.filter = QGraphicsPixmapItem()
         self.filter.setPos(j * 2048, i * 2048)
+        self.solarFilter = QGraphicsPixmapItem()
+        self.solarFilter.setPos(j * 2048, i * 2048)
         self.disasterFilter = QGraphicsPixmapItem()
         self.disasterFilter.setPos(j * 2048, i * 2048)
         self.allowsEntityRendering = False
@@ -30,6 +32,9 @@ class GraphicalTile:
 
     def getFilter(self):
         return self.filter
+
+    def getSolarFilter(self):
+        return self.solarFilter
 
     def getDisasterFilter(self):
         return self.disasterFilter
@@ -48,6 +53,7 @@ class GraphicalTile:
         yield self.filter
         yield self.entity
         yield self.disasterFilter
+        yield self.solarFilter
 
     def __getitem__(self, item):
         if item == 0:
