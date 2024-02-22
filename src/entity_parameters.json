@@ -10,14 +10,14 @@
         "health_points": 100
     },
     "Tree": {
-        "texture_path": ["tree.png"],
+        "texture_path": ["tree4.png"],
         "french_name": "Arbre",
         "valid_tiles": ["Land"],
         "spawn_weight": 1,
         "health_points": 300
     },
     "Algae": {
-        "texture_path": ["algae.png"],
+        "texture_path": ["algae3.png"],
         "french_name": "Algue",
         "valid_tiles": ["Water"],
         "spawn_weight": 1,
