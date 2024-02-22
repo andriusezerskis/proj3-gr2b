@@ -41,7 +41,7 @@ class Entity(ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
-        self._hp = self._getMaxHealthPoints()  # initialize health points to max
+        self._hp = self._getMaxHealthPoints() # initialize health points to max
 
         self._name = Person(Locale.FR).first_name()
 
