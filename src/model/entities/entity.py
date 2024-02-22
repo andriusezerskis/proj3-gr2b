@@ -57,6 +57,10 @@ class Entity(ParametrizedDrawable, ABC):
     @classmethod
     def getSpawnWeight(cls) -> float:
         return cls._getParameter("spawn_weight")
+    
+    @classmethod
+    def getHealthPoints(cls) -> float:
+        return cls._getParameter("health_points")
 
     @classmethod
     def _getValidTiles(cls) -> list[str]:
