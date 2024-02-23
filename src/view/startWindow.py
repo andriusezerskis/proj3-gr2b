@@ -26,7 +26,7 @@ class StartWindow(QMainWindow):
         self.setCentralWidget(container)
         self.layout2 = QHBoxLayout()
 
-        # ---- taille fenetre ----
+        # ---- input windows size ----
         self.gridSizeWidth = 100
         self.gridSizeHeight = 100
         label2 = QLabel("Taille fenêtre longueur")
@@ -38,7 +38,7 @@ class StartWindow(QMainWindow):
         self.layout2.addWidget(self.spinBoxWidth)
         self.layout2.addWidget(self.spinBoxHeight)
 
-        # --- ajout layout H ---
+        # --- Hlayout  ---
         container2 = QWidget()
         container2.setLayout(self.layout2)
         self.layout.addWidget(container2)
@@ -49,7 +49,7 @@ class StartWindow(QMainWindow):
         label.setPixmap(pixmap)
         # self.layout.addWidget(label)
 
-        # ---- bouton OK ----
+        # ---- ok button ----
         self.button = QPushButton("c parti youpi")
         self.button.clicked.connect(self.initMainWindow)
         self.layout.addWidget(self.button)
@@ -61,7 +61,7 @@ class StartWindow(QMainWindow):
         self.gridSizeHeight = value
 
     def initMainWindow(self):
-        # handler de oke bouton
+        # handler when ok button pressed
         simulation = Simulation(Point(self.gridSizeWidth, self.gridSizeHeight))
         window = Window(
             Point(self.gridSizeWidth, self.gridSizeHeight), simulation)

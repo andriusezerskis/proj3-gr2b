@@ -23,6 +23,10 @@ matplotlib.use('QtAgg')
 
 class MonitorWindow:
     def __init__(self, dock, container):
+        """
+        Window for controlling catastrophe on the map >:)
+        Display on the dock tab of main windows
+        """
         self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
@@ -39,6 +43,7 @@ class MonitorWindow:
         self.infoRayon = 10
         self.infoDisaster = "Froid glacial"
         self.isMonitor = False
+
         # Hlayout containing 2 Vlayout (check button)
         self.layout2 = QHBoxLayout()
         self.checkZone = self.checkBox()
@@ -52,11 +57,12 @@ class MonitorWindow:
         self.layout.addWidget(self.container2)
 
         self.button = QPushButton("OK")
-        self.button.clicked.connect(self.okButtonCallback)  # handler du inator
+        self.button.clicked.connect(self.okButtonCallback) 
         self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
 
     def okButtonCallback(self):
+        # handler of ok button after selection of a catastroph
         self.isMonitor = True
         self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
@@ -64,13 +70,15 @@ class MonitorWindow:
         return self.isMonitor
 
     def offIsMonitor(self):
+        # calls when click on the map after selection of catastroph
+        # (end of the action)
         self.isMonitor = False
         self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
     def getInfo(self):
         return self.infoZone, self.infoRayon, self.infoDisaster
 
-    # --- init des check box ---
+    # ---- method for init GUI ----
     def checkBox(self):
         layout = QVBoxLayout()
 
@@ -117,7 +125,7 @@ class MonitorWindow:
         container.setLayout(layout)
         return container
 
-    # --- handler des checkbox ---
+    # ---- handler for update information from button ----
     def btnZone(self, b):
         # handler de zone selectionné
 
