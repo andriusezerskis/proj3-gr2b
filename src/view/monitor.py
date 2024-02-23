@@ -180,7 +180,7 @@ class GraphWindow:
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
-        self.chosenEntity = Crab
+        self.setChosenEntity(j, iconbutton)
 
     def setChosenEntity(self, entity, iconbutton):
         if iconbutton.styleSheet() == NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
