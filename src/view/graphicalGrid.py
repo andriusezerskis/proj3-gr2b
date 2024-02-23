@@ -139,7 +139,10 @@ class GraphicalGrid(QGraphicsView):
         sceneWidth, sceneHeight = self.size
 
         scale = sceneWidth / pixmapWidth if pixmapWidth > 0 else 1
-        self.luminosityMode.setScale(scale * self.gridSize.x())
+        transform = QTransform()
+        transform.scale(scale * self.gridSize.x(),
+                        scale * self.gridSize.y())
+        self.luminosityMode.setTransform(transform)
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 

@@ -25,9 +25,9 @@ class RegionHandler:
         self.flatTemperatureNoise = NoiseGenerator()
         self.flatHumidityNoise = NoiseGenerator()
         self.temperatureMap = np.zeros(
-            [self.gridSize.x(), self.gridSize.y()], np.float32)
+            [self.gridSize.y(), self.gridSize.x()], np.float32)
         self.humidityMap = np.zeros(
-            [self.gridSize.x(), self.gridSize.y()], np.float32)
+            [self.gridSize.y(), self.gridSize.x()], np.float32)
         self._generate()
 
     def _sampleSineTemperature(self):
