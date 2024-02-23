@@ -4,13 +4,11 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, ENTITY_PARAMETERS, RELEASE_PLAYER
-from PyQt6.QtWidgets import QHBoxLayout
 
 
 class EntityInfoView(QDockWidget):

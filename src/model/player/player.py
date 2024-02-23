@@ -5,6 +5,7 @@ Date: December 2023
 """
 
 from copy import copy
+from overrides import override
 
 from model.action import Action
 from utils import Point
@@ -12,8 +13,6 @@ from utils import Point
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
-
-from overrides import override
 
 
 class Player(Entity):

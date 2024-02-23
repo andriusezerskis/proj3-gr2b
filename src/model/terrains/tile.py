@@ -6,6 +6,8 @@ Date: December 2023
 
 from abc import ABC
 from typing import TypeVar
+from overrides import override
+
 
 from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
@@ -13,7 +15,6 @@ from model.drawable import ParametrizedDrawable
 from utils import Point
 from constants import TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH
 
-from overrides import override
 
 Tile_ = TypeVar("Tile_")
 
