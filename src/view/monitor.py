@@ -41,8 +41,8 @@ class MonitorWindow:
         self.isMonitor = False
         # Hlayout containing 2 Vlayout (check button)
         self.layout2 = QHBoxLayout()
-        self.checkZone = self.check_box()
-        self.checkCata = self.check_box_2()
+        self.checkZone = self.checkBox()
+        self.checkCata = self.checkBox2()
 
         self.layout2.addWidget(self.checkZone)
         self.layout2.addWidget(self.checkCata)
@@ -57,8 +57,6 @@ class MonitorWindow:
         self.layout.addWidget(self.button)
 
     def okButtonCallback(self):
-        # bouton OK handler
-        # doit mettre à true un truc dans click sur map
         self.isMonitor = True
         self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
@@ -73,7 +71,7 @@ class MonitorWindow:
         return self.infoZone, self.infoRayon, self.infoDisaster
 
     # --- init des check box ---
-    def check_box(self):
+    def checkBox(self):
         layout = QVBoxLayout()
 
         label = QLabel("Choix de zone")
@@ -96,7 +94,7 @@ class MonitorWindow:
         container.setLayout(layout)
         return container
 
-    def check_box_2(self):
+    def checkBox2(self):
         layout = QVBoxLayout()
 
         label = QLabel("Choix de catastrophe")
@@ -111,7 +109,7 @@ class MonitorWindow:
         b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
-        b3 = QRadioButton("EXPLOSION")
+        b3 = QRadioButton(Disaster.INVASION)
         b3.toggled.connect(lambda: self.btnCata(b3))
         layout.addWidget(b3)
 
@@ -146,8 +144,6 @@ class MplCanvas(FigureCanvas):
 
 class GraphWindow:
     def __init__(self, dock, container):
-        # self.setGeometry(500, 100, 500, 300)
-
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()
@@ -213,9 +209,9 @@ class GraphWindow:
             # First time we have no plot reference, so do a normal plot.
             # .plot returns a list of line <reference>s, as we're
             # only getting one we can take the first element.
-            plot_refs = self.canvas.axes.plot(
+            plotRefs = self.canvas.axes.plot(
                 self.xdata, self.ydata[self.chosenEntity], 'r')
-            self._plotRef = plot_refs[0]
+            self._plotRef = plotRefs[0]
         else:
             # We have a reference, we can use it to update the data for that line.
             self._plotRef.set_ydata(self.ydata[self.chosenEntity])

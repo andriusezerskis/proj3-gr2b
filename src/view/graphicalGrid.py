@@ -36,7 +36,7 @@ from src.model.simulation import Simulation
 
 class GraphicalGrid(QGraphicsView):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
+    def __init__(self, gridSize: Tuple[int, int], grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
         self.luminosityMode = None
         self.simulation = simulation
         self.scene = QGraphicsScene()
@@ -48,10 +48,10 @@ class GraphicalGrid(QGraphicsView):
         self.setMouseTracking(True)
 
         self.size = 2048, 2048
-        self.gridSize = grid_size
+        self.gridSize = gridSize
         self.pixmapItems: List[List[GraphicalTile]] = \
-            [[GraphicalTile(i, j) for j in range(self.gridSize[0])]
-             for i in range(self.gridSize[1])]
+            [[GraphicalTile(y, x) for x in range(self.gridSize.x())]
+             for y in range(self.gridSize.y())]
         self._addPixmapItems()
         self.pixmapFromPath = {}
         self.pixmapFromRGB = {}
@@ -130,7 +130,8 @@ class GraphicalGrid(QGraphicsView):
         """
         Initialize a pixmap with the night mode
         """
-        self.luminosityMode = QGraphicsPixmapItem(self.getPixmapFromRGBHex(NIGHT_MODE))
+        self.luminosityMode = QGraphicsPixmapItem(
+            self.getPixmapFromRGBHex(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
@@ -138,7 +139,7 @@ class GraphicalGrid(QGraphicsView):
         sceneWidth, sceneHeight = self.size
 
         scale = sceneWidth / pixmapWidth if pixmapWidth > 0 else 1
-        self.luminosityMode.setScale(scale * self.gridSize[0])
+        self.luminosityMode.setScale(scale * self.gridSize.x())
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
@@ -230,7 +231,8 @@ class GraphicalGrid(QGraphicsView):
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
         if hour == SUNSET_MODE_START:
-            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(SUNSET_MODE))
+            self.luminosityMode.setPixmap(
+                self.getPixmapFromRGBHex(SUNSET_MODE))
             self.luminosityMode.setOpacity(0.1)
         if hour == NIGHT_MODE_START:
             self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(NIGHT_MODE))
@@ -286,7 +288,6 @@ class GraphicalGrid(QGraphicsView):
                     graphicalTile.EnableEntityRendering()
                 for label in graphicalTile:
                     self.scene.addItem(label)
-
     # Redirection of PYQT events to the controller
 
     def keyPressEvent(self, event):

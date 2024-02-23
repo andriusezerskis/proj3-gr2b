@@ -39,7 +39,7 @@ class CustomQDock(QDockWidget):
 
 
 class Window(QMainWindow):
-    def __init__(self, gridSize: Tuple[int, int], simulation: Simulation):
+    def __init__(self, gridSize, simulation: Simulation):
         super().__init__()
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)

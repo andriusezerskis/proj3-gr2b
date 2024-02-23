@@ -17,12 +17,13 @@ from constants import MAX_WATER_LEVEL
 
 
 class Grid:
-    def __init__(self, size: Point) -> None:
+    def __init__(self, gridSize: Point) -> None:
         self.tiles: List[List[Tile]] = []
         self.islands: List[List[Tile]] = []
         self.coasts: set[Tile] = set()
-        self.size: Point = size
-        self.regionHandler = RegionHandler(self.size.x(), self.size.y())
+        self.gridSize: Point = gridSize
+        self.regionHandler = RegionHandler(
+            self.gridSize.x(), self.gridSize.y())
 
     def initialize(self, tiles: List[List[Tile]], islands: List[set[Tile]]) -> None:
         """Random initialization of the grid with perlin noise"""
@@ -81,14 +82,14 @@ class Grid:
 
     def getTile(self, pos: Point) -> Tile:
         if not self.isInGrid(pos):
-            raise IndexError
+            raise IndexError(f"Position {pos} is not in the grid")
         return self.tiles[pos.y()][pos.x()]
 
     def getSize(self):
-        return self.size
+        return self.gridSize
 
     def isInGrid(self, pos: Point) -> bool:
-        return 0 <= pos.x() < self.size.x() and 0 <= pos.y() < self.size.y()
+        return 0 <= pos.x() < self.gridSize.x() and 0 <= pos.y() < self.gridSize.y()
 
     def __iter__(self):
         for line in self.tiles:

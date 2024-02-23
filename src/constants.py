@@ -28,9 +28,6 @@ ENTITY_MAX_HUNGER_REPRODUCTION = 10
 ENTITY_MIN_AGE_REPRODUCTION = 5
 PLANT_REPRODUCTION_PROBABILITY = 0.05
 
-# Grid -> size pris dans menu d'accueil
-# GRID_WIDTH = 100
-# GRID_HEIGHT = 100
 
 # Rendering size
 RENDERING_WIDTH = 100
@@ -103,3 +100,4 @@ with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
 class Disaster(str, Enum):
     FIRE = "Explosion",
     ICE = "Froid glacial"
+    INVASION = "Invasion de crabes"

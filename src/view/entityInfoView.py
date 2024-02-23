@@ -40,10 +40,10 @@ class EntityInfoView(QDockWidget):
         self.buttonLayout.addWidget(self.controlButton)
         self.buttonLayout.addWidget(self.lageButton)
         self.buttonLayout.setParent(None)
-        self.layout.addLayout(self.buttonLayout)
         self.layout.setAlignment(
             self.buttonLayout, Qt.AlignmentFlag.AlignBottom)
-        
+
+        self.layout.addLayout(self.buttonLayout)
         self.hungerBar.setRange(0, ENTITY_MAX_HUNGER)
         self.hungerBar.hide()
 
