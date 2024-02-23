@@ -29,7 +29,7 @@ from controller.mainWindowController import MainWindowController
 from view.graphicalTile import GraphicalTile
 
 
-from constants import FIRE, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+from constants import FIRE, GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
     MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
 from src.model.simulation import Simulation
 
@@ -67,7 +67,7 @@ class GraphicalGrid(QGraphicsView):
         # self.scene.moveToThread()
         self.initNightMode()
 
-        self.changeStyleSheet()
+        self.setStyleSheet(GRID_STYLESHEET)
 
         self.horizontalScrollbar = self.horizontalScrollBar()
         self.verticalScrollbar = self.verticalScrollBar()
@@ -86,45 +86,6 @@ class GraphicalGrid(QGraphicsView):
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
         self.highlitedTile.hide()
-
-    def changeStyleSheet(self):
-        self.setStyleSheet("""
-            QScrollBar:horizontal {
-                background-color: #808080; /* Couleur de fond */
-                height: 15px; /* Hauteur */
-            }
-
-            QScrollBar::handle:horizontal {
-                background-color: #C0C0C0; /* Couleur du curseur */
-                min-width: 50px; /* Largeur minimale */
-            }
-
-            QScrollBar::add-line:horizontal {
-                background: none;
-            }
-
-            QScrollBar::sub-line:horizontal {
-                background: none;
-            }
-
-            QScrollBar:vertical {
-                background-color: #808080; /* Couleur de fond */
-                width: 15px; /* Largeur */
-            }
-
-            QScrollBar::handle:vertical {
-                background-color: #C0C0C0; /* Couleur du curseur */
-                min-height: 50px; /* Hauteur minimale */
-            }
-
-            QScrollBar::add-line:vertical {
-                background: none;
-            }
-
-            QScrollBar::sub-line:vertical {
-                background: none;
-            }
-        """)
 
     def initNightMode(self):
         """
@@ -248,10 +209,10 @@ class GraphicalGrid(QGraphicsView):
         elif MIDDLE_OF_THE_NIGHT + 2 < hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
-    def movePlayer(self, old_pos, new_pos):
-        i, j = old_pos.y(), old_pos.x()
+    def movePlayer(self, oldPos, newPos):
+        i, j = oldPos.y(), oldPos.x()
         self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
-        self._drawEntities(self.simulation.getGrid().getTile(new_pos))
+        self._drawEntities(self.simulation.getGrid().getTile(newPos))
 
     def getPixmap(self, graphicalObject: ParametrizedDrawable | str):
         if isinstance(graphicalObject, ParametrizedDrawable):

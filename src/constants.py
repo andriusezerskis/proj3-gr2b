@@ -101,3 +101,46 @@ class Disaster(str, Enum):
     FIRE = "Explosion",
     ICE = "Froid glacial"
     INVASION = "Invasion de crabes"
+
+
+CONTROL_PLAYER = "Contrôler"
+RELEASE_PLAYER = "Relâcher"
+
+
+GRID_STYLESHEET = """
+            QScrollBar:horizontal {
+                background-color: #808080; /* Couleur de fond */
+                height: 15px; /* Hauteur */
+            }
+
+            QScrollBar::handle:horizontal {
+                background-color: #C0C0C0; /* Couleur du curseur */
+                min-width: 50px; /* Largeur minimale */
+            }
+
+            QScrollBar::add-line:horizontal {
+                background: none;
+            }
+
+            QScrollBar::sub-line:horizontal {
+                background: none;
+            }
+
+            QScrollBar:vertical {
+                background-color: #808080; /* Couleur de fond */
+                width: 15px; /* Largeur */
+            }
+
+            QScrollBar::handle:vertical {
+                background-color: #C0C0C0; /* Couleur du curseur */
+                min-height: 50px; /* Hauteur minimale */
+            }
+
+            QScrollBar::add-line:vertical {
+                background: none;
+            }
+
+            QScrollBar::sub-line:vertical {
+                background: none;
+            }
+        """
