@@ -12,17 +12,22 @@ from constants import (SEASON_TEMPERATURE_DIFFERENCE, YEAR_DURATION,
                        AVERAGE_TEMPERATURE, MAX_TEMPERATURE_DIFFERENCE)
 from math import sin, pi
 
+from utils import Point
+
 
 class RegionHandler:
 
     def __init__(self, w: int, h: int):
         self.w = w
         self.h = h
+        self.gridSize = Point(w, h)
         self.t = 0
         self.flatTemperatureNoise = NoiseGenerator()
         self.flatHumidityNoise = NoiseGenerator()
-        self.temperatureMap = np.zeros([self.w, self.h], np.float32)
-        self.humidityMap = np.zeros([self.w, self.h], np.float32)
+        self.temperatureMap = np.zeros(
+            [self.gridSize.x(), self.gridSize.y()], np.float32)
+        self.humidityMap = np.zeros(
+            [self.gridSize.x(), self.gridSize.y()], np.float32)
         self._generate()
 
     def _sampleSineTemperature(self):
@@ -34,19 +39,19 @@ class RegionHandler:
         self.flatHumidityNoise.addNoise(3, 1)
         self.flatHumidityNoise.addNoise(10, 0.3)
 
-        for y in range(self.h):
-            for x in range(self.w):
+        for y in range(self.gridSize.y()):
+            for x in range(self.gridSize.x()):
                 self.temperatureMap[y][x] = self._sampleTemperatureFlat(x, y)
                 self.humidityMap[y][x] = self._sampleHumidity(x, y)
 
     def _sampleTemperatureFlat(self, x: int, y: int):
         s = AVERAGE_TEMPERATURE
         s += self.flatTemperatureNoise.sample2D(
-            x/self.w, y/self.h) * MAX_TEMPERATURE_DIFFERENCE
+            x/self.gridSize.x(), y/self.gridSize.y()) * MAX_TEMPERATURE_DIFFERENCE
         return s
 
     def _sampleHumidity(self, x: int, y: int):
-        return self.flatHumidityNoise.sample2D(x/self.w, y/self.h)
+        return self.flatHumidityNoise.sample2D(x/self.gridSize.x(), y/self.gridSize.y())
 
     def sampleTemperature(self, x: int, y: int) -> float:
         return self.temperatureMap[y][x] + self._sampleSineTemperature()

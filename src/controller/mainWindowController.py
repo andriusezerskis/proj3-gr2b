@@ -39,8 +39,8 @@ class MainWindowController:
         return False
 
     def mousePressEvent(self, event):
-        scene_pos = self.graphicalGrid.mapToScene(event.pos())
-        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+        scenePos = self.graphicalGrid.mapToScene(event.pos())
+        tile = self.getClickedTile(scenePos.x(), scenePos.y())
         if tile:
             if self.mainWindow.monitor.getIsMonitor():
                 self.mainWindow.monitor.offIsMonitor()

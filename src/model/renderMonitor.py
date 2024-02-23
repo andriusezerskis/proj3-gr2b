@@ -78,11 +78,9 @@ class Cuboid:
         return lostArea, wonArea
 
     def __iter__(self):
-        for i in range(self.upper[0], self.lower[0] + 1):
-            for j in range(self.upper[1], self.lower[1] + 1):
-                # if Grid.isInGrid(i, j)
-                # if 0 <= i < 100 and 0 <= j < 100:
-                yield i, j
+        for x in range(self.upper[0], self.lower[0] + 1):
+            for y in range(self.upper[1], self.lower[1] + 1):
+                yield x, y
 
     def __contains__(self, item):
         assert isinstance(item, (tuple, list, Tile))
@@ -137,9 +135,9 @@ class RenderMonitor:
         self.renderingSize = Point(width, height)
 
     def centerOnPoint(self, point: Tuple[int, int]):
-        i, j = point
-        self.renderingSection = Cuboid([i - self.renderingSize.x() // 2, j - self.renderingSize.y() // 2],
-                                       [i + self.renderingSize.x() // 2, j +
+        x, y = point
+        self.renderingSection = Cuboid([x - self.renderingSize.x() // 2, y - self.renderingSize.y() // 2],
+                                       [x + self.renderingSize.x() // 2, y +
                                         self.renderingSize.y() // 2],
                                        self.renderingSize)
 

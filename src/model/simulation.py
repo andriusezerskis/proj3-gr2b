@@ -38,9 +38,9 @@ sys.path.append(os.path.dirname(
 
 
 class Simulation:
-    def __init__(self, size: tuple[int, int]):
+    def __init__(self, gridSize):
         super().__init__()
-        self.grid = GridGenerator(Point(size[0], size[1]),
+        self.grid = GridGenerator(gridSize,
                                   [2, 3, 4, 5, 6],
                                   350).generateGrid()
         EntitiesGenerator().generateEntities(self.grid)
@@ -49,10 +49,9 @@ class Simulation:
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
         self.player = Player(Point(-1, -1))
-        self.renderMonitor = RenderMonitor(
-            Point(size[0], size[1]), Point(size[0], size[1]))
+        self.renderMonitor = RenderMonitor(gridSize, gridSize)
 
-        self.water_level = Water.getLevel()
+        self.waterLevel = Water.getLevel()
 
         Entity.setGrid(self.grid)
 
@@ -125,10 +124,10 @@ class Simulation:
 
     def updateWaterLevel(self) -> None:
         # two oscillations a day
-        self.water_level = (Water.getLevel() +
-                            (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
-                            * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
-        modified = self.grid.updateTilesWithWaterLevel(self.water_level)
+        self.waterLevel = (Water.getLevel() +
+                           (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
+                           * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
+        modified = self.grid.updateTilesWithWaterLevel(self.waterLevel)
         self.modifiedTiles |= modified
 
     def evolution(self, entity: Entity) -> None:

@@ -33,14 +33,14 @@ class Player(Entity):
         tile.setEntity(self)
 
     def move(self, movement: Point):
-        old_position = copy(self.pos)
-        wanted_position = self.pos + movement
-        if (self.getGrid().isInGrid(wanted_position)
-                and not self.getGrid().getTile(wanted_position).hasEntity()
-                and self.isValidTileType(type(self.getGrid().getTile(wanted_position)))):
-            self.getGrid().getTile(old_position).removeEntity()
-            self.getGrid().getTile(wanted_position).setEntity(self)
-            self.pos = wanted_position
+        oldPosition = copy(self.pos)
+        wantedPosition = self.pos + movement
+        if (self.getGrid().isInGrid(wantedPosition)
+                and not self.getGrid().getTile(wantedPosition).hasEntity()
+                and self.isValidTileType(type(self.getGrid().getTile(wantedPosition)))):
+            self.getGrid().getTile(oldPosition).removeEntity()
+            self.getGrid().getTile(wantedPosition).setEntity(self)
+            self.pos = wantedPosition
             return True
         return False
 
