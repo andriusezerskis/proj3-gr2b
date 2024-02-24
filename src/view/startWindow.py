@@ -62,7 +62,6 @@ class StartWindow(QMainWindow):
     def initMainWindow(self):
         # handler when ok button pressed
         simulation = Simulation(Point(self.gridSizeWidth, self.gridSizeHeight))
-        window = Window(
-            Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
+        window = Window(Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
         window.show()
         self.hide()
