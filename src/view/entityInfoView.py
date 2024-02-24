@@ -60,7 +60,7 @@ class EntityInfoView(QDockWidget):
 
         self.healthBar.show()
         self.healthBar.setValue(int(entity.getHealthPoints()))
-        self.healthBar.setRange(0, entity.getHealthPoints())
+        self.healthBar.setRange(0, entity.getMaxHealthPoints())
         self.healthBar.setFormat("Santé")
 
         baseText = f"Prénom: {entity.getName()}\n"

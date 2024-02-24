@@ -7,6 +7,8 @@ Date: December 2023
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 
+from constants import FIRE, ICE, Disaster
+
 
 class GraphicalTile:
     def __init__(self, i: int, j: int):
@@ -15,7 +17,6 @@ class GraphicalTile:
         self.terrain.setPos(j * 2048, i * 2048)
         self.entity = QGraphicsPixmapItem()
         self.entity.setPos(j * 2048, i * 2048)
-
         self.filter = QGraphicsPixmapItem()
         self.filter.setPos(j * 2048, i * 2048)
         self.disasterFilter = QGraphicsPixmapItem()

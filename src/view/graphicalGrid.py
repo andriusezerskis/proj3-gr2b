@@ -30,7 +30,7 @@ from view.graphicalTile import GraphicalTile
 
 
 from constants import FIRE, GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
+    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY, Disaster
 
 from model.player.player import Player
 from model.simulation import Simulation
@@ -134,11 +134,12 @@ class GraphicalGrid(QGraphicsView):
     def _drawDisaster(self, tile):
         x, y = tile.getPos()
 
-        if tile.disaster is not None:
+        if tile.disaster == Disaster.FIRE or tile.disaster == Disaster.ICE:
             disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
+            disasterPixmap = tile.getDisasterPathName()
             disasterFilter.show()
             disasterFilter.setOpacity(tile.disasterOpacity)
-            disasterFilter.setPixmap(self.getPixmap(FIRE))
+            disasterFilter.setPixmap(self.getPixmap(disasterPixmap))
 
     def _drawTerrains(self, tile):
         x, y = tile.getPos()
@@ -181,7 +182,8 @@ class GraphicalGrid(QGraphicsView):
 
     def _removeTerrain(self, point: Point):
         assert isinstance(point, Point)
-        self.pixmapItems[point.y()][point.x()].getTerrain().setPixmap(QPixmap())
+        self.pixmapItems[point.y()][point.x(
+        )].getTerrain().setPixmap(QPixmap())
 
     def _removeTile(self, point: Point):
         assert isinstance(point, Point)
@@ -206,7 +208,8 @@ class GraphicalGrid(QGraphicsView):
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, oldPos, newPos):
-        self.pixmapItems[oldPos.y()][oldPos.x()].getEntity().setPixmap(QPixmap())
+        self.pixmapItems[oldPos.y()][oldPos.x()
+                                     ].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(newPos))
 
     def getPixmap(self, graphicalObject: ParametrizedDrawable | str):

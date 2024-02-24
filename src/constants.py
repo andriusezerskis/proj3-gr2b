@@ -85,6 +85,7 @@ NIGHT_MODE = "#090957"
 SUNSET_MODE = "#fc995b"
 HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
 FIRE = f"{TEXTURE_FOLDER_PATH}/fire.png"
+ICE = f"{TEXTURE_FOLDER_PATH}/ice.png"
 
 # jsons
 ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
@@ -105,6 +106,8 @@ class Disaster(str, Enum):
 
 CONTROL_PLAYER = "Contrôler"
 RELEASE_PLAYER = "Relâcher"
+
+TIME_FORMAT = "%e %A: %H hours"
 
 
 GRID_STYLESHEET = """

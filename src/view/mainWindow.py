@@ -8,7 +8,7 @@ import time
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME
+from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
 
 from model.entities.entity import Entity
 from model.simulation import Simulation
@@ -119,7 +119,7 @@ class Window(QMainWindow):
         """
 
         convert = time.strftime(
-            "%A %e:%H hours", time.gmtime(self.totalTime * 3600))
+            TIME_FORMAT, time.gmtime(self.totalTime * 3600))
         hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
@@ -176,7 +176,7 @@ class Window(QMainWindow):
         self.layout.addWidget(
             self.pauseButton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
-            self.fastFbutton,  alignment=Qt.AlignmentFlag.AlignTop)
+            self.fastFbutton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
@@ -184,7 +184,7 @@ class Window(QMainWindow):
         self.layout.addWidget(
             self.zoomInButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addWidget(
-            self.zoomOutButton,   alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+            self.zoomOutButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addStretch()
 
     def closeEvent(self, event):

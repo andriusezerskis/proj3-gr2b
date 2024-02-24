@@ -13,7 +13,7 @@ from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
 
 from utils import Point
-from constants import TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH
+from constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
 
 
 Tile_ = TypeVar("Tile_")
@@ -28,6 +28,13 @@ class Tile(ParametrizedDrawable, ABC):
         self.entity = None
         self.disaster = None
         self.disasterOpacity = 0
+
+    def getDisasterPathName(self):
+        if self.disaster == Disaster.FIRE:
+            return FIRE
+        elif self.disaster == Disaster.ICE:
+            return ICE
+        return None
 
     @classmethod
     @override

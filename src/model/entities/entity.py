@@ -8,7 +8,7 @@ from mimesis import Person
 from mimesis import Locale
 from abc import ABC, abstractmethod
 from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
-                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH)
+                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH, Disaster)
 from model.action import Action
 from typing import TypeVar
 from utils import Point
@@ -41,6 +41,7 @@ class Entity(ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
+        self._healthPoints = self.getMaxHealthPoints()
 
         self._name = Person(Locale.FR).first_name()
 
@@ -57,9 +58,9 @@ class Entity(ParametrizedDrawable, ABC):
     @classmethod
     def getSpawnWeight(cls) -> float:
         return cls._getParameter("spawn_weight")
-    
+
     @classmethod
-    def getHealthPoints(cls) -> float:
+    def getMaxHealthPoints(cls) -> float:
         return cls._getParameter("health_points")
 
     @classmethod
@@ -69,6 +70,17 @@ class Entity(ParametrizedDrawable, ABC):
     @classmethod
     def isValidTileType(cls, tileType: type) -> bool:
         return tileType.__name__ in cls._getValidTiles()
+
+    def getHealthPoints(self) -> float:
+        return self._healthPoints
+
+    def removeHealthPoints(self) -> None:
+        if self.getTile().disaster == Disaster.FIRE or self.getTile().disaster == Disaster.ICE:
+            self._healthPoints -= self.getTile().disasterOpacity * 100
+            print("health points", self._healthPoints)
+        if self._healthPoints <= 0:
+            print("killed")
+            self.kill()
 
     def canReproduce(self) -> bool:
         """
