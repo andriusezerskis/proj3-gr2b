@@ -43,7 +43,6 @@ class StartWindow(QMainWindow):
         container2.setLayout(self.layout2)
         self.layout.addWidget(container2)
 
-        # miaou
         label = QLabel(self)
         pixmap = QPixmap("../assets/textures"+"/entities"+"/cow.png")
         label.setPixmap(pixmap)
