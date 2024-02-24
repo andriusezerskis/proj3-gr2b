@@ -37,9 +37,12 @@ class Point:
 
     def __truediv__(self, other):
         if isinstance(other, int):
-            return Point(self.x() // other, self.y() // other)
+            return Point(int(self.x() // other), int(self.y() // other))
         elif isinstance(other, Point):
-            return Point(self.x() // other.x(), self.y() // other.y())
+            return Point(int(self.x() // other.x()), int(self.y() // other.y()))
+
+    def __floordiv__(self, other):
+        return self.__truediv__(other)
 
     def __str__(self):
         return f"({self.x()}, {self.y()})"

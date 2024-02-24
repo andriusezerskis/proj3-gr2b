@@ -91,13 +91,6 @@ class Tile(ParametrizedDrawable, ABC):
     def getPos(self) -> Point:
         return self.pos
 
-    @property
-    def index(self) -> tuple[int, int]:
-        return self.getIndex()
-
-    def getIndex(self) -> tuple[int, int]:
-        return self.pos.y(), self.pos.x()
-
     @staticmethod
     def copyWithDifferentTypeOf(toCopy: Tile_, type_: type) -> Tile_:
         """

@@ -5,22 +5,20 @@ Date: December 2023
 """
 
 from copy import copy
-from overrides import override
-
-from model.action import Action
 from utils import Point
 
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
+from model.grid import Grid
 
 
-class Player(Entity):
+class Player:
 
-    def __init__(self, pos: Point):
-        super().__init__(pos)
+    def __init__(self, pos: Point, grid: Grid):
+        self.pos = pos
+        self.grid = grid
         self.claimed_entity: Entity | None = None
-        self.health = 0
 
     def isPlaying(self):
         return self.claimed_entity is not None
@@ -34,16 +32,20 @@ class Player(Entity):
     def move(self, movement: Point):
         oldPosition = copy(self.pos)
         wantedPosition = self.pos + movement
-        if (self.getGrid().isInGrid(wantedPosition)
-                and not self.getGrid().getTile(wantedPosition).hasEntity()
-                and self.isValidTileType(type(self.getGrid().getTile(wantedPosition)))):
-            self.getGrid().getTile(oldPosition).removeEntity()
-            self.getGrid().getTile(wantedPosition).setEntity(self)
+        if (self.grid.isInGrid(wantedPosition)
+                and not self.grid.getTile(wantedPosition).hasEntity()
+                and self.isValidTileType(type(self.grid.getTile(wantedPosition)))):
+            self.grid.getTile(oldPosition).removeEntity()
+            self.grid.getTile(wantedPosition).setEntity(self)
             self.pos = wantedPosition
             return True
         return False
 
+    def getPos(self):
+        return self.pos
+
     def getTexturePath(self) -> str:
+        print(self.claimed_entity.getTexturePath())
         return self.claimed_entity.getTexturePath()
 
     def isValidTileType(self, tileType: type):
@@ -52,10 +54,3 @@ class Player(Entity):
     def getPreferredTemperature(self) -> float:
         assert isinstance(self.claimed_entity, Animal)
         return self.claimed_entity.getPreferredTemperature()
-
-    @override
-    def chooseAction(self) -> Action:
-        return Action.IDLE
-
-    def reproduce(self, other: Entity | None) -> None:
-        return None

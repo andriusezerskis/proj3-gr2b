@@ -31,7 +31,9 @@ from view.graphicalTile import GraphicalTile
 
 from constants import FIRE, GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
     MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
-from src.model.simulation import Simulation
+
+from model.player.player import Player
+from model.simulation import Simulation
 
 
 class GraphicalGrid(QGraphicsView):
@@ -109,7 +111,7 @@ class GraphicalGrid(QGraphicsView):
 
     def updateGrid(self, updatedTiles: Set[Tile]):
         for tile in updatedTiles:
-            if tile.getIndex() in self.renderingMonitor.getRenderingSection():
+            if tile in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
 
         self.updateHighlighted()
@@ -130,20 +132,20 @@ class GraphicalGrid(QGraphicsView):
         self._drawDisaster(tile)
 
     def _drawDisaster(self, tile):
-        i, j = tile.getIndex()
+        x, y = tile.getPos()
 
-        if tile.disaster != None:
-            disasterFilter = self.pixmapItems[i][j].getDisasterFilter()
+        if tile.disaster is not None:
+            disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
             disasterFilter.show()
             disasterFilter.setOpacity(tile.disasterOpacity)
             disasterFilter.setPixmap(self.getPixmap(FIRE))
 
     def _drawTerrains(self, tile):
-        i, j = tile.getIndex()
-        self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
+        x, y = tile.getPos()
+        self.pixmapItems[y][x].getTerrain().setPixmap(self.getPixmap(tile))
 
         # to move in a different spot?
-        depthFilter = self.pixmapItems[i][j].getFilter()
+        depthFilter = self.pixmapItems[y][x].getFilter()
         depthFilter.setPixmap(self.getPixmapFromRGBHex(tile.getFilterColor()))
 
         # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
@@ -160,16 +162,16 @@ class GraphicalGrid(QGraphicsView):
 
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
-            i, j = tile.getIndex()
+            x, y = tile.getPos()
             if tile.getEntity():
-                self.pixmapItems[i][j].getEntity().setPixmap(
+                self.pixmapItems[y][x].getEntity().setPixmap(
                     self.getPixmap(tile.getEntity()))
             else:
-                self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+                self.pixmapItems[y][x].getEntity().setPixmap(QPixmap())
 
     def _drawHighlightedTile(self, tile):
-        i, j = tile.getIndex()
-        self.highlitedTile.setPos(j * 2048, i * 2048)
+        x, y = tile.getPos()
+        self.highlitedTile.setPos(x * 2048, y * 2048)
         self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
@@ -215,12 +217,13 @@ class GraphicalGrid(QGraphicsView):
         self._drawEntities(self.simulation.getGrid().getTile(newPos))
 
     def getPixmap(self, graphicalObject: ParametrizedDrawable | str):
-        if isinstance(graphicalObject, ParametrizedDrawable):
+        if isinstance(graphicalObject, (ParametrizedDrawable, Player)):
             path = graphicalObject.getTexturePath()
         else:
             path = graphicalObject
 
         if path not in self.pixmapFromPath:
+            # todo print(path)
             pixmap = QPixmap(path)
             pixmap = pixmap.scaled(self.size[0], self.size[1])
             self.pixmapFromPath[path] = pixmap
@@ -246,19 +249,23 @@ class GraphicalGrid(QGraphicsView):
             self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
 
     def _addPixmapItems(self):
-        for i, line in enumerate(self.pixmapItems):
-            for j, graphicalTile in enumerate(line):
-                if (i, j) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
+        for y, line in enumerate(self.pixmapItems):
+            for x, graphicalTile in enumerate(line):
+                if Point(x, y) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(x, y)).hasEntity():
                     graphicalTile.EnableEntityRendering()
                 for label in graphicalTile:
                     self.scene.addItem(label)
-    # Redirection of PYQT events to the controller
 
+    # Redirection of PYQT events to the controller
     def keyPressEvent(self, event):
         GridController.getInstance().keyPressEvent(event)
 
     def mousePressEvent(self, event):
         MainWindowController.getInstance().mousePressEvent(event)
+
+    def wheelEvent(self, event):
+        #todo l'associer aux scrollsbars mais en annulant le scroll horizontal
+        return
 
     def getVerticalScrollBar(self):
         return self.verticalScrollbar

@@ -45,30 +45,34 @@ class GridController:
         if self.simulation.hasPlayer():
             pos = self.simulation.getPlayer().getPos()
             if self.simulation.getPlayer().move(movement):
-                self.graphicalGrid.movePlayer(
-                    pos, self.simulation.getPlayer().getPos())
+                self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPos())
                 self.graphicalGrid.initSmoothScroll(movement)
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
-            scaler = self.renderingMonitor.zoomForPlayer()
+            scaler = self.renderingMonitor.setOnZoomIndex()
             self.graphicalGrid.scale(scaler, scaler)
             self.recomputeCuboid()
             self.graphicalGrid.removeRenderedSection()
-            self.renderingMonitor.centerOnPoint(tile.getIndex())
+            self.renderingMonitor.centerOnPoint(tile.getPos())
             self.graphicalGrid.setScrollBars(
                 self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
-    def getGridCoordinate(self, x, y):
-        i, j = int(y // self.size[1]), int(x // self.size[0])
-        if self.simulation.getGrid().isInGrid(Point(j, i)):
-            return i, j
-        elif i < 0 or j < 0:
-            return 0, 0
-        else:
-            return self.simulation.getGrid().getSize() - Point(1, 1)
+    def getGridCoordinate(self, point: Point, for_cuboid=False):
+        assert isinstance(point, Point)
+
+        #board_point = Point(int(point.x() // self.size[0]), int(point.y() // self.size[1]))
+        board_point = point / Point(self.size[0], self.size[1])
+        if self.simulation.getGrid().isInGrid(board_point):
+            return board_point
+
+        if for_cuboid:
+            if board_point.x() < 0 or board_point.y() < 0:
+                return 0, 0
+            else:
+                return self.simulation.getGrid().getSize() - Point(1, 1)
 
     def zoomIn(self):
         if self.renderingMonitor.zoomIndex < len(self.renderingMonitor.zooms)-1:
@@ -86,16 +90,14 @@ class GridController:
         self.renderingMonitor.setNewPoints(upper, lower, width, height)
 
     def getCuboid(self, dim: QRectF):
-        upperTileI, upperTileJ = self.getGridCoordinate(dim.x(), dim.y())
-        lowerTileI, lowerTileJ = self.getGridCoordinate(
-            dim.x() + dim.width(), dim.y() + dim.height())
-        width, height = self.getGridCoordinate(dim.width(), dim.height())
-        return [upperTileI, upperTileJ], [lowerTileI, lowerTileJ], width, height
+        upperTile = self.getGridCoordinate(Point(dim.x(), dim.y()), True)
+        lowerTile = self.getGridCoordinate(Point(dim.x() + dim.width(), dim.y() + dim.height()), True)
+        width, height = self.getGridCoordinate(Point(dim.width(), dim.height()))
+        return upperTile, lowerTile, width, height
 
     def zoomOut(self):
         if self.renderingMonitor.zoomIndex > 0:
-            scaler = 1 / \
-                self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
+            scaler = 1 / self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
             self.renderingMonitor.zoomFactor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
             self.renderingMonitor.zoomIndex -= 1
