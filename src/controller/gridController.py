@@ -88,6 +88,7 @@ class GridController:
             self.graphicalGrid.viewport().rect()).boundingRect()
         upper, lower, width, height = self.getCuboid(real_rendered_area)
         self.renderingMonitor.setNewPoints(upper, lower, width, height)
+        self.graphicalGrid.renderSection()
 
     def getCuboid(self, dim: QRectF) -> Tuple[Point, Point, int, int]:
         upperTile = self.getGridCoordinate(Point(dim.x(), dim.y()), True)
