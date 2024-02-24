@@ -17,12 +17,14 @@ from overrides import override
 
 from random import choice
 
+from model.movable import Movable
+
 Entity_ = TypeVar("Entity_")
 Tile = TypeVar("Tile")
 Grid = TypeVar("Grid")
 
 
-class Entity(ParametrizedDrawable, ABC):
+class Entity(Movable, ParametrizedDrawable, ABC):
     # https://stackoverflow.com/a/75663885
     _counts = dict()
     _grid = None
@@ -157,6 +159,7 @@ class Entity(ParametrizedDrawable, ABC):
     def chooseAction(self) -> Action:
         ...
 
+    @override
     def getPos(self) -> Point:
         return self._pos
 
@@ -190,3 +193,7 @@ class Entity(ParametrizedDrawable, ABC):
     @classmethod
     def getCount(cls) -> int:
         return cls._counts[cls]
+
+    @classmethod
+    def getLoots(cls):
+        return cls._getParameter("loots")

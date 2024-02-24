@@ -15,6 +15,8 @@ from model.regionHandler import RegionHandler
 
 from constants import MAX_WATER_LEVEL
 
+from src.model.player.player import Player
+
 
 class Grid:
     def __init__(self, gridSize: Point) -> None:
@@ -68,6 +70,9 @@ class Grid:
                 continue
 
             if tile.hasEntity() and not newTile.hasEntity():
+                #print(type(tile.getEntity()))
+                #if not isinstance(tile.getEntity(), Player):
+                #todo aaaaaah wtf, bug si la marée monte
                 tile.getEntity().kill()
 
             self.coasts.remove(tile)

@@ -1,0 +1,9 @@
+{
+    "FishingRod": {
+        "blueprint": {
+            "Wood": 3,
+            "Crawl": 1
+        },
+        "french_name": "Canne à pêche"
+    }
+}

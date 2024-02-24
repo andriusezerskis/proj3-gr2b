@@ -57,16 +57,23 @@ class MainWindowController:
                 if not self.simulation.hasPlayer():
                     self.openDockEvent()
                 else:
-                    if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
-                        tile.removeEntity()
-                        self.graphicalGrid.removeEntity(
-                            tile.getPos().y(), tile.getPos().x())
+                    self.playerControll(tile)
+                    return
 
             self.mainWindow.entityController.setEntity(
                 tile.getEntity())
             self.graphicalGrid.chosenEntity = tile.getEntity()
             self.mainWindow.entityController.update()
             self.graphicalGrid.updateHighlighted()
+
+    def playerControll(self, tile):
+        if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
+            tile.getEntity()
+            tile.removeEntity()
+            self.graphicalGrid.removeEntity(tile.getPos())
+
+            self.graphicalGrid.updateHighlighted()
+
 
     def closeDockEvent(self):
         self.mainWindow.buttonOpenDock.show()

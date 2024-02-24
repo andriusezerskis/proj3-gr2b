@@ -43,6 +43,7 @@ class RenderMonitor:
     def __init__(self, gridSize: Point, size: Point):
         assert isinstance(gridSize, Point)
         assert isinstance(size, Point)
+        self.gridSize = gridSize
         self.renderingSize = size
         self.renderingSection = Cuboid(Point(0, 0), Point(gridSize.x()-1, gridSize.y()-1), self.renderingSize)
 
@@ -73,9 +74,12 @@ class RenderMonitor:
 
     def centerOnPoint(self, point: Point):
         assert isinstance(point, Point)
-        self.renderingSection = Cuboid(point - self.renderingSize // 2,
-                                       point + self.renderingSize // 2,
-                                       self.renderingSize)
+        upper = point - self.renderingSize // 2
+        upper = Point(0, 0) if not upper.isPositive() else upper
+        lower = point + self.renderingSize // 2
+        lower = self.gridSize - Point(1, 1) if not lower < self.gridSize else lower
+
+        self.renderingSection = Cuboid(upper, lower, self.renderingSize)
 
     def setOnZoomIndex(self, index=3):
         oldZoom = self.zoomIndex

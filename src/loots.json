@@ -1,0 +1,12 @@
+{
+    "Wood": {
+        "texture_path": ["..."],
+        "french_name": "Bois",
+        "drop_chance": 0.8
+    },
+    "Crawl": {
+        "texture_path": ["..."],
+        "french_name": "Pince",
+        "drop_chance": 0.5
+    }
+}

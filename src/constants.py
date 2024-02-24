@@ -80,6 +80,7 @@ TEXTURE_SIZE = 2048
 TEXTURE_FOLDER_PATH = "../assets/textures"
 ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
 TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
+ITEMS_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/items"
 
 # Special
 NIGHT_MODE = "#090957"
@@ -91,12 +92,20 @@ ICE = f"{TEXTURE_FOLDER_PATH}/ice.png"
 # jsons
 ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
 TILE_PARAMETERS_FILE_PATH = "tile_parameters.json"
+LOOT_PARAMETERS_FILE_PATH = "loots.json"
+CRAFT_PARAMETERS_FILE_PATH = "crafts.json"
 
 with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
     ENTITY_PARAMETERS: dict = json.load(f)
 
 with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
     TILE_PARAMETERS: dict = json.load(f)
+
+with open(LOOT_PARAMETERS_FILE_PATH, "r") as f:
+    LOOT_PARAMETERS: dict = json.load(f)
+
+with open(CRAFT_PARAMETERS_FILE_PATH, "r") as f:
+    CRAFT_PARAMETERS: dict = json.load(f)
 
 
 class Disaster(str, Enum):

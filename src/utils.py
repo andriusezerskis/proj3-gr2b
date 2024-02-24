@@ -71,6 +71,12 @@ class Point:
     def octileDistance(self, other):
         return max(abs(self.x() - other.x()), abs(self.y() - other.y()))
 
+    def isPositive(self):
+        return self.x() >= 0 and self.y() >= 0
+
+    def __lt__(self, other):
+        return self.x() < other.x() and self.y() < other.y()
+
     def __iter__(self):
         yield self.x()
         yield self.y()

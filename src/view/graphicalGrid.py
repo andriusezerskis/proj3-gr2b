@@ -234,7 +234,7 @@ class GraphicalGrid(QGraphicsView):
 
     def removeRenderedSection(self):
         for point in self.renderingMonitor.getRenderingSection():
-            self._removeTile(point)
+            self.removeEntity(point)
 
     def renderSection(self):
         for point in self.renderingMonitor.getRenderingSection():
