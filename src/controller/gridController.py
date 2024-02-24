@@ -3,6 +3,7 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
+from typing import Tuple
 
 from PyQt6.QtCore import *
 from utils import Point
@@ -60,17 +61,16 @@ class GridController:
                 self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
-    def getGridCoordinate(self, point: Point, for_cuboid=False):
+    def getGridCoordinate(self, point: Point, for_cuboid=False) -> Point | None:
         assert isinstance(point, Point)
 
-        #board_point = Point(int(point.x() // self.size[0]), int(point.y() // self.size[1]))
         board_point = point / Point(self.size[0], self.size[1])
         if self.simulation.getGrid().isInGrid(board_point):
             return board_point
 
         if for_cuboid:
             if board_point.x() < 0 or board_point.y() < 0:
-                return 0, 0
+                return Point(0, 0)
             else:
                 return self.simulation.getGrid().getSize() - Point(1, 1)
 
@@ -89,10 +89,10 @@ class GridController:
         upper, lower, width, height = self.getCuboid(real_rendered_area)
         self.renderingMonitor.setNewPoints(upper, lower, width, height)
 
-    def getCuboid(self, dim: QRectF):
+    def getCuboid(self, dim: QRectF) -> Tuple[Point, Point, int, int]:
         upperTile = self.getGridCoordinate(Point(dim.x(), dim.y()), True)
         lowerTile = self.getGridCoordinate(Point(dim.x() + dim.width(), dim.y() + dim.height()), True)
-        width, height = self.getGridCoordinate(Point(dim.width(), dim.height()))
+        width, height = self.getGridCoordinate(Point(dim.width(), dim.height()), True)
         return upperTile, lowerTile, width, height
 
     def zoomOut(self):

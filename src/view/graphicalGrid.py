@@ -175,24 +175,18 @@ class GraphicalGrid(QGraphicsView):
         self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
-    def removeEntity(self, i, j):
-        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+    def removeEntity(self, point: Point):
+        assert isinstance(point, Point)
+        self.pixmapItems[point.y()][point.x()].getEntity().setPixmap(QPixmap())
 
-    def _removeTerrain(self, i, j):
-        self.pixmapItems[i][j].getTerrain().setPixmap(QPixmap())
+    def _removeTerrain(self, point: Point):
+        assert isinstance(point, Point)
+        self.pixmapItems[point.y()][point.x()].getTerrain().setPixmap(QPixmap())
 
-    def _removeTile(self, i, j):
-        self.removeEntity(i, j)
-        self._removeTerrain(i, j)
-
-    def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
-        lost, won = cuboids
-        for i, j in lost:
-            self.pixmapItems[i][j].DisableEntityRendering()
-            self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
-        for i, j in won:
-            self.pixmapItems[i][j].EnableEntityRendering()
-            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
+    def _removeTile(self, point: Point):
+        assert isinstance(point, Point)
+        self.removeEntity(point)
+        self._removeTerrain(point)
 
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
@@ -212,8 +206,7 @@ class GraphicalGrid(QGraphicsView):
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, oldPos, newPos):
-        i, j = oldPos.y(), oldPos.x()
-        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+        self.pixmapItems[oldPos.y()][oldPos.x()].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(newPos))
 
     def getPixmap(self, graphicalObject: ParametrizedDrawable | str):
@@ -241,20 +234,19 @@ class GraphicalGrid(QGraphicsView):
         return self.pixmapFromRGB[rgbHex]
 
     def removeRenderedSection(self):
-        for i, j in self.renderingMonitor.getRenderingSection():
-            self._removeTile(i, j)
+        for point in self.renderingMonitor.getRenderingSection():
+            self._removeTile(point)
 
     def renderSection(self):
-        for i, j in self.renderingMonitor.getRenderingSection():
-            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
+        for point in self.renderingMonitor.getRenderingSection():
+            self._drawTiles(self.simulation.getGrid().getTile(point))
 
     def _addPixmapItems(self):
         for y, line in enumerate(self.pixmapItems):
             for x, graphicalTile in enumerate(line):
-                if Point(x, y) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(x, y)).hasEntity():
-                    graphicalTile.EnableEntityRendering()
-                for label in graphicalTile:
-                    self.scene.addItem(label)
+                if Point(x, y) in self.renderingMonitor.getRenderingSection():
+                    for label in graphicalTile:
+                        self.scene.addItem(label)
 
     # Redirection of PYQT events to the controller
     def keyPressEvent(self, event):
