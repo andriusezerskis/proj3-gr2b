@@ -25,6 +25,7 @@ class Cuboid:
         self.size = size
 
     def __iter__(self):
+        # print(f"y: {self.upper.y()} to {self.lower.y() + 1} ; x: {self.upper.x()} to {self.lower.x() + 1}")
         for y in range(self.upper.y(), self.lower.y() + 1):
             for x in range(self.upper.x(), self.lower.x() + 1):
                 yield Point(x, y)
@@ -64,6 +65,8 @@ class RenderMonitor:
         return self.renderingSection
 
     def setNewPoints(self, upperPoint: Point, lowerPoint: Point, width: int, height: int):
+        assert isinstance(upperPoint, Point)
+        assert isinstance(lowerPoint, Point)
         self.renderingSection = Cuboid(upperPoint, lowerPoint, Point(width, height))
         self.renderingSize = Point(width, height)
 
