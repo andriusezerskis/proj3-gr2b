@@ -255,10 +255,6 @@ class GraphicalGrid(QGraphicsView):
     def mousePressEvent(self, event):
         MainWindowController.getInstance().mousePressEvent(event)
 
-    def wheelEvent(self, event):
-        #todo l'associer aux scrollsbars mais en annulant le scroll horizontal
-        return
-
     def getVerticalScrollBar(self):
         return self.verticalScrollbar
 
