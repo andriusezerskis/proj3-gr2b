@@ -30,6 +30,7 @@ class CustomQDock(QDockWidget):
         self.dockLayout = QVBoxLayout()
         container = QWidget()
         container.setLayout(self.dockLayout)
+        self.setStyleSheet("background-color: #cdc0fb;")
         self.setWidget(container)
 
     def closeEvent(self, event: QCloseEvent | None) -> None:

@@ -12,15 +12,26 @@ from model.simulation import Simulation
 from utils import Point
 from view.mainWindow import Window
 
+from constants import TEST_BUTTON_STYLE_SHEET
+
 
 class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Deb'île launcher")
+        self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
+        self.setGeometry(100, 100, 100, 100)
+
+        self.setStyleSheet("background-color: #ffd294;") 
+
         self.layout = QVBoxLayout()
         label = QLabel("Deb'île")
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
         self.layout.addWidget(label)
 
         container = QWidget()
+
         container.setLayout(self.layout)
 
         self.setCentralWidget(container)
@@ -33,24 +44,31 @@ class StartWindow(QMainWindow):
         self.layout2.addWidget(label2)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
+        self.spinBoxWidth.setStyleSheet("background-color: #feb07c;") 
+
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
         self.layout2.addWidget(self.spinBoxWidth)
         self.layout2.addWidget(self.spinBoxHeight)
+        self.spinBoxHeight.setStyleSheet("background-color: #feb07c;")
 
         # --- Hlayout  ---
         container2 = QWidget()
         container2.setLayout(self.layout2)
+        container2.setStyleSheet("background-color: white;")
         self.layout.addWidget(container2)
 
-        label = QLabel(self)
-        pixmap = QPixmap("../assets/textures"+"/entities"+"/cow.png")
-        label.setPixmap(pixmap)
-        # self.layout.addWidget(label)
+        label_im = QLabel(self)
+        image = QPixmap("../assets/textures"+"/entities"+"/cow.png")
+        image = image.scaled(100,100)
+        label_im.setPixmap(image)
+        label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.layout.addWidget(label_im)
 
         # ---- ok button ----
         self.button = QPushButton("c parti youpi")
         self.button.clicked.connect(self.initMainWindow)
+        self.button.setStyleSheet(TEST_BUTTON_STYLE_SHEET)
         self.layout.addWidget(self.button)
 
     def updateSpinboxWidth(self, value):

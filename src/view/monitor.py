@@ -35,7 +35,7 @@ class MonitorWindow:
         # --- main layout settings ---
         title = QLabel('Tableau de bord-inator')
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("QLabel{font-size: 20pt;}")
+        title.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----
@@ -100,6 +100,7 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
+        container.setStyleSheet("background-color: #ddd5fd")
         return container
 
     def checkBox2(self):
@@ -123,6 +124,7 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
+        container.setStyleSheet("background-color: #ddd5fd")
         return container
 
     # ---- handler for update information from button ----

@@ -7,8 +7,9 @@ from enum import Enum
 import json
 
 # STYLESHEET
-CLICKED_BUTTON_STYLESHEET = "background-color: blue; color: white;"
-NOT_CLICKED_BUTTON_STYLESHEET = "background-color: green; color: white;"
+CLICKED_BUTTON_STYLESHEET = "background-color: #96a9f9; color: white; border-radius:0.001px"
+NOT_CLICKED_BUTTON_STYLESHEET = "background-color: #d0f996; color: black; border-radius:0.001px"
+TEST_BUTTON_STYLE_SHEET = "background-color: #7cac04; color: white; border-radius:0.001px; font-size: 30px; width: 5px;"
 
 
 ENTITY_DEAD_MESSAGE = "L'entité est morte"
