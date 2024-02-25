@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 import time
-from typing import Tuple, Set, List
+from typing import Set, List
 
 from PyQt6.QtCore import QTimer
 from controller.gridController import GridController
@@ -18,10 +18,8 @@ from PyQt6.QtWidgets import *
 
 from model.grid import Grid
 from model.terrains.tile import Tile
-from model.terrains.tiles import Water
 from model.drawable import ParametrizedDrawable
 from model.renderMonitor import RenderMonitor
-from model.renderMonitor import Cuboid
 from model.generator.gridGenerator import GridGenerator
 
 from controller.mainWindowController import MainWindowController
@@ -29,14 +27,16 @@ from controller.mainWindowController import MainWindowController
 from view.graphicalTile import GraphicalTile
 
 
-from constants import FIRE, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY
-from src.model.simulation import Simulation
+from constants import FIRE, GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY, TEXTURE_SIZE, Disaster
+
+from model.player.player import Player
+from model.simulation import Simulation
 
 
 class GraphicalGrid(QGraphicsView):
 
-    def __init__(self, grid_size: Tuple[int, int], grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
+    def __init__(self, gridSize: Point, grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
         self.luminosityMode = None
         self.simulation = simulation
         self.scene = QGraphicsScene()
@@ -47,11 +47,11 @@ class GraphicalGrid(QGraphicsView):
 
         self.setMouseTracking(True)
 
-        self.size = 2048, 2048
-        self.gridSize = grid_size
+        self.texture_size = TEXTURE_SIZE
+        self.gridSize: Point = gridSize
         self.pixmapItems: List[List[GraphicalTile]] = \
-            [[GraphicalTile(i, j) for j in range(self.gridSize[0])]
-             for i in range(self.gridSize[1])]
+            [[GraphicalTile(y, x) for x in range(self.gridSize.x())]
+             for y in range(self.gridSize.y())]
         self._addPixmapItems()
         self.pixmapFromPath = {}
         self.pixmapFromRGB = {}
@@ -63,11 +63,10 @@ class GraphicalGrid(QGraphicsView):
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
-        self.scale(10/2048, 10/2048)
-        # self.scene.moveToThread()
+        self.scale(10/TEXTURE_SIZE, 10/TEXTURE_SIZE)
         self.initNightMode()
 
-        self.changeStyleSheet()
+        self.setStyleSheet(GRID_STYLESHEET)
 
         self.horizontalScrollbar = self.horizontalScrollBar()
         self.verticalScrollbar = self.verticalScrollBar()
@@ -87,64 +86,29 @@ class GraphicalGrid(QGraphicsView):
         self.chosenEntity = None
         self.highlitedTile.hide()
 
-    def changeStyleSheet(self):
-        self.setStyleSheet("""
-            QScrollBar:horizontal {
-                background-color: #808080; /* Couleur de fond */
-                height: 15px; /* Hauteur */
-            }
-
-            QScrollBar::handle:horizontal {
-                background-color: #C0C0C0; /* Couleur du curseur */
-                min-width: 50px; /* Largeur minimale */
-            }
-
-            QScrollBar::add-line:horizontal {
-                background: none;
-            }
-
-            QScrollBar::sub-line:horizontal {
-                background: none;
-            }
-
-            QScrollBar:vertical {
-                background-color: #808080; /* Couleur de fond */
-                width: 15px; /* Largeur */
-            }
-
-            QScrollBar::handle:vertical {
-                background-color: #C0C0C0; /* Couleur du curseur */
-                min-height: 50px; /* Hauteur minimale */
-            }
-
-            QScrollBar::add-line:vertical {
-                background: none;
-            }
-
-            QScrollBar::sub-line:vertical {
-                background: none;
-            }
-        """)
-
     def initNightMode(self):
         """
         Initialize a pixmap with the night mode
         """
-        self.luminosityMode = QGraphicsPixmapItem(self.getPixmapFromRGBHex(NIGHT_MODE))
+        self.luminosityMode = QGraphicsPixmapItem(
+            self.getPixmapFromRGBHex(NIGHT_MODE))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
         pixmapWidth = self.luminosityMode.pixmap().width()
-        sceneWidth, sceneHeight = self.size
+        sceneWidth, sceneHeight = self.texture_size, self.texture_size
 
         scale = sceneWidth / pixmapWidth if pixmapWidth > 0 else 1
-        self.luminosityMode.setScale(scale * self.gridSize[0])
+        transform = QTransform()
+        transform.scale(scale * self.gridSize.x(),
+                        scale * self.gridSize.y())
+        self.luminosityMode.setTransform(transform)
         self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updatedTiles: Set[Tile]):
         for tile in updatedTiles:
-            if tile.getIndex() in self.renderingMonitor.getRenderingSection():
+            if tile in self.renderingMonitor.getRenderingSection():
                 self._drawTiles(tile)
 
         self.updateHighlighted()
@@ -165,20 +129,21 @@ class GraphicalGrid(QGraphicsView):
         self._drawDisaster(tile)
 
     def _drawDisaster(self, tile):
-        i, j = tile.getIndex()
+        x, y = tile.getPos()
 
-        if tile.disaster != None:
-            disasterFilter = self.pixmapItems[i][j].getDisasterFilter()
+        if tile.disaster == Disaster.FIRE or tile.disaster == Disaster.ICE:
+            disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
+            disasterPixmap = tile.getDisasterPathName()
             disasterFilter.show()
             disasterFilter.setOpacity(tile.disasterOpacity)
-            disasterFilter.setPixmap(self.getPixmap(FIRE))
+            disasterFilter.setPixmap(self.getPixmap(disasterPixmap))
 
     def _drawTerrains(self, tile):
-        i, j = tile.getIndex()
-        self.pixmapItems[i][j].getTerrain().setPixmap(self.getPixmap(tile))
+        x, y = tile.getPos()
+        self.pixmapItems[y][x].getTerrain().setPixmap(self.getPixmap(tile))
 
         # to move in a different spot?
-        depthFilter = self.pixmapItems[i][j].getFilter()
+        depthFilter = self.pixmapItems[y][x].getFilter()
         depthFilter.setPixmap(self.getPixmapFromRGBHex(tile.getFilterColor()))
 
         # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
@@ -195,42 +160,38 @@ class GraphicalGrid(QGraphicsView):
 
     def _drawEntities(self, tile):
         if tile in self.renderingMonitor.getRenderingSection():
-            i, j = tile.getIndex()
+            x, y = tile.getPos()
             if tile.getEntity():
-                self.pixmapItems[i][j].getEntity().setPixmap(
+                self.pixmapItems[y][x].getEntity().setPixmap(
                     self.getPixmap(tile.getEntity()))
             else:
-                self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+                self.pixmapItems[y][x].getEntity().setPixmap(QPixmap())
 
     def _drawHighlightedTile(self, tile):
-        i, j = tile.getIndex()
-        self.highlitedTile.setPos(j * 2048, i * 2048)
+        x, y = tile.getPos()
+        self.highlitedTile.setPos(x * self.texture_size, y * self.texture_size)
         self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
-    def removeEntity(self, i, j):
-        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
+    def removeEntity(self, point: Point):
+        assert isinstance(point, Point)
+        self.pixmapItems[point.y()][point.x()].getEntity().setPixmap(QPixmap())
 
-    def _removeTerrain(self, i, j):
-        self.pixmapItems[i][j].getTerrain().setPixmap(QPixmap())
+    def _removeTerrain(self, point: Point):
+        assert isinstance(point, Point)
+        self.pixmapItems[point.y()][point.x(
+        )].getTerrain().setPixmap(QPixmap())
 
-    def _removeTile(self, i, j):
-        self.removeEntity(i, j)
-        self._removeTerrain(i, j)
-
-    def moveCamera(self, cuboids: Tuple[Cuboid, Cuboid]):
-        lost, won = cuboids
-        for i, j in lost:
-            self.pixmapItems[i][j].DisableEntityRendering()
-            self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
-        for i, j in won:
-            self.pixmapItems[i][j].EnableEntityRendering()
-            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
+    def _removeTile(self, point: Point):
+        assert isinstance(point, Point)
+        self.removeEntity(point)
+        self._removeTerrain(point)
 
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
         if hour == SUNSET_MODE_START:
-            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(SUNSET_MODE))
+            self.luminosityMode.setPixmap(
+                self.getPixmapFromRGBHex(SUNSET_MODE))
             self.luminosityMode.setOpacity(0.1)
         if hour == NIGHT_MODE_START:
             self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(NIGHT_MODE))
@@ -243,20 +204,20 @@ class GraphicalGrid(QGraphicsView):
         elif MIDDLE_OF_THE_NIGHT + 2 < hour < NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
-    def movePlayer(self, old_pos, new_pos):
-        i, j = old_pos.y(), old_pos.x()
-        self.pixmapItems[i][j].getEntity().setPixmap(QPixmap())
-        self._drawEntities(self.simulation.getGrid().getTile(new_pos))
+    def movePlayer(self, oldPos, newPos):
+        self.pixmapItems[oldPos.y()][oldPos.x()].getEntity().setPixmap(QPixmap())
+        self._drawEntities(self.simulation.getGrid().getTile(newPos))
 
     def getPixmap(self, graphicalObject: ParametrizedDrawable | str):
-        if isinstance(graphicalObject, ParametrizedDrawable):
+        if isinstance(graphicalObject, (ParametrizedDrawable, Player)):
             path = graphicalObject.getTexturePath()
         else:
             path = graphicalObject
 
         if path not in self.pixmapFromPath:
+            # todo print(path)
             pixmap = QPixmap(path)
-            pixmap = pixmap.scaled(self.size[0], self.size[1])
+            pixmap = pixmap.scaled(self.texture_size, self.texture_size)
             self.pixmapFromPath[path] = pixmap
 
         return self.pixmapFromPath[path]
@@ -266,29 +227,27 @@ class GraphicalGrid(QGraphicsView):
             im = QImage(1, 1, QImage.Format.Format_RGB32)
             im.setPixel(0, 0, QColor(rgbHex).rgb())
             pixmap = QPixmap(im)
-            pixmap = pixmap.scaled(self.size[0], self.size[1])
+            pixmap = pixmap.scaled(self.texture_size, self.texture_size)
             self.pixmapFromRGB[rgbHex] = pixmap
 
         return self.pixmapFromRGB[rgbHex]
 
     def removeRenderedSection(self):
-        for i, j in self.renderingMonitor.getRenderingSection():
-            self._removeTile(i, j)
+        for point in self.renderingMonitor.getRenderingSection():
+            self._removeTile(point)
 
     def renderSection(self):
-        for i, j in self.renderingMonitor.getRenderingSection():
-            self._drawTiles(self.simulation.getGrid().getTile(Point(j, i)))
+        for point in self.renderingMonitor.getRenderingSection():
+            self._drawTiles(self.simulation.getGrid().getTile(point))
 
     def _addPixmapItems(self):
-        for i, line in enumerate(self.pixmapItems):
-            for j, graphicalTile in enumerate(line):
-                if (i, j) in self.renderingMonitor.getRenderingSection() and self.simulation.getGrid().getTile(Point(j, i)).hasEntity():
-                    graphicalTile.EnableEntityRendering()
-                for label in graphicalTile:
-                    self.scene.addItem(label)
+        for y, line in enumerate(self.pixmapItems):
+            for x, graphicalTile in enumerate(line):
+                if Point(x, y) in self.renderingMonitor.getRenderingSection():
+                    for label in graphicalTile:
+                        self.scene.addItem(label)
 
     # Redirection of PYQT events to the controller
-
     def keyPressEvent(self, event):
         GridController.getInstance().keyPressEvent(event)
 
@@ -342,6 +301,9 @@ class GraphicalGrid(QGraphicsView):
         self.horizontalScrollbar.setValue(
             self.horizontalScrollbar.value() - step)
         self.timers[3][1] += step
+
+    def resizeEvent(self, event):
+        GridController.getInstance().resizeEvent(event)
 
     def initSmoothScroll(self, movement: Point):
         # TODO si on appuie trop rapidemment, la caméra ne suivra pas assez bien

@@ -7,20 +7,20 @@ Date: December 2023
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 
+from constants import FIRE, ICE, TEXTURE_SIZE, Disaster
+
 
 class GraphicalTile:
     def __init__(self, i: int, j: int):
         self.position = (i, j)
         self.terrain = QGraphicsPixmapItem()
-        self.terrain.setPos(j * 2048, i * 2048)
+        self.terrain.setPos(j * TEXTURE_SIZE, i * TEXTURE_SIZE)
         self.entity = QGraphicsPixmapItem()
-        self.entity.setPos(j * 2048, i * 2048)
-
+        self.entity.setPos(j * TEXTURE_SIZE, i * TEXTURE_SIZE)
         self.filter = QGraphicsPixmapItem()
-        self.filter.setPos(j * 2048, i * 2048)
+        self.filter.setPos(j * TEXTURE_SIZE, i * TEXTURE_SIZE)
         self.disasterFilter = QGraphicsPixmapItem()
-        self.disasterFilter.setPos(j * 2048, i * 2048)
-        self.allowsEntityRendering = False
+        self.disasterFilter.setPos(j * TEXTURE_SIZE, i * TEXTURE_SIZE)
 
     def getTerrain(self):
         return self.terrain
@@ -33,15 +33,6 @@ class GraphicalTile:
 
     def getDisasterFilter(self):
         return self.disasterFilter
-
-    def mayRenderEntity(self):
-        return self.allowsEntityRendering
-
-    def EnableEntityRendering(self):
-        self.allowsEntityRendering = True
-
-    def DisableEntityRendering(self):
-        self.allowsEntityRendering = False
 
     def __iter__(self):
         yield self.terrain

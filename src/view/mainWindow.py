@@ -5,20 +5,19 @@ Date: December 2023
 """
 
 import time
-from typing import Tuple
 from PyQt6.QtGui import QCloseEvent
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
-from constants import *
-from controller.gridController import GridController
+from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
+from PyQt6.QtCore import Qt, QTimer
+from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
+
 from model.entities.entity import Entity
-
 from model.simulation import Simulation
-from view.commandsWindow import CommandWindow
 
+from view.commandsWindow import CommandWindow
 from view.graphicalGrid import GraphicalGrid
 from view.monitor import GraphWindow, MonitorWindow
 
+from controller.gridController import GridController
 from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
 
@@ -39,7 +38,7 @@ class CustomQDock(QDockWidget):
 
 
 class Window(QMainWindow):
-    def __init__(self, gridSize: Tuple[int, int], simulation: Simulation):
+    def __init__(self, gridSize, simulation: Simulation):
         super().__init__()
 
         self.setWindowTitle(MAIN_WINDOW_TITLE)
@@ -120,7 +119,7 @@ class Window(QMainWindow):
         """
 
         convert = time.strftime(
-            "%A %e:%H hours", time.gmtime(self.totalTime * 3600))
+            TIME_FORMAT, time.gmtime(self.totalTime * 3600))
         hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
@@ -177,7 +176,7 @@ class Window(QMainWindow):
         self.layout.addWidget(
             self.pauseButton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
-            self.fastFbutton,  alignment=Qt.AlignmentFlag.AlignTop)
+            self.fastFbutton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
@@ -185,5 +184,15 @@ class Window(QMainWindow):
         self.layout.addWidget(
             self.zoomInButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addWidget(
-            self.zoomOutButton,   alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
+            self.zoomOutButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addStretch()
+
+    def closeEvent(self, event):
+        result = QMessageBox.question(
+            self, "Confirm Exit...", "Are you sure you want to exit ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        event.ignore()
+
+        if result == QMessageBox.StandardButton.Yes:
+            event.accept()
+        else:
+            event.ignore()

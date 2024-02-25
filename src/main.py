@@ -14,12 +14,6 @@ from view.startWindow import StartWindow
 
 from PyQt6.QtWidgets import QApplication
 
-# from constants import GRID_WIDTH, GRID_HEIGHT
-
-from model.simulation import Simulation
-
-from view.mainWindow import Window
-
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -29,7 +23,7 @@ sys.path.append(os.path.dirname(
 LOCALE_LOCK = threading.Lock()
 
 # Locale lock because changing settings of langages is not thread safe
-# Timer is a thread so we need a lock rip
+# Timer is a thread so we need a lock
 
 
 @contextmanager

@@ -28,9 +28,6 @@ ENTITY_MAX_HUNGER_REPRODUCTION = 10
 ENTITY_MIN_AGE_REPRODUCTION = 5
 PLANT_REPRODUCTION_PROBABILITY = 0.05
 
-# Grid -> size pris dans menu d'accueil
-# GRID_WIDTH = 100
-# GRID_HEIGHT = 100
 
 # Rendering size
 RENDERING_WIDTH = 100
@@ -79,6 +76,7 @@ MOVE_CAMERA_UP = "Move Camera UP : UP ARROW"
 
 
 # # Textures
+TEXTURE_SIZE = 2048
 TEXTURE_FOLDER_PATH = "../assets/textures"
 ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
 TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
@@ -88,6 +86,7 @@ NIGHT_MODE = "#090957"
 SUNSET_MODE = "#fc995b"
 HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
 FIRE = f"{TEXTURE_FOLDER_PATH}/fire.png"
+ICE = f"{TEXTURE_FOLDER_PATH}/ice.png"
 
 # jsons
 ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
@@ -103,3 +102,49 @@ with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
 class Disaster(str, Enum):
     FIRE = "Explosion",
     ICE = "Froid glacial"
+    INVASION = "Invasion de crabes"
+
+
+CONTROL_PLAYER = "Contrôler"
+RELEASE_PLAYER = "Relâcher"
+
+TIME_FORMAT = "%e %A: %H hours"
+
+
+GRID_STYLESHEET = """
+            QScrollBar:horizontal {
+                background-color: #808080; /* Couleur de fond */
+                height: 15px; /* Hauteur */
+            }
+
+            QScrollBar::handle:horizontal {
+                background-color: #C0C0C0; /* Couleur du curseur */
+                min-width: 50px; /* Largeur minimale */
+            }
+
+            QScrollBar::add-line:horizontal {
+                background: none;
+            }
+
+            QScrollBar::sub-line:horizontal {
+                background: none;
+            }
+
+            QScrollBar:vertical {
+                background-color: #808080; /* Couleur de fond */
+                width: 15px; /* Largeur */
+            }
+
+            QScrollBar::handle:vertical {
+                background-color: #C0C0C0; /* Couleur du curseur */
+                min-height: 50px; /* Hauteur minimale */
+            }
+
+            QScrollBar::add-line:vertical {
+                background: none;
+            }
+
+            QScrollBar::sub-line:vertical {
+                background: none;
+            }
+        """

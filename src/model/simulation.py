@@ -38,9 +38,9 @@ sys.path.append(os.path.dirname(
 
 
 class Simulation:
-    def __init__(self, size: tuple[int, int]):
+    def __init__(self, gridSize):
         super().__init__()
-        self.grid = GridGenerator(Point(size[0], size[1]),
+        self.grid = GridGenerator(gridSize,
                                   [2, 3, 4, 5, 6],
                                   350).generateGrid()
         EntitiesGenerator().generateEntities(self.grid)
@@ -48,11 +48,10 @@ class Simulation:
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
-        self.player = Player(Point(-1, -1))
-        self.renderMonitor = RenderMonitor(
-            Point(size[0], size[1]), Point(size[0], size[1]))
+        self.player = Player(Point(-1, -1), self.grid)
+        self.renderMonitor = RenderMonitor(gridSize, gridSize)
 
-        self.water_level = Water.getLevel()
+        self.waterLevel = Water.getLevel()
 
         Entity.setGrid(self.grid)
 
@@ -89,10 +88,25 @@ class Simulation:
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
         if zone == "Rayon":
+            modification = set()
             for i in self.grid.getTilesInRadius(pos, radius):
-                i.disaster = disaster
-                i.disasterOpacity = abs(
-                    1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
+
+                if disaster == Disaster.FIRE:
+                    i.disaster = disaster
+                    i.disasterOpacity = abs(
+                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
+
+                elif disaster == Disaster.ICE:
+                    i.disaster = disaster
+                    i.disasterOpacity = abs(
+                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
+                elif disaster == Disaster.INVASION:
+                    i.setEntity(Crab(i.getPos()))
+
+                if i.getEntity():
+                    i.getEntity().removeHealthPoints()
+                modification.add(i)
+            return modification
 
     def step(self) -> None:
         self.modifiedTiles = set()
@@ -114,16 +128,18 @@ class Simulation:
     def diminishDisaster(self, tile):
         if tile.disasterOpacity > 0:
             tile.disasterOpacity -= 0.1
+        else:
+            tile.disaster = None
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
 
     def updateWaterLevel(self) -> None:
         # two oscillations a day
-        self.water_level = (Water.getLevel() +
-                            (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
-                            * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
-        modified = self.grid.updateTilesWithWaterLevel(self.water_level)
+        self.waterLevel = (Water.getLevel() +
+                           (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
+                           * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
+        modified = self.grid.updateTilesWithWaterLevel(self.waterLevel)
         self.modifiedTiles |= modified
 
     def evolution(self, entity: Entity) -> None:
