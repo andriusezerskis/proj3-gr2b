@@ -41,7 +41,7 @@ class Entity(ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
-        self._healthPoints = self.getMaxHealthPoints()
+        self._hp = self.getMaxHealthPoints() # initialize health points to max
 
         self._name = Person(Locale.FR).first_name()
 
@@ -72,7 +72,7 @@ class Entity(ParametrizedDrawable, ABC):
         return tileType.__name__ in cls._getValidTiles()
 
     def getHealthPoints(self) -> float:
-        return self._healthPoints
+        return self._hp
 
     def removeHealthPoints(self) -> None:
         if self.getTile().disaster == Disaster.FIRE or self.getTile().disaster == Disaster.ICE:

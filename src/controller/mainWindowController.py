@@ -4,12 +4,12 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from PyQt6.QtCore import *
-from utils import Point
+from utils import Point, getPointsAdjacentTo
 
 from model.terrains.tile import Tile
 
-from src.utils import getPointsAdjacentTo
+from constants import TEXTURE_SIZE
+from controller.gridController import GridController
 
 
 class MainWindowController:
@@ -22,7 +22,7 @@ class MainWindowController:
             cls.graphicalGrid = graphicalGrid
             cls.mainWindow = mainWindow
             cls.simulation = simulation
-            cls.size = [2048, 2048]
+            # cls.gridController = GridController.getInstance()
         return cls.instance
 
     @staticmethod
@@ -31,11 +31,11 @@ class MainWindowController:
             raise TypeError
         return MainWindowController.instance
 
-    def getClickedTile(self, x, y) -> Tile | bool:
+    def getClickedTile(self, point: Point) -> Tile | bool:
         """return false if there is no tile at (x, y) coord"""
-        i, j = int(y // self.size[1]), int(x // self.size[0])
-        if 0 <= i < self.size[1] and 0 <= j < self.size[0]:
-            return self.simulation.getGrid().getTile(Point(int(x // self.size[0]), int(y // self.size[1])))
+        board_point = point // self.graphicalGrid.texture_size
+        if self.simulation.getGrid().isInGrid(board_point):
+            return self.simulation.getGrid().getTile(board_point)
         return False
 
     def mousePressEvent(self, event):
@@ -45,13 +45,13 @@ class MainWindowController:
             event (_type_): the mouse press event
         """
         scenePos = self.graphicalGrid.mapToScene(event.pos())
-        tile = self.getClickedTile(scenePos.x(), scenePos.y())
+        tile = self.getClickedTile(Point(scenePos.x(), scenePos.y()))
         if tile:
             if self.mainWindow.monitor.getIsMonitor():
                 self.mainWindow.monitor.offIsMonitor()
                 zone, radius, disaster = self.mainWindow.monitor.getInfo()
-                self.simulation.bordinatorExecution(
-                    zone,  radius, disaster, tile.getPos())
+                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, tile.getPos())
+                self.graphicalGrid.updateGrid(tiles)
 
             elif tile.hasEntity():
                 if not self.simulation.hasPlayer():

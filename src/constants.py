@@ -76,6 +76,7 @@ MOVE_CAMERA_UP = "Move Camera UP : UP ARROW"
 
 
 # # Textures
+TEXTURE_SIZE = 2048
 TEXTURE_FOLDER_PATH = "../assets/textures"
 ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
 TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
@@ -96,6 +97,12 @@ with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
 
 with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
     TILE_PARAMETERS: dict = json.load(f)
+
+# Entity info text
+HEALTH_BAR_TEXT = "Santé : "
+NAME_TEXT = "Prénom : "
+AGE_TEXT = "Âge : "
+HUNGER_TEXT = "Faim"
 
 
 class Disaster(str, Enum):

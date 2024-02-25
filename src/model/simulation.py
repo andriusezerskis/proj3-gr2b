@@ -88,6 +88,7 @@ class Simulation:
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
         if zone == "Rayon":
+            modification = set()
             for i in self.grid.getTilesInRadius(pos, radius):
 
                 if disaster == Disaster.FIRE:
@@ -104,7 +105,8 @@ class Simulation:
 
                 if i.getEntity():
                     i.getEntity().removeHealthPoints()
-                self.addModifiedTiles(i)
+                modification.add(i)
+            return modification
 
     def step(self) -> None:
         self.modifiedTiles = set()

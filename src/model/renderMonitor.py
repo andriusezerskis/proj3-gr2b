@@ -5,10 +5,8 @@ Date: December 2023
 """
 
 from functools import reduce
-from typing import List, Tuple
 
 from model.terrains.tile import Tile
-
 from utils import Point
 
 
@@ -50,7 +48,7 @@ class RenderMonitor:
 
         self.zoomIndex = 0
         self.zoomFactor = 1
-        self.zooms = [1, 4/3, 3/2, 2, 5/2]
+        self.zooms = [1, 4/3, 3/2, 2, 5/2, 2]
 
     def getUpperPoint(self):
         return self.renderingSection.upper
@@ -63,6 +61,9 @@ class RenderMonitor:
 
     def getRenderingSection(self):
         return self.renderingSection
+
+    def getRenderingSize(self):
+        return self.renderingSize
 
     def setNewPoints(self, upperPoint: Point, lowerPoint: Point, width: int, height: int):
         assert isinstance(upperPoint, Point)
