@@ -76,9 +76,9 @@ class Entity(ParametrizedDrawable, ABC):
 
     def removeHealthPoints(self) -> None:
         if self.getTile().disaster == Disaster.FIRE or self.getTile().disaster == Disaster.ICE:
-            self._healthPoints -= self.getTile().disasterOpacity * 100
-            print("health points", self._healthPoints)
-        if self._healthPoints <= 0:
+            self._hp -= self.getTile().disasterOpacity * 100
+            print("health points", self._hp)
+        if self._hp <= 0:
             print("killed")
             self.kill()
 
