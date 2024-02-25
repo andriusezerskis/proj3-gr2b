@@ -98,6 +98,12 @@ with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
 with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
     TILE_PARAMETERS: dict = json.load(f)
 
+# Entity info text
+HEALTH_BAR_TEXT = "Santé : "
+NAME_TEXT = "Prénom : "
+AGE_TEXT = "Âge : "
+HUNGER_TEXT = "Faim"
+
 
 class Disaster(str, Enum):
     FIRE = "Explosion",
