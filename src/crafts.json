@@ -5,5 +5,11 @@
             "Crawl": 1
         },
         "french_name": "Canne à pêche"
+    },
+    "Fence": {
+        "blueprint": {
+            "Wood": 5
+        },
+        "french_name": "Clôture"
     }
 }

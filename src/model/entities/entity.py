@@ -197,3 +197,17 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     @classmethod
     def getLoots(cls):
         return cls._getParameter("loots")
+
+    @classmethod
+    def getQuantity(cls, loot):
+        assert cls.isValidItemType(loot)
+        return cls.getLoots().get(loot.__name__)[0]
+
+    @classmethod
+    def getChance(cls, loot):
+        assert cls.isValidItemType(loot)
+        return cls.getLoots().get(loot.__name__)[1]
+
+    @classmethod
+    def isValidItemType(cls, itemType: type) -> bool:
+        return itemType.__name__ in cls.getLoots()

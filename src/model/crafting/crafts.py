@@ -32,9 +32,17 @@ class Craft(ParametrizedDrawable):
         return ITEMS_TEXTURE_FOLDER_PATH
 
     @classmethod
-    def getBlueprint(cls) -> float:
+    def getBlueprint(cls) -> Dict[str, int]:
         return cls._getParameter("blueprint")
 
+    @classmethod
+    def isValidItemType(cls, itemType: type) -> bool:
+        return itemType.__name__ in cls.getBlueprint()
 
-class FishingRod:
+
+class FishingRod(Craft):
+    ...
+
+
+class Fence(Craft):
     ...

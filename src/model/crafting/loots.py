@@ -15,13 +15,10 @@ class Loot(ParametrizedDrawable):
     def _getFilePathPrefix(cls) -> str:
         return ITEMS_TEXTURE_FOLDER_PATH
 
-    @classmethod
-    def getDropChance(cls) -> float:
-        return cls._getParameter("drop_chance")
-
 
 class Wood(Loot):
     ...
+
 
 class Claw(Loot):
     ...
