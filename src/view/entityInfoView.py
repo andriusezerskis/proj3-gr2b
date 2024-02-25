@@ -4,48 +4,47 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
-from constants import ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, ENTITY_PARAMETERS
-from PyQt6.QtWidgets import QHBoxLayout
+from constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, ENTITY_PARAMETERS, RELEASE_PLAYER
 
 
 class EntityInfoView(QDockWidget):
     def __init__(self, dock, container):
         super().__init__()
         self.dock = dock
-        self.container = container
-        self.layout = QVBoxLayout()
-        self.container.setLayout(self.layout)
-        self.hungerBar = QProgressBar()
+
         self.healthBar = QProgressBar()
         self.infoLabel = QLabel()
-        self.buttonLayout = QHBoxLayout()
-        self.controlButton = QPushButton("Contrôler")
-        self.lageButton = QPushButton("Relâcher")
-        self.initialize()
-        self.entity = None
 
-    def initialize(self):
+        self.hungerBar = QProgressBar()
+        self.hungerBar.setRange(0, ENTITY_MAX_HUNGER)
+        self.hungerBar.hide()
+
+        self.controlButton = QPushButton(CONTROL_PLAYER)
+        self.controlButton.clicked.connect(self.controlEntity)
+        self.controlButton.hide()
+
+        self.lageButton = QPushButton(RELEASE_PLAYER)
+        self.lageButton.clicked.connect(self.controlEntity)
+        self.lageButton.hide()
+
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.addWidget(self.controlButton)
+        self.buttonLayout.addWidget(self.lageButton)
+
+        self.layout = QVBoxLayout()
         self.layout.addWidget(self.healthBar)
         self.layout.addWidget(self.hungerBar)
         self.layout.addWidget(self.infoLabel)
-        self.controlButton.clicked.connect(self.controlEntity)
-        self.lageButton.clicked.connect(self.controlEntity)
-        self.controlButton.hide()
-        self.lageButton.hide()
-        self.buttonLayout.addWidget(self.controlButton)
-        self.buttonLayout.addWidget(self.lageButton)
-        self.buttonLayout.setParent(None)
         self.layout.addLayout(self.buttonLayout)
-        self.layout.setAlignment(
-            self.buttonLayout, Qt.AlignmentFlag.AlignBottom)
-        
-        self.hungerBar.setRange(0, ENTITY_MAX_HUNGER)
-        self.hungerBar.hide()
+
+        self.container = container
+        self.container.setLayout(self.layout)
+
+        self.entity = None
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
@@ -58,10 +57,12 @@ class EntityInfoView(QDockWidget):
         self.entity = entity
         self.controlButton.show()
         self.lageButton.show()
+
         self.healthBar.show()
+        self.healthBar.setValue(int(entity.getHealthPoints()))
         self.healthBar.setRange(0, entity.getMaxHealthPoints())
-        self.healthBar.setValue(int(entity.getMaxHealthPoints()))
         self.healthBar.setFormat("Santé")
+
         baseText = f"Prénom: {entity.getName()}\n"
         baseText += f"Âge: {entity.getDisplayAge()} jours\n"
         if isinstance(entity, Animal):

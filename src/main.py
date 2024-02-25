@@ -14,12 +14,6 @@ from view.startWindow import StartWindow
 
 from PyQt6.QtWidgets import QApplication
 
-# from constants import GRID_WIDTH, GRID_HEIGHT
-
-from model.simulation import Simulation
-
-from view.mainWindow import Window
-
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 

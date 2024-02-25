@@ -9,7 +9,7 @@
         "texture_path": ["sand2.png"],
         "level": 0.1,
         "filter_color": "#c27800",
-        "ascending_gradient": 1
+        "ascending_gradient": 0
     },
     "Land": {
         "texture_path": ["land6.png"],

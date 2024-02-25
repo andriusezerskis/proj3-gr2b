@@ -12,10 +12,6 @@ class EntityInfoController:
     def __init__(self, dock, container):
         self.entity = None
         self.view = EntityInfoView(dock, container)
-        self.initialize()
-
-    def initialize(self):
-        self.view.initialize()
 
     def update(self):
         self.view.updateOnStep()

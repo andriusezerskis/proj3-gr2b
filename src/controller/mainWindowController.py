@@ -39,8 +39,13 @@ class MainWindowController:
         return False
 
     def mousePressEvent(self, event):
-        scene_pos = self.graphicalGrid.mapToScene(event.pos())
-        tile = self.getClickedTile(scene_pos.x(), scene_pos.y())
+        """Handles the mouse press event
+
+        Args:
+            event (_type_): the mouse press event
+        """
+        scenePos = self.graphicalGrid.mapToScene(event.pos())
+        tile = self.getClickedTile(scenePos.x(), scenePos.y())
         if tile:
             if self.mainWindow.monitor.getIsMonitor():
                 self.mainWindow.monitor.offIsMonitor()
@@ -51,19 +56,15 @@ class MainWindowController:
             elif tile.hasEntity():
                 if not self.simulation.hasPlayer():
                     self.openDockEvent()
-
-                    self.mainWindow.entityController.setEntity(
-                        tile.getEntity())
-                    self.graphicalGrid.chosenEntity = tile.getEntity()
                 else:
                     if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
                         tile.removeEntity()
                         self.graphicalGrid.removeEntity(
                             tile.getPos().y(), tile.getPos().x())
-            else:
-                self.graphicalGrid.chosenEntity = None
-                self.mainWindow.entityController.setEntity(None)
 
+            self.mainWindow.entityController.setEntity(
+                tile.getEntity())
+            self.graphicalGrid.chosenEntity = tile.getEntity()
             self.mainWindow.entityController.update()
             self.graphicalGrid.updateHighlighted()
 
