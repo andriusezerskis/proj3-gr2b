@@ -9,6 +9,7 @@ from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, ENTITY_PARAMETERS, RELEASE_PLAYER
+from controller.mainWindowController import MainWindowController
 
 
 class EntityInfoView(QDockWidget):
@@ -27,19 +28,11 @@ class EntityInfoView(QDockWidget):
         self.controlButton.clicked.connect(self.controlEntity)
         self.controlButton.hide()
 
-        self.lageButton = QPushButton(RELEASE_PLAYER)
-        self.lageButton.clicked.connect(self.controlEntity)
-        self.lageButton.hide()
-
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.addWidget(self.controlButton)
-        self.buttonLayout.addWidget(self.lageButton)
-
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.healthBar)
         self.layout.addWidget(self.hungerBar)
         self.layout.addWidget(self.infoLabel)
-        self.layout.addLayout(self.buttonLayout)
+        self.layout.addWidget(self.controlButton)
 
         self.container = container
         self.container.setLayout(self.layout)
@@ -48,6 +41,8 @@ class EntityInfoView(QDockWidget):
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
+        MainWindowController.getInstance().closeDock()
+        MainWindowController.getInstance().mainWindow.dock2.show()
 
     def setEntity(self, entity: Entity):
         self.entity = entity
@@ -56,7 +51,6 @@ class EntityInfoView(QDockWidget):
         """Shows information about an entity"""
         self.entity = entity
         self.controlButton.show()
-        self.lageButton.show()
 
         self.healthBar.show()
         self.healthBar.setValue(int(entity.getHealthPoints()))

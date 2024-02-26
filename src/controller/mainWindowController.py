@@ -18,6 +18,7 @@ class MainWindowController:
 
     def __new__(cls, graphicalGrid, simulation, mainWindow):
         if cls.instance is None:
+            print("eueueeuueeuueeueueueueueueueueeuueuu")
             cls.instance = object.__new__(cls)
             cls.graphicalGrid = graphicalGrid
             cls.mainWindow = mainWindow
@@ -74,6 +75,8 @@ class MainWindowController:
 
             self.graphicalGrid.updateHighlighted()
 
+    def closeDock(self):
+        self.mainWindow.dock.close()
 
     def closeDockEvent(self):
         self.mainWindow.buttonOpenDock.show()

@@ -1,10 +1,10 @@
 {
     "Wood": {
-        "texture_path": ["..."],
+        "texture_path": ["wood.png"],
         "french_name": "Bois"
     },
     "Crawl": {
-        "texture_path": ["..."],
+        "texture_path": ["claw.png"],
         "french_name": "Pince"
     }
 }

@@ -20,13 +20,14 @@ from view.monitor import GraphWindow, MonitorWindow
 from controller.gridController import GridController
 from controller.mainWindowController import MainWindowController
 from controller.entityInfoController import EntityInfoController
+from controller.playerDockController import PlayerDockController
 
 
 class CustomQDock(QDockWidget):
     def __init__(self, mainWindowController, mainWindow):
-        super().__init__("ehhhh", mainWindow)
+        super().__init__("", mainWindow)
         self.mainWindowController = mainWindowController
-        self.setGeometry(100, 100, 300, 200)
+        #self.setGeometry(100, 100, 300, 200)
         self.dockLayout = QVBoxLayout()
         container = QWidget()
         container.setLayout(self.dockLayout)
@@ -37,6 +38,20 @@ class CustomQDock(QDockWidget):
         self.mainWindowController.closeDockEvent()
 
 
+class CustomQDock2(QDockWidget):
+    def __init__(self, mainWindowController, mainWindow):
+        super().__init__("", mainWindow)
+        self.mainWindowController = mainWindowController
+        #self.setGeometry(100, 100, 300, 200)
+        self.dockLayout = QVBoxLayout()
+        container = QWidget()
+        container.setLayout(self.dockLayout)
+        self.setWidget(container)
+
+    def closeEvent(self, event: QCloseEvent | None) -> None:
+        super().closeEvent(event)
+
+
 class Window(QMainWindow):
     def __init__(self, gridSize, simulation: Simulation):
         super().__init__()
@@ -44,14 +59,12 @@ class Window(QMainWindow):
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
-        self.view = GraphicalGrid(
-            gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
-        self.mainWindowController = MainWindowController(
-            self.view, simulation, self)
+        self.view = GraphicalGrid(gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
+        self.mainWindowController = MainWindowController(self.view, simulation, self)
         self.initialiseDock()
+        self.initialisePlayerDock()
 
-        self.gridController = GridController(
-            self.view, simulation, self.renderingMonitor)
+        self.gridController = GridController(self.view, simulation, self.renderingMonitor)
 
         self.setCentralWidget(self.view)
         self.simulation = simulation
@@ -70,8 +83,7 @@ class Window(QMainWindow):
 
     def initialiseDock(self):
         self.dock = CustomQDock(self.mainWindowController, self)
-        self.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
 
         container1 = QWidget()
         container2 = QWidget()
@@ -83,6 +95,16 @@ class Window(QMainWindow):
         self.monitor = MonitorWindow(self.dock, container1)
         self.graph = GraphWindow(self.dock, container3)
         self.entityController = EntityInfoController(self.dock, container2)
+
+
+    def initialisePlayerDock(self):
+        self.dock2 = CustomQDock2(self.mainWindowController, self)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock2)
+        container1 = QWidget()
+        self.dock2.dockLayout.addWidget(container1)
+        self.playerController = PlayerDockController(self.dock2, container1)
+        self.dock2.close()
+        # self.dock2.closeEvent(None)
 
     def initTimer(self):
         self.timer = QTimer()
