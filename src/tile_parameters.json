@@ -18,9 +18,9 @@
         "ascending_gradient": 1
     },
     "Mountain": {
-        "texture_path": ["mountain2.png"],
+        "texture_path": ["mountain3.png"],
         "level": 1,
-        "filter_color": "#ffffff",
+        "filter_color": "#F2C5B3",
         "ascending_gradient": 1
     }
 }
