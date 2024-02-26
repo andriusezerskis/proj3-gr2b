@@ -99,16 +99,16 @@ class Simulation:
             modification = set()
             for i in self.grid.getTilesInRadius(pos, radius):
 
-                if disaster == Disaster.FIRE:
+                if disaster == Disaster.FIRE_TEXT:
                     i.disaster = disaster
                     i.disasterOpacity = abs(
                         1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
 
-                elif disaster == Disaster.ICE:
+                elif disaster == Disaster.ICE_TEXT:
                     i.disaster = disaster
                     i.disasterOpacity = abs(
                         1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-                elif disaster == Disaster.INVASION:
+                elif disaster == Disaster.INVASION_TEXT:
                     i.setEntity(globals()[entityChosen](i.getPos()))
 
                 if i.getEntity():
