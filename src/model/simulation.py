@@ -48,7 +48,7 @@ class Simulation:
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
-        self.player = Player(Point(-1, -1), self.grid)
+        self.player = Player(None, self.grid)
         self.renderMonitor = RenderMonitor(gridSize, gridSize)
 
         self.waterLevel = Water.getLevel()

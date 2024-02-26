@@ -1,3 +1,5 @@
+from typing import TypeVar
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget
@@ -7,14 +9,20 @@ from controller.playerDockController import PlayerDockController
 from view.monitor import MonitorWindow, GraphWindow
 
 
+class Observer:
+    def updateClosure(self):
+        ...
+
+
 class CustomQDock(QDockWidget):
-    def __init__(self, mainWindowController, mainWindow):
+    def __init__(self, mainWindowController, mainWindow, observer):
         super().__init__("", mainWindow)
         self.mainWindowController = mainWindowController
         self.dockLayout = QVBoxLayout()
         container = QWidget()
         container.setLayout(self.dockLayout)
         self.setWidget(container)
+        self.observer = observer
 
     def updateContent(self, j):
         ...
@@ -29,13 +37,14 @@ class CustomQDock(QDockWidget):
 
     def closeEvent(self, event: QCloseEvent | None) -> None:
         super().closeEvent(event)
+        self.observer.updateClosure()
         self.mainWindowController.closeDockEvent()
         #print("closed by me")
 
 
 class MonitoringDock(CustomQDock):
-    def __init__(self, mainWindowController, mainWindow):
-        super().__init__(mainWindowController, mainWindow)
+    def __init__(self, mainWindowController, mainWindow, observer):
+        super().__init__(mainWindowController, mainWindow, observer)
 
         mainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self)
         container1 = QWidget()
@@ -57,8 +66,8 @@ class MonitoringDock(CustomQDock):
 
 
 class PlayerDock(CustomQDock):
-    def __init__(self, mainWindowController, mainWindow):
-        super().__init__(mainWindowController, mainWindow)
+    def __init__(self, mainWindowController, mainWindow, observer):
+        super().__init__(mainWindowController, mainWindow, observer)
 
         mainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self)
         container1 = QWidget()
@@ -72,10 +81,10 @@ class PlayerDock(CustomQDock):
         return
 
 
-class DocksMonitor:
+class DocksMonitor(Observer):
     def __init__(self, mainWindowController, mainWindow):
-        self.monitoringDock = MonitoringDock(mainWindowController, mainWindow)
-        self.playerDock = PlayerDock(mainWindowController, mainWindow)
+        self.monitoringDock = MonitoringDock(mainWindowController, mainWindow, self)
+        self.playerDock = PlayerDock(mainWindowController, mainWindow, self)
         self.docks = [self.monitoringDock, self.playerDock]
 
         self.currentDock = 0
@@ -97,3 +106,15 @@ class DocksMonitor:
 
     def getCurrentDock(self):
         return self.docks[self.currentDock]
+
+    def isMonitoringDock(self):
+        return self.currentDock == 0
+
+    def isPlayerDock(self):
+        return self.currentDock == 1
+
+    def isDisplayed(self):
+        return self.displayed
+
+    def updateClosure(self):
+        self.displayed = False

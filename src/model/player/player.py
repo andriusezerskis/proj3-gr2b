@@ -19,7 +19,7 @@ Grid = TypeVar("Grid")
 
 class Player(Movable):
 
-    def __init__(self, pos: Point, grid: Grid):
+    def __init__(self, pos: Point | None, grid: Grid):
         super().__init__()
         self.pos = pos
         self.grid = grid
@@ -33,6 +33,12 @@ class Player(Movable):
         self.pos = tile.getPos()
         tile.removeEntity()
         tile.setEntity(self)
+
+    def removeClaimedEntity(self):
+        self.claimed_entity.setPos(self.pos)
+        self.grid.getTile(self.pos).setEntity(self.claimed_entity)
+        self.pos = None
+        self.claimed_entity = None
 
     def move(self, movement: Point):
         oldPosition = copy(self.pos)
@@ -51,7 +57,6 @@ class Player(Movable):
         return self.pos
 
     def getTexturePath(self) -> str:
-        #zprint(self.claimed_entity.getTexturePath())
         return self.claimed_entity.getTexturePath()
 
     def isValidTileType(self, tileType: type):

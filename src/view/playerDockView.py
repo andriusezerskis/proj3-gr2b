@@ -1,7 +1,9 @@
 from PyQt6.QtWidgets import QDockWidget, QPushButton, QVBoxLayout
 
-from src.constants import RELEASE_PLAYER
-from src.model.entities.entity import Entity
+from constants import RELEASE_PLAYER
+from controller.mainWindowController import MainWindowController
+from model.entities.entity import Entity
+from controller.gridController import GridController
 
 
 class PlayerDockView(QDockWidget):
@@ -25,4 +27,5 @@ class PlayerDockView(QDockWidget):
         self.entity = entity
 
     def lageEntity(self):
-        print("a")
+        GridController.getInstance().lageEntity()
+        MainWindowController.getInstance().changeDock()

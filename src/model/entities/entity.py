@@ -173,6 +173,10 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         if not self.getGrid().getTile(self._pos).setEntity(self):
             self.kill()
 
+    def setPos(self, pos: Point):
+        self._pos = pos
+        #self.getGrid().getTile(self._pos).removeEntity()
+
     @staticmethod
     def getGrid() -> Grid:
         return Entity._grid
