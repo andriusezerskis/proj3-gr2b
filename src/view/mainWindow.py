@@ -8,6 +8,7 @@ import time
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt
 from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
 
 from model.entities.entity import Entity
@@ -31,6 +32,7 @@ class CustomQDock(QDockWidget):
         container = QWidget()
         container.setLayout(self.dockLayout)
         self.setWidget(container)
+        self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
 
     def closeEvent(self, event: QCloseEvent | None) -> None:
         super().closeEvent(event)
@@ -171,7 +173,7 @@ class Window(QMainWindow):
             self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
-                              alignment=Qt.AlignmentFlag.AlignLeft)
+                              alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.layout.addStretch()
         self.layout.addWidget(
             self.pauseButton, alignment=Qt.AlignmentFlag.AlignTop)
