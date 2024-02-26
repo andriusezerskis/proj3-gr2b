@@ -48,9 +48,9 @@ class MainWindowController:
         scenePos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(Point(scenePos.x(), scenePos.y()))
         if tile:
-            if self.mainWindow.monitor.getIsMonitor():
-                self.mainWindow.monitor.offIsMonitor()
-                zone, radius, disaster = self.mainWindow.monitor.getInfo()
+            if self.mainWindow.docksMonitor.getCurrentDock().monitor.getIsMonitor():
+                self.mainWindow.docksMonitor.getCurrentDock().monitor.offIsMonitor()
+                zone, radius, disaster = self.mainWindow.docksMonitor.getCurrentDock().monitor.getInfo()
                 tiles = self.simulation.bordinatorExecution(zone, radius, disaster, tile.getPos())
                 self.graphicalGrid.updateGrid(tiles)
 
@@ -61,10 +61,9 @@ class MainWindowController:
                     self.playerControll(tile)
                     return
 
-            self.mainWindow.entityController.setEntity(
-                tile.getEntity())
+            self.mainWindow.docksMonitor.getCurrentDock().entityController.setEntity(tile.getEntity())
             self.graphicalGrid.chosenEntity = tile.getEntity()
-            self.mainWindow.entityController.update()
+            self.mainWindow.docksMonitor.getCurrentDock().entityController.update()
             self.graphicalGrid.updateHighlighted()
 
     def playerControll(self, tile):
@@ -76,11 +75,17 @@ class MainWindowController:
             self.graphicalGrid.updateHighlighted()
 
     def closeDock(self):
-        self.mainWindow.dock.close()
+        self.mainWindow.docksMonitor.getCurrentDock().close()
 
     def closeDockEvent(self):
         self.mainWindow.buttonOpenDock.show()
 
+    def changeDock(self):
+        self.mainWindow.docksMonitor.changeCurrentDock()
+
+    def hide_button(self):
+        self.mainWindow.buttonOpenDock.hide()
+
     def openDockEvent(self):
         self.mainWindow.buttonOpenDock.hide()
-        self.mainWindow.dock.show()
+        self.mainWindow.docksMonitor.openDock()

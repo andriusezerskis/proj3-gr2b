@@ -41,8 +41,8 @@ class EntityInfoView(QDockWidget):
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
-        MainWindowController.getInstance().closeDock()
-        MainWindowController.getInstance().mainWindow.dock2.show()
+        #MainWindowController.getInstance().closeDock()
+        MainWindowController.getInstance().changeDock()
 
     def setEntity(self, entity: Entity):
         self.entity = entity
