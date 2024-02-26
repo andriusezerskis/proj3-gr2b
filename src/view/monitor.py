@@ -108,16 +108,16 @@ class MonitorWindow:
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        b1 = QRadioButton(Disaster.ICE, self.dock)
+        b1 = QRadioButton(Disaster.ICE_TEXT, self.dock)
         b1.setChecked(True)
         b1.toggled.connect(lambda: self.btnCata(b1))
         layout.addWidget(b1)
 
-        b2 = QRadioButton(Disaster.FIRE, self.dock)
+        b2 = QRadioButton(Disaster.FIRE_TEXT, self.dock)
         b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
-        b3 = QRadioButton(Disaster.INVASION, self.dock)
+        b3 = QRadioButton(Disaster.INVASION_TEXT, self.dock)
         b3.toggled.connect(lambda: self.btnCata(b3))
 
         combobox5 = QComboBox()
