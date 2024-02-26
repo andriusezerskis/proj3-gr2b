@@ -15,9 +15,15 @@ import sys
 import numpy as np
 
 from constants import *
-from model.entities.animals import Crab
 from utils import Point
 from math import cos, pi
+
+# do not trust your IDE, we need it for the globals() function
+
+from model.entities.animals import Crab, Fish
+from model.entities.plants import Algae, Tree
+
+###
 
 from model.entities.animal import Animal
 from model.grid import Grid
@@ -80,7 +86,7 @@ class Simulation:
     def manhattan_distance(self, pos1, pos2):
         return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
 
-    def bordinatorExecution(self, zone, radius, disaster, pos):
+    def bordinatorExecution(self, zone, radius, disaster, entityChosen, pos):
         """
         BORDINATOR EXECUTION
         """
@@ -101,7 +107,7 @@ class Simulation:
                     i.disasterOpacity = abs(
                         1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
                 elif disaster == Disaster.INVASION:
-                    i.setEntity(Crab(i.getPos()))
+                    i.setEntity(globals()[entityChosen](i.getPos()))
 
                 if i.getEntity():
                     i.getEntity().removeHealthPoints()

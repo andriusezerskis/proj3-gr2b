@@ -49,8 +49,9 @@ class MainWindowController:
         if tile:
             if self.mainWindow.monitor.getIsMonitor():
                 self.mainWindow.monitor.offIsMonitor()
-                zone, radius, disaster = self.mainWindow.monitor.getInfo()
-                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, tile.getPos())
+                zone, radius, disaster, entityChosen = self.mainWindow.monitor.getInfo()
+                tiles = self.simulation.bordinatorExecution(
+                    zone, radius, disaster, entityChosen, tile.getPos())
                 self.graphicalGrid.updateGrid(tiles)
 
             elif tile.hasEntity():

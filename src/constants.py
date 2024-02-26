@@ -108,7 +108,7 @@ HUNGER_TEXT = "Faim"
 class Disaster(str, Enum):
     FIRE = "Explosion",
     ICE = "Froid glacial"
-    INVASION = "Invasion de crabes"
+    INVASION = "Invasion de:"
 
 
 CONTROL_PLAYER = "Contrôler"
