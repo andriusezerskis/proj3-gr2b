@@ -31,6 +31,7 @@ from model.pathfinder import Pathfinder
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 from model.action import Action
+from model.disaster import DisasterHandler
 
 
 sys.path.append(os.path.dirname(
@@ -87,25 +88,14 @@ class Simulation:
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
+        disasterHandler = DisasterHandler(pos, disaster, radius)
         if zone == "Rayon":
             modification = set()
-            for i in self.grid.getTilesInRadius(pos, radius):
-
-                if disaster == Disaster.FIRE:
-                    i.disaster = disaster
-                    i.disasterOpacity = abs(
-                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-
-                elif disaster == Disaster.ICE:
-                    i.disaster = disaster
-                    i.disasterOpacity = abs(
-                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-                elif disaster == Disaster.INVASION:
-                    i.setEntity(Crab(i.getPos()))
-
-                if i.getEntity():
-                    i.getEntity().removeHealthPoints()
-                modification.add(i)
+            for tile in self.grid.getTilesInRadius(pos, radius):
+                disasterHandler.chooseDisaster(tile)
+                if tile.getEntity():
+                    tile.getEntity().removeHealthPoints()
+                modification.add(tile)
             return modification
 
     def step(self) -> None:

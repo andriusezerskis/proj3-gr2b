@@ -66,6 +66,9 @@ SUNSET_MODE_START = 16
 
 MAX_TILE_FILTER_OPACITY = 0.7
 
+# Types of disasters
+DISASTERS = {}
+
 # WINDOWS
 # MAIN_WINDOW
 MAIN_WINDOW_TITLE = "Simulation 2D"
@@ -106,9 +109,9 @@ HUNGER_TEXT = "Faim"
 
 
 class Disaster(str, Enum):
-    FIRE = "Explosion",
-    ICE = "Froid glacial"
-    INVASION = "Invasion de crabes"
+    FIRE_TEXT = "Explosion",
+    ICE_TEXT = "Froid glacial"
+    INVASION_TEXT = "Invasion de crabes"
 
 
 CONTROL_PLAYER = "Contrôler"

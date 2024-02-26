@@ -70,6 +70,9 @@ class Point:
 
     def octileDistance(self, other):
         return max(abs(self.x() - other.x()), abs(self.y() - other.y()))
+    
+    def manhattanDistance(self, other):
+        return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
     def __iter__(self):
         yield self.x()
