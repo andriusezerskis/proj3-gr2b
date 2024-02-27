@@ -88,32 +88,17 @@ class Simulation:
         return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
 
     def bordinatorExecution(self, zone, radius, disaster, entityChosen, pos):
-        """
-        BORDINATOR EXECUTION
-        """
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
         disasterHandler = DisasterHandler(pos, disaster, radius)
         if zone == "Rayon":
             modification = set()
-            for i in self.grid.getTilesInRadius(pos, radius):
-
-                if disaster == Disaster.FIRE_TEXT:
-                    i.disaster = disaster
-                    i.disasterOpacity = abs(
-                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-
-                elif disaster == Disaster.ICE_TEXT:
-                    i.disaster = disaster
-                    i.disasterOpacity = abs(
-                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-                elif disaster == Disaster.INVASION_TEXT:
-                    i.setEntity(globals()[entityChosen](i.getPos()))
-
-                if i.getEntity():
-                    i.getEntity().removeHealthPoints()
-                modification.add(i)
+            for tile in self.grid.getTilesInRadius(pos, radius):
+                disasterHandler.chooseDisaster(tile)
+                if tile.getEntity():
+                    tile.getEntity().removeHealthPoints()
+                modification.add(tile)
             return modification
 
     def step(self) -> None:
