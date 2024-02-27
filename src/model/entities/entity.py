@@ -3,6 +3,7 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
+import random
 
 from mimesis import Person
 from mimesis import Locale
@@ -219,3 +220,12 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     @classmethod
     def isValidItemType(cls, itemType: type) -> bool:
         return itemType.__name__ in cls.getLoots()
+
+    def loot(self):
+        res = {}
+        for str_loot in self.getLoots():
+            tot = 0
+            for _ in range(self.getLoots().get(str_loot)[0]):
+                tot += 1 if random.random() < self.getLoots().get(str_loot)[1] else 0
+            res[str_loot] = tot
+        return res

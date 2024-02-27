@@ -68,7 +68,8 @@ class MainWindowController:
 
     def playerControll(self, tile):
         if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
-            tile.getEntity()
+            entity = tile.getEntity()
+            print(entity.loot())
             tile.removeEntity()
             self.graphicalGrid.removeEntity(tile.getPos())
 

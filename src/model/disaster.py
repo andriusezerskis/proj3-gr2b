@@ -19,7 +19,7 @@ class DisasterHandler:
             
         elif self.disasterType == Disaster.ICE_TEXT:
             self.executeIceDisaster(tile, abs(
-                    1 - initialPosPoint.manhattan_distance(tile.getPos())/(self.radius*2)))
+                    1 - initialPosPoint.manhattanDistance(tile.getPos())/(self.radius*2)))
             
         elif self.disasterType == Disaster.INVASION_TEXT:
             self.executeCrabDisaster(tile)

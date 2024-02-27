@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget
 from controller.entityInfoController import EntityInfoController
 from controller.playerDockController import PlayerDockController
 from view.monitor import MonitorWindow, GraphWindow
+from view.scrollArea import ScrollArea
 
 
 class Observer:
@@ -72,8 +73,12 @@ class PlayerDock(CustomQDock):
 
         mainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self)
         container1 = QWidget()
+        container2 = QWidget()
         self.dockLayout.addWidget(container1)
+        self.dockLayout.addWidget(container2)
         self.playerController = PlayerDockController(self, container1)
+        self.scrollArea = ScrollArea(container2)
+
 
     def updateContent(self, j):
         return
