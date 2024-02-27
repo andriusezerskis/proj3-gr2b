@@ -8,7 +8,8 @@ import time
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
+from constants import MAIN_WINDOW_TITLE, STEP_TIME, TIME_FORMAT
+from view.cssConstants import *
 
 from model.entities.entity import Entity
 from model.simulation import Simulation

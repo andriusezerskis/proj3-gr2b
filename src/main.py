@@ -40,8 +40,8 @@ def setlocale(name):
 def main():
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     app = QApplication(sys.argv)
-    font = QFont('Small Fonts')
-    app.setFont(font)
+    #font = QFont('Small Fonts')
+    #app.setFont(font)
     startWindow = StartWindow()
     startWindow.show()
     app.exec()
