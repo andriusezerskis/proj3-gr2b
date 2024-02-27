@@ -10,9 +10,9 @@ import os
 import sys
 import signal
 
-from src.model.crafting.crafts import FishingRod, Fence
-from src.model.crafting.loots import Wood, Claw
-from src.model.entities.animals import Crab
+from model.crafting.crafts import FishingRod, Fence
+from model.crafting.loots import Wood, Claw
+from model.entities.animals import Crab
 from view.startWindow import StartWindow
 
 
