@@ -180,7 +180,9 @@ class GraphWindow:
         self.iconButtonSelected = None
 
         for i in Entity.__subclasses__():
+            print("hoho", i.__name__)
             for j in i.__subclasses__():
+                print("haha", j.__name__)
                 iconbutton = QPushButton(j.__name__)
                 iconbutton.clicked.connect(
                     partial(self.setChosenEntity, j, iconbutton))

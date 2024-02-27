@@ -4,7 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from src.view.playerDockView import PlayerDockView
+from view.playerDockView import PlayerDockView
 
 
 class PlayerDockController:

@@ -22,6 +22,7 @@ class CustomQDock(QDockWidget):
         container = QWidget()
         container.setLayout(self.dockLayout)
         self.setWidget(container)
+        self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.observer = observer
 
     def updateContent(self, j):

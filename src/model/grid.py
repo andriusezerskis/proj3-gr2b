@@ -15,8 +15,6 @@ from model.regionHandler import RegionHandler
 
 from constants import MAX_WATER_LEVEL
 
-from src.model.player.player import Player
-
 
 class Grid:
     def __init__(self, gridSize: Point) -> None:

@@ -15,12 +15,10 @@ from model.simulation import Simulation
 
 from view.commandsWindow import CommandWindow
 from view.graphicalGrid import GraphicalGrid
-from view.monitor import GraphWindow, MonitorWindow
 
 from controller.gridController import GridController
 from controller.mainWindowController import MainWindowController
-from controller.entityInfoController import EntityInfoController
-from controller.playerDockController import PlayerDockController
+
 
 from view.docksMonitor import DocksMonitor
 

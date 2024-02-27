@@ -1,8 +1,8 @@
 from typing import Dict, override
 
-from src.constants import CRAFT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
-from src.model.crafting.loots import Loot
-from src.model.drawable import ParametrizedDrawable
+from constants import CRAFT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
+from model.crafting.loots import Loot
+from model.drawable import ParametrizedDrawable
 
 
 class Craft(ParametrizedDrawable):
