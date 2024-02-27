@@ -31,9 +31,9 @@ class Tile(ParametrizedDrawable, ABC):
         self.disasterOpacity = 0
 
     def getDisasterPathName(self):
-        if self.disaster == Disaster.FIRE:
+        if self.disaster == Disaster.FIRE_TEXT:
             return FIRE
-        elif self.disaster == Disaster.ICE:
+        elif self.disaster == Disaster.ICE_TEXT:
             return ICE
         return None
 
@@ -83,6 +83,12 @@ class Tile(ParametrizedDrawable, ABC):
             self.movable = entity
             return True
         return False
+    
+    def setDisaster(self, disasterType: str) -> None:
+        self.disaster = disasterType
+
+    def setDisasterOpacity(self, disasterOpacity: float) -> None:
+        self.disasterOpacity = disasterOpacity
 
     def addNewEntity(self, entity: type) -> None:
         """

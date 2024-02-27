@@ -27,7 +27,7 @@ sys.path.append(os.path.dirname(
 LOCALE_LOCK = threading.Lock()
 
 # Locale lock because changing settings of langages is not thread safe
-# Timer is a thread so we need a lock rip
+# Timer is a thread so we need a lock
 
 
 @contextmanager

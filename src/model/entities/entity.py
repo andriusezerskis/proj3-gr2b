@@ -43,7 +43,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
-        self._healthPoints = self.getMaxHealthPoints()
+        self._hp = self.getMaxHealthPoints() # initialize health points to max
 
         self._name = Person(Locale.FR).first_name()
 
@@ -74,13 +74,13 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return tileType.__name__ in cls._getValidTiles()
 
     def getHealthPoints(self) -> float:
-        return self._healthPoints
+        return self._hp
 
     def removeHealthPoints(self) -> None:
-        if self.getTile().disaster == Disaster.FIRE or self.getTile().disaster == Disaster.ICE:
-            self._healthPoints -= self.getTile().disasterOpacity * 100
-            print("health points", self._healthPoints)
-        if self._healthPoints <= 0:
+        if self.getTile().disaster == Disaster.FIRE_TEXT or self.getTile().disaster == Disaster.ICE_TEXT:
+            self._hp -= self.getTile().disasterOpacity * 100
+            print("health points", self._hp)
+        if self._hp <= 0:
             print("killed")
             self.kill()
 
@@ -116,7 +116,11 @@ class Entity(Movable, ParametrizedDrawable, ABC):
             self._counts[cls] -= 1
 
         self._killed = True
-        self._dead = True
+    
+    def inflictDamage(self, damage: float) -> None:
+        self._hp -= damage
+        if self._hp <= 0:
+            self.kill()
 
     def evolve(self):
         self._age += 1

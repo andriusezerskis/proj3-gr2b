@@ -7,7 +7,7 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QButtonGroup
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 import os
@@ -57,7 +57,7 @@ class MonitorWindow:
         self.layout.addWidget(self.container2)
 
         self.button = QPushButton("OK")
-        self.button.clicked.connect(self.okButtonCallback) 
+        self.button.clicked.connect(self.okButtonCallback)
         self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
 
@@ -76,7 +76,7 @@ class MonitorWindow:
         self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
     def getInfo(self):
-        return self.infoZone, self.infoRayon, self.infoDisaster
+        return self.infoZone, self.infoRayon, self.infoDisaster, self.invasionChosen
 
     # ---- method for init GUI ----
     def checkBox(self):
@@ -108,22 +108,38 @@ class MonitorWindow:
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        b1 = QRadioButton(Disaster.ICE)
+        b1 = QRadioButton(Disaster.ICE_TEXT, self.dock)
         b1.setChecked(True)
         b1.toggled.connect(lambda: self.btnCata(b1))
         layout.addWidget(b1)
 
-        b2 = QRadioButton(Disaster.FIRE)
+        b2 = QRadioButton(Disaster.FIRE_TEXT, self.dock)
         b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
-        b3 = QRadioButton(Disaster.INVASION)
+        b3 = QRadioButton(Disaster.INVASION_TEXT, self.dock)
         b3.toggled.connect(lambda: self.btnCata(b3))
+
+        combobox5 = QComboBox()
+
+        for i in Entity.__subclasses__():
+            for j in i.__subclasses__():
+                animalIcon = QIcon(j.getDefaultTexturePath())
+                combobox5.addItem(animalIcon, j.__name__)
+
+        self.invasionChosen = combobox5.currentText()
+        combobox5.currentTextChanged.connect(self.indexChanged)
+
         layout.addWidget(b3)
+        layout.addWidget(combobox5)
 
         container = QWidget()
         container.setLayout(layout)
         return container
+
+    def indexChanged(self, button):
+        self.invasionChosen = button
+        print(self.invasionChosen)
 
     # ---- handler for update information from button ----
     def btnZone(self, b):

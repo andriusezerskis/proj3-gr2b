@@ -25,8 +25,6 @@ from controller.playerDockController import PlayerDockController
 from view.docksMonitor import DocksMonitor
 
 
-
-
 class Window(QMainWindow):
     def __init__(self, gridSize, simulation: Simulation):
         super().__init__()
@@ -137,7 +135,7 @@ class Window(QMainWindow):
         self.buttonOpenDock.clicked.connect(self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
-                              alignment=Qt.AlignmentFlag.AlignLeft)
+                              alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.layout.addStretch()
         self.layout.addWidget(
             self.pauseButton, alignment=Qt.AlignmentFlag.AlignTop)

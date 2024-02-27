@@ -15,9 +15,15 @@ import sys
 import numpy as np
 
 from constants import *
-from model.entities.animals import Crab
 from utils import Point
 from math import cos, pi
+
+# do not trust your IDE, we need it for the globals() function
+
+from model.entities.animals import Crab, Fish
+from model.entities.plants import Algae, Tree
+
+###
 
 from model.entities.animal import Animal
 from model.grid import Grid
@@ -31,6 +37,7 @@ from model.pathfinder import Pathfinder
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 from model.action import Action
+from model.disaster import DisasterHandler
 
 
 sys.path.append(os.path.dirname(
@@ -80,32 +87,18 @@ class Simulation:
     def manhattan_distance(self, pos1, pos2):
         return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
 
-    def bordinatorExecution(self, zone, radius, disaster, pos):
-        """
-        BORDINATOR EXECUTION
-        """
+    def bordinatorExecution(self, zone, radius, disaster, entityChosen, pos):
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
+        disasterHandler = DisasterHandler(pos, disaster, radius)
         if zone == "Rayon":
             modification = set()
-            for i in self.grid.getTilesInRadius(pos, radius):
-
-                if disaster == Disaster.FIRE:
-                    i.disaster = disaster
-                    i.disasterOpacity = abs(
-                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-
-                elif disaster == Disaster.ICE:
-                    i.disaster = disaster
-                    i.disasterOpacity = abs(
-                        1 - self.manhattan_distance(pos, i.getPos())/(radius*2))
-                elif disaster == Disaster.INVASION:
-                    i.setEntity(Crab(i.getPos()))
-
-                if i.getEntity():
-                    i.getEntity().removeHealthPoints()
-                modification.add(i)
+            for tile in self.grid.getTilesInRadius(pos, radius):
+                disasterHandler.chooseDisaster(tile)
+                if tile.getEntity():
+                    tile.getEntity().removeHealthPoints()
+                modification.add(tile)
             return modification
 
     def step(self) -> None:

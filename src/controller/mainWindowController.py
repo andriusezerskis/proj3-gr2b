@@ -15,7 +15,6 @@ class MainWindowController:
 
     def __new__(cls, graphicalGrid, simulation, mainWindow):
         if cls.instance is None:
-            print("eueueeuueeuueeueueueueueueueueeuueuu")
             cls.instance = object.__new__(cls)
             cls.graphicalGrid = graphicalGrid
             cls.mainWindow = mainWindow
@@ -48,8 +47,8 @@ class MainWindowController:
             if self.mainWindow.docksMonitor.isMonitoringDock() and \
                     self.mainWindow.docksMonitor.getCurrentDock().monitor.getIsMonitor():
                 self.mainWindow.docksMonitor.getCurrentDock().monitor.offIsMonitor()
-                zone, radius, disaster = self.mainWindow.docksMonitor.getCurrentDock().monitor.getInfo()
-                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, tile.getPos())
+                zone, radius, disaster, entityChosen = self.mainWindow.docksMonitor.getCurrentDock().monitor.getInfo()
+                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, entityChosen, tile.getPos())
                 self.graphicalGrid.updateGrid(tiles)
 
             elif tile.hasEntity():

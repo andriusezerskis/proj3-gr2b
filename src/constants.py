@@ -66,6 +66,9 @@ SUNSET_MODE_START = 16
 
 MAX_TILE_FILTER_OPACITY = 0.7
 
+# Types of disasters
+DISASTERS = {}
+
 # WINDOWS
 # MAIN_WINDOW
 MAIN_WINDOW_TITLE = "Simulation 2D"
@@ -108,11 +111,17 @@ with open(LOOT_PARAMETERS_FILE_PATH, "r") as f:
 with open(CRAFT_PARAMETERS_FILE_PATH, "r") as f:
     CRAFT_PARAMETERS: dict = json.load(f)
 
+# Entity info text
+HEALTH_BAR_TEXT = "Santé : "
+NAME_TEXT = "Prénom : "
+AGE_TEXT = "Âge : "
+HUNGER_TEXT = "Faim"
+
 
 class Disaster(str, Enum):
-    FIRE = "Explosion",
-    ICE = "Froid glacial"
-    INVASION = "Invasion de crabes"
+    FIRE_TEXT = "Explosion",
+    ICE_TEXT = "Froid glacial"
+    INVASION_TEXT = "Invasion de:"
 
 
 CONTROL_PLAYER = "Contrôler"

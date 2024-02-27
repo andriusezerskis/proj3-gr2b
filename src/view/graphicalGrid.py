@@ -131,7 +131,7 @@ class GraphicalGrid(QGraphicsView):
     def _drawDisaster(self, tile):
         x, y = tile.getPos()
 
-        if tile.disaster == Disaster.FIRE or tile.disaster == Disaster.ICE:
+        if tile.disaster == Disaster.FIRE_TEXT or tile.disaster == Disaster.ICE_TEXT:
             disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
             disasterPixmap = tile.getDisasterPathName()
             disasterFilter.show()
