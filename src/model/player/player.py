@@ -5,17 +5,22 @@ Date: December 2023
 """
 
 from copy import copy
+from typing import override, TypeVar
+
 from utils import Point
 
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
-from model.grid import Grid
+from model.movable import Movable
+
+Grid = TypeVar("Grid")
 
 
-class Player:
+class Player(Movable):
 
-    def __init__(self, pos: Point, grid: Grid):
+    def __init__(self, pos: Point | None, grid: Grid):
+        super().__init__()
         self.pos = pos
         self.grid = grid
         self.claimed_entity: Entity | None = None
@@ -29,6 +34,12 @@ class Player:
         tile.removeEntity()
         tile.setEntity(self)
 
+    def removeClaimedEntity(self):
+        self.claimed_entity.setPos(self.pos)
+        self.grid.getTile(self.pos).setEntity(self.claimed_entity)
+        self.pos = None
+        self.claimed_entity = None
+
     def move(self, movement: Point):
         oldPosition = copy(self.pos)
         wantedPosition = self.pos + movement
@@ -41,11 +52,11 @@ class Player:
             return True
         return False
 
-    def getPos(self):
+    @override
+    def getPos(self) -> Point:
         return self.pos
 
     def getTexturePath(self) -> str:
-        print(self.claimed_entity.getTexturePath())
         return self.claimed_entity.getTexturePath()
 
     def isValidTileType(self, tileType: type):

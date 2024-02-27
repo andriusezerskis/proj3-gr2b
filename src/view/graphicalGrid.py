@@ -131,7 +131,7 @@ class GraphicalGrid(QGraphicsView):
     def _drawDisaster(self, tile):
         x, y = tile.getPos()
 
-        if tile.disaster == Disaster.FIRE or tile.disaster == Disaster.ICE:
+        if tile.disaster == Disaster.FIRE_TEXT or tile.disaster == Disaster.ICE_TEXT:
             disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
             disasterPixmap = tile.getDisasterPathName()
             disasterFilter.show()
@@ -234,7 +234,7 @@ class GraphicalGrid(QGraphicsView):
 
     def removeRenderedSection(self):
         for point in self.renderingMonitor.getRenderingSection():
-            self._removeTile(point)
+            self.removeEntity(point)
 
     def renderSection(self):
         for point in self.renderingMonitor.getRenderingSection():

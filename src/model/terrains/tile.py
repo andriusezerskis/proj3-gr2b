@@ -11,6 +11,7 @@ from overrides import override
 
 from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
+from model.movable import Movable
 
 from utils import Point
 from constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
@@ -25,14 +26,14 @@ class Tile(ParametrizedDrawable, ABC):
         super().__init__()
         self.pos = pos
         self.height = height
-        self.entity = None
+        self.movable: Movable = None
         self.disaster = None
         self.disasterOpacity = 0
 
     def getDisasterPathName(self):
-        if self.disaster == Disaster.FIRE:
+        if self.disaster == Disaster.FIRE_TEXT:
             return FIRE
-        elif self.disaster == Disaster.ICE:
+        elif self.disaster == Disaster.ICE_TEXT:
             return ICE
         return None
 
@@ -65,13 +66,13 @@ class Tile(ParametrizedDrawable, ABC):
     def step(self):
         pass
 
-    def getEntity(self) -> Entity | None:
-        return self.entity
+    def getEntity(self) -> Movable | None:
+        return self.movable
 
     def hasEntity(self) -> bool:
-        return self.entity is not None
+        return self.movable is not None
 
-    def setEntity(self, entity: Entity) -> bool:
+    def setEntity(self, entity: Movable) -> bool:
         """
         Sets the entity in the tile
         :param entity: the entity that you want to place
@@ -79,21 +80,27 @@ class Tile(ParametrizedDrawable, ABC):
         """
         # we only set the entity if the tile is of a valid type
         if entity and entity.isValidTileType(self.__class__):
-            self.entity = entity
+            self.movable = entity
             return True
         return False
+    
+    def setDisaster(self, disasterType: str) -> None:
+        self.disaster = disasterType
+
+    def setDisasterOpacity(self, disasterOpacity: float) -> None:
+        self.disasterOpacity = disasterOpacity
 
     def addNewEntity(self, entity: type) -> None:
         """
         Places a new entity in this tile
         :param entity: the type of entity that must be created
         """
-        if not self.entity:
+        if not self.movable:
             self.setEntity(entity(self.getPos()))
 
     def removeEntity(self) -> None:
-        if self.entity:
-            self.entity = None
+        if self.movable:
+            self.movable = None
 
     def getPos(self) -> Point:
         return self.pos
@@ -108,7 +115,7 @@ class Tile(ParametrizedDrawable, ABC):
         :return:
         """
         tile = type_(toCopy.pos, toCopy.height)
-        tile.setEntity(toCopy.entity)
+        tile.setEntity(toCopy.getEntity())
         return tile
 
     def __repr__(self):

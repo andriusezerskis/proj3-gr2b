@@ -68,6 +68,9 @@ class Grid:
                 continue
 
             if tile.hasEntity() and not newTile.hasEntity():
+                #print(type(tile.getEntity()))
+                #if not isinstance(tile.getEntity(), Player):
+                #todo aaaaaah wtf, bug si la marée monte
                 tile.getEntity().kill()
 
             self.coasts.remove(tile)

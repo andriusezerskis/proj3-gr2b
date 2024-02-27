@@ -1,0 +1,10 @@
+{
+    "Wood": {
+        "texture_path": ["wood.png"],
+        "french_name": "Bois"
+    },
+    "Claw": {
+        "texture_path": ["claw.png"],
+        "french_name": "Pince"
+    }
+}

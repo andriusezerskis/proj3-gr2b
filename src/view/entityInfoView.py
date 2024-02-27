@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPu
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
+from controller.mainWindowController import MainWindowController
 from constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, \
     ENTITY_PARAMETERS, RELEASE_PLAYER, HEALTH_BAR_TEXT, NAME_TEXT, AGE_TEXT, HUNGER_TEXT
 
@@ -28,19 +29,11 @@ class EntityInfoView(QDockWidget):
         self.controlButton.clicked.connect(self.controlEntity)
         self.controlButton.hide()
 
-        self.releaseButton = QPushButton(RELEASE_PLAYER)
-        self.releaseButton.clicked.connect(self.controlEntity)
-        self.releaseButton.hide()
-
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.addWidget(self.controlButton)
-        self.buttonLayout.addWidget(self.releaseButton)
-
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.healthBar)
         self.layout.addWidget(self.hungerBar)
         self.layout.addWidget(self.infoLabel)
-        self.layout.addLayout(self.buttonLayout)
+        self.layout.addWidget(self.controlButton)
 
         self.container = container
         self.container.setLayout(self.layout)
@@ -49,6 +42,8 @@ class EntityInfoView(QDockWidget):
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
+        #MainWindowController.getInstance().closeDock()
+        MainWindowController.getInstance().changeDock()
 
     def setEntity(self, entity: Entity):
         self.entity = entity
@@ -57,7 +52,6 @@ class EntityInfoView(QDockWidget):
         """Shows information about an entity"""
         self.entity = entity
         self.controlButton.show()
-        self.releaseButton.show()
 
         self.healthBar.show()
         self.healthBar.setRange(0, entity.getMaxHealthPoints())

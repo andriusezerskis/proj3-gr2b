@@ -66,6 +66,9 @@ SUNSET_MODE_START = 16
 
 MAX_TILE_FILTER_OPACITY = 0.7
 
+# Types of disasters
+DISASTERS = {}
+
 # WINDOWS
 # MAIN_WINDOW
 MAIN_WINDOW_TITLE = "Simulation 2D"
@@ -80,23 +83,33 @@ TEXTURE_SIZE = 2048
 TEXTURE_FOLDER_PATH = "../assets/textures"
 ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
 TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
+ITEMS_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/items"
+EFFECTS_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/effects"
 
 # Special
 NIGHT_MODE = "#090957"
 SUNSET_MODE = "#fc995b"
-HIGHLIGHTED_TILE = f"{TEXTURE_FOLDER_PATH}/yellow.png"
-FIRE = f"{TEXTURE_FOLDER_PATH}/fire.png"
-ICE = f"{TEXTURE_FOLDER_PATH}/ice.png"
+HIGHLIGHTED_TILE = f"{EFFECTS_TEXTURE_FOLDER_PATH}/yellow.png"
+FIRE = f"{EFFECTS_TEXTURE_FOLDER_PATH}/fire.png"
+ICE = f"{EFFECTS_TEXTURE_FOLDER_PATH}/ice.png"
 
 # jsons
 ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
 TILE_PARAMETERS_FILE_PATH = "tile_parameters.json"
+LOOT_PARAMETERS_FILE_PATH = "loots.json"
+CRAFT_PARAMETERS_FILE_PATH = "crafts.json"
 
 with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
     ENTITY_PARAMETERS: dict = json.load(f)
 
 with open(TILE_PARAMETERS_FILE_PATH, "r") as f:
     TILE_PARAMETERS: dict = json.load(f)
+
+with open(LOOT_PARAMETERS_FILE_PATH, "r") as f:
+    LOOT_PARAMETERS: dict = json.load(f)
+
+with open(CRAFT_PARAMETERS_FILE_PATH, "r") as f:
+    CRAFT_PARAMETERS: dict = json.load(f)
 
 # Entity info text
 HEALTH_BAR_TEXT = "Santé : "
@@ -106,9 +119,9 @@ HUNGER_TEXT = "Faim"
 
 
 class Disaster(str, Enum):
-    FIRE = "Explosion",
-    ICE = "Froid glacial"
-    INVASION = "Invasion de crabes"
+    FIRE_TEXT = "Explosion",
+    ICE_TEXT = "Froid glacial"
+    INVASION_TEXT = "Invasion de:"
 
 
 CONTROL_PLAYER = "Contrôler"

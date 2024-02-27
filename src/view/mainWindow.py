@@ -15,26 +15,12 @@ from model.simulation import Simulation
 
 from view.commandsWindow import CommandWindow
 from view.graphicalGrid import GraphicalGrid
-from view.monitor import GraphWindow, MonitorWindow
 
 from controller.gridController import GridController
 from controller.mainWindowController import MainWindowController
-from controller.entityInfoController import EntityInfoController
 
 
-class CustomQDock(QDockWidget):
-    def __init__(self, mainWindowController, mainWindow):
-        super().__init__("ehhhh", mainWindow)
-        self.mainWindowController = mainWindowController
-        self.setGeometry(100, 100, 300, 200)
-        self.dockLayout = QVBoxLayout()
-        container = QWidget()
-        container.setLayout(self.dockLayout)
-        self.setWidget(container)
-
-    def closeEvent(self, event: QCloseEvent | None) -> None:
-        super().closeEvent(event)
-        self.mainWindowController.closeDockEvent()
+from view.docksMonitor import DocksMonitor
 
 
 class Window(QMainWindow):
@@ -44,14 +30,13 @@ class Window(QMainWindow):
         self.setWindowTitle(MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
-        self.view = GraphicalGrid(
-            gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
-        self.mainWindowController = MainWindowController(
-            self.view, simulation, self)
-        self.initialiseDock()
+        self.view = GraphicalGrid(gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
+        self.mainWindowController = MainWindowController(self.view, simulation, self)
+        self.layout = QHBoxLayout()
+        self.drawButtons()
+        self.docksMonitor = DocksMonitor(self.mainWindowController, self)
 
-        self.gridController = GridController(
-            self.view, simulation, self.renderingMonitor)
+        self.gridController = GridController(self.view, simulation, self.renderingMonitor)
 
         self.setCentralWidget(self.view)
         self.simulation = simulation
@@ -60,29 +45,12 @@ class Window(QMainWindow):
         self.fastF = False
         self.paused = False
 
-        self.layout = QHBoxLayout()
-        self.drawButtons()
+        self.drawButtons2()
         self.view.setLayout(self.layout)
 
         self.initTimer()
 
         self.commands = CommandWindow(self)
-
-    def initialiseDock(self):
-        self.dock = CustomQDock(self.mainWindowController, self)
-        self.addDockWidget(
-            Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
-
-        container1 = QWidget()
-        container2 = QWidget()
-        container3 = QWidget()
-        self.dock.dockLayout.addWidget(container1)
-        self.dock.dockLayout.addWidget(container3)
-        self.dock.dockLayout.addWidget(container2)
-
-        self.monitor = MonitorWindow(self.dock, container1)
-        self.graph = GraphWindow(self.dock, container3)
-        self.entityController = EntityInfoController(self.dock, container2)
 
     def initTimer(self):
         self.timer = QTimer()
@@ -109,8 +77,8 @@ class Window(QMainWindow):
         self.updateGrid()
         for i in Entity.__subclasses__():
             for j in i.__subclasses__():
-                self.graph.updatePlot(j.getCount(), j)
-        self.entityController.update()
+                self.docksMonitor.getCurrentDock().updateContent(j)
+        self.docksMonitor.getCurrentDock().updateController()
         self.showTime()
 
     def showTime(self):
@@ -160,18 +128,12 @@ class Window(QMainWindow):
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)
 
-        self.zoomInButton = QPushButton("+")
-        self.zoomInButton.clicked.connect(self.gridController.zoomIn)
-        self.zoomOutButton = QPushButton("-")
-        self.zoomOutButton.clicked.connect(self.gridController.zoomOut)
-
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
-        self.buttonOpenDock.clicked.connect(
-            self.mainWindowController.openDockEvent)
+        self.buttonOpenDock.clicked.connect(self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
-                              alignment=Qt.AlignmentFlag.AlignLeft)
+                              alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.layout.addStretch()
         self.layout.addWidget(
             self.pauseButton, alignment=Qt.AlignmentFlag.AlignTop)
@@ -181,6 +143,13 @@ class Window(QMainWindow):
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+
+    def drawButtons2(self):
+        self.zoomInButton = QPushButton("+")
+        self.zoomInButton.clicked.connect(self.gridController.zoomIn)
+        self.zoomOutButton = QPushButton("-")
+        self.zoomOutButton.clicked.connect(self.gridController.zoomOut)
         self.layout.addWidget(
             self.zoomInButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addWidget(

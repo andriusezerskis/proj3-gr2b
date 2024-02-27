@@ -3,6 +3,7 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
+import random
 
 from mimesis import Person
 from mimesis import Locale
@@ -17,12 +18,14 @@ from overrides import override
 
 from random import choice
 
+from model.movable import Movable
+
 Entity_ = TypeVar("Entity_")
 Tile = TypeVar("Tile")
 Grid = TypeVar("Grid")
 
 
-class Entity(ParametrizedDrawable, ABC):
+class Entity(Movable, ParametrizedDrawable, ABC):
     # https://stackoverflow.com/a/75663885
     _counts = dict()
     _grid = None
@@ -75,7 +78,7 @@ class Entity(ParametrizedDrawable, ABC):
         return self._hp
 
     def removeHealthPoints(self) -> None:
-        if self.getTile().disaster == Disaster.FIRE or self.getTile().disaster == Disaster.ICE:
+        if self.getTile().disaster == Disaster.FIRE_TEXT or self.getTile().disaster == Disaster.ICE_TEXT:
             self._hp -= self.getTile().disasterOpacity * 100
             print("health points", self._hp)
         if self._hp <= 0:
@@ -161,6 +164,7 @@ class Entity(ParametrizedDrawable, ABC):
     def chooseAction(self) -> Action:
         ...
 
+    @override
     def getPos(self) -> Point:
         return self._pos
 
@@ -173,6 +177,10 @@ class Entity(ParametrizedDrawable, ABC):
         self._pos += movement
         if not self.getGrid().getTile(self._pos).setEntity(self):
             self.kill()
+
+    def setPos(self, pos: Point):
+        self._pos = pos
+        #self.getGrid().getTile(self._pos).removeEntity()
 
     @staticmethod
     def getGrid() -> Grid:
@@ -194,3 +202,30 @@ class Entity(ParametrizedDrawable, ABC):
     @classmethod
     def getCount(cls) -> int:
         return cls._counts[cls]
+
+    @classmethod
+    def getLoots(cls):
+        return cls._getParameter("loots")
+
+    @classmethod
+    def getQuantity(cls, loot):
+        assert cls.isValidItemType(loot)
+        return cls.getLoots().get(loot.__name__)[0]
+
+    @classmethod
+    def getChance(cls, loot):
+        assert cls.isValidItemType(loot)
+        return cls.getLoots().get(loot.__name__)[1]
+
+    @classmethod
+    def isValidItemType(cls, itemType: type) -> bool:
+        return itemType.__name__ in cls.getLoots()
+
+    def loot(self):
+        res = {}
+        for str_loot in self.getLoots():
+            tot = 0
+            for _ in range(self.getLoots().get(str_loot)[0]):
+                tot += 1 if random.random() < self.getLoots().get(str_loot)[1] else 0
+            res[str_loot] = tot
+        return res
