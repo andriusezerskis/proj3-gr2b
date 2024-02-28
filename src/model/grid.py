@@ -35,17 +35,17 @@ class Grid:
             if Water.getLevel() < tile.height < MAX_WATER_LEVEL:
                 self.coasts.add(tile)
 
-    def dist(self, x1, y1, x2, y2):
-        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-
-    def getTilesInRadius(self, pos, r):
+    def getTilesInRadius(self, center: Point, radius: int):
         """
-        Return the tiles in the radius of the given position
+        :param center: the center of the circle
+        :param radius: the maximum distance from the center
+        :return: every point at a distance <= radius from the center WITHOUT including the center
         """
-        for x in range(pos.x() - r, pos.x() + r):
-            for y in range(pos.y() - r, pos.y() + r):
-                if self.dist(pos.x(), pos.y(), x, y) <= r and self.isInGrid(Point(x, y)):
-                    yield self.getTile(Point(x, y))
+        tiles = []
+        for pos in getPointsInRadius(center, radius):
+            if self.isInGrid(pos):
+                tiles.append(self.getTile(pos))
+        return tiles
 
     def getAdjacentTiles(self, currentTile: Point) -> List[Tile]:
         """

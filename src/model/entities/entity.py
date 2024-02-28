@@ -44,7 +44,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
-        self._hp = self.getMaxHealthPoints() # initialize health points to max
+        self._hp = self.getMaxHealthPoints()
 
         self._name = Person(Locale.FR).first_name()
 
@@ -65,6 +65,10 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     @classmethod
     def getMaxHealthPoints(cls) -> float:
         return cls._getParameter("health_points")
+
+    @classmethod
+    def getFrenchName(cls) -> str:
+        return cls._getParameter("french_name")
 
     @classmethod
     def _getValidTiles(cls) -> list[str]:
@@ -189,6 +193,9 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     @staticmethod
     def setGrid(grid: Grid):
         Entity._grid = grid
+
+    def setAge(self, age: int):
+        self._age = age
 
     def getTile(self) -> Tile:
         return self.getGrid().getTile(self.getPos())

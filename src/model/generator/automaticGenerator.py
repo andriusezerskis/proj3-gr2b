@@ -5,6 +5,7 @@ Date: December 2023
 """
 
 from abc import ABC, abstractmethod
+from utils import getTerminalSubclassesOfClass
 
 
 class AutomaticGenerator(ABC):
@@ -16,13 +17,4 @@ class AutomaticGenerator(ABC):
 
     @classmethod
     def getTerminalChildrenOfBaseClass(cls) -> set[type]:
-        res = set()
-        stack = [cls.getBaseClass()]
-        while len(stack) > 0:
-            current = stack.pop()
-            subclasses = current.__subclasses__()
-            if len(subclasses) == 0:
-                res.add(current)
-            else:
-                stack.extend(subclasses)
-        return res
+        return getTerminalSubclassesOfClass(cls.getBaseClass())

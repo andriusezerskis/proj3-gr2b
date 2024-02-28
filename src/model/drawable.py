@@ -6,6 +6,7 @@ Date: December 2023
 
 
 from abc import ABC, abstractmethod
+from typing import Any
 from random import choice
 
 
@@ -26,7 +27,7 @@ class ParametrizedDrawable(ABC):
         return cls._getParameters()[cls.__name__]
 
     @classmethod
-    def _getParameter(cls, parameter: str) -> list[str] | str | int | float:
+    def _getParameter(cls, parameter: str) -> Any:
         return cls.getParameters()[parameter]
 
     @classmethod

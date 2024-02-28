@@ -7,7 +7,7 @@ Date: December 2023
 from cmath import sqrt
 import itertools
 import math
-import random
+from random import choice, random
 import time
 import os
 import sys
@@ -15,11 +15,12 @@ import sys
 import numpy as np
 
 from constants import *
-from utils import Point
+from utils import Point, getTerminalSubclassesOfClass
 from math import cos, pi
 
 # do not trust your IDE, we need it for the globals() function
 
+from model.entities.plant import Plant
 from model.entities.animals import Crab, Fish
 from model.entities.plants import Algae, Tree
 
@@ -62,31 +63,6 @@ class Simulation:
 
         Entity.setGrid(self.grid)
 
-        # self._TEST_PATHFINDING()
-
-    def _TEST_PATHFINDING(self):
-        """
-        PATHFINDING TEST, TO REMOVE
-        """
-        for tile in self.grid.islands[0]:
-            if type(tile.getEntity()) is Human:
-                pathfinder = Pathfinder(self.grid)
-                current = tile.getPos()
-                dest = random.choice(list(self.grid.islands[0])).getPos()
-                t1 = time.time()
-                if pathfinder.findPath(tile.getEntity(), current, dest):
-                    print(
-                        f"Found path from {current} to {dest} in {time.time() - t1}s")
-                    print("simulating path...")
-                    for move in pathfinder.getPath():
-                        print(
-                            f"{current} + {move} = {current + move} (tile {self.grid.getTile(current + move)})")
-                        current = current + move
-                break
-
-    def manhattan_distance(self, pos1, pos2):
-        return abs(pos1.x() - pos2.x()) + abs(pos1.y() - pos2.y())
-
     def bordinatorExecution(self, zone, radius, disaster, entityChosen, pos):
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
@@ -115,8 +91,31 @@ class Simulation:
             if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
                 self.evolution(entity)
                 self.updatedEntities.add(entity)
+            if not entity:
+                self.spontaneousGeneration(tile)
 
         print(f"compute time : {time.time() - t}")
+
+    def spontaneousGeneration(self, tile: Tile):
+        assert not tile.hasEntity()
+
+        probability = 0.05
+        for adjacent in self.getGrid().getAdjacentTiles(tile.getPos()):
+            if adjacent.hasEntity():
+                probability -= 0.02
+
+        if random() >= probability:
+            return
+
+        validTypes = []
+        for plantType in getTerminalSubclassesOfClass(Plant):
+            assert issubclass(plantType, Plant)
+            if plantType.isValidTileType(type(tile)):
+                validTypes.append(plantType)
+
+        if len(validTypes) > 0:
+            tile.addNewEntity(choice(validTypes))
+            self.addModifiedTiles(tile)
 
     def diminishDisaster(self, tile):
         if tile.disasterOpacity > 0:
@@ -151,6 +150,8 @@ class Simulation:
                 self.moveEntity(entity)
             case Action.REPRODUCE:
                 self.reproduceEntity(entity)
+            case Action.DIE:
+                self.dead(entity.getTile())
 
     def eat(self, entity: Entity):
         assert isinstance(entity, Animal)

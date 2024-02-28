@@ -26,7 +26,7 @@ class Tile(ParametrizedDrawable, ABC):
         super().__init__()
         self.pos = pos
         self.height = height
-        self.movable: Movable = None
+        self.movable: Movable | None = None
         self.disaster = None
         self.disasterOpacity = 0
 
@@ -90,13 +90,17 @@ class Tile(ParametrizedDrawable, ABC):
     def setDisasterOpacity(self, disasterOpacity: float) -> None:
         self.disasterOpacity = disasterOpacity
 
-    def addNewEntity(self, entity: type) -> None:
+    def addNewEntity(self, entity: type, age: int = 0) -> None:
         """
         Places a new entity in this tile
         :param entity: the type of entity that must be created
+        :param age: the age of the new entity
         """
         if not self.movable:
-            self.setEntity(entity(self.getPos()))
+            newEntity = entity(self.getPos())
+            assert isinstance(newEntity, Entity)
+            self.setEntity(newEntity)
+            newEntity.setAge(age)
 
     def removeEntity(self) -> None:
         if self.movable:

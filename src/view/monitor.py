@@ -14,6 +14,7 @@ import os
 
 
 import matplotlib
+from utils import getTerminalSubclassesOfClass
 from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
 from model.entities.animals import Crab
 from model.entities.entity import Entity
@@ -122,10 +123,10 @@ class MonitorWindow:
 
         combobox5 = QComboBox()
 
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                animalIcon = QIcon(j.getDefaultTexturePath())
-                combobox5.addItem(animalIcon, j.__name__)
+        for entityType in getTerminalSubclassesOfClass(Entity):
+            assert issubclass(entityType, Entity)
+            animalIcon = QIcon(entityType.getDefaultTexturePath())
+            combobox5.addItem(animalIcon, entityType.getFrenchName())
 
         self.invasionChosen = combobox5.currentText()
         combobox5.currentTextChanged.connect(self.indexChanged)
@@ -179,34 +180,30 @@ class GraphWindow:
         self.layout.addWidget(iconWidget)
         self.iconButtonSelected = None
 
-        for i in Entity.__subclasses__():
-            print("hoho", i.__name__)
-            for j in i.__subclasses__():
-                print("haha", j.__name__)
-                iconbutton = QPushButton(j.__name__)
-                iconbutton.clicked.connect(
-                    partial(self.setChosenEntity, j, iconbutton))
-                icon = j.getDefaultTexturePath()
-                iconbutton.setIcon(
-                    QIcon(icon))
-                iconbutton.setIconSize(QSize(15, 15))
-                iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        for entityType in getTerminalSubclassesOfClass(Entity):
+            assert issubclass(entityType, Entity)
+            iconbutton = QPushButton(entityType.getFrenchName())
+            iconbutton.clicked.connect(partial(self.setChosenEntity, entityType, iconbutton))
+            icon = entityType.getDefaultTexturePath()
+            iconbutton.setIcon(
+                QIcon(icon))
+            iconbutton.setIconSize(QSize(15, 15))
+            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
-                iconLayout.addWidget(iconbutton)
+            iconLayout.addWidget(iconbutton)
 
         nData = 50
         self.xdata = list(range(nData))
         self.nData = nData
         self.ydata = {}
 
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                self.ydata[j] = [0 for k in range(nData)]
+        for entityType in getTerminalSubclassesOfClass(Entity):
+            self.ydata[entityType] = [0 for k in range(nData)]
 
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
-        self.setChosenEntity(j, iconbutton)
+        self.setChosenEntity(entityType, iconbutton)
 
     def setChosenEntity(self, entity, iconbutton):
         if iconbutton.styleSheet() == NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
