@@ -8,8 +8,8 @@ import random
 from mimesis import Person
 from mimesis import Locale
 from abc import ABC, abstractmethod
-from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
-                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH, Disaster)
+from parameters.constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
+                                  ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH, Disaster)
 from model.action import Action
 from typing import TypeVar
 from utils import Point

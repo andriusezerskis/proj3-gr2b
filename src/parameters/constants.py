@@ -14,9 +14,6 @@ NOT_CLICKED_BUTTON_STYLESHEET = "background-color: green; color: white;"
 ENTITY_DEAD_MESSAGE = "L'entité est morte"
 ENTITY_NOT_SELECTED = "Pas d'entité sélectionnée"
 
-# Simulation
-STEP_TIME = 2000
-
 # Entities
 ENTITY_HUNGRY_THRESHOLD = 10
 ENTITY_MAX_AGE = 24 * 5
@@ -36,6 +33,9 @@ PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS = 0.75
 # Rendering size
 RENDERING_WIDTH = 100
 RENDERING_HEIGHT = 100
+
+# Simulation
+STEP_TIME = 2000
 
 # # Climate
 # Temperature difference between winter and summer
@@ -84,7 +84,7 @@ MOVE_CAMERA_UP = "Move Camera UP : UP ARROW"
 
 # # Textures
 TEXTURE_SIZE = 2048
-TEXTURE_FOLDER_PATH = "../assets/textures"
+TEXTURE_FOLDER_PATH = "../../assets/textures"
 ENTITIES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/entities"
 TILES_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/tiles"
 ITEMS_TEXTURE_FOLDER_PATH = TEXTURE_FOLDER_PATH + "/items"
@@ -98,10 +98,10 @@ FIRE = f"{EFFECTS_TEXTURE_FOLDER_PATH}/fire.png"
 ICE = f"{EFFECTS_TEXTURE_FOLDER_PATH}/ice.png"
 
 # jsons
-ENTITY_PARAMETERS_FILE_PATH = "entity_parameters.json"
-TILE_PARAMETERS_FILE_PATH = "tile_parameters.json"
-LOOT_PARAMETERS_FILE_PATH = "loots.json"
-CRAFT_PARAMETERS_FILE_PATH = "crafts.json"
+ENTITY_PARAMETERS_FILE_PATH = "../config/entities.json"
+TILE_PARAMETERS_FILE_PATH = "../config/tiles.json"
+LOOT_PARAMETERS_FILE_PATH = "../config/loots.json"
+CRAFT_PARAMETERS_FILE_PATH = "../config/crafts.json"
 
 with open(ENTITY_PARAMETERS_FILE_PATH, "r") as f:
     ENTITY_PARAMETERS: dict = json.load(f)

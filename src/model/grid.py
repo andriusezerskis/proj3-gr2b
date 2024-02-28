@@ -4,7 +4,6 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-import math
 from typing import List
 from utils import Point, getPointsInRadius
 
@@ -13,7 +12,7 @@ from model.terrains.tiles import Water, Sand
 
 from model.regionHandler import RegionHandler
 
-from constants import MAX_WATER_LEVEL
+from parameters.constants import MAX_WATER_LEVEL
 
 
 class Grid:

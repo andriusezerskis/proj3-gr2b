@@ -14,7 +14,7 @@ from model.drawable import ParametrizedDrawable
 from model.movable import Movable
 
 from utils import Point
-from constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
+from parameters.constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
 
 
 Tile_ = TypeVar("Tile_")

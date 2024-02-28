@@ -10,8 +10,8 @@ from random import random
 
 from model.entities.entity import Entity
 from model.action import Action
-from constants import (PLANT_REPRODUCTION_PROBABILITY, PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD,
-                       PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS)
+from parameters.constants import (PLANT_REPRODUCTION_PROBABILITY, PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD,
+                                  PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS)
 
 
 class Plant(Entity, ABC):

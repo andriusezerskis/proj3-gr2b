@@ -7,16 +7,13 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QButtonGroup
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-import os
-
 
 import matplotlib
 from utils import getTerminalSubclassesOfClass
-from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
-from model.entities.animals import Crab
+from parameters.constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
 from model.entities.entity import Entity
 
 matplotlib.use('QtAgg')

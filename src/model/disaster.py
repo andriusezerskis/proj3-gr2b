@@ -1,7 +1,8 @@
-from constants import Disaster
+from parameters.constants import Disaster
 from utils import Point
 from model.terrains.tile import Tile
 from model.entities.animals import Crab
+
 
 class DisasterHandler:
     def __init__(self, initialPos: tuple, disasterType: str, radius: int) -> None:

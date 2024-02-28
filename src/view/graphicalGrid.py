@@ -27,7 +27,7 @@ from controller.mainWindowController import MainWindowController
 from view.graphicalTile import GraphicalTile
 
 
-from constants import FIRE, GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
+from parameters.constants import GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
     MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY, TEXTURE_SIZE, Disaster
 
 from model.player.player import Player

@@ -5,10 +5,9 @@ Date: December 2023
 """
 
 import time
-from PyQt6.QtGui import QCloseEvent
-from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
+from parameters.constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
 
 from model.entities.entity import Entity
 from model.simulation import Simulation

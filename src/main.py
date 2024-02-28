@@ -41,6 +41,9 @@ def setlocale(name):
 
 
 def main():
+    from parameters.entityparameters import EntityParameters
+    EntityParameters.reloadDict()
+    print(EntityParameters.HUNGRY_THRESHOLD)
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     app = QApplication(sys.argv)
     startWindow = StartWindow()

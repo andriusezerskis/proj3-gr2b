@@ -4,10 +4,9 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 
-from constants import FIRE, ICE, TEXTURE_SIZE, Disaster
+from parameters.constants import TEXTURE_SIZE
 
 
 class GraphicalTile:
