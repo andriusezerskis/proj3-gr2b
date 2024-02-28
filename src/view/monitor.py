@@ -94,6 +94,7 @@ class MonitorWindow:
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
+        spinBox.setStyleSheet(SPIN_COLOR2)
         layout.addWidget(spinBox)
 
         b3 = QRadioButton("Ile")

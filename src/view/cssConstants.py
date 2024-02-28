@@ -15,6 +15,7 @@ START_BUTTON_STYLE_SHEET = f"background-color: {BUTTON_COLOR}; color: white; bor
 # COLOR MONITOR
 CLICKED_COLOR = '#96a9f9'
 NCLICKED_COLOR = '#d0f996'
+SPIN_COLOR2 ="background-color: white;"
 
 
 # STYLESHEET
@@ -27,3 +28,13 @@ VLAYOUT_COLOR = "background-color: #ddd5fd"
 PLOT_COLOR = "magenta"
 PLOT_BCKGROUND = "lavender"
 FIG_BCKGROUND = "#d8dfe6"
+
+PROGRESS_BAR = """QProgressBar {
+    border: 2px solid grey;
+    border-radius: 5px;
+}
+
+QProgressBar::chunk {
+    background-color: #05B8CC;
+    width: 20px;
+}"""
