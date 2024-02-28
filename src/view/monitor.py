@@ -14,7 +14,8 @@ import os
 
 
 import matplotlib
-from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
+from constants import Disaster
+from view.cssConstants import *
 from model.entities.animals import Crab
 from model.entities.entity import Entity
 
@@ -35,6 +36,7 @@ class MonitorWindow:
         # --- main layout settings ---
         title = QLabel('Tableau de bord-inator')
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #tittle.setFont(QFont('Small Fonts', 20)) 
         title.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
         self.layout.addWidget(title)
 
@@ -100,7 +102,7 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
-        container.setStyleSheet("background-color: #ddd5fd")
+        container.setStyleSheet(VLAYOUT_COLOR)
         return container
 
     def checkBox2(self):
@@ -124,7 +126,7 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
-        container.setStyleSheet("background-color: #ddd5fd")
+        container.setStyleSheet(VLAYOUT_COLOR)
         return container
 
     # ---- handler for update information from button ----
@@ -148,6 +150,7 @@ class MonitorWindow:
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
+        fig.set_facecolor(FIG_BCKGROUND)
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
@@ -157,8 +160,11 @@ class GraphWindow:
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()
+        container.setStyleSheet(VLAYOUT_COLOR)
         container.setLayout(self.layout)
         self.layout.addWidget(self.canvas)
+
+        # --- buttons range with different entities ---
         iconWidget = QWidget()
         iconLayout = QHBoxLayout()
         iconWidget.setLayout(iconLayout)
@@ -178,6 +184,7 @@ class GraphWindow:
 
                 iconLayout.addWidget(iconbutton)
 
+        # range display
         nData = 50
         self.xdata = list(range(nData))
         self.nData = nData
@@ -206,14 +213,18 @@ class GraphWindow:
 
     def drawPlot(self):
         self.canvas.axes.clear()
-        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], 'r')
+        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], PLOT_COLOR)
         self.canvas.axes.set_ylim(
             0, max(max(self.ydata[self.chosenEntity]), 1))
+        self.canvas.axes.set_title(f'Évolution de {self.chosenEntity.__name__}')
+        self.canvas.axes.set_facecolor(PLOT_BCKGROUND)
+        self.canvas.axes.set_ylabel("Nombre d'individus")
+
         self.canvas.draw()
+        
 
     def updatePlot(self, newNumber, entity):
         self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
-
         # Note: we no longer need to clear the axis.
         if self._plotRef is None:
             # First time we have no plot reference, so do a normal plot.
@@ -226,3 +237,4 @@ class GraphWindow:
             # We have a reference, we can use it to update the data for that line.
             self._plotRef.set_ydata(self.ydata[self.chosenEntity])
         self.drawPlot()
+
