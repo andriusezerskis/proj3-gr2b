@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 import random
-from constants import EMPTY_TILE_PROBABILITY_GENERATION
+from constants import EMPTY_TILE_PROBABILITY_GENERATION, ENTITY_MIN_AGE_REPRODUCTION
 
 from random import random, choices
 
@@ -34,11 +34,6 @@ class EntitiesGenerator(AutomaticGenerator):
     def getBaseClass(cls) -> type:
         return Entity
 
-    @classmethod
-    @override
-    def getTerminalChildrenOfBaseClass(cls) -> set[type]:
-        return super().getTerminalChildrenOfBaseClass() - {Player}
-
     def generateEntities(self, grid: Grid):
         for tile in grid:
             if random() >= EMPTY_TILE_PROBABILITY_GENERATION:
@@ -62,4 +57,4 @@ class EntitiesGenerator(AutomaticGenerator):
         if len(validEntities) == 0:
             return
         weights = [entityType.getSpawnWeight() for entityType in validEntities]
-        return tile.addNewEntity(choices(population=validEntities, weights=weights)[0])
+        return tile.addNewEntity(choices(population=validEntities, weights=weights)[0], ENTITY_MIN_AGE_REPRODUCTION)
