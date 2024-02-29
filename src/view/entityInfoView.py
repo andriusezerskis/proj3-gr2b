@@ -9,7 +9,7 @@ from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, ENTITY_PARAMETERS, RELEASE_PLAYER
-from view.cssConstants import PROGRESS_BAR
+from view.cssConstants import PROGRESS_BAR, CLICKED_BUTTON_STYLESHEET
 
 
 class EntityInfoView(QDockWidget):
@@ -28,10 +28,12 @@ class EntityInfoView(QDockWidget):
 
         self.controlButton = QPushButton(CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
+        self.controlButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
         self.controlButton.hide()
 
         self.lageButton = QPushButton(RELEASE_PLAYER)
         self.lageButton.clicked.connect(self.controlEntity)
+        self.lageButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
         self.lageButton.hide()
 
         self.buttonLayout = QHBoxLayout()

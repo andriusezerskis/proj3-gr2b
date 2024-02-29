@@ -29,7 +29,7 @@ class StartWindow(QMainWindow):
         label = QLabel("Deb'île")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         #label.setFont(QFont('Small Fonts', 100)) 
-        label.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
+        label.setStyleSheet("QLabel{font-weight: bold}")
         self.layout.addWidget(label)
 
         container = QWidget()

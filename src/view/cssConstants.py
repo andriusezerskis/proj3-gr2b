@@ -32,9 +32,11 @@ FIG_BCKGROUND = "#d8dfe6"
 PROGRESS_BAR = """QProgressBar {
     border: 2px solid grey;
     border-radius: 5px;
+    text-align: center;
 }
 
 QProgressBar::chunk {
-    background-color: #05B8CC;
-    width: 20px;
+    background-color: #CD96CD;
+    width: 10px;
+    margin: 0.5px;
 }"""
