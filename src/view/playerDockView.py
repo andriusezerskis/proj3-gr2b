@@ -11,12 +11,12 @@ class PlayerDockView(QDockWidget):
         super().__init__()
         self.dock = dock
 
-        self.lageButton = QPushButton(RELEASE_PLAYER)
-        self.lageButton.clicked.connect(self.lageEntity)
+        self.freeButton = QPushButton(RELEASE_PLAYER)
+        self.freeButton.clicked.connect(self.lageEntity)
         #self.lageButton.hide()
 
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.lageButton)
+        self.layout.addWidget(self.freeButton)
 
         self.container = container
         self.container.setLayout(self.layout)

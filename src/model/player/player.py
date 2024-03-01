@@ -5,14 +5,15 @@ Date: December 2023
 """
 
 from copy import copy
-from typing import override, TypeVar
+from typing import override, TypeVar, Dict
 
-from utils import Point
+from utils import Point, getTerminalSubclassesOfClass
 
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
 from model.movable import Movable
+from model.crafting.loots import Loot
 
 Grid = TypeVar("Grid")
 
@@ -24,6 +25,7 @@ class Player(Movable):
         self.pos = pos
         self.grid = grid
         self.claimed_entity: Entity | None = None
+        self.inventory = {loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
 
     def isPlaying(self):
         return self.claimed_entity is not None
@@ -51,6 +53,17 @@ class Player(Movable):
             self.pos = wantedPosition
             return True
         return False
+
+    def addInInventory(self, loots: Dict[str, int]):
+        for loot_name in loots:
+            self.inventory[loot_name] += loots[loot_name]
+
+    def removeFromInventory(self, recipe: Dict[str, int]):
+        for loot_name in recipe:
+            self.inventory[loot_name] -= recipe[loot_name]
+
+    def getInventory(self):
+        return self.inventory
 
     @override
     def getPos(self) -> Point:

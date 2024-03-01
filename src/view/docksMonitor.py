@@ -79,7 +79,6 @@ class PlayerDock(CustomQDock):
         self.playerController = PlayerDockController(self, container1)
         self.scrollArea = ScrollArea(container2)
 
-
     def updateContent(self, j):
         return
 
