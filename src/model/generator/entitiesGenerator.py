@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 import random
-from parameters.constants import EMPTY_TILE_PROBABILITY_GENERATION, ENTITY_MIN_AGE_REPRODUCTION
+from parameter.constants import EMPTY_TILE_PROBABILITY_GENERATION, ENTITY_MIN_AGE_REPRODUCTION
 
 from random import random, choices
 
@@ -18,6 +18,9 @@ from model.entities.entity import Entity
 from model.terrains.tile import Tile
 
 # these imports are actually necessary, do not trust your IDE
+import model.entities.plants
+import model.entities.animals
+import model.entities.human
 
 
 class EntitiesGenerator(AutomaticGenerator):
@@ -53,5 +56,5 @@ class EntitiesGenerator(AutomaticGenerator):
         validEntities = self.getValidEntities(type(tile))
         if len(validEntities) == 0:
             return
-        weights = [entityType.getSpawnWeight() for entityType in validEntities]
+        weights = [entityType.getSpawnWeight() for entityType in validEntities if issubclass(entityType, Entity)]
         return tile.addNewEntity(choices(population=validEntities, weights=weights)[0], ENTITY_MIN_AGE_REPRODUCTION)

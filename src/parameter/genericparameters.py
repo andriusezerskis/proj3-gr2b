@@ -4,7 +4,7 @@ from json import load
 from utils import getTerminalSubclassesOfClass
 
 
-class Parameters(ABC):
+class GenericParameters(ABC):
 
     @classmethod
     @abstractmethod
@@ -17,8 +17,8 @@ class Parameters(ABC):
 
     @staticmethod
     def reloadAllClasses():
-        for parameterType in getTerminalSubclassesOfClass(Parameters):
-            assert issubclass(parameterType, Parameters)
+        for parameterType in getTerminalSubclassesOfClass(GenericParameters):
+            assert issubclass(parameterType, GenericParameters)
             parameterType.reloadDict()
 
     @classmethod

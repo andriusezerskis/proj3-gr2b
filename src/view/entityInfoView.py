@@ -9,7 +9,7 @@ from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from controller.mainWindowController import MainWindowController
-from parameters.constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, \
+from parameter.constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, \
     ENTITY_PARAMETERS, HEALTH_BAR_TEXT, NAME_TEXT, AGE_TEXT, HUNGER_TEXT
 
 

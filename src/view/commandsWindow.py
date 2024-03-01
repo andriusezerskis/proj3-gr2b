@@ -4,7 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from parameters.constants import COMMANDS_WINDOW_TITLE, MOVE_CAMERA_UP
+from parameter.constants import COMMANDS_WINDOW_TITLE, MOVE_CAMERA_UP
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QWidget, QMainWindow
 
 

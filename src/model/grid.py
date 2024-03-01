@@ -12,7 +12,7 @@ from model.terrains.tiles import Water, Sand
 
 from model.regionHandler import RegionHandler
 
-from parameters.constants import MAX_WATER_LEVEL
+from parameter.constants import MAX_WATER_LEVEL
 
 
 class Grid:

@@ -1,4 +1,4 @@
-from parameters.constants import Disaster
+from parameter.constants import Disaster
 from utils import Point
 from model.terrains.tile import Tile
 from model.entities.animals import Crab

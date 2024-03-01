@@ -9,7 +9,7 @@ import time
 import os
 import sys
 
-from parameters.constants import *
+from parameter.constants import *
 from utils import getTerminalSubclassesOfClass
 from math import cos, pi
 

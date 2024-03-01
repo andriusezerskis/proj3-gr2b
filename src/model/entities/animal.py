@@ -10,7 +10,7 @@ from abc import ABC
 from overrides import override
 from random import choice, choices
 
-from parameters.constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
+from parameter.constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
 from model.entities.entity import Entity
 from model.action import Action
 

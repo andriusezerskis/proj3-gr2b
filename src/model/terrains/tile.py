@@ -14,7 +14,7 @@ from model.drawable import ParametrizedDrawable
 from model.movable import Movable
 
 from utils import Point
-from parameters.constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
+from parameter.constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
 
 
 Tile_ = TypeVar("Tile_")
@@ -39,8 +39,8 @@ class Tile(ParametrizedDrawable, ABC):
 
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return TILE_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/tiles.json"
 
     @classmethod
     @override

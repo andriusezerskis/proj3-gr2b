@@ -13,7 +13,7 @@ from PyQt6.QtGui import *
 
 import matplotlib
 from utils import getTerminalSubclassesOfClass
-from parameters.constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
+from parameter.constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
 from model.entities.entity import Entity
 
 matplotlib.use('QtAgg')

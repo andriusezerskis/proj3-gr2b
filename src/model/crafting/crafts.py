@@ -1,6 +1,6 @@
 from typing import Dict, override
 
-from parameters.constants import CRAFT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
+from parameter.constants import CRAFT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
 from model.crafting.loots import Loot
 from model.drawable import ParametrizedDrawable
 

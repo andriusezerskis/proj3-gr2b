@@ -6,7 +6,7 @@ Date: December 2023
 
 from PyQt6.QtWidgets import *
 
-from parameters.constants import TEXTURE_SIZE
+from parameter.constants import TEXTURE_SIZE
 
 
 class GraphicalTile:

@@ -1,6 +1,6 @@
 from typing import override
 
-from parameters.constants import LOOT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
+from parameter.constants import LOOT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
 from model.drawable import ParametrizedDrawable
 
 

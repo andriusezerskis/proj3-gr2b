@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QDockWidget, QPushButton, QVBoxLayout
 
-from parameters.constants import RELEASE_PLAYER
+from parameter.constants import RELEASE_PLAYER
 from controller.mainWindowController import MainWindowController
 from model.entities.entity import Entity
 from controller.gridController import GridController
