@@ -8,8 +8,8 @@ from model.generator.noiseGenerator import NoiseGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 
-from parameter.constants import (SEASON_TEMPERATURE_DIFFERENCE, YEAR_DURATION,
-                                 AVERAGE_TEMPERATURE, MAX_TEMPERATURE_DIFFERENCE)
+from parameters import TerrainParameters
+
 from math import sin, pi
 
 from utils import Point
@@ -31,7 +31,8 @@ class RegionHandler:
         self._generate()
 
     def _sampleSineTemperature(self):
-        return SEASON_TEMPERATURE_DIFFERENCE / 2 * sin(pi * 2 * self.t / YEAR_DURATION)
+        return (TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2 *
+                sin(pi * 2 * self.t / TerrainParameters.YEAR_DURATION))
 
     def _generate(self) -> None:
         self.flatTemperatureNoise.addNoise(3, 1)
@@ -45,9 +46,9 @@ class RegionHandler:
                 self.humidityMap[y][x] = self._sampleHumidity(x, y)
 
     def _sampleTemperatureFlat(self, x: int, y: int):
-        s = AVERAGE_TEMPERATURE
+        s = TerrainParameters.AVERAGE_TEMPERATURE
         s += self.flatTemperatureNoise.sample2D(
-            x/self.gridSize.x(), y/self.gridSize.y()) * MAX_TEMPERATURE_DIFFERENCE
+            x/self.gridSize.x(), y/self.gridSize.y()) * TerrainParameters.MAX_TEMPERATURE_DIFFERENCE
         return s
 
     def _sampleHumidity(self, x: int, y: int):
@@ -60,10 +61,10 @@ class RegionHandler:
         return self.humidityMap[y][x]
 
     def renderTemperatureMap(self):
-        vmin = (AVERAGE_TEMPERATURE - MAX_TEMPERATURE_DIFFERENCE -
-                SEASON_TEMPERATURE_DIFFERENCE / 2)
-        vmax = (AVERAGE_TEMPERATURE + MAX_TEMPERATURE_DIFFERENCE +
-                SEASON_TEMPERATURE_DIFFERENCE / 2)
+        vmin = (TerrainParameters.AVERAGE_TEMPERATURE - TerrainParameters.MAX_TEMPERATURE_DIFFERENCE -
+                TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2)
+        vmax = (TerrainParameters.AVERAGE_TEMPERATURE + TerrainParameters.MAX_TEMPERATURE_DIFFERENCE +
+                TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2)
         plt.imshow(self.temperatureMap + self._sampleSineTemperature(),
                    vmin=vmin, vmax=vmax)
         plt.text(1, 4, f"t={self.t}", backgroundcolor="white")

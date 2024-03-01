@@ -4,7 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from parameter.constants import COMMANDS_WINDOW_TITLE, MOVE_CAMERA_UP
+from parameters import ViewText
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QWidget, QMainWindow
 
 
@@ -12,7 +12,7 @@ class CommandWindow(QMainWindow):
     def __init__(self, parent=None):
         super(CommandWindow, self).__init__(parent)
         self.layout = QHBoxLayout()
-        self.setWindowTitle(COMMANDS_WINDOW_TITLE)
+        self.setWindowTitle(ViewText.COMMANDS_WINDOW_TITLE)
         self.centralWidget: QWidget = QWidget()
         self.centralWidget.setLayout(self.layout)
         self.setCentralWidget(self.centralWidget)
@@ -23,5 +23,5 @@ class CommandWindow(QMainWindow):
         """
         Draw the commands that the user can use to move the player
         """
-        self.firstCommand = QLabel(MOVE_CAMERA_UP)
+        self.firstCommand = QLabel(ViewText.MOVE_CAMERA_UP)
         self.layout.addWidget(self.firstCommand)

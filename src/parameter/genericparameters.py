@@ -16,7 +16,7 @@ class GenericParameters(ABC):
         return "../config/" + cls.getFileName()
 
     @staticmethod
-    def reloadAllClasses():
+    def reloadAllDicts():
         for parameterType in getTerminalSubclassesOfClass(GenericParameters):
             assert issubclass(parameterType, GenericParameters)
             parameterType.reloadDict()

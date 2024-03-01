@@ -12,9 +12,11 @@ from overrides import override
 from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
 from model.movable import Movable
+from model.disaster import Disaster
 
 from utils import Point
-from parameter.constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
+
+from parameters import TerrainParameters, ViewParameters
 
 
 Tile_ = TypeVar("Tile_")
@@ -32,9 +34,9 @@ class Tile(ParametrizedDrawable, ABC):
 
     def getDisasterPathName(self):
         if self.disaster == Disaster.FIRE_TEXT:
-            return FIRE
+            return ViewParameters.FIRE_TEXTURE_PATH
         elif self.disaster == Disaster.ICE_TEXT:
-            return ICE
+            return ViewParameters.ICE_TEXTURE_PATH
         return None
 
     @classmethod
@@ -45,7 +47,7 @@ class Tile(ParametrizedDrawable, ABC):
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return TILES_TEXTURE_FOLDER_PATH
+        return TerrainParameters.TEXTURE_FOLDER_PATH
 
     @classmethod
     def getLevel(cls) -> float:

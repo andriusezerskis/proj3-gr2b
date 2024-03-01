@@ -1,19 +1,19 @@
 from typing import override
 
-from parameter.constants import LOOT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
+from parameters import CraftParameters
 from model.drawable import ParametrizedDrawable
 
 
 class Loot(ParametrizedDrawable):
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return LOOT_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/loots.json"
 
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return ITEMS_TEXTURE_FOLDER_PATH
+        return CraftParameters.TEXTURE_FOLDER_PATH
 
 
 class Wood(Loot):

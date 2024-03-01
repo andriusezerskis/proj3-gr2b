@@ -13,6 +13,9 @@ import signal
 from model.crafting.crafts import FishingRod, Fence
 from model.crafting.loots import Wood, Claw
 from model.entities.animals import Crab
+import parameters
+
+from parameter.genericparameters import GenericParameters
 from view.startWindow import StartWindow
 
 
@@ -42,6 +45,7 @@ def setlocale(name):
 
 def main():
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    GenericParameters.reloadAllDicts()
     app = QApplication(sys.argv)
     startWindow = StartWindow()
     startWindow.show()

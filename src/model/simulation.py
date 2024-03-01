@@ -6,10 +6,9 @@ Date: December 2023
 
 from random import choice, random
 import time
-import os
-import sys
 
-from parameter.constants import *
+from parameters import TerrainParameters
+
 from utils import getTerminalSubclassesOfClass
 from math import cos, pi
 
@@ -29,11 +28,7 @@ from model.entities.entity import Entity
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 from model.action import Action
-from model.disaster import DisasterHandler
-
-
-sys.path.append(os.path.dirname(
-    os.path.dirname(os.path.abspath("constants.py"))))
+from model.disasterhandler import DisasterHandler
 
 
 class Simulation:
@@ -120,8 +115,8 @@ class Simulation:
     def updateWaterLevel(self) -> None:
         # two oscillations a day
         self.waterLevel = (Water.getLevel() +
-                           (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
-                           * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
+                           (-cos(4 * pi * self.stepCount / TerrainParameters.DAY_DURATION) + 1)
+                           * (TerrainParameters.MAX_WATER_LEVEL - Water.getLevel()) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.waterLevel)
         self.modifiedTiles |= modified
 

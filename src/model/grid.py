@@ -12,7 +12,7 @@ from model.terrains.tiles import Water, Sand
 
 from model.regionHandler import RegionHandler
 
-from parameter.constants import MAX_WATER_LEVEL
+from parameters import TerrainParameters
 
 
 class Grid:
@@ -31,7 +31,7 @@ class Grid:
 
         # construct the set of tiles that will be affected by tides
         for tile in self:
-            if Water.getLevel() < tile.height < MAX_WATER_LEVEL:
+            if Water.getLevel() < tile.height < TerrainParameters.MAX_WATER_LEVEL:
                 self.coasts.add(tile)
 
     def getTilesInRadius(self, center: Point, radius: int):

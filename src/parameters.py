@@ -67,6 +67,7 @@ class ViewParameters(GenericParameters, ABC):
     TIME_FORMAT: str = None
     GRID_STYLESHEET: str = None
     TEXTURE_SIZE: int = None
+    STEP_TIME: int = None
 
     @classmethod
     @override
@@ -92,3 +93,13 @@ class ViewText(GenericParameters, ABC):
     @override
     def getFileName(cls) -> str:
         return "view_text.json"
+
+
+class CraftParameters(GenericParameters, ABC):
+
+    TEXTURE_FOLDER_PATH: str = None
+
+    @classmethod
+    @override
+    def getFileName(cls) -> str:
+        return "crafting_parameters.json"

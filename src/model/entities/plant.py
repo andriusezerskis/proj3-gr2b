@@ -10,8 +10,8 @@ from random import random
 
 from model.entities.entity import Entity
 from model.action import Action
-from parameter.constants import (PLANT_REPRODUCTION_PROBABILITY, PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD,
-                                 PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS)
+
+from parameters import EntityParameters
 
 
 class Plant(Entity, ABC):
@@ -21,11 +21,11 @@ class Plant(Entity, ABC):
         adjacentPeers = len([tile for tile in self.getAdjacentTiles()
                              if tile.hasEntity() and type(self) is type(tile.getEntity())])
 
-        if (adjacentPeers >= PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD and
-                random() < PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS):
+        if (adjacentPeers >= EntityParameters.PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD and
+                random() < EntityParameters.PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_NEIGHBOURS):
             return Action.DIE
 
-        probability = PLANT_REPRODUCTION_PROBABILITY - 0.01 * adjacentPeers
+        probability = EntityParameters.PLANT_REPRODUCTION_PROBABILITY - 0.01 * adjacentPeers
 
         if random() < probability and len(self.getValidMovementTiles()) > 0:
             return Action.REPRODUCE

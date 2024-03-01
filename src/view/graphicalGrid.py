@@ -27,8 +27,9 @@ from controller.mainWindowController import MainWindowController
 from view.graphicalTile import GraphicalTile
 
 
-from parameter.constants import GRID_STYLESHEET, NIGHT_MODE, SUNSET_MODE_START, SUNSET_MODE, NIGHT_MODE_START, NIGHT_MODE_FINISH, \
-    MIDDLE_OF_THE_NIGHT, HIGHLIGHTED_TILE, MAX_TILE_FILTER_OPACITY, TEXTURE_SIZE, Disaster
+from model.disaster import Disaster
+
+from parameters import ViewParameters
 
 from model.player.player import Player
 from model.simulation import Simulation
@@ -47,7 +48,7 @@ class GraphicalGrid(QGraphicsView):
 
         self.setMouseTracking(True)
 
-        self.texture_size = TEXTURE_SIZE
+        self.texture_size = ViewParameters.TEXTURE_SIZE
         self.gridSize: Point = gridSize
         self.pixmapItems: List[List[GraphicalTile]] = \
             [[GraphicalTile(y, x) for x in range(self.gridSize.x())]
@@ -63,10 +64,10 @@ class GraphicalGrid(QGraphicsView):
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
         # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
-        self.scale(10/TEXTURE_SIZE, 10/TEXTURE_SIZE)
+        self.scale(10 / ViewParameters.TEXTURE_SIZE, 10 / ViewParameters.TEXTURE_SIZE)
         self.initNightMode()
 
-        self.setStyleSheet(GRID_STYLESHEET)
+        self.setStyleSheet(ViewParameters.GRID_STYLESHEET)
 
         self.horizontalScrollbar = self.horizontalScrollBar()
         self.verticalScrollbar = self.verticalScrollBar()
@@ -81,7 +82,7 @@ class GraphicalGrid(QGraphicsView):
         """
         Initialize the border of the tile to know which tile is selected
         """
-        self.highlitedTile = QGraphicsPixmapItem(QPixmap(HIGHLIGHTED_TILE))
+        self.highlitedTile = QGraphicsPixmapItem(QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH))
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
         self.highlitedTile.hide()
@@ -91,7 +92,7 @@ class GraphicalGrid(QGraphicsView):
         Initialize a pixmap with the night mode
         """
         self.luminosityMode = QGraphicsPixmapItem(
-            self.getPixmapFromRGBHex(NIGHT_MODE))
+            self.getPixmapFromRGBHex(ViewParameters.NIGHT_MODE_COLOR))
         self.scene.addItem(self.luminosityMode)
         self.luminosityMode.setPos(0, 0)
 
@@ -148,12 +149,12 @@ class GraphicalGrid(QGraphicsView):
 
         # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
         levelRange = GridGenerator.getRange(type(tile))
-        m = MAX_TILE_FILTER_OPACITY / (levelRange[1] - levelRange[0])
+        m = ViewParameters.MAX_TILE_FILTER_OPACITY / (levelRange[1] - levelRange[0])
         p = -levelRange[0] * m
         opacity = m * tile.getHeight() + p
 
         if not tile.isGradientAscending():
-            opacity = MAX_TILE_FILTER_OPACITY - opacity
+            opacity = ViewParameters.MAX_TILE_FILTER_OPACITY - opacity
 
         depthFilter.setOpacity(opacity)
         depthFilter.show()
@@ -189,19 +190,19 @@ class GraphicalGrid(QGraphicsView):
 
     def nightMode(self, hour):
         opacity = self.luminosityMode.opacity()
-        if hour == SUNSET_MODE_START:
+        if hour == ViewParameters.SUNSET_MODE_START:
             self.luminosityMode.setPixmap(
-                self.getPixmapFromRGBHex(SUNSET_MODE))
+                self.getPixmapFromRGBHex(ViewParameters.SUNSET_MODE_COLOR))
             self.luminosityMode.setOpacity(0.1)
-        if hour == NIGHT_MODE_START:
-            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(NIGHT_MODE))
+        if hour == ViewParameters.NIGHT_MODE_START:
+            self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(ViewParameters.NIGHT_MODE_COLOR))
             self.luminosityMode.setOpacity(0.1)
 
-        elif hour == NIGHT_MODE_FINISH:
+        elif hour == ViewParameters.NIGHT_MODE_FINISH:
             self.luminosityMode.setPixmap(QPixmap())
-        elif hour > NIGHT_MODE_START or hour < MIDDLE_OF_THE_NIGHT - 2:
+        elif hour > ViewParameters.NIGHT_MODE_START or hour < ViewParameters.MIDDLE_OF_THE_NIGHT - 2:
             self.luminosityMode.setOpacity(opacity + 0.1)
-        elif MIDDLE_OF_THE_NIGHT + 2 < hour < NIGHT_MODE_FINISH:
+        elif ViewParameters.MIDDLE_OF_THE_NIGHT + 2 < hour < ViewParameters.NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, oldPos, newPos):

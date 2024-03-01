@@ -1,7 +1,7 @@
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QLabel
 
-from src.model.crafting.loots import Loot
+from model.crafting.loots import Loot
 
 
 class ScrollArea(QWidget):
