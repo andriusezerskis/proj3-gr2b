@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QDockWidget, QPushButton, QVBoxLayout
 
-from constants import RELEASE_PLAYER
+from parameters import ViewText
 from controller.mainWindowController import MainWindowController
 from model.entities.entity import Entity
 from controller.gridController import GridController
@@ -11,7 +11,7 @@ class PlayerDockView(QDockWidget):
         super().__init__()
         self.dock = dock
 
-        self.lageButton = QPushButton(RELEASE_PLAYER)
+        self.lageButton = QPushButton(ViewText.RELEASE_PLAYER)
         self.lageButton.clicked.connect(self.lageEntity)
         #self.lageButton.hide()
 

@@ -8,8 +8,9 @@ import random
 from mimesis import Person
 from mimesis import Locale
 from abc import ABC, abstractmethod
-from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
-                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH, Disaster)
+
+from parameters import EntityParameters, TerrainParameters
+
 from model.action import Action
 from typing import TypeVar
 from utils import Point
@@ -50,13 +51,20 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return ENTITY_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/entities.json"
 
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return ENTITIES_TEXTURE_FOLDER_PATH
+        return EntityParameters.TEXTURE_FOLDER_PATH
+
+    @staticmethod
+    def getFrenchNameFromClassName(className: str) -> str:
+        for cls in Entity.parameterDicts.keys():
+            if cls.__name__ == className:
+                return cls.getFrenchName()
+        raise KeyError
 
     @classmethod
     def getSpawnWeight(cls) -> float:
@@ -100,15 +108,15 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         Reproduces and places the newborn in the grid
         :return: the position of the newborn
         """
-        self._reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+        self._reproductionCooldown = EntityParameters.REPRODUCTION_COOLDOWN
         if other:
-            other.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+            other.reproductionCooldown = EntityParameters.REPRODUCTION_COOLDOWN
         freeTile = choice(self.getValidMovementTiles())
         freeTile.addNewEntity(self.__class__)
         return freeTile
 
     def isDeadByOldness(self):
-        return self._age >= ENTITY_MAX_AGE
+        return self._age >= EntityParameters.MAX_AGE
 
     def isDead(self):
         return self.isDeadByOldness() or self._dead
@@ -147,7 +155,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return self._name
 
     def getDisplayAge(self) -> int:
-        return self.getAge() // DAY_DURATION
+        return self.getAge() // TerrainParameters.DAY_DURATION
 
     def __str__(self):
         return self.__class__.__name__[0]
@@ -201,7 +209,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return self.getGrid().getTile(self.getPos())
 
     def isFitForReproduction(self) -> bool:
-        return self.getReproductionCooldown() == 0 and self.getAge() >= ENTITY_MIN_AGE_REPRODUCTION
+        return self.getReproductionCooldown() == 0 and self.getAge() >= EntityParameters.REPRODUCTION_MIN_AGE
 
     def getReproductionCooldown(self) -> int:
         return self._reproductionCooldown

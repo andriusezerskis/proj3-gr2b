@@ -5,10 +5,10 @@ Date: December 2023
 """
 
 import time
-from PyQt6.QtGui import QCloseEvent
-from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
+
+from parameters import ViewParameters, ViewText
 
 from model.entities.entity import Entity
 from model.simulation import Simulation
@@ -27,7 +27,7 @@ class Window(QMainWindow):
     def __init__(self, gridSize, simulation: Simulation):
         super().__init__()
 
-        self.setWindowTitle(MAIN_WINDOW_TITLE)
+        self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
         self.view = GraphicalGrid(gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
@@ -54,7 +54,7 @@ class Window(QMainWindow):
 
     def initTimer(self):
         self.timer = QTimer()
-        self.timer.setInterval(STEP_TIME)
+        self.timer.setInterval(ViewParameters.STEP_TIME)
         self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
         self.recurringTimer()
@@ -64,12 +64,12 @@ class Window(QMainWindow):
         if self.paused:
             self.paused = False
             self.timer.start()
-            self.pauseButton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+            self.pauseButton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
             self.timer.stop()
             self.paused = True
-            self.pauseButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
+            self.pauseButton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
 
     def recurringTimer(self):
         self.totalTime += 1
@@ -87,21 +87,21 @@ class Window(QMainWindow):
         """
 
         convert = time.strftime(
-            TIME_FORMAT, time.gmtime(self.totalTime * 3600))
+            ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
         hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
 
     def fastForward(self):
         if self.fastF:
-            self.timer.setInterval(STEP_TIME)
+            self.timer.setInterval(ViewParameters.STEP_TIME)
             self.fastF = False
-            self.fastFbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+            self.fastFbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
-            self.timer.setInterval(STEP_TIME // 2)
+            self.timer.setInterval(ViewParameters.STEP_TIME // 2)
             self.fastF = True
-            self.fastFbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
+            self.fastFbutton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
 
     def getGraphicalGrid(self):
         return self.view
@@ -116,11 +116,11 @@ class Window(QMainWindow):
 
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
-        self.pauseButton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.pauseButton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
         self.fastFbutton = QPushButton("fast forward")
-        self.fastFbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.fastFbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")

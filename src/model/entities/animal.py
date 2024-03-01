@@ -10,7 +10,8 @@ from abc import ABC
 from overrides import override
 from random import choice, choices
 
-from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
+from parameters import EntityParameters
+
 from model.entities.entity import Entity
 from model.action import Action
 
@@ -224,13 +225,13 @@ class Animal(Entity, ABC):
 
     @override
     def isFitForReproduction(self) -> bool:
-        return super().isFitForReproduction() and self.hunger <= ENTITY_MAX_HUNGER_REPRODUCTION
+        return super().isFitForReproduction() and self.hunger <= EntityParameters.REPRODUCTION_MAX_HUNGER
 
     def starvedToDeath(self) -> bool:
-        return self.hunger >= ENTITY_MAX_HUNGER
+        return self.hunger >= EntityParameters.MAX_HUNGER
 
     def getHunger(self) -> float:
         return self.hunger
 
     def isHungry(self) -> bool:
-        return self.getHunger() > ENTITY_HUNGRY_THRESHOLD
+        return self.getHunger() > EntityParameters.HUNGRY_THRESHOLD

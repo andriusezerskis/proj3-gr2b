@@ -7,16 +7,14 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QButtonGroup
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-import os
-
 
 import matplotlib
 from utils import getTerminalSubclassesOfClass
-from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
-from model.entities.animals import Crab
+from model.disaster import Disaster
+from parameters import ViewParameters
 from model.entities.entity import Entity
 
 matplotlib.use('QtAgg')
@@ -59,13 +57,13 @@ class MonitorWindow:
 
         self.button = QPushButton("OK")
         self.button.clicked.connect(self.okButtonCallback)
-        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
 
     def okButtonCallback(self):
         # handler of ok button after selection of a catastroph
         self.isMonitor = True
-        self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
+        self.button.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
 
     def getIsMonitor(self):
         return self.isMonitor
@@ -74,7 +72,7 @@ class MonitorWindow:
         # calls when click on the map after selection of catastroph
         # (end of the action)
         self.isMonitor = False
-        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
     def getInfo(self):
         return self.infoZone, self.infoRayon, self.infoDisaster, self.invasionChosen
@@ -188,7 +186,7 @@ class GraphWindow:
             iconbutton.setIcon(
                 QIcon(icon))
             iconbutton.setIconSize(QSize(15, 15))
-            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+            iconbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
             iconLayout.addWidget(iconbutton)
 
@@ -206,14 +204,14 @@ class GraphWindow:
         self.setChosenEntity(entityType, iconbutton)
 
     def setChosenEntity(self, entity, iconbutton):
-        if iconbutton.styleSheet() == NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
-            iconbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)  # chosen
+        if iconbutton.styleSheet() == ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
+            iconbutton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)  # chosen
             if self.iconButtonSelected:
                 self.iconButtonSelected.setStyleSheet(
-                    NOT_CLICKED_BUTTON_STYLESHEET)
+                    ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
             self.iconButtonSelected = iconbutton
         else:
-            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+            iconbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.chosenEntity = entity
         self.drawPlot()
 

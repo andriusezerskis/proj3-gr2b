@@ -1,6 +1,7 @@
 from typing import Dict, override
 
-from constants import CRAFT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
+from parameters import CraftParameters
+
 from model.crafting.loots import Loot
 from model.drawable import ParametrizedDrawable
 
@@ -23,13 +24,13 @@ class Craft(ParametrizedDrawable):
 
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return CRAFT_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/crafts.json"
 
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return ITEMS_TEXTURE_FOLDER_PATH
+        return CraftParameters.TEXTURE_FOLDER_PATH
 
     @classmethod
     def getBlueprint(cls) -> Dict[str, int]:

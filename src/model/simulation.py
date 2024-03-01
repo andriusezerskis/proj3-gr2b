@@ -4,25 +4,17 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from cmath import sqrt
-import itertools
-import math
 from random import choice, random
 import time
-import os
-import sys
 
-import numpy as np
+from parameters import TerrainParameters
 
-from constants import *
-from utils import Point, getTerminalSubclassesOfClass
+from utils import getTerminalSubclassesOfClass
 from math import cos, pi
 
 # do not trust your IDE, we need it for the globals() function
 
 from model.entities.plant import Plant
-from model.entities.animals import Crab, Fish
-from model.entities.plants import Algae, Tree
 
 ###
 
@@ -33,16 +25,10 @@ from model.generator.entitiesGenerator import EntitiesGenerator
 from model.terrains.tile import Tile
 from model.terrains.tiles import Water
 from model.entities.entity import Entity
-from model.entities.human import Human
-from model.pathfinder import Pathfinder
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 from model.action import Action
-from model.disaster import DisasterHandler
-
-
-sys.path.append(os.path.dirname(
-    os.path.dirname(os.path.abspath("constants.py"))))
+from model.disasterhandler import DisasterHandler
 
 
 class Simulation:
@@ -129,8 +115,8 @@ class Simulation:
     def updateWaterLevel(self) -> None:
         # two oscillations a day
         self.waterLevel = (Water.getLevel() +
-                           (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
-                           * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
+                           (-cos(4 * pi * self.stepCount / TerrainParameters.DAY_DURATION) + 1)
+                           * (TerrainParameters.MAX_WATER_LEVEL - Water.getLevel()) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.waterLevel)
         self.modifiedTiles |= modified
 
