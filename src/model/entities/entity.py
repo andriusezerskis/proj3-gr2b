@@ -3,12 +3,14 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
+import random
 
 from mimesis import Person
 from mimesis import Locale
 from abc import ABC, abstractmethod
-from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
-                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH, Disaster)
+
+from parameters import EntityParameters, TerrainParameters
+
 from model.action import Action
 from typing import TypeVar
 from utils import Point
@@ -17,12 +19,14 @@ from overrides import override
 
 from random import choice
 
+from model.movable import Movable
+
 Entity_ = TypeVar("Entity_")
 Tile = TypeVar("Tile")
 Grid = TypeVar("Grid")
 
 
-class Entity(ParametrizedDrawable, ABC):
+class Entity(Movable, ParametrizedDrawable, ABC):
     # https://stackoverflow.com/a/75663885
     _counts = dict()
     _grid = None
@@ -41,19 +45,26 @@ class Entity(ParametrizedDrawable, ABC):
         self._local_information = {}
         self._dead = False
         self._killed = False
-        self._healthPoints = self.getMaxHealthPoints()
+        self._hp = self.getMaxHealthPoints()
 
         self._name = Person(Locale.FR).first_name()
 
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return ENTITY_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/entities.json"
 
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return ENTITIES_TEXTURE_FOLDER_PATH
+        return EntityParameters.TEXTURE_FOLDER_PATH
+
+    @staticmethod
+    def getFrenchNameFromClassName(className: str) -> str:
+        for cls in Entity.parameterDicts.keys():
+            if cls.__name__ == className:
+                return cls.getFrenchName()
+        raise KeyError
 
     @classmethod
     def getSpawnWeight(cls) -> float:
@@ -64,6 +75,10 @@ class Entity(ParametrizedDrawable, ABC):
         return cls._getParameter("health_points")
 
     @classmethod
+    def getFrenchName(cls) -> str:
+        return cls._getParameter("french_name")
+
+    @classmethod
     def _getValidTiles(cls) -> list[str]:
         return cls._getParameter("valid_tiles")
 
@@ -72,13 +87,13 @@ class Entity(ParametrizedDrawable, ABC):
         return tileType.__name__ in cls._getValidTiles()
 
     def getHealthPoints(self) -> float:
-        return self._healthPoints
+        return self._hp
 
     def removeHealthPoints(self) -> None:
-        if self.getTile().disaster == Disaster.FIRE or self.getTile().disaster == Disaster.ICE:
-            self._healthPoints -= self.getTile().disasterOpacity * 100
-            print("health points", self._healthPoints)
-        if self._healthPoints <= 0:
+        if self.getTile().disaster == Disaster.FIRE_TEXT or self.getTile().disaster == Disaster.ICE_TEXT:
+            self._hp -= self.getTile().disasterOpacity * 100
+            print("health points", self._hp)
+        if self._hp <= 0:
             print("killed")
             self.kill()
 
@@ -93,15 +108,15 @@ class Entity(ParametrizedDrawable, ABC):
         Reproduces and places the newborn in the grid
         :return: the position of the newborn
         """
-        self._reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+        self._reproductionCooldown = EntityParameters.REPRODUCTION_COOLDOWN
         if other:
-            other.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+            other.reproductionCooldown = EntityParameters.REPRODUCTION_COOLDOWN
         freeTile = choice(self.getValidMovementTiles())
         freeTile.addNewEntity(self.__class__)
         return freeTile
 
     def isDeadByOldness(self):
-        return self._age >= ENTITY_MAX_AGE
+        return self._age >= EntityParameters.MAX_AGE
 
     def isDead(self):
         return self.isDeadByOldness() or self._dead
@@ -114,7 +129,11 @@ class Entity(ParametrizedDrawable, ABC):
             self._counts[cls] -= 1
 
         self._killed = True
-        self._dead = True
+    
+    def inflictDamage(self, damage: float) -> None:
+        self._hp -= damage
+        if self._hp <= 0:
+            self.kill()
 
     def evolve(self):
         self._age += 1
@@ -136,7 +155,7 @@ class Entity(ParametrizedDrawable, ABC):
         return self._name
 
     def getDisplayAge(self) -> int:
-        return self.getAge() // DAY_DURATION
+        return self.getAge() // TerrainParameters.DAY_DURATION
 
     def __str__(self):
         return self.__class__.__name__[0]
@@ -157,6 +176,7 @@ class Entity(ParametrizedDrawable, ABC):
     def chooseAction(self) -> Action:
         ...
 
+    @override
     def getPos(self) -> Point:
         return self._pos
 
@@ -170,6 +190,10 @@ class Entity(ParametrizedDrawable, ABC):
         if not self.getGrid().getTile(self._pos).setEntity(self):
             self.kill()
 
+    def setPos(self, pos: Point):
+        self._pos = pos
+        #self.getGrid().getTile(self._pos).removeEntity()
+
     @staticmethod
     def getGrid() -> Grid:
         return Entity._grid
@@ -178,11 +202,14 @@ class Entity(ParametrizedDrawable, ABC):
     def setGrid(grid: Grid):
         Entity._grid = grid
 
+    def setAge(self, age: int):
+        self._age = age
+
     def getTile(self) -> Tile:
         return self.getGrid().getTile(self.getPos())
 
     def isFitForReproduction(self) -> bool:
-        return self.getReproductionCooldown() == 0 and self.getAge() >= ENTITY_MIN_AGE_REPRODUCTION
+        return self.getReproductionCooldown() == 0 and self.getAge() >= EntityParameters.REPRODUCTION_MIN_AGE
 
     def getReproductionCooldown(self) -> int:
         return self._reproductionCooldown
@@ -190,3 +217,30 @@ class Entity(ParametrizedDrawable, ABC):
     @classmethod
     def getCount(cls) -> int:
         return cls._counts[cls]
+
+    @classmethod
+    def getLoots(cls):
+        return cls._getParameter("loots")
+
+    @classmethod
+    def getQuantity(cls, loot):
+        assert cls.isValidItemType(loot)
+        return cls.getLoots().get(loot.__name__)[0]
+
+    @classmethod
+    def getChance(cls, loot):
+        assert cls.isValidItemType(loot)
+        return cls.getLoots().get(loot.__name__)[1]
+
+    @classmethod
+    def isValidItemType(cls, itemType: type) -> bool:
+        return itemType.__name__ in cls.getLoots()
+
+    def loot(self):
+        res = {}
+        for str_loot in self.getLoots():
+            tot = 0
+            for _ in range(self.getLoots().get(str_loot)[0]):
+                tot += 1 if random.random() < self.getLoots().get(str_loot)[1] else 0
+            res[str_loot] = tot
+        return res

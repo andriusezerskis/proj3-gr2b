@@ -57,6 +57,10 @@ class GridController:
             self.graphicalGrid.setScrollBars(self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
+    def lageEntity(self):
+        self.simulation.getPlayer().removeClaimedEntity()
+        print(self.simulation.hasPlayer())
+
     def resizeEvent(self, event):
         if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():
             self.recomputeCuboid()

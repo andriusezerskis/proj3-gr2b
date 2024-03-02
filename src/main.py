@@ -9,6 +9,13 @@ import threading
 import os
 import sys
 import signal
+
+from model.crafting.crafts import FishingRod, Fence
+from model.crafting.loots import Wood, Claw
+from model.entities.animals import Crab
+import parameters
+
+from parameter.genericparameters import GenericParameters
 from view.startWindow import StartWindow
 
 
@@ -39,6 +46,7 @@ def setlocale(name):
 
 def main():
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    GenericParameters.reloadAllDicts()
     app = QApplication(sys.argv)
     font = QFont('Small Fonts')
     app.setFont(font)
@@ -48,4 +56,13 @@ def main():
 
 
 if __name__ == '__main__':
+    # print(FishingRod.getBlueprint())
+    # print(FishingRod.isValidItemType(Wood))
+    # print(Fence.getBlueprint())
+    # print(Crab._getValidTiles())
+    # print(Wood.getDefaultTexturePath())
+    # print(Wood.getFrenchName())
+    # print(Crab.getLoots())
+    # print(Crab.isValidItemType(Claw))
+    # print(Crab.getChance(Claw))
     main()

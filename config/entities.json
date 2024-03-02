@@ -1,27 +1,30 @@
 {
     "Human": {
         "view_distance": 2,
-        "texture_path": ["humans/loïc.png", "humans/moïra.png"],
+        "texture_path": ["humans/andrius.png", "humans/hawen.png", "humans/loïc.png", "humans/mathieu.png","humans/moïra.png"],
         "valid_tiles": ["Land", "Sand"],
         "french_name": "Humain",
         "preys": ["Crab", "Tree", "Fish"],
         "spawn_weight": 0.5,
         "preferred_temperature": 18,
-        "health_points": 100
+        "health_points": 100,
+        "loots": {}
     },
     "Tree": {
         "texture_path": ["tree4.png"],
         "french_name": "Arbre",
         "valid_tiles": ["Land"],
         "spawn_weight": 1,
-        "health_points": 300
+        "health_points": 300,
+        "loots": {"Wood": [5, 0.8]}
     },
     "Algae": {
         "texture_path": ["algae3.png"],
         "french_name": "Algue",
         "valid_tiles": ["Water"],
         "spawn_weight": 1,
-        "health_points": 25
+        "health_points": 25,
+        "loots": {}
     },
     "Crab": {
         "view_distance": 1,
@@ -31,7 +34,8 @@
         "preys": ["Fish", "Algae"],
         "spawn_weight": 0.2,
         "preferred_temperature": 20,
-        "health_points": 75
+        "health_points": 75,
+        "loots": {"Claw": [2, 0.5]}
     },
     "Fish": {
         "view_distance": 1,
@@ -41,6 +45,7 @@
         "preys": ["Algae"],
         "spawn_weight": 0.5,
         "preferred_temperature": 20,
-        "health_points": 50
+        "health_points": 50,
+        "loots": {}
     }
 }

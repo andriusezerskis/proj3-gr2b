@@ -10,7 +10,8 @@ from abc import ABC
 from overrides import override
 from random import choice, choices
 
-from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
+from parameters import EntityParameters
+
 from model.entities.entity import Entity
 from model.action import Action
 
@@ -92,12 +93,12 @@ class Animal(Entity, ABC):
 
         # incentive to move if predators are nearby
         if len(self._local_information["predators"]["adjacent"]) > 0:
-            score += 10
+            score += 100
         elif len(self._local_information["predators"]["viewable"]) > 0:
-            score += 5
+            score += 10
 
         # incentive to move if the temperature is too bad
-        score += self.getTemperatureDifference() / 2
+        score += self.getTemperatureDifference()
 
         # incentive to move to find food if hungry
         if len(self._local_information["preys"]["adjacent"]) == 0:
@@ -112,7 +113,7 @@ class Animal(Entity, ABC):
         score = 1
 
         # incentive to eat if hungry
-        score += self.isHungry() * 10
+        score += self.isHungry() * 30
         score += self.getHunger() / 5
 
         return score
@@ -122,7 +123,7 @@ class Animal(Entity, ABC):
             return 0
 
         # incentive to reproduce if possible
-        score = 10
+        score = 100
 
         # disincentive to reproduce if hungry (note that self.canReproduce() is false if the hunger is too high)
         score -= self.hunger / 5
@@ -140,6 +141,8 @@ class Animal(Entity, ABC):
         reproduce = self._scoreReproduce()
         idle = self._scoreIdle()
 
+        # print(f"move: {move}, eat: {eat}, repr: {reproduce}, idle: {idle}")
+
         return choices([Action.MOVE, Action.EAT, Action.REPRODUCE, Action.IDLE],
                        [move, eat, reproduce, idle])[0]
 
@@ -154,21 +157,31 @@ class Animal(Entity, ABC):
 
     def _scorePosition(self, pos: Point) -> float:
         assert pos.octileDistance(self.getPos()) == 1
-        score = 1
+        score = 100
 
         for predator in self._local_information["predators"]["viewable"]:
             if pos.octileDistance(predator.getPos()) == 1:
+                # a predator is adjacent
                 return 0.1
+            elif pos.octileDistance(predator.getPos()) <= self.getViewDistance():
+                # a predator is viewable from pos but not adjacent
+                score -= 10
 
         for prey in self._local_information["preys"]["viewable"]:
             if pos.octileDistance(prey.getPos()) == 1:
-                score += 5
+                # adjacent
+                score += 15
+            elif pos.octileDistance(prey.getPos()) <= self.getViewDistance():
+                # viewable
+                score += 10
 
         for mates in self._local_information["mates"]["viewable"]:
             if pos.octileDistance(mates.getPos()) == 1:
-                score += 1
+                score += 15
+            elif pos.octileDistance(mates.getPos()) <= self.getViewDistance():
+                score += 10
 
-        return score
+        return max(score, 5)
 
     @override
     def chooseMove(self) -> Point:
@@ -183,7 +196,7 @@ class Animal(Entity, ABC):
 
     def eat(self, prey: Entity):
         self.hunger = 0
-        prey.setDead(True)
+        prey.kill()
 
     @override
     def isDead(self):
@@ -212,13 +225,13 @@ class Animal(Entity, ABC):
 
     @override
     def isFitForReproduction(self) -> bool:
-        return super().isFitForReproduction() and self.hunger <= ENTITY_MAX_HUNGER_REPRODUCTION
+        return super().isFitForReproduction() and self.hunger <= EntityParameters.REPRODUCTION_MAX_HUNGER
 
     def starvedToDeath(self) -> bool:
-        return self.hunger >= ENTITY_MAX_HUNGER
+        return self.hunger >= EntityParameters.MAX_HUNGER
 
     def getHunger(self) -> float:
         return self.hunger
 
     def isHungry(self) -> bool:
-        return self.getHunger() > ENTITY_HUNGRY_THRESHOLD
+        return self.getHunger() > EntityParameters.HUNGRY_THRESHOLD

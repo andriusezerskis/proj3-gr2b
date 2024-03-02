@@ -12,3 +12,4 @@ class Action(Enum):
     REPRODUCE = 1
     EAT = 2
     IDLE = 3
+    DIE = 4

@@ -7,16 +7,15 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-import os
-
 
 import matplotlib
-from constants import Disaster
 from view.cssConstants import *
-from model.entities.animals import Crab
+from utils import getTerminalSubclassesOfClass
+from model.disaster import Disaster
+from parameters import ViewParameters
 from model.entities.entity import Entity
 
 matplotlib.use('QtAgg')
@@ -59,14 +58,14 @@ class MonitorWindow:
         self.layout.addWidget(self.container2)
 
         self.button = QPushButton("OK")
-        self.button.clicked.connect(self.okButtonCallback) 
-        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.clicked.connect(self.okButtonCallback)
+        self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
 
     def okButtonCallback(self):
         # handler of ok button after selection of a catastroph
         self.isMonitor = True
-        self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
+        self.button.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
 
     def getIsMonitor(self):
         return self.isMonitor
@@ -75,10 +74,10 @@ class MonitorWindow:
         # calls when click on the map after selection of catastroph
         # (end of the action)
         self.isMonitor = False
-        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
     def getInfo(self):
-        return self.infoZone, self.infoRayon, self.infoDisaster
+        return self.infoZone, self.infoRayon, self.infoDisaster, self.invasionChosen
 
     # ---- method for init GUI ----
     def checkBox(self):
@@ -112,23 +111,39 @@ class MonitorWindow:
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        b1 = QRadioButton(Disaster.ICE)
+        b1 = QRadioButton(Disaster.ICE_TEXT, self.dock)
         b1.setChecked(True)
         b1.toggled.connect(lambda: self.btnCata(b1))
         layout.addWidget(b1)
 
-        b2 = QRadioButton(Disaster.FIRE)
+        b2 = QRadioButton(Disaster.FIRE_TEXT, self.dock)
         b2.toggled.connect(lambda: self.btnCata(b2))
         layout.addWidget(b2)
 
-        b3 = QRadioButton(Disaster.INVASION)
+        b3 = QRadioButton(Disaster.INVASION_TEXT, self.dock)
         b3.toggled.connect(lambda: self.btnCata(b3))
+
+        combobox5 = QComboBox()
+
+        for entityType in getTerminalSubclassesOfClass(Entity):
+            assert issubclass(entityType, Entity)
+            animalIcon = QIcon(entityType.getDefaultTexturePath())
+            combobox5.addItem(animalIcon, entityType.getFrenchName())
+
+        self.invasionChosen = combobox5.currentText()
+        combobox5.currentTextChanged.connect(self.indexChanged)
+
         layout.addWidget(b3)
+        layout.addWidget(combobox5)
 
         container = QWidget()
         container.setLayout(layout)
         container.setStyleSheet(VLAYOUT_COLOR)
         return container
+
+    def indexChanged(self, button):
+        self.invasionChosen = button
+        print(self.invasionChosen)
 
     # ---- handler for update information from button ----
     def btnZone(self, b):
@@ -172,18 +187,17 @@ class GraphWindow:
         self.layout.addWidget(iconWidget)
         self.iconButtonSelected = None
 
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                iconbutton = QPushButton(j.__name__)
-                iconbutton.clicked.connect(
-                    partial(self.setChosenEntity, j, iconbutton))
-                icon = j.getDefaultTexturePath()
-                iconbutton.setIcon(
-                    QIcon(icon))
-                iconbutton.setIconSize(QSize(15, 15))
-                iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        for entityType in getTerminalSubclassesOfClass(Entity):
+            assert issubclass(entityType, Entity)
+            iconbutton = QPushButton(entityType.getFrenchName())
+            iconbutton.clicked.connect(partial(self.setChosenEntity, entityType, iconbutton))
+            icon = entityType.getDefaultTexturePath()
+            iconbutton.setIcon(
+                QIcon(icon))
+            iconbutton.setIconSize(QSize(15, 15))
+            iconbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
-                iconLayout.addWidget(iconbutton)
+            iconLayout.addWidget(iconbutton)
 
         # range display
         nData = 50
@@ -191,24 +205,23 @@ class GraphWindow:
         self.nData = nData
         self.ydata = {}
 
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                self.ydata[j] = [0 for k in range(nData)]
+        for entityType in getTerminalSubclassesOfClass(Entity):
+            self.ydata[entityType] = [0 for k in range(nData)]
 
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
-        self.setChosenEntity(j, iconbutton)
+        self.setChosenEntity(entityType, iconbutton)
 
     def setChosenEntity(self, entity, iconbutton):
-        if iconbutton.styleSheet() == NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
-            iconbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)  # chosen
+        if iconbutton.styleSheet() == ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
+            iconbutton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)  # chosen
             if self.iconButtonSelected:
                 self.iconButtonSelected.setStyleSheet(
-                    NOT_CLICKED_BUTTON_STYLESHEET)
+                    ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
             self.iconButtonSelected = iconbutton
         else:
-            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+            iconbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.chosenEntity = entity
         self.drawPlot()
 

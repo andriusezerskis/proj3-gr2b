@@ -1,0 +1,13 @@
+{
+    "MAIN_WINDOW_TITLE": "Simulation 2D",
+    "COMMANDS_WINDOW_TITLE": "Commandes",
+    "MOVE_CAMERA_UP": "to edit",
+    "ENTITY_DEAD_MESSAGE": "L'entité est morte",
+    "ENTITY_NOT_SELECTED": "Pas d'entité sélectionnée",
+    "CONTROL_PLAYER": "Contrôler",
+    "RELEASE_PLAYER": "Relâcher",
+    "HEALTH_BAR_TEXT": "Santé : ",
+    "NAME_TEXT": "Prénom : ",
+    "AGE_TEXT": "Âge : ",
+    "HUNGER_TEXT": "Faim"
+}

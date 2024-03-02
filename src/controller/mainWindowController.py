@@ -8,9 +8,6 @@ from utils import Point, getPointsAdjacentTo
 
 from model.terrains.tile import Tile
 
-from constants import TEXTURE_SIZE
-from controller.gridController import GridController
-
 
 class MainWindowController:
     """Singleton"""
@@ -47,30 +44,49 @@ class MainWindowController:
         scenePos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(Point(scenePos.x(), scenePos.y()))
         if tile:
-            if self.mainWindow.monitor.getIsMonitor():
-                self.mainWindow.monitor.offIsMonitor()
-                zone, radius, disaster = self.mainWindow.monitor.getInfo()
-                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, tile.getPos())
+            if self.mainWindow.docksMonitor.isMonitoringDock() and \
+                    self.mainWindow.docksMonitor.getCurrentDock().monitor.getIsMonitor():
+                self.mainWindow.docksMonitor.getCurrentDock().monitor.offIsMonitor()
+                zone, radius, disaster, entityChosen = self.mainWindow.docksMonitor.getCurrentDock().monitor.getInfo()
+                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, entityChosen, tile.getPos())
                 self.graphicalGrid.updateGrid(tiles)
 
             elif tile.hasEntity():
                 if not self.simulation.hasPlayer():
-                    self.openDockEvent()
+                    if not self.mainWindow.docksMonitor.isDisplayed():
+                        self.openDockEvent()
+                    self.mainWindow.docksMonitor.getCurrentDock().entityController.setEntity(tile.getEntity())
+                    self.graphicalGrid.chosenEntity = tile.getEntity()
+                    self.mainWindow.docksMonitor.getCurrentDock().entityController.update()
+                    self.graphicalGrid.updateHighlighted()
                 else:
-                    if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
-                        tile.removeEntity()
-                        self.graphicalGrid.removeEntity(
-                            tile.getPos().y(), tile.getPos().x())
+                    self.playerControll(tile)
+                    return
 
-            self.mainWindow.entityController.setEntity(
-                tile.getEntity())
-            self.graphicalGrid.chosenEntity = tile.getEntity()
-            self.mainWindow.entityController.update()
+    def EntityMonitorPressEvent(self, event):
+        ...
+
+    def playerControll(self, tile):
+        if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
+            entity = tile.getEntity()
+            print(entity.loot())
+            tile.removeEntity()
+            self.graphicalGrid.removeEntity(tile.getPos())
+
             self.graphicalGrid.updateHighlighted()
+
+    def closeDock(self):
+        self.mainWindow.docksMonitor.getCurrentDock().close()
 
     def closeDockEvent(self):
         self.mainWindow.buttonOpenDock.show()
 
+    def changeDock(self):
+        self.mainWindow.docksMonitor.changeCurrentDock()
+
+    def hide_button(self):
+        self.mainWindow.buttonOpenDock.hide()
+
     def openDockEvent(self):
         self.mainWindow.buttonOpenDock.hide()
-        self.mainWindow.dock.show()
+        self.mainWindow.docksMonitor.openDock()

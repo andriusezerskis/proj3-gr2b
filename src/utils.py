@@ -70,6 +70,15 @@ class Point:
 
     def octileDistance(self, other):
         return max(abs(self.x() - other.x()), abs(self.y() - other.y()))
+    
+    def manhattanDistance(self, other):
+        return abs(self.x() - other.x()) + abs(self.y() - other.y())
+
+    def isPositive(self):
+        return self.x() >= 0 and self.y() >= 0
+
+    def __lt__(self, other):
+        return self.x() < other.x() and self.y() < other.y()
 
     def __iter__(self):
         yield self.x()
@@ -95,3 +104,16 @@ def getPointsInRadius(point: Point, radius: int) -> list[Point]:
     assert radius > 0 and isinstance(radius, int)
     return [Point(point.x() + x, point.y() + y) for y in range(-radius, radius + 1) for x in range(-radius, radius + 1)
             if x != 0 or y != 0]
+
+
+def getTerminalSubclassesOfClass(cls: type) -> set[type]:
+    res = set()
+    stack = [cls]
+    while len(stack) > 0:
+        current = stack.pop()
+        subclasses = current.__subclasses__()
+        if len(subclasses) == 0:
+            res.add(current)
+        else:
+            stack.extend(subclasses)
+    return res

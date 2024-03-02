@@ -5,7 +5,8 @@ Date: December 2023
 """
 
 import random
-from constants import EMPTY_TILE_PROBABILITY_GENERATION
+
+from parameters import TerrainParameters, EntityParameters
 
 from random import random, choices
 
@@ -15,12 +16,12 @@ from model.generator.automaticGenerator import AutomaticGenerator
 from overrides import override
 
 from model.entities.entity import Entity
-from model.player.player import Player
 from model.terrains.tile import Tile
 
 # these imports are actually necessary, do not trust your IDE
 import model.entities.plants
 import model.entities.animals
+import model.entities.human
 
 
 class EntitiesGenerator(AutomaticGenerator):
@@ -34,14 +35,9 @@ class EntitiesGenerator(AutomaticGenerator):
     def getBaseClass(cls) -> type:
         return Entity
 
-    @classmethod
-    @override
-    def getTerminalChildrenOfBaseClass(cls) -> set[type]:
-        return super().getTerminalChildrenOfBaseClass() - {Player}
-
     def generateEntities(self, grid: Grid):
         for tile in grid:
-            if random() >= EMPTY_TILE_PROBABILITY_GENERATION:
+            if random() >= TerrainParameters.EMPTY_TILE_PROBABILITY_GENERATION:
                 self.addRandomEntity(tile)
 
     def getValidEntities(self, tile: type) -> list[type]:
@@ -61,5 +57,7 @@ class EntitiesGenerator(AutomaticGenerator):
         validEntities = self.getValidEntities(type(tile))
         if len(validEntities) == 0:
             return
-        weights = [entityType.getSpawnWeight() for entityType in validEntities]
-        return tile.addNewEntity(choices(population=validEntities, weights=weights)[0])
+        weights = [entityType.getSpawnWeight() for entityType in validEntities if issubclass(entityType, Entity)]
+
+        return tile.addNewEntity(choices(population=validEntities, weights=weights)[0],
+                                 EntityParameters.REPRODUCTION_MIN_AGE)
