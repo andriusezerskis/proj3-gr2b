@@ -3,7 +3,8 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
-
+import threading
+from copy import deepcopy
 from random import choice, random
 import time
 
@@ -34,9 +35,11 @@ from model.disasterhandler import DisasterHandler
 class Simulation:
     def __init__(self, gridSize):
         super().__init__()
-        self.grid = GridGenerator(gridSize,
-                                  [2, 3, 4, 5, 6],
-                                  350).generateGrid()
+        self.step_thread = threading.Thread(target=self.step)
+        self.nextStepCondition = threading.Condition()
+        self.viewUpdateCondition = threading.Condition()
+
+        self.grid = GridGenerator(gridSize, [2, 3, 4, 5, 6], 350).generateGrid()
         EntitiesGenerator().generateEntities(self.grid)
 
         self.stepCount = 0
@@ -64,23 +67,36 @@ class Simulation:
             return modification
 
     def step(self) -> None:
-        self.modifiedTiles = set()
-        self.updatedEntities = set()
-        self.stepCount += 1
-        print("Step " + str(self.stepCount))
-        t = time.time()
-        self.updateWaterLevel()
+        #todo in thread
+        while True:
+            self.modifiedTiles = set()
+            self.updatedEntities = set()
+            self.stepCount += 1
+            print("Step " + str(self.stepCount))
+            t = time.time()
+            self.updateWaterLevel()
 
-        for tile in self.grid:
-            self.diminishDisaster(tile)
-            entity = tile.getEntity()
-            if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
-                self.evolution(entity)
-                self.updatedEntities.add(entity)
-            if not entity:
-                self.spontaneousGeneration(tile)
+            for tile in self.grid:
+                self.diminishDisaster(tile)
+                entity = tile.getEntity()
+                if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
+                    self.evolution(entity)
+                    self.updatedEntities.add(entity)
+                if not entity:
+                    self.spontaneousGeneration(tile)
 
-        print(f"compute time : {time.time() - t}")
+            print(f"compute time : {time.time() - t}")
+            with self.viewUpdateCondition:
+                self.viewUpdateCondition.notify()
+            with self.nextStepCondition:
+                self.nextStepCondition.wait()
+
+    def calculate_step(self):
+        if not self.step_thread.is_alive():
+            self.step_thread.start()
+        else:
+            with self.nextStepCondition:
+                self.nextStepCondition.notify()
 
     def spontaneousGeneration(self, tile: Tile):
         assert not tile.hasEntity()

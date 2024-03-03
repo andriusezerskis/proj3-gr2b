@@ -77,7 +77,9 @@ class Window(QMainWindow):
 
     def recurringTimer(self):
         self.totalTime += 1
-        self.simulation.step()
+        self.simulation.calculate_step()
+        """with self.simulation.viewUpdateCondition:
+            self.simulation.viewUpdateCondition.wait()"""
         self.updateGrid()
         for i in Entity.__subclasses__():
             for j in i.__subclasses__():
