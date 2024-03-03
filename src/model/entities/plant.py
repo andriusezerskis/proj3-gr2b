@@ -16,16 +16,23 @@ from parameters import EntityParameters
 
 class Plant(Entity, ABC):
 
+    @classmethod
+    def getDuplicationProbability(cls) -> float:
+        return cls._getParameter("duplication_probability")
+
+    @classmethod
+    def doesGenerateSpontaneously(cls) -> bool:
+        return bool(cls._getParameter("spontaneous_generation"))
+
     @override
     def chooseAction(self) -> Action:
         adjacentPeers = len([tile for tile in self.getAdjacentTiles()
                              if tile.hasEntity() and type(self) is type(tile.getEntity())])
 
-        if (adjacentPeers >= EntityParameters.PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD and
-                random() < EntityParameters.PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_NEIGHBOURS):
+        if adjacentPeers >= EntityParameters.PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD:
             return Action.DIE
 
-        probability = EntityParameters.PLANT_REPRODUCTION_PROBABILITY - 0.01 * adjacentPeers
+        probability = self.getDuplicationProbability() - 0.01 * adjacentPeers
 
         if random() < probability and len(self.getValidMovementTiles()) > 0:
             return Action.REPRODUCE

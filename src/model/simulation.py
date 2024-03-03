@@ -96,7 +96,7 @@ class Simulation:
         validTypes = []
         for plantType in getTerminalSubclassesOfClass(Plant):
             assert issubclass(plantType, Plant)
-            if plantType.isValidTileType(type(tile)):
+            if plantType.doesGenerateSpontaneously() and plantType.isValidTileType(type(tile)):
                 validTypes.append(plantType)
 
         if len(validTypes) > 0:
