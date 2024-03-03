@@ -13,7 +13,7 @@ from PyQt6.QtGui import *
 
 import matplotlib
 from view.cssConstants import *
-from utils import getTerminalSubclassesOfClass
+from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
 from model.disaster import Disaster
 from parameters import ViewParameters
 from model.entities.entity import Entity
@@ -130,7 +130,7 @@ class MonitorWindow:
             animalIcon = QIcon(entityType.getDefaultTexturePath())
             combobox5.addItem(animalIcon, entityType.getFrenchName())
 
-        self.invasionChosen = combobox5.currentText()
+        self.invasionChosen = getFrenchToEnglishTranslation(combobox5.currentText())
         combobox5.currentTextChanged.connect(self.indexChanged)
 
         layout.addWidget(b3)
@@ -141,8 +141,8 @@ class MonitorWindow:
         container.setStyleSheet(VLAYOUT_COLOR)
         return container
 
-    def indexChanged(self, button):
-        self.invasionChosen = button
+    def indexChanged(self, button: str):
+        self.invasionChosen = getFrenchToEnglishTranslation(button)
         print(self.invasionChosen)
 
     # ---- handler for update information from button ----

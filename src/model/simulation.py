@@ -49,14 +49,25 @@ class Simulation:
 
         Entity.setGrid(self.grid)
 
-    def bordinatorExecution(self, zone, radius, disaster, entityChosen, pos):
+    def bordinatorExecution(self, zone, radius, disaster, entityChosen, initialPos):
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
-        disasterHandler = DisasterHandler(pos, disaster, radius)
+        disasterHandler = DisasterHandler(initialPos, disaster, radius, entityChosen)
         if zone == "Rayon":
             modification = set()
-            for tile in self.grid.getTilesInRadius(pos, radius):
+            for tile in self.grid.getTilesInRadius(initialPos, radius):
+                disasterHandler.chooseDisaster(tile)
+                if tile.getEntity():
+                    tile.getEntity().removeHealthPoints()
+                modification.add(tile)
+            return modification
+        
+        elif zone == "Ile":
+            modification = set()
+            initialTile = self.grid.getTile(initialPos)
+            island = self.grid.getIsland(initialTile)
+            for tile in island:
                 disasterHandler.chooseDisaster(tile)
                 if tile.getEntity():
                     tile.getEntity().removeHealthPoints()
