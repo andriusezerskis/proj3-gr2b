@@ -4,7 +4,6 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-
 from model.entities.animal import Animal
 
 
@@ -13,4 +12,12 @@ class Crab(Animal):
 
 
 class Fish(Animal):
+    ...
+
+
+class Goat(Animal):
+    ...
+
+
+class SnowLeopard(Animal):
     ...

@@ -14,3 +14,7 @@ class Algae(Plant):
 
 class Tree(Plant):
     ...
+
+
+class Flower(Plant):
+    ...
