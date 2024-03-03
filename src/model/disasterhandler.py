@@ -1,15 +1,21 @@
-from utils import Point
+from utils import Point, getFrenchToEnglishTranslation
 from model.terrains.tile import Tile
 from model.entities.animals import Crab
 from model.disaster import Disaster
+from model.entities.entity import Entity
+from model.entities.plants import *
+from model.entities.plant import Plant
+from model.entities.animals import *
+from model.entities.human import Human
 
 
 class DisasterHandler:
-    def __init__(self, initialPos: tuple, disasterType: str, radius: int) -> None:
+    def __init__(self, initialPos: tuple, disasterType: str, radius: int, entityChosen: Entity) -> None:
         self.disasterType = disasterType
         self.initialPos = initialPos
         self.radius: int = radius
         self.modifiedTiles = set()
+        self.entityChosen = entityChosen
 
     def chooseDisaster(self, tile: Tile):
         initialPosPoint = Point(self.initialPos.x(), self.initialPos.y())
@@ -23,7 +29,7 @@ class DisasterHandler:
                 1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
 
         elif self.disasterType == Disaster.INVASION_TEXT:
-            self.executeCrabDisaster(tile)
+            self.executeEntityDisaster(tile)
 
     def executeFireDisaster(self, tile: Tile, disasterOpacity: float):
         tile.setDisaster(self.disasterType)
@@ -33,6 +39,6 @@ class DisasterHandler:
         tile.setDisaster(self.disasterType)
         tile.setDisasterOpacity(disasterOpacity)
 
-    def executeCrabDisaster(self, tile: Tile):
-        tile.setEntity(Crab(tile.getPos()))
+    def executeEntityDisaster(self, tile: Tile):
+        tile.setEntity(globals()[self.entityChosen](tile.getPos()))
 

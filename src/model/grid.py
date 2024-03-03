@@ -33,6 +33,13 @@ class Grid:
         for tile in self:
             if Water.getLevel() < tile.height < TerrainParameters.MAX_WATER_LEVEL:
                 self.coasts.add(tile)
+                
+    def getIsland(self, tile: Tile) -> List[Tile]:
+        """Get the island in which the tile is located"""
+        for island in self.islands:
+            if tile in island:
+                return island
+        return []
 
     def getTilesInRadius(self, center: Point, radius: int):
         """
