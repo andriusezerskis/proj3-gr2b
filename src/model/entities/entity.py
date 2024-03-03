@@ -20,6 +20,7 @@ from overrides import override
 from random import choice
 
 from model.movable import Movable
+from model.disaster import Disaster
 
 Entity_ = TypeVar("Entity_")
 Tile = TypeVar("Tile")
