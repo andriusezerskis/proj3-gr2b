@@ -11,9 +11,7 @@ class EntityParameters(GenericParameters, ABC):
     REPRODUCTION_COOLDOWN: int = None
     REPRODUCTION_MAX_HUNGER: int = None
     REPRODUCTION_MIN_AGE: int = None
-    PLANT_REPRODUCTION_PROBABILITY: float = None
     PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD: int = None
-    PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_NEIGHBOURS: float = None
     TEXTURE_FOLDER_PATH: str = None
 
     @classmethod

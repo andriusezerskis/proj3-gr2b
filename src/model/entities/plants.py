@@ -6,13 +6,14 @@ Date: December 2023
 
 
 from model.entities.plant import Plant
+from model.entities.fruitplant import FruitPlant
 
 
 class Algae(Plant):
     ...
 
 
-class Tree(Plant):
+class Tree(FruitPlant):
     ...
 
 

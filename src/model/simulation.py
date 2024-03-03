@@ -107,7 +107,7 @@ class Simulation:
         validTypes = []
         for plantType in getTerminalSubclassesOfClass(Plant):
             assert issubclass(plantType, Plant)
-            if plantType.isValidTileType(type(tile)):
+            if plantType.doesGenerateSpontaneously() and plantType.isValidTileType(type(tile)):
                 validTypes.append(plantType)
 
         if len(validTypes) > 0:
@@ -132,7 +132,8 @@ class Simulation:
         self.modifiedTiles |= modified
 
     def evolution(self, entity: Entity) -> None:
-        entity.evolve()
+        if entity.evolve():
+            self.addModifiedTiles(entity.getTile())
 
         if entity.isDead():
             self.dead(self.grid.getTile(entity.getPos()))
@@ -153,8 +154,10 @@ class Simulation:
     def eat(self, entity: Entity):
         assert isinstance(entity, Animal)
         prey = entity.choosePrey()
-        entity.eat(prey)
-        self.dead(prey.getTile())
+        if entity.eat(prey):
+            self.dead(prey.getTile())
+        else:
+            self.addModifiedTiles(prey.getTile())
 
     def reproduceEntity(self, entity: Entity):
         mate = None

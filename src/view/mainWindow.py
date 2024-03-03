@@ -7,7 +7,9 @@ Date: December 2023
 import time
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
+
 from parameters import ViewParameters, ViewText
+from utils import getTerminalSubclassesOfClass
 
 
 from model.entities.entity import Entity
@@ -75,9 +77,8 @@ class Window(QMainWindow):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                self.docksMonitor.getCurrentDock().updateContent(j)
+        for j in getTerminalSubclassesOfClass(Entity):
+            self.docksMonitor.getCurrentDock().updateContent(j)
         self.docksMonitor.getCurrentDock().updateController()
         self.showTime()
 

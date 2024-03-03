@@ -229,7 +229,7 @@ class GraphWindow:
         self.canvas.axes.clear()
         self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], ViewParameters.PLOT_COLOR)
         self.canvas.axes.set_ylim(
-            0, max(max(self.ydata[self.chosenEntity]), 1))
+            0, max(1.15 * max(self.ydata[self.chosenEntity]), 1))
         self.canvas.axes.set_title(f'Évolution de {self.chosenEntity.__name__}')
         self.canvas.axes.set_facecolor(ViewParameters.PLOT_BCKGROUND)
         self.canvas.axes.set_ylabel("Nombre d'individus")
