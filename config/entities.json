@@ -59,7 +59,7 @@
     "Goat": {
         "view_distance": 1,
         "texture_path": ["goat.png"],
-        "french_name": "Chèvre",
+        "french_name": "Chevre",
         "valid_tiles": ["Mountain"],
         "preys": ["Flower"],
         "spawn_weight": 0.1,
@@ -70,7 +70,7 @@
     "SnowLeopard": {
         "view_distance": 1,
         "texture_path": ["snow_leopard.png"],
-        "french_name": "Léopard des neiges",
+        "french_name": "Leopard des neiges",
         "valid_tiles": ["Mountain"],
         "preys": ["Goat"],
         "spawn_weight": 0.1,

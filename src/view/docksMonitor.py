@@ -9,6 +9,8 @@ from controller.playerDockController import PlayerDockController
 from view.monitor import MonitorWindow, GraphWindow
 from view.scrollArea import ScrollArea
 
+from parameters import ViewParameters
+
 
 class Observer:
     def updateClosure(self):
@@ -25,6 +27,8 @@ class CustomQDock(QDockWidget):
         self.setWidget(container)
         self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.observer = observer
+
+        self.setStyleSheet(ViewParameters.DOCK_BG)
 
     def updateContent(self, j):
         ...

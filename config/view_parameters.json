@@ -10,9 +10,26 @@
     "FIRE_TEXTURE_PATH": "../assets/textures/effects/fire.png",
     "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/yellow.png",
     "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",
-    "CLICKED_BUTTON_STYLESHEET": "background-color: blue; color: white;",
-    "NOT_CLICKED_BUTTON_STYLESHEET": "background-color: green; color: white;",
     "TIME_FORMAT": "%e %A: %Hh",
     "GRID_STYLESHEET": "QScrollBar:horizontal {background-color: #808080; /* Couleur de fond */height: 15px; /* Hauteur */}QScrollBar::handle:horizontal {background-color: #C0C0C0; /* Couleur du curseur */min-width: 50px; /* Largeur minimale */}QScrollBar::add-line:horizontal {background: none;}QScrollBar::sub-line:horizontal {background: none;}QScrollBar:vertical {background-color: #808080; /* Couleur de fond */width: 15px; /* Largeur */}QScrollBar::handle:vertical {background-color: #C0C0C0; /* Couleur du curseur */min-height: 50px; /* Hauteur minimale */}QScrollBar::add-line:vertical {background: none;}QScrollBar::sub-line:vertical {background: none;}",
-    "STEP_TIME": 2000
+    "STEP_TIME": 2000,
+
+    "DOCK_BG" : "background-color: #cdc0fb;",
+
+    "SPIN_COLOR" :"background-color: #feb07c;",
+    "HLAYOUT_COLOR" : "background-color: white;",
+    "START_BUTTON_STYLE_SHEET" :"background-color: #7cac04; color: white; border-radius:0.001px; font-size: 30px; width: 5px;",
+
+
+    "CLICKED_BUTTON_STYLESHEET": "background-color: #96a9f9; color: white;",
+    "NOT_CLICKED_BUTTON_STYLESHEET": "background-color: #d0f996; color: black;",
+
+    "VLAYOUT_COLOR" : "background-color: #ddd5fd",
+    "SPIN_COLOR2" : "background-color: white;",
+
+    "PLOT_COLOR" : "magenta",
+    "PLOT_BCKGROUND" : "lavender",
+    "FIG_BCKGROUND" : "#d8dfe6",
+
+    "PROGRESS_BAR" : "QProgressBar {border: 2px solid grey; border-radius: 5px; text-align: center;} QProgressBar::chunk { background-color: #CD96CD; width: 10px;}"
 }

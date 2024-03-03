@@ -12,8 +12,7 @@ from model.simulation import Simulation
 from utils import Point
 from view.mainWindow import Window
 
-from view.cssConstants import *
-
+from parameters import ViewParameters
 
 
 class StartWindow(QMainWindow):
@@ -46,18 +45,18 @@ class StartWindow(QMainWindow):
         self.layout2.addWidget(label2)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
-        self.spinBoxWidth.setStyleSheet(SPIN_COLOR) 
+        self.spinBoxWidth.setStyleSheet(ViewParameters.SPIN_COLOR) 
 
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
         self.layout2.addWidget(self.spinBoxWidth)
         self.layout2.addWidget(self.spinBoxHeight)
-        self.spinBoxHeight.setStyleSheet(SPIN_COLOR)
+        self.spinBoxHeight.setStyleSheet(ViewParameters.SPIN_COLOR)
 
         # --- Hlayout  ---
         container2 = QWidget()
         container2.setLayout(self.layout2)
-        container2.setStyleSheet(HLAYOUT_COLOR)
+        container2.setStyleSheet(ViewParameters.HLAYOUT_COLOR)
         self.layout.addWidget(container2)
 
         label_im = QLabel(self)
@@ -68,9 +67,9 @@ class StartWindow(QMainWindow):
         self.layout.addWidget(label_im)
 
         # ---- ok button ----
-        self.button = QPushButton("c parti youpi")
+        self.button = QPushButton("Commencer !")
         self.button.clicked.connect(self.initMainWindow)
-        self.button.setStyleSheet(START_BUTTON_STYLE_SHEET)
+        self.button.setStyleSheet(ViewParameters.START_BUTTON_STYLE_SHEET)
         self.layout.addWidget(self.button)
 
     def updateSpinboxWidth(self, value):

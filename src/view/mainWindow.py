@@ -7,13 +7,8 @@ Date: December 2023
 import time
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-# <<<<<<< HEAD
-# from constants import MAIN_WINDOW_TITLE, STEP_TIME, TIME_FORMAT
-from view.cssConstants import *
-# =======
-
 from parameters import ViewParameters, ViewText
-#>>>>>>> 7b4187af9561509892ff2ba449d4fe9c0c6259c5
+
 
 from model.entities.entity import Entity
 from model.simulation import Simulation
@@ -53,6 +48,7 @@ class Window(QMainWindow):
         self.view.setLayout(self.layout)
 
         self.initTimer()
+
 
         self.commands = CommandWindow(self)
 
