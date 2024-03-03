@@ -47,5 +47,35 @@
         "preferred_temperature": 20,
         "health_points": 50,
         "loots": {}
+    },
+    "Flower": {
+        "texture_path": ["flowers/flower1.png", "flowers/flower2.png", "flowers/flower3.png"],
+        "french_name": "Fleur",
+        "valid_tiles": ["Mountain"],
+        "spawn_weight": 0.2,
+        "health_points": 10,
+        "loots": {}
+    },
+    "Goat": {
+        "view_distance": 1,
+        "texture_path": ["goat.png"],
+        "french_name": "Chèvre",
+        "valid_tiles": ["Mountain"],
+        "preys": ["Flower"],
+        "spawn_weight": 0.1,
+        "preferred_temperature": 10,
+        "health_points": 75,
+        "loots": {}
+    },
+    "SnowLeopard": {
+        "view_distance": 1,
+        "texture_path": ["snow_leopard.png"],
+        "french_name": "Léopard des neiges",
+        "valid_tiles": ["Mountain"],
+        "preys": ["Goat"],
+        "spawn_weight": 0.1,
+        "preferred_temperature": 0,
+        "health_points": 200,
+        "loots": {}
     }
 }
