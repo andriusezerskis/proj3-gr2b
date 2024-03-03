@@ -3,17 +3,13 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
-
+import threading
 import time
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-# <<<<<<< HEAD
-# from constants import MAIN_WINDOW_TITLE, STEP_TIME, TIME_FORMAT
 from view.cssConstants import *
-# =======
 
 from parameters import ViewParameters, ViewText
-#>>>>>>> 7b4187af9561509892ff2ba449d4fe9c0c6259c5
 
 from model.entities.entity import Entity
 from model.simulation import Simulation
@@ -26,12 +22,20 @@ from controller.mainWindowController import MainWindowController
 
 from view.docksMonitor import DocksMonitor
 
+from model.conditionStorage import ConditionStorage
+
 
 class Window(QMainWindow):
-    def __init__(self, gridSize, simulation: Simulation):
+    def __init__(self, gridSize, simulation: Simulation, storage):
         super().__init__()
-
         self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
+        """print(f"({threading.get_ident()}) a'", simulation)
+        with storage.getMapLoadingCondition():
+            print(f"({threading.get_ident()}) b'")
+            storage.getMapLoadingCondition().wait()
+            print(f"({threading.get_ident()}) c'")
+        print('uhu', simulation[0])
+        simulation = simulation[0]"""
         self.renderingMonitor = simulation.getRenderMonitor()
 
         self.view = GraphicalGrid(gridSize, simulation.getGrid(), simulation, self.renderingMonitor)

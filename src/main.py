@@ -16,6 +16,7 @@ from model.entities.animals import Crab
 import parameters
 
 from parameter.genericparameters import GenericParameters
+from src.model.conditionStorage import ConditionStorage
 from view.startWindow import StartWindow
 
 
@@ -50,7 +51,8 @@ def main():
     app = QApplication(sys.argv)
     font = QFont('Small Fonts')
     app.setFont(font)
-    startWindow = StartWindow()
+    conditionStorage = ConditionStorage(True)
+    startWindow = StartWindow(conditionStorage)
     startWindow.show()
     app.exec()
 
