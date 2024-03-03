@@ -90,6 +90,17 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     def getHealthPoints(self) -> float:
         return self._hp
 
+    def canBeEaten(self) -> bool:
+        return True
+
+    def getEaten(self) -> bool:
+        """
+        Make the entity get eaten
+        :return: True if the entity dies
+        """
+        self.kill()
+        return True
+
     def removeHealthPoints(self) -> None:
         if self.getTile().disaster == Disaster.FIRE_TEXT or self.getTile().disaster == Disaster.ICE_TEXT:
             self._hp -= self.getTile().disasterOpacity * 100
@@ -136,11 +147,16 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         if self._hp <= 0:
             self.kill()
 
-    def evolve(self):
+    def evolve(self) -> bool:
+        """
+        Makes the entity age
+        :return: True if the entity needs to be updated visually
+        """
         self._age += 1
         self._reproductionCooldown = max(0, self._reproductionCooldown - 1)
 
         self._scanSurroundings()
+        return False
 
     def _scanSurroundings(self) -> None:
         self._local_information = {"valid_movement_tiles": []}
@@ -169,9 +185,6 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     def getValidMovementTiles(self) -> list[Tile]:
         return self._local_information["valid_movement_tiles"]
-
-    def setDead(self, dead):
-        self._dead = dead
 
     @abstractmethod
     def chooseAction(self) -> Action:

@@ -54,10 +54,10 @@ class ParametrizedDrawable(ABC):
         return cls._constructFullTexturePath(choice(cls._getParameter("texture_path")))
 
     def getTexturePath(self) -> str:
-        return self._texture_path
+        return self._texturePath
 
     def __init__(self):
         if self.__class__.__name__ == "Player":
             return
 
-        self._texture_path = self.pickRandomTexturePath()
+        self._texturePath = self.pickRandomTexturePath()

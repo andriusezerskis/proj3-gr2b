@@ -51,10 +51,10 @@ class Animal(Entity, ABC):
         return abs(self.getGrid().getTemperature(self.getPos()) - self.getPreferredTemperature())
 
     @override
-    def evolve(self):
+    def evolve(self) -> bool:
         self.hunger += 1 + self.getTemperatureDifference() / 10
 
-        super().evolve()
+        return super().evolve()
 
     @override
     def _scanSurroundings(self) -> None:
@@ -194,9 +194,9 @@ class Animal(Entity, ABC):
 
         return choices(freeTiles, scores)[0].getPos() - self.getPos()
 
-    def eat(self, prey: Entity):
+    def eat(self, prey: Entity) -> bool:
         self.hunger = 0
-        prey.kill()
+        return prey.getEaten()
 
     @override
     def isDead(self):
