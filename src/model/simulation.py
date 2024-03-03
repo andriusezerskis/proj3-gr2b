@@ -121,7 +121,8 @@ class Simulation:
         self.modifiedTiles |= modified
 
     def evolution(self, entity: Entity) -> None:
-        entity.evolve()
+        if entity.evolve():
+            self.addModifiedTiles(entity.getTile())
 
         if entity.isDead():
             self.dead(self.grid.getTile(entity.getPos()))
@@ -142,8 +143,10 @@ class Simulation:
     def eat(self, entity: Entity):
         assert isinstance(entity, Animal)
         prey = entity.choosePrey()
-        entity.eat(prey)
-        self.dead(prey.getTile())
+        if entity.eat(prey):
+            self.dead(prey.getTile())
+        else:
+            self.addModifiedTiles(prey.getTile())
 
     def reproduceEntity(self, entity: Entity):
         mate = None

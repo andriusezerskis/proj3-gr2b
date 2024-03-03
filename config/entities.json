@@ -12,6 +12,8 @@
     },
     "Tree": {
         "texture_path": ["tree4.png"],
+        "fruit_texture_path": ["apple_tree.png"],
+        "fruit_cooldown": 12,
         "french_name": "Arbre",
         "valid_tiles": ["Land"],
         "spawn_weight": 1,
