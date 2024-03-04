@@ -230,6 +230,8 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     @classmethod
     def getCount(cls) -> int:
+        if cls not in cls._counts.keys():
+            return 0
         return cls._counts[cls]
 
     @classmethod
