@@ -176,9 +176,10 @@ class Simulation:
         self.addModifiedTiles(self.getEntityTile(entity))
 
     def dead(self, tile: Tile) -> None:
-        tile.getEntity().kill()
-        tile.removeEntity()
-        self.addModifiedTiles(tile)
+        if tile.hasEntity():
+            tile.getEntity().kill()
+            tile.removeEntity()
+            self.addModifiedTiles(tile)
 
     def getEntityTile(self, entity: Entity) -> Tile:
         return self.getGrid().getTile(entity.getPos())
