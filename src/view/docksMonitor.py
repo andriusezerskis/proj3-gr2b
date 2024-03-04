@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QCloseEvent
-from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget, QFrame
 
 from controller.entityInfoController import EntityInfoController
 from controller.playerDockController import PlayerDockController
@@ -29,6 +29,7 @@ class CustomQDock(QDockWidget):
         self.observer = observer
 
         self.setStyleSheet(ViewParameters.DOCK_BG)
+
 
     def updateContent(self, j):
         ...

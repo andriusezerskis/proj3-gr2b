@@ -57,10 +57,14 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
+        #todo button style
         self.button = QPushButton("OK")
+        self.button.setMaximumWidth(500)
+        self.button.setMinimumWidth(200)
         self.button.clicked.connect(self.okButtonCallback)
         self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
+        self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
 
     def okButtonCallback(self):
         # handler of ok button after selection of a catastroph
@@ -166,7 +170,7 @@ class MonitorWindow:
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
-        fig.set_facecolor(ViewParameters.FIG_BCKGROUND)
+        fig.set_facecolor(eval(ViewParameters.FIG_BCKGROUND))
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
@@ -231,7 +235,7 @@ class GraphWindow:
         self.canvas.axes.set_ylim(
             0, max(1.15 * max(self.ydata[self.chosenEntity]), 1))
         self.canvas.axes.set_title(f'Évolution de {self.chosenEntity.__name__}')
-        self.canvas.axes.set_facecolor(ViewParameters.PLOT_BCKGROUND)
+        self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
         self.canvas.axes.set_ylabel("Nombre d'individus")
 
         self.canvas.draw()
