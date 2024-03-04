@@ -40,5 +40,6 @@ class DisasterHandler:
         tile.setDisasterOpacity(disasterOpacity)
 
     def executeEntityDisaster(self, tile: Tile):
-        tile.setEntity(globals()[self.entityChosen](tile.getPos()))
+        if not tile.hasEntity():
+            tile.setEntity(globals()[self.entityChosen](tile.getPos()))
 
