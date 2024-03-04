@@ -41,5 +41,6 @@ class DisasterHandler:
 
     def executeEntityDisaster(self, tile: Tile):
         if not tile.hasEntity():
-            tile.setEntity(globals()[self.entityChosen](tile.getPos()))
+            entity = globals()[self.entityChosen](tile.getPos())
+            tile.setEntity(entity)
 
