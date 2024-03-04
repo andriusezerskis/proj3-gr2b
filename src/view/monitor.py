@@ -12,7 +12,6 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 import matplotlib
-from view.cssConstants import *
 from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
 from model.disaster import Disaster
 from parameters import ViewParameters
@@ -30,6 +29,7 @@ class MonitorWindow:
         self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
+
         self.container.setLayout(self.layout)
 
         # --- main layout settings ---
@@ -93,7 +93,7 @@ class MonitorWindow:
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
-        spinBox.setStyleSheet(SPIN_COLOR2)
+        spinBox.setStyleSheet(ViewParameters.SPIN_COLOR2)
         layout.addWidget(spinBox)
 
         b3 = QRadioButton("Ile")
@@ -102,7 +102,7 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
-        container.setStyleSheet(VLAYOUT_COLOR)
+        container.setStyleSheet(ViewParameters.VLAYOUT_COLOR)
         return container
 
     def checkBox2(self):
@@ -138,7 +138,7 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
-        container.setStyleSheet(VLAYOUT_COLOR)
+        container.setStyleSheet(ViewParameters.VLAYOUT_COLOR)
         return container
 
     def indexChanged(self, button: str):
@@ -166,7 +166,7 @@ class MonitorWindow:
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
-        fig.set_facecolor(FIG_BCKGROUND)
+        fig.set_facecolor(ViewParameters.FIG_BCKGROUND)
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
@@ -176,7 +176,7 @@ class GraphWindow:
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()
-        container.setStyleSheet(VLAYOUT_COLOR)
+        container.setStyleSheet(ViewParameters.VLAYOUT_COLOR)
         container.setLayout(self.layout)
         self.layout.addWidget(self.canvas)
 
@@ -227,11 +227,11 @@ class GraphWindow:
 
     def drawPlot(self):
         self.canvas.axes.clear()
-        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], PLOT_COLOR)
+        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], ViewParameters.PLOT_COLOR)
         self.canvas.axes.set_ylim(
-            0, max(max(self.ydata[self.chosenEntity]), 1))
+            0, max(1.15 * max(self.ydata[self.chosenEntity]), 1))
         self.canvas.axes.set_title(f'Évolution de {self.chosenEntity.__name__}')
-        self.canvas.axes.set_facecolor(PLOT_BCKGROUND)
+        self.canvas.axes.set_facecolor(ViewParameters.PLOT_BCKGROUND)
         self.canvas.axes.set_ylabel("Nombre d'individus")
 
         self.canvas.draw()

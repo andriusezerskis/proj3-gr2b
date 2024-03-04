@@ -125,5 +125,8 @@ def getFrenchToEnglishTranslation(frenchEntity: str) -> str:
         "Arbre": "Tree",
         "Plante": "Plant",
         "Algue": "Algae",
-        "Humain": "Human"
+        "Humain": "Human",
+        "Chevre" : "Goat",
+        "Leopard des neiges" : "SnowLeopard",
+        "Fleur" : "Flower"
     }[frenchEntity]

@@ -7,13 +7,10 @@ Date: December 2023
 import time
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-# <<<<<<< HEAD
-# from constants import MAIN_WINDOW_TITLE, STEP_TIME, TIME_FORMAT
-from view.cssConstants import *
-# =======
 
 from parameters import ViewParameters, ViewText
-#>>>>>>> 7b4187af9561509892ff2ba449d4fe9c0c6259c5
+from utils import getTerminalSubclassesOfClass
+
 
 from model.entities.entity import Entity
 from model.simulation import Simulation
@@ -54,6 +51,7 @@ class Window(QMainWindow):
 
         self.initTimer()
 
+
         self.commands = CommandWindow(self)
 
     def initTimer(self):
@@ -79,9 +77,8 @@ class Window(QMainWindow):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                self.docksMonitor.getCurrentDock().updateContent(j)
+        for j in getTerminalSubclassesOfClass(Entity):
+            self.docksMonitor.getCurrentDock().updateContent(j)
         self.docksMonitor.getCurrentDock().updateController()
         self.showTime()
 

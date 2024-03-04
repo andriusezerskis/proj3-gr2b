@@ -8,10 +8,9 @@ from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPu
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
-from view.cssConstants import PROGRESS_BAR, CLICKED_BUTTON_STYLESHEET
 from controller.mainWindowController import MainWindowController
 
-from parameters import ViewText, EntityParameters
+from parameters import ViewText, EntityParameters, ViewParameters
 
 
 class EntityInfoView(QDockWidget):
@@ -20,11 +19,11 @@ class EntityInfoView(QDockWidget):
         self.dock = dock
 
         self.healthBar = QProgressBar()
-        self.healthBar.setStyleSheet(PROGRESS_BAR)
+        self.healthBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
         self.infoLabel = QLabel()
 
         self.hungerBar = QProgressBar()
-        self.hungerBar.setStyleSheet(PROGRESS_BAR)
+        self.hungerBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
 
         self.hungerBar.setRange(0, EntityParameters.MAX_HUNGER)
 
@@ -32,21 +31,9 @@ class EntityInfoView(QDockWidget):
 
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
-        self.controlButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
+        self.controlButton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
         self.controlButton.hide()
 
-# <<<<<<< HEAD
-#         self.lageButton = QPushButton(RELEASE_PLAYER)
-#         self.lageButton.clicked.connect(self.controlEntity)
-#         self.lageButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
-#         self.lageButton.hide()
-
-#         self.buttonLayout = QHBoxLayout()
-#         self.buttonLayout.addWidget(self.controlButton)
-#         self.buttonLayout.addWidget(self.lageButton)
-
-# =======
-# >>>>>>> 7b4187af9561509892ff2ba449d4fe9c0c6259c5
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.healthBar)
         self.layout.addWidget(self.hungerBar)
