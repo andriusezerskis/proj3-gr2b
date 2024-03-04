@@ -231,12 +231,14 @@ class GraphWindow:
 
     def drawPlot(self):
         self.canvas.axes.clear()
-        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], ViewParameters.PLOT_COLOR)
+        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], color=eval(ViewParameters.PLOT_COLOR))
         self.canvas.axes.set_ylim(
             0, max(1.15 * max(self.ydata[self.chosenEntity]), 1))
-        self.canvas.axes.set_title(f'Évolution de {self.chosenEntity.__name__}')
+        self.canvas.axes.set_title(f'Évolution de la population '
+                                   f'{"d'" if self.chosenEntity.getFrenchName()[0] in "AEIOUYH" else "de "}'
+                                   f'{self.chosenEntity.getFrenchName().lower()}s')
         self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
-        self.canvas.axes.set_ylabel("Nombre d'individus")
+        self.canvas.axes.set_ylabel("Quantité")
 
         self.canvas.draw()
         
