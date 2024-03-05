@@ -2,14 +2,16 @@
     "FishingRod": {
         "blueprint": {
             "Wood": 3,
-            "Crawl": 1
+            "Claw": 1
         },
-        "french_name": "Canne à pêche"
+        "french_name": "Canne à pêche",
+        "texture_path": ["fishing_rod.png"]
     },
     "Fence": {
         "blueprint": {
             "Wood": 5
         },
-        "french_name": "Clôture"
+        "french_name": "Clôture",
+        "texture_path": []
     }
 }

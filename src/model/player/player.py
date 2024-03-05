@@ -80,3 +80,14 @@ class Player(Movable):
     def getPreferredTemperature(self) -> float:
         assert isinstance(self.claimed_entity, Animal)
         return self.claimed_entity.getPreferredTemperature()
+
+    def hasEnoughQuantityToCraft(self, item):
+        for material, quantity in item.getBlueprint().items():
+            if self.inventory.get(material) < quantity:
+                return False
+        return True
+
+    def craft(self, item):
+        if not self.hasEnoughQuantity(item):
+            return False
+        self.removeFromInventory(item.getBlueprint())

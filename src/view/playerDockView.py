@@ -6,6 +6,9 @@ from controller.mainWindowController import MainWindowController
 from model.entities.entity import Entity
 from controller.gridController import GridController
 
+from model.crafting.crafts import FishingRod
+from model.crafting.loots import *
+
 
 class PlayerDockView(QDockWidget):
     def __init__(self, dock, container):
@@ -19,24 +22,13 @@ class PlayerDockView(QDockWidget):
         self.peche = QPushButton("Débloquer")
         self.peche.setFixedSize(200, 40)
         self.peche.clicked.connect(self.unlockFishing)
-        self.peche.setIcon(
-            QIcon(QPixmap("../assets/textures/items/fishing_rod.png")))
+        self.peche.setIcon(QIcon(QPixmap(FishingRod.getDefaultTexturePath())))
         # self.lageButton.hide()
 
         self.woodIcon = QTextEdit()
         self.woodIcon.setReadOnly(True)
         self.woodIcon.setFixedSize(200, 40)
-        self.woodIcon.setHtml(
-            """
-<table width="100%">
-    <tr>
-        <td><img src='../assets/textures/items/wood.png' width='25' height='25'></td>
-        <td style="vertical-align: middle;"> 5 </td>
-        <td><img src='../assets/textures/items/claw.png' width='25' height='25'></td>
-        <td style="vertical-align: middle;"> 3 </td>
-    </tr>
-</table>
-""")
+        self.woodIcon.setHtml(self.createHTML(FishingRod))
 
         self.secondLayout = QHBoxLayout()
         self.secondLayout.addWidget(self.peche)
@@ -62,5 +54,18 @@ class PlayerDockView(QDockWidget):
         MainWindowController.getInstance().changeDock()
 
     def unlockFishing(self):
-        MainWindowController.getInstance().unlockFishing()
-        self.peche.setText("Canne à pêche débloquée")
+        if MainWindowController.getInstance().unlockFishing():
+            self.peche.setText("Canne à pêche débloquée")
+
+    @staticmethod
+    def createHTML(craftable_item):
+        res = """<table width="100%"><tr>"""
+        blueprint = craftable_item.getBlueprint()
+        for item, quantity in blueprint.items():
+            item_class = eval(item)
+            texture = item_class.getDefaultTexturePath()
+
+            res += f"""<td><img src='{texture}' width='25' height='25'></td>
+                <td style="vertical-align: middle;"> {quantity} </td>"""
+        res += """</tr></table>"""
+        return res
