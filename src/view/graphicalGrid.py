@@ -138,7 +138,7 @@ class GraphicalGrid(QGraphicsView):
             disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
             disasterPixmap = tile.getDisasterPathName()
             disasterFilter.show()
-            disasterFilter.setOpacity(tile.disasterOpacity)
+            disasterFilter.setOpacity(tile.getDisasterOpacity())
             disasterFilter.setPixmap(self.getPixmap(disasterPixmap))
 
     def _drawTerrains(self, tile):
@@ -306,6 +306,7 @@ class GraphicalGrid(QGraphicsView):
         self.timers[3][1] += step
 
     def resizeEvent(self, event):
+        super().resizeEvent(event)
         GridController.getInstance().resizeEvent(event)
 
     def initSmoothScroll(self, movement: Point):
