@@ -158,6 +158,7 @@ class Window(QMainWindow):
         self.layout.addStretch()
 
     def closeEvent(self, event):
+        self.pauseTimer()
         result = QMessageBox.question(
             self, "Confirm Exit...", "Are you sure you want to exit ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         event.ignore()
@@ -165,4 +166,5 @@ class Window(QMainWindow):
         if result == QMessageBox.StandardButton.Yes:
             event.accept()
         else:
+            self.pauseTimer()
             event.ignore()
