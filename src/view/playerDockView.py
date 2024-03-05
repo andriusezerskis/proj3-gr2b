@@ -26,6 +26,7 @@ class PlayerDockView(QDockWidget):
     def setEntity(self, entity: Entity):
         self.entity = entity
 
-    def lageEntity(self):
+    @staticmethod
+    def lageEntity():
         GridController.getInstance().lageEntity()
         MainWindowController.getInstance().changeDock()

@@ -13,7 +13,7 @@ from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
 from model.movable import Movable
-
+from view.playerDockView import PlayerDockView
 
 
 class Player(Movable):
@@ -64,3 +64,7 @@ class Player(Movable):
     def getPreferredTemperature(self) -> float:
         assert isinstance(self.claimed_entity, Animal)
         return self.claimed_entity.getPreferredTemperature()
+
+    def kill(self):
+        #self.removeClaimedEntity()
+        PlayerDockView.lageEntity()
