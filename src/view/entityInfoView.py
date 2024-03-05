@@ -31,7 +31,7 @@ class EntityInfoView(QDockWidget):
 
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
-        self.controlButton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
+        self.controlButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.controlButton.setCheckable(True)
         self.controlButton.setMaximumWidth(500)
         self.controlButton.setMinimumWidth(200)
@@ -42,7 +42,8 @@ class EntityInfoView(QDockWidget):
         self.layout.addWidget(self.hungerBar)
         self.layout.addWidget(self.infoLabel)
         self.layout.addWidget(self.controlButton)
-        self.layout.setAlignment(self.controlButton, Qt.AlignmentFlag.AlignCenter)
+        self.layout.setAlignment(
+            self.controlButton, Qt.AlignmentFlag.AlignCenter)
 
         self.container = container
         self.container.setLayout(self.layout)
@@ -51,7 +52,7 @@ class EntityInfoView(QDockWidget):
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
-        #MainWindowController.getInstance().closeDock()
+        # MainWindowController.getInstance().closeDock()
         MainWindowController.getInstance().changeDock()
 
     def setEntity(self, entity: Entity):
@@ -65,7 +66,8 @@ class EntityInfoView(QDockWidget):
         self.healthBar.show()
         self.healthBar.setRange(0, entity.getMaxHealthPoints())
         self.healthBar.setValue(int(entity.getHealthPoints()))
-        self.healthBar.setFormat(f"{ViewText.HEALTH_BAR_TEXT}{int(entity.getHealthPoints())}")
+        self.healthBar.setFormat(
+            f"{ViewText.HEALTH_BAR_TEXT}{int(entity.getHealthPoints())}")
 
         baseText = f"{ViewText.NAME_TEXT}{entity.getName()}\n"
         baseText += f"{ViewText.AGE_TEXT}{entity.getDisplayAge()} jours\n"
