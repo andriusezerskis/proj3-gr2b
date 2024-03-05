@@ -7,6 +7,7 @@ Date: December 2023
 import time
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QIcon
 
 from parameters import ViewParameters, ViewText
 from utils import getTerminalSubclassesOfClass
@@ -89,7 +90,11 @@ class Window(QMainWindow):
 
         convert = time.strftime(
             ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
-        hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
+        hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))
+        if int(hour) == ViewParameters.NIGHT_MODE_START:
+            self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
+        elif int(hour) == ViewParameters.NIGHT_MODE_FINISH:
+            self.timebutton.setIcon(QIcon(ViewParameters.SUN_ICON))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
 
@@ -125,6 +130,7 @@ class Window(QMainWindow):
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")
+        self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
 
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)

@@ -7,6 +7,8 @@
     "NIGHT_MODE_COLOR": "#090957",
     "SUNSET_MODE_COLOR": "#fc995b",
     "TEXTURE_SIZE": 2048,
+    "MOON_ICON" : "../assets/textures/effects/moon.png",
+    "SUN_ICON" : "../assets/textures/effects/sun.png",
     "FIRE_TEXTURE_PATH": "../assets/textures/effects/fire.png",
     "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/yellow.png",
     "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",

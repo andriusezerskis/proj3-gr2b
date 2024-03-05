@@ -38,6 +38,7 @@ from model.simulation import Simulation
 class GraphicalGrid(QGraphicsView):
 
     def __init__(self, gridSize: Point, grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
+
         self.luminosityMode = None
         self.simulation = simulation
         self.scene = QGraphicsScene()
@@ -199,7 +200,6 @@ class GraphicalGrid(QGraphicsView):
         if hour == ViewParameters.NIGHT_MODE_START:
             self.luminosityMode.setPixmap(self.getPixmapFromRGBHex(ViewParameters.NIGHT_MODE_COLOR))
             self.luminosityMode.setOpacity(0.1)
-
         elif hour == ViewParameters.NIGHT_MODE_FINISH:
             self.luminosityMode.setPixmap(QPixmap())
         elif hour > ViewParameters.NIGHT_MODE_START or hour < ViewParameters.MIDDLE_OF_THE_NIGHT - 2:
