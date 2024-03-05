@@ -113,4 +113,5 @@ class EntityInfoView(QDockWidget):
         self.healthBar.setValue(0)
         self.healthBar.setFormat(ViewText.ENTITY_DEAD_MESSAGE)
         self.infoLabel.clear()
+        self.controlButton.hide()
         self.entity = None

@@ -21,7 +21,7 @@
     "START_BUTTON_STYLE_SHEET" :"background-color: #7cac04; color: white; border-radius:10px; font-size: 30px; width: 5px;",
 
 
-    "BUTTON_STYLESHEET": "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: rgba(122, 100, 83, 1); color: white; border-radius: 3px;}",
+    "BUTTON_STYLESHEET": "QPushButton:checked {background-color: rgba(122, 100, 83, 1); color: white; border-radius: 3px;} QPushButton {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;}",
 
 
 

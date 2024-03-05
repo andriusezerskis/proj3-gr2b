@@ -40,16 +40,17 @@ class Cuboid:
 
 class RenderMonitor:
     """Represents the visible section of the grid for the user"""
+
     def __init__(self, gridSize: Point, size: Point):
         assert isinstance(gridSize, Point)
         assert isinstance(size, Point)
         self.gridSize = gridSize
         self.renderingSize = size
-        self.renderingSection = Cuboid(Point(0, 0), Point(gridSize.x()-1, gridSize.y()-1), self.renderingSize)
+        self.renderingSection = Cuboid(Point(0, 0), Point(gridSize.x() - 1, gridSize.y() - 1), self.renderingSize)
 
         self.zoomIndex = 0
         self.zoomFactor = 1
-        self.zooms = [1, 4/3, 3/2, 2, 5/2, 2]
+        self.zooms = [1, 4 / 3, 3 / 2, 2, 5 / 2, 2]
 
     def getUpperPoint(self):
         return self.renderingSection.upper
@@ -89,8 +90,17 @@ class RenderMonitor:
             newZoom = reduce(lambda x, y: x * y, self.zooms[oldZoom + 1:self.zoomIndex + 1])
             self.zoomFactor *= newZoom
         elif difference < 0:
-            newZoom = 1 / reduce(lambda x, y: x * y, self.zooms[oldZoom + 1 + difference:oldZoom+1])
+            newZoom = 1 / reduce(lambda x, y: x * y, self.zooms[oldZoom + 1 + difference:oldZoom + 1])
             self.zoomFactor *= newZoom
         else:
             newZoom = 1
         return newZoom
+
+    def isNextToBorder(self, point: Point, movement: Point):
+        upper_borders = point - self.renderingSize // 2
+        lower_borders = point + self.renderingSize // 2 - self.gridSize
+        print(upper_borders, lower_borders)
+        if (movement.x() and (not upper_borders.xIsPositive() or lower_borders.xIsPositive())) \
+                or (movement.y() and (not upper_borders.yIsPositive() or lower_borders.yIsPositive())):
+            return True
+        return False
