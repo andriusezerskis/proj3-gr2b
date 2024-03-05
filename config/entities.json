@@ -9,7 +9,8 @@
         "spawn_weight": 0.5,
         "preferred_temperature": 18,
         "health_points": 100,
-        "loots": {}
+        "loots": {},
+        "symbol": "H"
     },
     "Tree": {
         "texture_path": ["tree4.png"],
@@ -22,7 +23,8 @@
         "valid_tiles": ["Land"],
         "spawn_weight": 1,
         "health_points": 300,
-        "loots": {"Wood": [5, 0.8]}
+        "loots": {"Wood": [5, 0.8]},
+        "symbol": "T"
     },
     "Algae": {
         "texture_path": ["algae3.png"],
@@ -33,7 +35,8 @@
         "valid_tiles": ["Water"],
         "spawn_weight": 1,
         "health_points": 25,
-        "loots": {}
+        "loots": {},
+        "symbol": "A"
     },
     "Crab": {
         "view_distance": 1,
@@ -45,7 +48,8 @@
         "color" : "#e8cbc1",
         "preferred_temperature": 20,
         "health_points": 75,
-        "loots": {"Claw": [2, 0.5]}
+        "loots": {"Claw": [2, 0.5]},
+        "symbol": "C"
     },
     "Fish": {
         "view_distance": 1,
@@ -57,7 +61,8 @@
         "spawn_weight": 0.5,
         "preferred_temperature": 20,
         "health_points": 50,
-        "loots": {}
+        "loots": {},
+        "symbol": "F"
     },
     "Flower": {
         "texture_path": ["flowers/flower1.png", "flowers/flower2.png", "flowers/flower3.png"],
@@ -68,7 +73,8 @@
         "color": "#c12f49",
         "spawn_weight": 0.2,
         "health_points": 10,
-        "loots": {}
+        "loots": {},
+        "symbol": "f"
     },
     "Goat": {
         "view_distance": 1,
@@ -80,7 +86,8 @@
         "spawn_weight": 0.1,
         "preferred_temperature": 10,
         "health_points": 75,
-        "loots": {}
+        "loots": {},
+        "symbol": "G"
     },
     "SnowLeopard": {
         "view_distance": 1,
@@ -92,6 +99,7 @@
         "spawn_weight": 0.1,
         "preferred_temperature": 0,
         "health_points": 200,
-        "loots": {}
+        "loots": {},
+        "symbol": "S"
     }
 }

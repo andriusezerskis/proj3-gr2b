@@ -19,7 +19,7 @@ class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Deb'île launcher")
-        self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
+        self.setWindowIcon(QIcon("../assets/textures/entities/cow.png"))
         self.setGeometry(100, 100, 100, 100)
 
         self.setStyleSheet("background-color: #ffd294;") 
@@ -60,8 +60,8 @@ class StartWindow(QMainWindow):
         self.layout.addWidget(container2)
 
         label_im = QLabel(self)
-        image = QPixmap("../assets/textures"+"/entities"+"/cow.png")
-        image = image.scaled(100,100)
+        image = QPixmap("../assets/textures/entities/cow.png")
+        image = image.scaled(100, 100)
         label_im.setPixmap(image)
         label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(label_im)

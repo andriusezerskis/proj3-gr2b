@@ -97,6 +97,10 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     def getColor(cls) -> str:
         return cls._getParameter("color")
 
+    @classmethod
+    def getSymbol(cls) -> str:
+        return cls._getParameter("symbol")
+
     def getEaten(self) -> bool:
         """
         Make the entity get eaten

@@ -16,6 +16,8 @@ from math import cos, pi
 
 from model.entities.plant import Plant
 
+from model.gridloader import GridLoader
+
 ###
 
 from model.entities.animal import Animal
@@ -34,10 +36,8 @@ from model.disasterhandler import DisasterHandler
 class Simulation:
     def __init__(self, gridSize):
         super().__init__()
-        self.grid = GridGenerator(gridSize,
-                                  [2, 3, 4, 5, 6],
-                                  350).generateGrid()
-        EntitiesGenerator().generateEntities(self.grid)
+        # self.grid = self.generateGrid(gridSize)
+        self.grid = GridLoader.loadFromFile("../assets/grids/test1.map")
 
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
@@ -48,6 +48,14 @@ class Simulation:
         self.waterLevel = Water.getLevel()
 
         Entity.setGrid(self.grid)
+
+    @staticmethod
+    def generateGrid(gridSize):
+        grid = GridGenerator(gridSize,
+                             [2, 3, 4, 5, 6],
+                             350).generateGrid()
+        EntitiesGenerator().generateEntities(grid)
+        return grid
 
     def bordinatorExecution(self, zone, radius, disaster, entityChosen, initialPos):
         # if zone == "Ile":
