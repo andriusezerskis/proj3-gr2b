@@ -75,7 +75,7 @@ class RenderMonitor:
     def centerOnPoint(self, point: Point):
         assert isinstance(point, Point)
         upper = point - self.renderingSize // 2
-        upper = Point(0, 0) if not upper.isPositive() else upper
+        upper = Point(0 if not upper.xIsPositive() else upper.x(), 0 if not upper.yIsPositive() else upper.y())
         lower = point + self.renderingSize // 2
         lower = self.gridSize - Point(1, 1) if not lower < self.gridSize else lower
 
