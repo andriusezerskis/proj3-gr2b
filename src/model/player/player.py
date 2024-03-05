@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 from copy import copy
-from typing import override, TypeVar
+from overrides import override
 
 from utils import Point
 
@@ -14,12 +14,11 @@ from model.entities.animal import Animal
 from model.terrains.tile import Tile
 from model.movable import Movable
 
-Grid = TypeVar("Grid")
 
 
 class Player(Movable):
 
-    def __init__(self, pos: Point | None, grid: Grid):
+    def __init__(self, pos: Point | None, grid: "Grid"):
         super().__init__()
         self.pos = pos
         self.grid = grid

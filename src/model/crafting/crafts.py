@@ -1,4 +1,5 @@
-from typing import Dict, override
+from typing import Dict
+from overrides import override
 
 from parameters import CraftParameters
 

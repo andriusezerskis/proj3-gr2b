@@ -5,7 +5,6 @@ Date: December 2023
 """
 
 from abc import ABC
-from typing import TypeVar
 from overrides import override
 
 
@@ -17,9 +16,6 @@ from model.disaster import Disaster
 from utils import Point
 
 from parameters import TerrainParameters, ViewParameters
-
-
-Tile_ = TypeVar("Tile_")
 
 
 class Tile(ParametrizedDrawable, ABC):
@@ -85,7 +81,7 @@ class Tile(ParametrizedDrawable, ABC):
             self.movable = entity
             return True
         return False
-    
+
     def setDisaster(self, disasterType: str) -> None:
         self.disaster = disasterType
 
@@ -112,7 +108,7 @@ class Tile(ParametrizedDrawable, ABC):
         return self.pos
 
     @staticmethod
-    def copyWithDifferentTypeOf(toCopy: Tile_, type_: type) -> Tile_:
+    def copyWithDifferentTypeOf(toCopy: "Tile_", type_: type) -> "Tile_":
         """
         Copies the passed tile in a new tile of a different tile.
         Attemps to copy the potential entity but might not succeed.
