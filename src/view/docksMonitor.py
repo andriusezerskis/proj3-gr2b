@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QCloseEvent
-from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget, QFrame, QLabel
 
 from controller.entityInfoController import EntityInfoController
 from controller.playerDockController import PlayerDockController
@@ -28,7 +28,25 @@ class CustomQDock(QDockWidget):
         self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.observer = observer
 
+        #self.titleBarFrame = QFrame()
+        #self.setTitleBarWidget(self.titleBarFrame)
+
+        # Appliquer le style CSS à la barre de titre
+        #self.titleBarFrame.setStyleSheet("""
+        #            QFrame {
+        #                background-color: #2c3e50; /* Couleur de fond de la barre de titre */
+        #                color: white; /* Couleur du texte de la barre de titre */
+        #                border: none; /* Supprimer la bordure */
+        #            }
+        #        """)
+        #self.titleLabel = QLabel("title")
+        #layout = QVBoxLayout(self.titleBarFrame)
+        #layout.addWidget(self.titleLabel)
+        #self.titleLabel.setFixedHeight(30)
+        #layout.setContentsMargins(0, 0, 0, 0)
+
         self.setStyleSheet(ViewParameters.DOCK_BG)
+
 
     def updateContent(self, j):
         ...

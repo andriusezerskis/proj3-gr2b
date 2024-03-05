@@ -3,7 +3,7 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
-
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton
 from controller.gridController import GridController
 from model.entities.entity import Entity
@@ -32,6 +32,8 @@ class EntityInfoView(QDockWidget):
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
         self.controlButton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
+        self.controlButton.setMaximumWidth(500)
+        self.controlButton.setMinimumWidth(200)
         self.controlButton.hide()
 
         self.layout = QVBoxLayout()
@@ -39,6 +41,7 @@ class EntityInfoView(QDockWidget):
         self.layout.addWidget(self.hungerBar)
         self.layout.addWidget(self.infoLabel)
         self.layout.addWidget(self.controlButton)
+        self.layout.setAlignment(self.controlButton, Qt.AlignmentFlag.AlignCenter)
 
         self.container = container
         self.container.setLayout(self.layout)

@@ -35,7 +35,7 @@ class MonitorWindow:
         # --- main layout settings ---
         title = QLabel('Tableau de bord-inator')
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        #tittle.setFont(QFont('Small Fonts', 20)) 
+        # tittle.setFont(QFont('Small Fonts', 20))
         title.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
         self.layout.addWidget(title)
 
@@ -57,10 +57,14 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
+        # todo button style
         self.button = QPushButton("OK")
+        self.button.setMaximumWidth(500)
+        self.button.setMinimumWidth(200)
         self.button.clicked.connect(self.okButtonCallback)
         self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.layout.addWidget(self.button)
+        self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
 
     def okButtonCallback(self):
         # handler of ok button after selection of a catastroph
@@ -130,7 +134,8 @@ class MonitorWindow:
             animalIcon = QIcon(entityType.getDefaultTexturePath())
             combobox5.addItem(animalIcon, entityType.getFrenchName())
 
-        self.invasionChosen = getFrenchToEnglishTranslation(combobox5.currentText())
+        self.invasionChosen = getFrenchToEnglishTranslation(
+            combobox5.currentText())
         combobox5.currentTextChanged.connect(self.indexChanged)
 
         layout.addWidget(b3)
@@ -166,7 +171,7 @@ class MonitorWindow:
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
-        fig.set_facecolor(ViewParameters.FIG_BCKGROUND)
+        fig.set_facecolor(eval(ViewParameters.FIG_BCKGROUND))
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
@@ -190,12 +195,14 @@ class GraphWindow:
         for entityType in getTerminalSubclassesOfClass(Entity):
             assert issubclass(entityType, Entity)
             iconbutton = QPushButton(entityType.getFrenchName())
-            iconbutton.clicked.connect(partial(self.setChosenEntity, entityType, iconbutton))
+            iconbutton.clicked.connect(
+                partial(self.setChosenEntity, entityType, iconbutton))
             icon = entityType.getDefaultTexturePath()
             iconbutton.setIcon(
                 QIcon(icon))
             iconbutton.setIconSize(QSize(15, 15))
-            iconbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
+            iconbutton.setStyleSheet(
+                ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
             iconLayout.addWidget(iconbutton)
 
@@ -215,27 +222,35 @@ class GraphWindow:
 
     def setChosenEntity(self, entity, iconbutton):
         if iconbutton.styleSheet() == ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
-            iconbutton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)  # chosen
+            iconbutton.setStyleSheet(
+                ViewParameters.CLICKED_BUTTON_STYLESHEET)  # chosen
             if self.iconButtonSelected:
                 self.iconButtonSelected.setStyleSheet(
                     ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
             self.iconButtonSelected = iconbutton
         else:
-            iconbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
+            iconbutton.setStyleSheet(
+                ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
         self.chosenEntity = entity
         self.drawPlot()
 
     def drawPlot(self):
         self.canvas.axes.clear()
-        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], ViewParameters.PLOT_COLOR)
+        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], color=eval(
+            ViewParameters.PLOT_COLOR))
         self.canvas.axes.set_ylim(
             0, max(1.15 * max(self.ydata[self.chosenEntity]), 1))
-        self.canvas.axes.set_title(f'Évolution de {self.chosenEntity.__name__}')
-        self.canvas.axes.set_facecolor(ViewParameters.PLOT_BCKGROUND)
-        self.canvas.axes.set_ylabel("Nombre d'individus")
+        if self.chosenEntity.getFrenchName()[0] in "AEIOUYH":
+            self.canvas.axes.set_title(
+                f"Évolution de la population d' " + self.chosenEntity.getFrenchName().lower() + "s")
+        else:
+            self.canvas.axes.set_title(
+                f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")
+
+        self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
+        self.canvas.axes.set_ylabel("Quantité")
 
         self.canvas.draw()
-        
 
     def updatePlot(self, newNumber, entity):
         self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
@@ -251,4 +266,3 @@ class GraphWindow:
             # We have a reference, we can use it to update the data for that line.
             self._plotRef.set_ydata(self.ydata[self.chosenEntity])
         self.drawPlot()
-

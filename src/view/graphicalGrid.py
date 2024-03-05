@@ -82,7 +82,9 @@ class GraphicalGrid(QGraphicsView):
         """
         Initialize the border of the tile to know which tile is selected
         """
-        self.highlitedTile = QGraphicsPixmapItem(QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH))
+        higlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
+        higlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        self.highlitedTile = QGraphicsPixmapItem(higlight)
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
         self.highlitedTile.hide()
