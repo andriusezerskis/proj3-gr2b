@@ -62,24 +62,18 @@ class MonitorWindow:
         self.button = QPushButton("OK")
         self.button.setMaximumWidth(500)
         self.button.setMinimumWidth(200)
-        self.button.clicked.connect(self.okButtonCallback)
-        self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
+        self.button.setCheckable(True)
         self.layout.addWidget(self.button)
         self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
 
-    def okButtonCallback(self):
-        # handler of ok button after selection of a catastroph
-        self.isMonitor = True
-        self.button.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
-
     def getIsMonitor(self):
-        return self.isMonitor
+        return self.button.isChecked()
 
     def offIsMonitor(self):
         # calls when click on the map after selection of catastroph
         # (end of the action)
-        self.isMonitor = False
-        self.button.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.setChecked(False)
 
     def getInfo(self):
         return self.infoZone, self.infoRayon, self.infoDisaster, self.invasionChosen
@@ -224,7 +218,8 @@ class GraphWindow:
             iconbutton.clicked.connect(
                 partial(self.setChosenEntity, entityType, iconbutton))
             icon = entityType.getDefaultTexturePath()
-            iconbutton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
+            iconbutton.setStyleSheet(
+                "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: rgba(122, 100, 83, 1); color: " + entityType.getColor() + " ; border-radius: 3px;}")
             iconbutton.setIcon(
                 QIcon(icon))
             iconbutton.setIconSize(QSize(15, 15))
