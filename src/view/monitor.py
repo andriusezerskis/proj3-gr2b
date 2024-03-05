@@ -255,12 +255,11 @@ class GraphWindow:
             self.canvas.axes.set_title(
                 f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
 
-        title = "Évolution des populations" if len(self.chosenEntity) != 1 else "Évolution de la population " + \
-                f"{"d'" if self.chosenEntity[0].getFrenchName()[0] in "AEIOUYH" else "de "}" + \
-                self.chosenEntity[0].getFrenchName().lower() + \
-                f"{'s' if self.chosenEntity[0].getFrenchName()[-1] not in "xs" else ""}"
+        title = "Évolution des populations" if len(
+            self.chosenEntity) != 1 else "Évolution de la population "
 
-        self.canvas.axes.set_title(title if len(self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")
+        self.canvas.axes.set_title(title if len(
+            self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")
         self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
         self.canvas.axes.set_ylabel("Quantité")
         self.canvas.draw()

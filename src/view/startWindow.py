@@ -22,12 +22,12 @@ class StartWindow(QMainWindow):
         self.setWindowIcon(QIcon("../assets/textures/entities/cow.png"))
         self.setGeometry(100, 100, 100, 100)
 
-        self.setStyleSheet("background-color: #ffd294;") 
+        self.setStyleSheet("background-color: #ffd294;")
 
         self.layout = QVBoxLayout()
         label = QLabel("Deb'île")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        #label.setFont(QFont('Small Fonts', 100)) 
+        # label.setFont(QFont('Small Fonts', 100))
         label.setStyleSheet("QLabel{font-weight: bold}")
         self.layout.addWidget(label)
 
@@ -45,7 +45,7 @@ class StartWindow(QMainWindow):
         self.layout2.addWidget(label2)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
-        self.spinBoxWidth.setStyleSheet(ViewParameters.SPIN_COLOR) 
+        self.spinBoxWidth.setStyleSheet(ViewParameters.SPIN_COLOR)
 
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
@@ -59,18 +59,33 @@ class StartWindow(QMainWindow):
         container2.setStyleSheet(ViewParameters.HLAYOUT_COLOR)
         self.layout.addWidget(container2)
 
+        self.loadButton = QPushButton("Charger une carte")
+        self.loadButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
+        self.loadButton.clicked.connect(self.loadButtonCallback)
+
         label_im = QLabel(self)
         image = QPixmap("../assets/textures/entities/cow.png")
         image = image.scaled(100, 100)
         label_im.setPixmap(image)
         label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(label_im)
+        self.layout.addWidget(self.loadButton)
 
         # ---- ok button ----
         self.button = QPushButton("Commencer !")
         self.button.clicked.connect(self.initMainWindow)
         self.button.setStyleSheet(ViewParameters.START_BUTTON_STYLE_SHEET)
         self.layout.addWidget(self.button)
+
+    def loadButtonCallback(self):
+        """
+        Callback for the load button
+        """
+        self.qFileDialog = QFileDialog()
+        self.qFileDialog.setNameFilter("Text File (*.*)")
+        self.qFileDialog.exec()
+        file = self.qFileDialog.selectedFiles()
+        self.loadButton.setText("Carte chargée")
 
     def updateSpinboxWidth(self, value):
         self.gridSizeWidth = value
@@ -81,6 +96,7 @@ class StartWindow(QMainWindow):
     def initMainWindow(self):
         # handler when ok button pressed
         simulation = Simulation(Point(self.gridSizeWidth, self.gridSizeHeight))
-        window = Window(Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
+        window = Window(
+            Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
         window.show()
         self.hide()
