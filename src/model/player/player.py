@@ -5,7 +5,8 @@ Date: December 2023
 """
 
 from copy import copy
-from typing import override, TypeVar, Dict
+from overrides import override
+from typing import Dict
 
 from utils import Point, getTerminalSubclassesOfClass
 
@@ -15,17 +16,16 @@ from model.terrains.tile import Tile
 from model.movable import Movable
 from model.crafting.loots import Loot
 
-Grid = TypeVar("Grid")
-
 
 class Player(Movable):
 
-    def __init__(self, pos: Point | None, grid: Grid):
+    def __init__(self, pos: Point | None, grid: "Grid"):
         super().__init__()
         self.pos = pos
         self.grid = grid
         self.claimed_entity: Entity | None = None
-        self.inventory = {loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
+        self.inventory = {
+            loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
 
     def isPlaying(self):
         return self.claimed_entity is not None

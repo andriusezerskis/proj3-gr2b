@@ -1,4 +1,4 @@
-from typing import override
+from overrides import override
 
 from constants import LOOT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
 from model.drawable import ParametrizedDrawable
@@ -22,4 +22,3 @@ class Wood(Loot):
 
 class Claw(Loot):
     ...
-

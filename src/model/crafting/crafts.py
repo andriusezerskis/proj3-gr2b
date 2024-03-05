@@ -1,4 +1,5 @@
-from typing import Dict, override
+from typing import Dict
+from overrides import override
 
 from constants import CRAFT_PARAMETERS, ITEMS_TEXTURE_FOLDER_PATH
 from model.crafting.loots import Loot

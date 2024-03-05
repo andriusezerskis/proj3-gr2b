@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QDockWidget, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QDockWidget, QPushButton, QVBoxLayout, QWidget, QLabel, QHBoxLayout,  QTextEdit
+from PyQt6.QtGui import QPixmap, QIcon
 
 from constants import RELEASE_PLAYER
 from controller.mainWindowController import MainWindowController
@@ -13,13 +14,42 @@ class PlayerDockView(QDockWidget):
 
         self.freeButton = QPushButton(RELEASE_PLAYER)
         self.freeButton.clicked.connect(self.lageEntity)
-        #self.lageButton.hide()
+        # self.lageButton.hide()
 
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.freeButton)
+        self.peche = QPushButton("Débloquer")
+        self.peche.setFixedSize(200, 40)
+        self.peche.setIcon(
+            QIcon(QPixmap("../assets/textures/items/fishing_rod.png")))
+        # self.lageButton.hide()
+
+        self.woodIcon = QTextEdit()
+        self.woodIcon.setReadOnly(True)
+        self.woodIcon.setFixedSize(200, 40)
+        self.woodIcon.setHtml(
+            """
+<table width="100%">
+    <tr>
+        <td><img src='../assets/textures/items/wood.png' width='25' height='25'></td>
+        <td style="vertical-align: middle;"> 5 </td>
+        <td><img src='../assets/textures/items/claw.png' width='25' height='25'></td>
+        <td style="vertical-align: middle;"> 3 </td>
+    </tr>
+</table>
+""")
+
+        self.secondLayout = QHBoxLayout()
+        self.secondLayout.addWidget(self.peche)
+        self.secondLayout.addWidget(self.woodIcon)
+
+        self.secondContainer = QWidget()
+        self.secondContainer.setLayout(self.secondLayout)
+
+        self.firstLayout = QVBoxLayout()
+        self.firstLayout.addWidget(self.freeButton)
+        self.firstLayout.addWidget(self.secondContainer)
 
         self.container = container
-        self.container.setLayout(self.layout)
+        self.container.setLayout(self.firstLayout)
 
         self.entity = None
 
