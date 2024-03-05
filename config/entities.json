@@ -16,7 +16,7 @@
         "fruit_texture_path": ["apple_tree.png"],
         "duplication_probability": 0.005,
         "spontaneous_generation": 0,
-        "fruit_cooldown": 12,
+        "fruit_cooldown": 6,
         "color": "#b3d5a4",
         "french_name": "Arbre",
         "valid_tiles": ["Land"],

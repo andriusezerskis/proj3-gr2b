@@ -44,7 +44,8 @@ class GridController:
             pos = self.simulation.getPlayer().getPos()
             if self.simulation.getPlayer().move(movement):
                 self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPos())
-                self.graphicalGrid.initSmoothScroll(movement)
+                if not self.renderingMonitor.isNextToBorder(self.simulation.getPlayer().getPos() if movement.isPositive() else pos, movement):
+                    self.graphicalGrid.initSmoothScroll(movement)
 
     def controlEntity(self, tile):
         if not self.simulation.hasPlayer():

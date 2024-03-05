@@ -94,8 +94,8 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return True
 
     @classmethod
-    def getColor(self) -> str:
-        return self._getParameter("color")
+    def getColor(cls) -> str:
+        return cls._getParameter("color")
 
     def getEaten(self) -> bool:
         """

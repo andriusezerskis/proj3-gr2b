@@ -24,6 +24,7 @@ class FruitPlant(Plant):
 
     @override
     def getEaten(self) -> bool:
+        assert self.canBeEaten()
         self._fruitCooldown = self.getFruitCooldown()
         return False
 
@@ -37,6 +38,8 @@ class FruitPlant(Plant):
 
     @override
     def getTexturePath(self) -> str:
-        if self.canBeEaten():
+        # self._fruitCooldown <= 1 to ensure that we see the fruits for at least one step,
+        # even if the FruitPlant is not really eatable
+        if self._fruitCooldown <= 1:
             return self._fruitTexturePath
         return super().getTexturePath()

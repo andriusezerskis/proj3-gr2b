@@ -11,7 +11,6 @@ from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidg
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
-
 import matplotlib
 from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
 from model.disaster import Disaster
@@ -223,7 +222,7 @@ class GraphWindow:
             iconbutton.setIcon(
                 QIcon(icon))
             iconbutton.setIconSize(QSize(15, 15))
-            if len(getTerminalSubclassesOfClass(Entity))/2 > index:
+            if len(getTerminalSubclassesOfClass(Entity)) / 2 > index:
                 iconsubLayout.addWidget(iconbutton)
             else:
                 iconsubLayout2.addWidget(iconbutton)
@@ -256,6 +255,12 @@ class GraphWindow:
             self.canvas.axes.set_title(
                 f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
 
+        title = "Évolution des populations" if len(self.chosenEntity) != 1 else "Évolution de la population " + \
+                f"{"d'" if self.chosenEntity[0].getFrenchName()[0] in "AEIOUYH" else "de "}" + \
+                self.chosenEntity[0].getFrenchName().lower() + \
+                f"{'s' if self.chosenEntity[0].getFrenchName()[-1] not in "xs" else ""}"
+
+        self.canvas.axes.set_title(title if len(self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")
         self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
         self.canvas.axes.set_ylabel("Quantité")
         self.canvas.draw()
