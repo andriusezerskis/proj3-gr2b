@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidg
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
+
 import matplotlib
 from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
 from model.disaster import Disaster
@@ -187,25 +188,20 @@ class GraphWindow:
 
         # --- buttons range with different entities ---
         iconWidget = QWidget()
-        iconLayout = QHBoxLayout()
+        iconLayout = QVBoxLayout()
+        iconsubLayout = QHBoxLayout()
+        iconsubLayout2 = QHBoxLayout()
+        iconsubWidget = QWidget()
+        iconsubWidget2 = QWidget()
+        iconsubWidget.setLayout(iconsubLayout)
+        iconsubWidget2.setLayout(iconsubLayout2)
+        iconLayout.addWidget(iconsubWidget)
+        iconLayout.addWidget(iconsubWidget2)
+        self.chosenEntity = []
+
         iconWidget.setLayout(iconLayout)
         self.layout.addWidget(iconWidget)
         self.iconButtonSelected = None
-
-        for entityType in getTerminalSubclassesOfClass(Entity):
-            assert issubclass(entityType, Entity)
-            iconbutton = QPushButton(entityType.getFrenchName())
-            iconbutton.clicked.connect(
-                partial(self.setChosenEntity, entityType, iconbutton))
-            icon = entityType.getDefaultTexturePath()
-            iconbutton.setIcon(
-                QIcon(icon))
-            iconbutton.setIconSize(QSize(15, 15))
-            iconbutton.setStyleSheet(
-                ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
-
-            iconLayout.addWidget(iconbutton)
-
         # range display
         nData = 50
         self.xdata = list(range(nData))
@@ -218,51 +214,58 @@ class GraphWindow:
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
-        self.setChosenEntity(entityType, iconbutton)
+
+        for index, entityType in enumerate(getTerminalSubclassesOfClass(Entity)):
+            assert issubclass(entityType, Entity)
+            # text = Text(entityType.getFrenchName())
+            iconbutton = QPushButton(entityType.getFrenchName())
+            iconbutton.setCheckable(True)
+            self.setChosenEntity(entityType, iconbutton)
+            iconbutton.clicked.connect(
+                partial(self.setChosenEntity, entityType, iconbutton))
+            icon = entityType.getDefaultTexturePath()
+            iconbutton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
+            iconbutton.setIcon(
+                QIcon(icon))
+            iconbutton.setIconSize(QSize(15, 15))
+            if len(getTerminalSubclassesOfClass(Entity))/2 > index:
+                iconsubLayout.addWidget(iconbutton)
+            else:
+                iconsubLayout2.addWidget(iconbutton)
 
     def setChosenEntity(self, entity, iconbutton):
-        if iconbutton.styleSheet() == ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
-            iconbutton.setStyleSheet(
-                ViewParameters.CLICKED_BUTTON_STYLESHEET)  # chosen
-            if self.iconButtonSelected:
-                self.iconButtonSelected.setStyleSheet(
-                    ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
-            self.iconButtonSelected = iconbutton
+        if iconbutton.isChecked():
+
+            self.chosenEntity.remove(entity)
+
         else:
-            iconbutton.setStyleSheet(
-                ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
-        self.chosenEntity = entity
+
+            self.chosenEntity.append(entity)
         self.drawPlot()
 
     def drawPlot(self):
         self.canvas.axes.clear()
-        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], color=eval(
-            ViewParameters.PLOT_COLOR))
-        self.canvas.axes.set_ylim(
-            0, max(1.15 * max(self.ydata[self.chosenEntity]), 1))
+        ylim = 0
+        for entity in self.chosenEntity:
+            self.canvas.axes.plot(self.xdata, self.ydata[entity], color=entity.getColor(
+            ), label=entity.getFrenchName())
+            if max(self.ydata[entity]) * 1.15 > ylim:
+                ylim = 1.15 * max(self.ydata[entity])
+
+        self.canvas.axes.set_ylim(0, ylim)
+        """
         if self.chosenEntity.getFrenchName()[0] in "AEIOUYH":
             self.canvas.axes.set_title(
                 f"Évolution de la population d' " + self.chosenEntity.getFrenchName().lower() + "s")
         else:
             self.canvas.axes.set_title(
-                f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")
+                f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
 
         self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
         self.canvas.axes.set_ylabel("Quantité")
-
         self.canvas.draw()
 
     def updatePlot(self, newNumber, entity):
         self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
-        # Note: we no longer need to clear the axis.
-        if self._plotRef is None:
-            # First time we have no plot reference, so do a normal plot.
-            # .plot returns a list of line <reference>s, as we're
-            # only getting one we can take the first element.
-            plotRefs = self.canvas.axes.plot(
-                self.xdata, self.ydata[self.chosenEntity], 'r')
-            self._plotRef = plotRefs[0]
-        else:
-            # We have a reference, we can use it to update the data for that line.
-            self._plotRef.set_ydata(self.ydata[self.chosenEntity])
+
         self.drawPlot()
