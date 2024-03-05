@@ -27,6 +27,8 @@ class Player(Movable):
         self.inventory = {
             loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
 
+        self.abilityUnlockedRod = False
+
     def isPlaying(self):
         return self.claimed_entity is not None
 

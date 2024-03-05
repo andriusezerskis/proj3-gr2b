@@ -18,6 +18,7 @@ class PlayerDockView(QDockWidget):
 
         self.peche = QPushButton("Débloquer")
         self.peche.setFixedSize(200, 40)
+        self.peche.clicked.connect(self.unlockFishing)
         self.peche.setIcon(
             QIcon(QPixmap("../assets/textures/items/fishing_rod.png")))
         # self.lageButton.hide()
@@ -59,3 +60,7 @@ class PlayerDockView(QDockWidget):
     def lageEntity(self):
         GridController.getInstance().lageEntity()
         MainWindowController.getInstance().changeDock()
+
+    def unlockFishing(self):
+        MainWindowController.getInstance().unlockFishing()
+        self.peche.setText("Canne à pêche débloquée")

@@ -77,6 +77,14 @@ class MainWindowController:
 
             self.graphicalGrid.updateHighlighted()
 
+    def unlockFishing(self):
+        if self.simulation.getPlayer().abilityUnlockedRod == False:
+            self.simulation.getPlayer().abilityUnlockedRod = True
+            self.simulation.getPlayer().removeFromInventory(
+                {"Wood": 5, "Claw": 3})
+            self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
+                self.simulation.player.getInventory())
+
     def closeDock(self):
         self.mainWindow.docksMonitor.getCurrentDock().close()
 
