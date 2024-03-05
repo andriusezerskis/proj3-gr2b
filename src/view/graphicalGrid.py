@@ -306,6 +306,7 @@ class GraphicalGrid(QGraphicsView):
         self.timers[3][1] += step
 
     def resizeEvent(self, event):
+        super().resizeEvent(event)
         GridController.getInstance().resizeEvent(event)
 
     def initSmoothScroll(self, movement: Point):
