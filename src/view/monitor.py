@@ -218,7 +218,7 @@ class GraphWindow:
                 partial(self.setChosenEntity, entityType, iconbutton))
             icon = entityType.getDefaultTexturePath()
             iconbutton.setStyleSheet(
-                "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: rgba(122, 100, 83, 1); color: " + entityType.getColor() + " ; border-radius: 3px;}")
+                "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: " + entityType.getColor()+"; color: white ; border-radius: 3px;}")
             iconbutton.setIcon(
                 QIcon(icon))
             iconbutton.setIconSize(QSize(15, 15))
@@ -255,12 +255,14 @@ class GraphWindow:
             self.canvas.axes.set_title(
                 f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
 
-        title = "Évolution des populations" if len(self.chosenEntity) != 1 else "Évolution de la population " + \
+        title = "Évolution des populations"
+        """if len(self.chosenEntity) != 1 else "Évolution de la population " + \
                 f"{"d'" if self.chosenEntity[0].getFrenchName()[0] in "AEIOUYH" else "de "}" + \
                 self.chosenEntity[0].getFrenchName().lower() + \
-                f"{'s' if self.chosenEntity[0].getFrenchName()[-1] not in "xs" else ""}"
+                f"{'s' if self.chosenEntity[0].getFrenchName()[-1] not in "xs" else ""}"""
 
-        self.canvas.axes.set_title(title if len(self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")
+        self.canvas.axes.set_title(title if len(
+            self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")
         self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
         self.canvas.axes.set_ylabel("Quantité")
         self.canvas.draw()
