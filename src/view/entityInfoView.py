@@ -32,6 +32,7 @@ class EntityInfoView(QDockWidget):
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
         self.controlButton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
+        self.controlButton.setCheckable(True)
         self.controlButton.setMaximumWidth(500)
         self.controlButton.setMinimumWidth(200)
         self.controlButton.hide()

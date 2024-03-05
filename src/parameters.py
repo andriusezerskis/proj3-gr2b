@@ -60,8 +60,6 @@ class ViewParameters(GenericParameters, ABC):
     HIGHTLIGHTED_TILE_TEXTURE_PATH: str = None
     FIRE_TEXTURE_PATH: str = None
     ICE_TEXTURE_PATH: str = None
-    CLICKED_BUTTON_STYLESHEET: str = None
-    NOT_CLICKED_BUTTON_STYLESHEET: str = None
     TIME_FORMAT: str = None
     GRID_STYLESHEET: str = None
     TEXTURE_SIZE: int = None

@@ -31,13 +31,16 @@ class Window(QMainWindow):
         self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
-        self.view = GraphicalGrid(gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
-        self.mainWindowController = MainWindowController(self.view, simulation, self)
+        self.view = GraphicalGrid(
+            gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
+        self.mainWindowController = MainWindowController(
+            self.view, simulation, self)
         self.layout = QHBoxLayout()
         self.drawButtons()
         self.docksMonitor = DocksMonitor(self.mainWindowController, self)
 
-        self.gridController = GridController(self.view, simulation, self.renderingMonitor)
+        self.gridController = GridController(
+            self.view, simulation, self.renderingMonitor)
 
         self.setCentralWidget(self.view)
         self.simulation = simulation
@@ -50,7 +53,6 @@ class Window(QMainWindow):
         self.view.setLayout(self.layout)
 
         self.initTimer()
-
 
         self.commands = CommandWindow(self)
 
@@ -66,12 +68,10 @@ class Window(QMainWindow):
         if self.paused:
             self.paused = False
             self.timer.start()
-            self.pauseButton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
             self.timer.stop()
             self.paused = True
-            self.pauseButton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
 
     def recurringTimer(self):
         self.totalTime += 1
@@ -97,12 +97,10 @@ class Window(QMainWindow):
         if self.fastF:
             self.timer.setInterval(ViewParameters.STEP_TIME)
             self.fastF = False
-            self.fastFbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
             self.timer.setInterval(ViewParameters.STEP_TIME // 2)
             self.fastF = True
-            self.fastFbutton.setStyleSheet(ViewParameters.CLICKED_BUTTON_STYLESHEET)
 
     def getGraphicalGrid(self):
         return self.view
@@ -117,11 +115,13 @@ class Window(QMainWindow):
 
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
-        self.pauseButton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
+        self.pauseButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
+        self.pauseButton.setCheckable(True)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
         self.fastFbutton = QPushButton("fast forward")
-        self.fastFbutton.setStyleSheet(ViewParameters.NOT_CLICKED_BUTTON_STYLESHEET)
+        self.fastFbutton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
+        self.fastFbutton.setCheckable(True)
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")
@@ -131,7 +131,8 @@ class Window(QMainWindow):
 
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
-        self.buttonOpenDock.clicked.connect(self.mainWindowController.openDockEvent)
+        self.buttonOpenDock.clicked.connect(
+            self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
                               alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
@@ -144,7 +145,6 @@ class Window(QMainWindow):
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-
 
     def drawButtons2(self):
         self.zoomInButton = QPushButton("+")
