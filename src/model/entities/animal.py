@@ -59,7 +59,7 @@ class Animal(Entity, ABC):
     @override
     def _scanSurroundings(self) -> None:
         self._local_information = {"mates": {"adjacent": set(), "viewable": set()},
-                                   "preys": {"adjacent": set(), "viewable": set()},
+                                   "preys": {"adjacent": set(), "viewable": set(), "eatable": set()},
                                    "predators": {"adjacent": set(), "viewable": set()},
                                    "valid_movement_tiles": []}
 
@@ -74,6 +74,8 @@ class Animal(Entity, ABC):
                 self._local_information["preys"]["viewable"].add(entity)
                 if self.getPos().isNextTo(tile.getPos()):
                     self._local_information["preys"]["adjacent"].add(entity)
+                    if entity.canBeEaten():
+                        self._local_information["preys"]["eatable"].add(entity)
 
             if isinstance(entity, Animal) and entity.isPrey(type(self)):
                 self._local_information["predators"]["viewable"].add(entity)
@@ -147,13 +149,13 @@ class Animal(Entity, ABC):
                        [move, eat, reproduce, idle])[0]
 
     def choosePrey(self) -> Entity:
-        return choice(list(self._local_information["preys"]["adjacent"]))
+        return choice(list(self._local_information["preys"]["eatable"]))
 
     def canMove(self) -> bool:
         return len(self.getValidMovementTiles()) > 0
 
     def canEat(self) -> bool:
-        return len(self._local_information["preys"]["adjacent"]) > 0
+        return len(self._local_information["preys"]["eatable"]) > 0
 
     def _scorePosition(self, pos: Point) -> float:
         assert pos.octileDistance(self.getPos()) == 1
