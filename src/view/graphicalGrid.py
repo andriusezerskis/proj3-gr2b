@@ -136,7 +136,7 @@ class GraphicalGrid(QGraphicsView):
             disasterFilter = self.pixmapItems[y][x].getDisasterFilter()
             disasterPixmap = tile.getDisasterPathName()
             disasterFilter.show()
-            disasterFilter.setOpacity(tile.disasterOpacity)
+            disasterFilter.setOpacity(tile.getDisasterOpacity())
             disasterFilter.setPixmap(self.getPixmap(disasterPixmap))
 
     def _drawTerrains(self, tile):

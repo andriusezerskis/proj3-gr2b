@@ -88,6 +88,9 @@ class Tile(ParametrizedDrawable, ABC):
     
     def setDisaster(self, disasterType: str) -> None:
         self.disaster = disasterType
+        
+    def getDisasterOpacity(self) -> float:
+        return self.disasterOpacity
 
     def setDisasterOpacity(self, disasterOpacity: float) -> None:
         self.disasterOpacity = disasterOpacity

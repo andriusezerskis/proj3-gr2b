@@ -115,10 +115,10 @@ class Simulation:
             self.addModifiedTiles(tile)
 
     def diminishDisaster(self, tile):
-        if tile.disasterOpacity > 0:
-            tile.disasterOpacity -= 0.1
+        if tile.getDisasterOpacity() > 0:
+            tile.setDisasterOpacity(tile.getDisasterOpacity() - 0.1)
         else:
-            tile.disaster = None
+            tile.setDisaster(None)
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
