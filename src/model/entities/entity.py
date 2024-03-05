@@ -93,6 +93,10 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     def canBeEaten(self) -> bool:
         return True
 
+    @classmethod
+    def getColor(self) -> str:
+        return self._getParameter("color")
+
     def getEaten(self) -> bool:
         """
         Make the entity get eaten
@@ -141,7 +145,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
             self._counts[cls] -= 1
 
         self._killed = True
-    
+
     def inflictDamage(self, damage: float) -> None:
         self._hp -= damage
         if self._hp <= 0:
@@ -206,7 +210,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     def setPos(self, pos: Point):
         self._pos = pos
-        #self.getGrid().getTile(self._pos).removeEntity()
+        # self.getGrid().getTile(self._pos).removeEntity()
 
     @staticmethod
     def getGrid() -> Grid:
@@ -257,6 +261,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         for str_loot in self.getLoots():
             tot = 0
             for _ in range(self.getLoots().get(str_loot)[0]):
-                tot += 1 if random.random() < self.getLoots().get(str_loot)[1] else 0
+                tot += 1 if random.random() < self.getLoots().get(str_loot)[
+                    1] else 0
             res[str_loot] = tot
         return res
