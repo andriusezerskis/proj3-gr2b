@@ -91,7 +91,7 @@ class StartWindow(QMainWindow):
         self.qFileDialog.exec()
         self.file = self.qFileDialog.selectedFiles()
         print(self.file)
-        if self.file[0].endswith(".map"):
+        if self.file and self.file[0].endswith(".map"):
             self.loadButton.setText("Carte chargée")
             # desactivate the button to choose the size of the map
             self.spinBoxWidth.setEnabled(False)
@@ -104,7 +104,7 @@ class StartWindow(QMainWindow):
         self.gridSizeHeight = value
 
     def initMainWindow(self):
-        if self.file is None or not self.file[0].endswith(".map"):
+        if not self.file or not self.file[0].endswith(".map"):
             self.grid = GridGenerator(Point(self.gridSizeWidth, self.gridSizeHeight), [
                                       2, 3, 4, 5, 6], 350).generateGrid()
             EntitiesGenerator().generateEntities(self.grid)
