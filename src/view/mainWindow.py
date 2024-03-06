@@ -7,9 +7,10 @@ Date: December 2023
 import time
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QIcon
 
 from parameters import ViewParameters, ViewText
-from utils import getTerminalSubclassesOfClass
+from utils import Point, getTerminalSubclassesOfClass
 
 
 from model.entities.entity import Entity
@@ -25,7 +26,7 @@ from view.docksMonitor import DocksMonitor
 
 
 class Window(QMainWindow):
-    def __init__(self, gridSize, simulation: Simulation):
+    def __init__(self, gridSize: Point, simulation: Simulation):
         super().__init__()
 
         self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
@@ -86,10 +87,13 @@ class Window(QMainWindow):
         """
         Display the time passed, one step is one hour
         """
-
         convert = time.strftime(
             ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
-        hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
+        hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))
+        if int(hour) == ViewParameters.NIGHT_MODE_START:
+            self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
+        elif int(hour) == ViewParameters.NIGHT_MODE_FINISH:
+            self.timebutton.setIcon(QIcon(ViewParameters.SUN_ICON))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
 
@@ -106,6 +110,9 @@ class Window(QMainWindow):
         return self.view
 
     def updateGrid(self):
+        """
+        Update the grid with the tiles that has been updated by the simulation
+        """
         start = time.time()
         self.view.updateGrid(self.simulation.getUpdatedTiles())
         print(f"update time : {time.time() - start}")
@@ -115,16 +122,15 @@ class Window(QMainWindow):
 
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
-        self.pauseButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.pauseButton.setCheckable(True)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
         self.fastFbutton = QPushButton("fast forward")
-        self.fastFbutton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.fastFbutton.setCheckable(True)
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")
+        self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
 
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)

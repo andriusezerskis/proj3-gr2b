@@ -1,0 +1,111 @@
+QMainWindow#startWindow {
+    border-image: url(../assets/textures/banner.png);
+
+}
+
+QWidget#Dock {
+    background-color: rgba(67, 76, 93, 1);
+        border-radius: 10px;
+        border: 1px solid rgb(105, 120, 149);
+
+}
+
+
+QDockWidget > QWidget{
+    background-color: rgba(67, 76, 93, 1);
+    border-radius: 10px;
+}
+
+
+
+QToolButton {
+    background-color: #7cac04; 
+    color: white; 
+    border-radius:10px; 
+    font-size: 20px; width: 5px;
+
+}
+
+QWidget {
+    background-color: rgba(67, 76, 93, 1);
+        border-radius: 10px;
+}
+
+
+QPushButton:checked {
+    background-color: rgba(122, 100, 83, 1);
+    color: white;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+QPushButton {
+    background-color: rgba(159, 134, 109, 1);
+    color: rgba(247, 229, 209, 1);
+    border-radius: 3px;
+    padding: 5px;
+}
+
+QProgressBar {
+        border: 2px solid grey;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    QProgressBar::chunk {
+        background-color: rgb(100, 115, 141);
+        width: 10px;
+    }
+
+
+QSpinBox {background: rgba(0,0,0,50);}
+
+
+QScrollBar:horizontal {
+    background-color: #808080;
+    /* Couleur de fond */
+    height: 15px;
+    /* Hauteur */
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #C0C0C0;
+    /* Couleur du curseur */
+    min-width: 50px;
+    /* Largeur minimale */
+}
+
+QScrollBar::add-line:horizontal {
+    background: none;
+}
+
+QScrollBar::sub-line:horizontal {
+    background: none;
+}
+
+QScrollBar:vertical {
+    background-color: #808080;
+    /* Couleur de fond */
+    width: 15px;
+    /* Largeur */
+}
+
+QScrollBar::handle:vertical {
+    background-color: #C0C0C0;
+    /* Couleur du curseur */
+    min-height: 50px;
+    /* Hauteur minimale */
+}
+
+
+QScrollBar::add-line:vertical {
+    background: none;
+}
+
+QScrollBar::sub-line:vertical {
+    background: none;
+}
+
+QLabel {
+    font-weight: bold
+}

@@ -9,7 +9,7 @@ import time
 
 from parameters import TerrainParameters
 
-from utils import getTerminalSubclassesOfClass
+from utils import Point, getTerminalSubclassesOfClass
 from math import cos, pi
 
 # do not trust your IDE, we need it for the globals() function
@@ -34,7 +34,7 @@ from model.disasterhandler import DisasterHandler
 
 
 class Simulation:
-    def __init__(self, gridSize, grid):
+    def __init__(self, gridSize: Point, grid):
         super().__init__()
         self.grid = grid
         self.stepCount = 0
@@ -55,11 +55,12 @@ class Simulation:
         EntitiesGenerator().generateEntities(grid)
         return grid
 
-    def bordinatorExecution(self, zone, radius, disaster, entityChosen, initialPos):
+    def bordinatorExecution(self, zone: str, radius: int, disaster, entityChosen, initialPos: Point):
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
-        disasterHandler = DisasterHandler(initialPos, disaster, radius, entityChosen)
+        disasterHandler = DisasterHandler(
+            initialPos, disaster, radius, entityChosen)
         if zone == "Rayon":
             modification = set()
             for tile in self.grid.getTilesInRadius(initialPos, radius):
@@ -68,7 +69,7 @@ class Simulation:
                     tile.getEntity().removeHealthPoints()
                 modification.add(tile)
             return modification
-        
+
         elif zone == "Ile":
             modification = set()
             initialTile = self.grid.getTile(initialPos)
@@ -120,7 +121,7 @@ class Simulation:
             tile.addNewEntity(choice(validTypes))
             self.addModifiedTiles(tile)
 
-    def diminishDisaster(self, tile):
+    def diminishDisaster(self, tile: Tile):
         if tile.getDisasterOpacity() > 0:
             tile.setDisasterOpacity(tile.getDisasterOpacity() - 0.1)
         else:
@@ -132,7 +133,8 @@ class Simulation:
     def updateWaterLevel(self) -> None:
         # two oscillations a day
         self.waterLevel = (Water.getLevel() +
-                           (-cos(4 * pi * self.stepCount / TerrainParameters.DAY_DURATION) + 1)
+                           (-cos(4 * pi * self.stepCount /
+                            TerrainParameters.DAY_DURATION) + 1)
                            * (TerrainParameters.MAX_WATER_LEVEL - Water.getLevel()) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.waterLevel)
         self.modifiedTiles |= modified
@@ -196,7 +198,7 @@ class Simulation:
     def getPlayer(self) -> Player:
         return self.player
 
-    def setPlayerEntity(self, tile) -> None:
+    def setPlayerEntity(self, tile: Tile) -> None:
         self.player.setClaimedEntity(tile)
 
     def hasPlayer(self) -> bool:

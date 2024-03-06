@@ -4,7 +4,7 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton
+from PyQt6.QtWidgets import QWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
@@ -13,28 +13,18 @@ from controller.mainWindowController import MainWindowController
 from parameters import ViewText, EntityParameters, ViewParameters
 
 
-class EntityInfoView(QDockWidget):
-    def __init__(self, dock, container):
-        super().__init__()
-        self.dock = dock
-
+class EntityInfoView():
+    def __init__(self,  container: QWidget):
         self.healthBar = QProgressBar()
-        self.healthBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
         self.infoLabel = QLabel()
 
         self.hungerBar = QProgressBar()
-        self.hungerBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
-
         self.hungerBar.setRange(0, EntityParameters.MAX_HUNGER)
-
         self.hungerBar.hide()
 
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
-        self.controlButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.controlButton.setCheckable(True)
-        self.controlButton.setMaximumWidth(500)
-        self.controlButton.setMinimumWidth(200)
         self.controlButton.hide()
 
         self.layout = QVBoxLayout()
@@ -113,4 +103,5 @@ class EntityInfoView(QDockWidget):
         self.healthBar.setValue(0)
         self.healthBar.setFormat(ViewText.ENTITY_DEAD_MESSAGE)
         self.infoLabel.clear()
+        self.controlButton.hide()
         self.entity = None

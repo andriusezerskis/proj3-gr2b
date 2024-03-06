@@ -7,30 +7,20 @@
     "NIGHT_MODE_COLOR": "#090957",
     "SUNSET_MODE_COLOR": "#fc995b",
     "TEXTURE_SIZE": 2048,
+    "MOON_ICON" : "../assets/textures/effects/moon.png",
+    "SUN_ICON" : "../assets/textures/effects/sun.png",
     "FIRE_TEXTURE_PATH": "../assets/textures/effects/fire.png",
-    "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/yellow.png",
+    "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/frame.png",
     "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",
     "TIME_FORMAT": "%e %A: %Hh",
-    "GRID_STYLESHEET": "QScrollBar:horizontal {background-color: #808080; /* Couleur de fond */height: 15px; /* Hauteur */}QScrollBar::handle:horizontal {background-color: #C0C0C0; /* Couleur du curseur */min-width: 50px; /* Largeur minimale */}QScrollBar::add-line:horizontal {background: none;}QScrollBar::sub-line:horizontal {background: none;}QScrollBar:vertical {background-color: #808080; /* Couleur de fond */width: 15px; /* Largeur */}QScrollBar::handle:vertical {background-color: #C0C0C0; /* Couleur du curseur */min-height: 50px; /* Hauteur minimale */}QScrollBar::add-line:vertical {background: none;}QScrollBar::sub-line:vertical {background: none;}",
+    "GRID_STYLESHEET": "",
     "STEP_TIME": 2000,
 
     "DOCK_BG" : "background-color: rgba(47, 54, 66, 1)",
 
-    "SPIN_COLOR" :"background-color: rgba(67, 76, 128, 1)",
-    "HLAYOUT_COLOR" : "background-color: white;",
     "START_BUTTON_STYLE_SHEET" :"background-color: #7cac04; color: white; border-radius:10px; font-size: 30px; width: 5px;",
 
-
-    "BUTTON_STYLESHEET": "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: rgba(122, 100, 83, 1); color: white; border-radius: 3px;}",
-
-
-
-    "VLAYOUT_COLOR" : "background-color: rgba(67, 76, 93, 1); border-radius: 10px;",
-    "SPIN_COLOR2" : "background-color: white;",
-
-    "PLOT_COLOR" : "(228/255, 127/255, 83/255)",
     "PLOT_BCKGROUND" : "(67/255, 76/255, 93/255, 1)",
-    "FIG_BCKGROUND" : "(67/255, 76/255, 93/255, 1)",
+    "FIG_BCKGROUND" : "(67/255, 76/255, 93/255, 1)"
 
-    "PROGRESS_BAR" : "QProgressBar {border: 2px solid grey; border-radius: 5px; text-align: center;} QProgressBar::chunk { background-color: rgb(100, 115, 141); width: 10px;}"
 }

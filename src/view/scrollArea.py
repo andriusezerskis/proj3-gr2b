@@ -1,3 +1,9 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QLabel
 
@@ -5,30 +11,29 @@ from model.crafting.loots import Loot
 
 
 class ScrollArea(QWidget):
-    def __init__(self, container):
+    def __init__(self, container: QWidget):
         super().__init__()
-        self.scroll_area = QScrollArea()
+        self.scrollArea = QScrollArea()
         self.initUI(container)
 
-    def initUI(self, container):
+    def initUI(self, container: QWidget):
         layout = QVBoxLayout()
-        content_widget = QWidget()
-        self.scroll_area.setWidget(content_widget)
-        self.scroll_area.setWidgetResizable(True)
-        # self.scroll_area.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
+        contentWidget = QWidget()
+        self.scrollArea.setWidget(contentWidget)
+        self.scrollArea.setWidgetResizable(True)
+        # self.scrollArea.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
 
-        scroll_layout = QVBoxLayout()
-        content_widget.setLayout(scroll_layout)
+        scrollLayout = QVBoxLayout()
+        contentWidget.setLayout(scrollLayout)
 
         # Ajoutez des images à la liste
-        for items_class in Loot.__subclasses__():
-            for _ in range(100):
-                pixmap = QPixmap(items_class.getDefaultTexturePath())
-                pixmap.scaled(2048, 2048)
-                label = QLabel()
-                label.setPixmap(pixmap)
-                scroll_layout.addWidget(label)
+        for itemsClass in Loot.__subclasses__():
+            pixmap = QPixmap(itemsClass.getDefaultTexturePath())
+            pixmap = pixmap.scaled(32, 32)
+            label = QLabel()
+            label.setPixmap(pixmap)
+            scrollLayout.addWidget(label)
 
-        layout.addWidget(self.scroll_area)
+        layout.addWidget(self.scrollArea)
         self.setLayout(layout)
         container.setLayout(layout)
