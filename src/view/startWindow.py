@@ -120,6 +120,6 @@ class StartWindow(QMainWindow):
         simulation = Simulation(
             self.grid.gridSize, self.grid)
         window = Window(
-            Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
+            self.grid.gridSize, simulation)
         window.show()
         self.hide()
