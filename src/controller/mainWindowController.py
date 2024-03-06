@@ -73,7 +73,7 @@ class MainWindowController:
             entity = tile.getEntity()
             print(entity.loot())
             tile.removeEntity()
-            self.graphicalGrid.removeEntity(tile.getPos())
+            self.graphicalGrid.redraw(tile)
 
             self.graphicalGrid.updateHighlighted()
 
