@@ -34,11 +34,9 @@ from model.disasterhandler import DisasterHandler
 
 
 class Simulation:
-    def __init__(self, gridSize):
+    def __init__(self, gridSize, grid):
         super().__init__()
-        # self.grid = self.generateGrid(gridSize)
-        self.grid = GridLoader.loadFromFile("../assets/grids/test1.map")
-
+        self.grid = grid
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()

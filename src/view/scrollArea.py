@@ -15,7 +15,7 @@ class ScrollArea(QWidget):
         content_widget = QWidget()
         self.scroll_area.setWidget(content_widget)
         self.scroll_area.setWidgetResizable(True)
-        #self.scroll_area.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
+        # self.scroll_area.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
 
         scroll_layout = QVBoxLayout()
         content_widget.setLayout(scroll_layout)
@@ -23,7 +23,6 @@ class ScrollArea(QWidget):
         # Ajoutez des images à la liste
         for items_class in Loot.__subclasses__():
             for _ in range(100):
-                print(items_class.getDefaultTexturePath())
                 pixmap = QPixmap(items_class.getDefaultTexturePath())
                 pixmap.scaled(2048, 2048)
                 label = QLabel()

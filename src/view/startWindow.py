@@ -7,6 +7,10 @@ Date: December 2023
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
+from model.generator.entitiesGenerator import EntitiesGenerator
+from model.generator.gridGenerator import GridGenerator
+from model.grid import Grid
+from model.gridloader import GridLoader
 
 from model.simulation import Simulation
 from utils import Point
@@ -37,6 +41,7 @@ class StartWindow(QMainWindow):
 
         self.setCentralWidget(container)
         self.layout2 = QHBoxLayout()
+        self.file = None
 
         # ---- input windows size ----
         self.gridSizeWidth = 100
@@ -82,10 +87,13 @@ class StartWindow(QMainWindow):
         Callback for the load button
         """
         self.qFileDialog = QFileDialog()
-        self.qFileDialog.setNameFilter("Text File (*.*)")
+        self.qFileDialog.setNameFilter("MAP files (*.map)")
         self.qFileDialog.exec()
-        file = self.qFileDialog.selectedFiles()
+        self.file = self.qFileDialog.selectedFiles()
         self.loadButton.setText("Carte chargée")
+        # desactivate the button to choose the size of the map
+        self.spinBoxWidth.setEnabled(False)
+        self.spinBoxHeight.setEnabled(False)
 
     def updateSpinboxWidth(self, value):
         self.gridSizeWidth = value
@@ -94,8 +102,15 @@ class StartWindow(QMainWindow):
         self.gridSizeHeight = value
 
     def initMainWindow(self):
-        # handler when ok button pressed
-        simulation = Simulation(Point(self.gridSizeWidth, self.gridSizeHeight))
+        if self.file == None:
+            self.grid = GridGenerator(Point(self.gridSizeWidth, self.gridSizeHeight), [
+                                      2, 3, 4, 5, 6], 350).generateGrid()
+            EntitiesGenerator().generateEntities(self.grid)
+        else:
+            self.grid = GridLoader.loadFromFile(self.file[0])
+
+        simulation = Simulation(
+            self.grid.gridSize, self.grid)
         window = Window(
             Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
         window.show()

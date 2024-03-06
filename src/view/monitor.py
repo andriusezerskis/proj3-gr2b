@@ -142,7 +142,6 @@ class MonitorWindow:
 
     def indexChanged(self, button: str):
         self.invasionChosen = getFrenchToEnglishTranslation(button)
-        print(self.invasionChosen)
 
     # ---- handler for update information from button ----
     def btnZone(self, b):
