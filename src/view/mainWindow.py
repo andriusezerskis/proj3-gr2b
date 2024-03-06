@@ -87,7 +87,6 @@ class Window(QMainWindow):
         """
         Display the time passed, one step is one hour
         """
-
         convert = time.strftime(
             ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
         hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))

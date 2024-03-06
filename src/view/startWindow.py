@@ -22,12 +22,12 @@ class StartWindow(QMainWindow):
         self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
         self.setGeometry(100, 100, 100, 100)
 
-        self.setStyleSheet("background-color: #ffd294;") 
+        self.setStyleSheet("background-color: #ffd294;")
 
         self.layout = QVBoxLayout()
         label = QLabel("Deb'île")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        #label.setFont(QFont('Small Fonts', 100)) 
+        # label.setFont(QFont('Small Fonts', 100))
         label.setStyleSheet("QLabel{font-weight: bold}")
         self.layout.addWidget(label)
 
@@ -45,7 +45,7 @@ class StartWindow(QMainWindow):
         self.layout2.addWidget(label2)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
-        self.spinBoxWidth.setStyleSheet(ViewParameters.SPIN_COLOR) 
+        self.spinBoxWidth.setStyleSheet(ViewParameters.SPIN_COLOR)
 
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
@@ -61,7 +61,7 @@ class StartWindow(QMainWindow):
 
         label_im = QLabel(self)
         image = QPixmap("../assets/textures"+"/entities"+"/cow.png")
-        image = image.scaled(100,100)
+        image = image.scaled(100, 100)
         label_im.setPixmap(image)
         label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(label_im)
@@ -72,15 +72,16 @@ class StartWindow(QMainWindow):
         self.button.setStyleSheet(ViewParameters.START_BUTTON_STYLE_SHEET)
         self.layout.addWidget(self.button)
 
-    def updateSpinboxWidth(self, value):
+    def updateSpinboxWidth(self, value: int):
         self.gridSizeWidth = value
 
-    def updateSpinboxHeight(self, value):
+    def updateSpinboxHeight(self, value: int):
         self.gridSizeHeight = value
 
     def initMainWindow(self):
         # handler when ok button pressed
         simulation = Simulation(Point(self.gridSizeWidth, self.gridSizeHeight))
-        window = Window(Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
+        window = Window(
+            Point(self.gridSizeWidth, self.gridSizeHeight), simulation)
         window.show()
         self.hide()

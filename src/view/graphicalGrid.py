@@ -211,7 +211,7 @@ class GraphicalGrid(QGraphicsView):
         elif ViewParameters.MIDDLE_OF_THE_NIGHT + 2 < hour < ViewParameters.NIGHT_MODE_FINISH:
             self.luminosityMode.setOpacity(opacity - 0.1)
 
-    def movePlayer(self, oldPos, newPos):
+    def movePlayer(self, oldPos: Point, newPos: Point):
         self.pixmapItems[oldPos.y()][oldPos.x()
                                      ].getEntity().setPixmap(QPixmap())
         self._drawEntities(self.simulation.getGrid().getTile(newPos))

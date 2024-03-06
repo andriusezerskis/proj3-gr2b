@@ -5,6 +5,7 @@ from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget, QFrame, QLabel
 
 from controller.entityInfoController import EntityInfoController
+from controller.mainWindowController import MainWindowController
 from controller.playerDockController import PlayerDockController
 from view.monitor import MonitorWindow, GraphWindow
 from view.scrollArea import ScrollArea
@@ -18,7 +19,7 @@ class Observer:
 
 
 class CustomQDock(QDockWidget):
-    def __init__(self, mainWindowController, mainWindow, observer):
+    def __init__(self, mainWindowController: MainWindowController, mainWindow: "Window", observer):
         super().__init__("", mainWindow)
         self.mainWindowController = mainWindowController
         self.dockLayout = QVBoxLayout()
@@ -66,7 +67,7 @@ class CustomQDock(QDockWidget):
 
 
 class MonitoringDock(CustomQDock):
-    def __init__(self, mainWindowController, mainWindow, observer):
+    def __init__(self, mainWindowController: MainWindowController, mainWindow: "Window", observer):
         super().__init__(mainWindowController, mainWindow, observer)
 
         mainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self)
@@ -89,7 +90,7 @@ class MonitoringDock(CustomQDock):
 
 
 class PlayerDock(CustomQDock):
-    def __init__(self, mainWindowController, mainWindow, observer):
+    def __init__(self, mainWindowController: MainWindowController, mainWindow: "Window", observer):
         super().__init__(mainWindowController, mainWindow, observer)
 
         mainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self)
@@ -97,7 +98,7 @@ class PlayerDock(CustomQDock):
         container2 = QWidget()
         self.dockLayout.addWidget(container1)
         self.dockLayout.addWidget(container2)
-        self.playerController = PlayerDockController(self, container1)
+        self.playerController = PlayerDockController(container1)
         self.scrollArea = ScrollArea(container2)
 
     def updateContent(self, j):
@@ -108,7 +109,7 @@ class PlayerDock(CustomQDock):
 
 
 class DocksMonitor(Observer):
-    def __init__(self, mainWindowController, mainWindow):
+    def __init__(self, mainWindowController: MainWindowController, mainWindow: "Window"):
         self.monitoringDock = MonitoringDock(
             mainWindowController, mainWindow, self)
         self.playerDock = PlayerDock(mainWindowController, mainWindow, self)

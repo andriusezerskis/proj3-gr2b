@@ -13,13 +13,17 @@ class GraphicalTile:
     def __init__(self, i: int, j: int):
         self.position = (i, j)
         self.terrain = QGraphicsPixmapItem()
-        self.terrain.setPos(j * ViewParameters.TEXTURE_SIZE, i * ViewParameters.TEXTURE_SIZE)
+        self.terrain.setPos(j * ViewParameters.TEXTURE_SIZE,
+                            i * ViewParameters.TEXTURE_SIZE)
         self.entity = QGraphicsPixmapItem()
-        self.entity.setPos(j * ViewParameters.TEXTURE_SIZE, i * ViewParameters.TEXTURE_SIZE)
+        self.entity.setPos(j * ViewParameters.TEXTURE_SIZE,
+                           i * ViewParameters.TEXTURE_SIZE)
         self.filter = QGraphicsPixmapItem()
-        self.filter.setPos(j * ViewParameters.TEXTURE_SIZE, i * ViewParameters.TEXTURE_SIZE)
+        self.filter.setPos(j * ViewParameters.TEXTURE_SIZE,
+                           i * ViewParameters.TEXTURE_SIZE)
         self.disasterFilter = QGraphicsPixmapItem()
-        self.disasterFilter.setPos(j * ViewParameters.TEXTURE_SIZE, i * ViewParameters.TEXTURE_SIZE)
+        self.disasterFilter.setPos(
+            j * ViewParameters.TEXTURE_SIZE, i * ViewParameters.TEXTURE_SIZE)
 
     def getTerrain(self):
         return self.terrain
@@ -39,7 +43,7 @@ class GraphicalTile:
         yield self.entity
         yield self.disasterFilter
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: int):
         if item == 0:
             return self.terrain
         elif item == 1:
