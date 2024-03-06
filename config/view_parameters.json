@@ -13,12 +13,12 @@
     "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/frame.png",
     "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",
     "TIME_FORMAT": "%e %A: %Hh",
-    "GRID_STYLESHEET": "QScrollBar:horizontal {background-color: #808080; /* Couleur de fond */height: 15px; /* Hauteur */}QScrollBar::handle:horizontal {background-color: #C0C0C0; /* Couleur du curseur */min-width: 50px; /* Largeur minimale */}QScrollBar::add-line:horizontal {background: none;}QScrollBar::sub-line:horizontal {background: none;}QScrollBar:vertical {background-color: #808080; /* Couleur de fond */width: 15px; /* Largeur */}QScrollBar::handle:vertical {background-color: #C0C0C0; /* Couleur du curseur */min-height: 50px; /* Hauteur minimale */}QScrollBar::add-line:vertical {background: none;}QScrollBar::sub-line:vertical {background: none;}",
+    "GRID_STYLESHEET": "",
     "STEP_TIME": 2000,
 
     "DOCK_BG" : "background-color: rgba(47, 54, 66, 1)",
 
-    "HLAYOUT_COLOR" : "background-color: white;",
+    "HLAYOUT_COLOR" : "background-color: transparent;",
     "START_BUTTON_STYLE_SHEET" :"background-color: #7cac04; color: white; border-radius:10px; font-size: 30px; width: 5px;",
 
     "VLAYOUT_COLOR" : "background-color: rgba(67, 76, 93, 1); border-radius: 10px;",

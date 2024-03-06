@@ -20,17 +20,18 @@ class StartWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Deb'île launcher")
         self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
-        self.setGeometry(100, 100, 1960, 862)
+        self.setGeometry(0, 0, 1000, 400)
 
         self.layout = QVBoxLayout()
         label = QLabel("Deb'île")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         label.setFont(QFont('Small Fonts', 80))
         self.layout.addWidget(label)
-
         container = QWidget()
-
         container.setLayout(self.layout)
+        container.setStyleSheet("background: transparent;")
+
+        self.setObjectName("startWindow")
 
         self.setCentralWidget(container)
         self.layout2 = QHBoxLayout()
@@ -38,39 +39,41 @@ class StartWindow(QMainWindow):
         # ---- input windows size ----
         self.gridSizeWidth = 100
         self.gridSizeHeight = 100
-        label2 = QLabel("Taille fenêtre longueur")
+        label2 = QToolButton()
+        label2.setText("Taille de la grille")
+        label2.setStyleSheet("background: rgba(0,0,0,50);")
         label2.setFixedSize(200, 30)
-        self.layout2.addWidget(label2)
+        self.layout2.addStretch()
+        self.layout2.addWidget(label2, alignment=Qt.AlignmentFlag.AlignCenter)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
-        self.spinBoxWidth.setFixedSize(100, 30)
+        self.spinBoxWidth.setFixedSize(50, 30)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
+        self.spinBoxWidth.setStyleSheet("background: rgba(0,0,0,50);")
 
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
-        self.spinBoxHeight.setFixedSize(100, 30)
+        self.spinBoxHeight.setFixedSize(50, 30)
+        self.spinBoxHeight.setStyleSheet("background: rgba(0,0,0,50); ")
 
-        self.layout2.addWidget(self.spinBoxWidth)
-        self.layout2.addWidget(self.spinBoxHeight)
+        self.layout2.addWidget(
+            self.spinBoxWidth, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.layout2.addWidget(
+            self.spinBoxHeight, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.layout2.addStretch()
 
         # --- Hlayout  ---
         container2 = QWidget()
         container2.setLayout(self.layout2)
-        container2.setStyleSheet(ViewParameters.HLAYOUT_COLOR)
         self.layout.addWidget(container2)
 
-        # label_im = QLabel(self)
-        # image = QPixmap("../assets/textures"+"/banner.png")
-        # image = image.scaledToWidth(1000)
-        # image = image.scaled(100, 100)
-        # label_im.setPixmap(image)
-        # label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.layout.addWidget(label_im)
-
         # ---- ok button ----
-        self.button = QPushButton("Démarrer")
+        self.button = QToolButton()
+        self.button.setText("Démarrer")
+        self.button.setFixedSize(200, 50)
         self.button.clicked.connect(self.initMainWindow)
         self.button.setStyleSheet(ViewParameters.START_BUTTON_STYLE_SHEET)
-        self.layout.addWidget(self.button)
+        self.layout.addWidget(
+            self.button, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def updateSpinboxWidth(self, value: int):
         self.gridSizeWidth = value

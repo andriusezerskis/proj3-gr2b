@@ -98,7 +98,6 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
-        container.setStyleSheet(ViewParameters.VLAYOUT_COLOR)
         return container
 
     def checkBox2(self):
@@ -135,7 +134,6 @@ class MonitorWindow:
 
         container = QWidget()
         container.setLayout(layout)
-        container.setStyleSheet(ViewParameters.VLAYOUT_COLOR)
         return container
 
     def indexChanged(self, button: str):
@@ -173,7 +171,6 @@ class GraphWindow:
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()
-        container.setStyleSheet(ViewParameters.VLAYOUT_COLOR)
         container.setLayout(self.layout)
         self.layout.addWidget(self.canvas)
 
