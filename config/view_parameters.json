@@ -18,10 +18,7 @@
 
     "DOCK_BG" : "background-color: rgba(47, 54, 66, 1)",
 
-    "HLAYOUT_COLOR" : "background-color: transparent;",
     "START_BUTTON_STYLE_SHEET" :"background-color: #7cac04; color: white; border-radius:10px; font-size: 30px; width: 5px;",
-
-    "VLAYOUT_COLOR" : "background-color: rgba(67, 76, 93, 1); border-radius: 10px;",
 
     "PLOT_BCKGROUND" : "(67/255, 76/255, 93/255, 1)",
     "FIG_BCKGROUND" : "(67/255, 76/255, 93/255, 1)"
