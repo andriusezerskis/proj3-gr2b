@@ -7,29 +7,29 @@ from model.crafting.loots import Loot
 class ScrollArea(QWidget):
     def __init__(self, container):
         super().__init__()
-        self.scroll_area = QScrollArea()
+        self.scrollArea = QScrollArea()
         self.initUI(container)
 
     def initUI(self, container):
         layout = QVBoxLayout()
-        content_widget = QWidget()
-        self.scroll_area.setWidget(content_widget)
-        self.scroll_area.setWidgetResizable(True)
-        #self.scroll_area.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
+        contentWidget = QWidget()
+        self.scrollArea.setWidget(contentWidget)
+        self.scrollArea.setWidgetResizable(True)
+        # self.scrollArea.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
 
-        scroll_layout = QVBoxLayout()
-        content_widget.setLayout(scroll_layout)
+        scrollLayout = QVBoxLayout()
+        contentWidget.setLayout(scrollLayout)
 
         # Ajoutez des images à la liste
-        for items_class in Loot.__subclasses__():
+        for itemsClass in Loot.__subclasses__():
             for _ in range(100):
-                print(items_class.getDefaultTexturePath())
-                pixmap = QPixmap(items_class.getDefaultTexturePath())
+                print(itemsClass.getDefaultTexturePath())
+                pixmap = QPixmap(itemsClass.getDefaultTexturePath())
                 pixmap.scaled(2048, 2048)
                 label = QLabel()
                 label.setPixmap(pixmap)
-                scroll_layout.addWidget(label)
+                scrollLayout.addWidget(label)
 
-        layout.addWidget(self.scroll_area)
+        layout.addWidget(self.scrollArea)
         self.setLayout(layout)
         container.setLayout(layout)

@@ -28,25 +28,24 @@ class CustomQDock(QDockWidget):
         self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.observer = observer
 
-        #self.titleBarFrame = QFrame()
-        #self.setTitleBarWidget(self.titleBarFrame)
+        # self.titleBarFrame = QFrame()
+        # self.setTitleBarWidget(self.titleBarFrame)
 
         # Appliquer le style CSS à la barre de titre
-        #self.titleBarFrame.setStyleSheet("""
+        # self.titleBarFrame.setStyleSheet("""
         #            QFrame {
         #                background-color: #2c3e50; /* Couleur de fond de la barre de titre */
         #                color: white; /* Couleur du texte de la barre de titre */
         #                border: none; /* Supprimer la bordure */
         #            }
         #        """)
-        #self.titleLabel = QLabel("title")
-        #layout = QVBoxLayout(self.titleBarFrame)
-        #layout.addWidget(self.titleLabel)
-        #self.titleLabel.setFixedHeight(30)
-        #layout.setContentsMargins(0, 0, 0, 0)
+        # self.titleLabel = QLabel("title")
+        # layout = QVBoxLayout(self.titleBarFrame)
+        # layout.addWidget(self.titleLabel)
+        # self.titleLabel.setFixedHeight(30)
+        # layout.setContentsMargins(0, 0, 0, 0)
 
         self.setStyleSheet(ViewParameters.DOCK_BG)
-
 
     def updateContent(self, j):
         ...
@@ -56,14 +55,14 @@ class CustomQDock(QDockWidget):
 
     def close(self):
         super().close()
-        #print("closed")
+        # print("closed")
         self.mainWindowController.hide_button()
 
     def closeEvent(self, event: QCloseEvent | None) -> None:
         super().closeEvent(event)
         self.observer.updateClosure()
         self.mainWindowController.closeDockEvent()
-        #print("closed by me")
+        # print("closed by me")
 
 
 class MonitoringDock(CustomQDock):
@@ -80,7 +79,7 @@ class MonitoringDock(CustomQDock):
 
         self.monitor = MonitorWindow(self, container1)
         self.graph = GraphWindow(self, container3)
-        self.entityController = EntityInfoController(self, container2)
+        self.entityController = EntityInfoController(container2)
 
     def updateContent(self, j):
         self.graph.updatePlot(j.getCount(), j)
@@ -101,7 +100,6 @@ class PlayerDock(CustomQDock):
         self.playerController = PlayerDockController(self, container1)
         self.scrollArea = ScrollArea(container2)
 
-
     def updateContent(self, j):
         return
 
@@ -111,7 +109,8 @@ class PlayerDock(CustomQDock):
 
 class DocksMonitor(Observer):
     def __init__(self, mainWindowController, mainWindow):
-        self.monitoringDock = MonitoringDock(mainWindowController, mainWindow, self)
+        self.monitoringDock = MonitoringDock(
+            mainWindowController, mainWindow, self)
         self.playerDock = PlayerDock(mainWindowController, mainWindow, self)
         self.docks = [self.monitoringDock, self.playerDock]
 

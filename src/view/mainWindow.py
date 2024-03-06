@@ -10,7 +10,7 @@ from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QIcon
 
 from parameters import ViewParameters, ViewText
-from utils import getTerminalSubclassesOfClass
+from utils import Point, getTerminalSubclassesOfClass
 
 
 from model.entities.entity import Entity
@@ -26,7 +26,7 @@ from view.docksMonitor import DocksMonitor
 
 
 class Window(QMainWindow):
-    def __init__(self, gridSize, simulation: Simulation):
+    def __init__(self, gridSize: Point, simulation: Simulation):
         super().__init__()
 
         self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
@@ -111,6 +111,9 @@ class Window(QMainWindow):
         return self.view
 
     def updateGrid(self):
+        """
+        Update the grid with the tiles that has been updated by the simulation
+        """
         start = time.time()
         self.view.updateGrid(self.simulation.getUpdatedTiles())
         print(f"update time : {time.time() - start}")

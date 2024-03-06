@@ -14,9 +14,8 @@ from parameters import ViewText, EntityParameters, ViewParameters
 
 
 class EntityInfoView(QDockWidget):
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         super().__init__()
-        self.dock = dock
 
         self.healthBar = QProgressBar()
         self.healthBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
