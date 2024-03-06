@@ -66,10 +66,18 @@ class StartWindow(QMainWindow):
             self.spinBoxHeight, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.layout2.addStretch()
 
+        self.loadButton = QToolButton()
+        self.loadButton.setText("Charger une carte")
+        self.loadButton.clicked.connect(self.loadButtonCallback)
+        self.loadButton.setFixedSize(200, 30)
+        self.loadButton.setStyleSheet("background: rgba(0,0,0,50);")
+
         # --- Hlayout  ---
         container2 = QWidget()
         container2.setLayout(self.layout2)
         self.layout.addWidget(container2)
+        self.layout.addWidget(
+            self.loadButton, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # ---- ok button ----
         self.button = QToolButton()
