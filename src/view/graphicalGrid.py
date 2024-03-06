@@ -84,10 +84,9 @@ class GraphicalGrid(QGraphicsView):
         """
         Initialize the border of the tile to know which tile is selected
         """
-        higlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
-        higlight.scaled(ViewParameters.TEXTURE_SIZE,
-                        ViewParameters.TEXTURE_SIZE)
-        self.highlitedTile = QGraphicsPixmapItem(higlight)
+        highlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
+        highlight = highlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        self.highlitedTile = QGraphicsPixmapItem(highlight)
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
         self.highlitedTile.hide()
@@ -177,7 +176,7 @@ class GraphicalGrid(QGraphicsView):
     def _drawHighlightedTile(self, tile: Tile):
         x, y = tile.getPos()
         self.highlitedTile.setPos(x * self.textureSize, y * self.textureSize)
-        self.highlitedTile.setScale(1)
+        #self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
     def removeEntity(self, point: Point):

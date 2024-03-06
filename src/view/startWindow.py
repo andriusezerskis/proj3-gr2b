@@ -60,14 +60,15 @@ class StartWindow(QMainWindow):
         self.layout.addWidget(container2)
 
         label_im = QLabel(self)
-        image = QPixmap("../assets/textures"+"/entities"+"/cow.png")
-        image = image.scaled(100, 100)
+        image = QPixmap("../assets/textures"+"/banner.png")
+        image = image.scaledToWidth(1000)
+        #image = image.scaled(100, 100)
         label_im.setPixmap(image)
         label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(label_im)
 
         # ---- ok button ----
-        self.button = QPushButton("Commencer !")
+        self.button = QPushButton("Démarrer")
         self.button.clicked.connect(self.initMainWindow)
         self.button.setStyleSheet(ViewParameters.START_BUTTON_STYLE_SHEET)
         self.layout.addWidget(self.button)

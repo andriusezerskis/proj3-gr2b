@@ -28,12 +28,11 @@ class ScrollArea(QWidget):
 
         # Ajoutez des images à la liste
         for itemsClass in Loot.__subclasses__():
-            for _ in range(100):
-                pixmap = QPixmap(itemsClass.getDefaultTexturePath())
-                pixmap.scaled(2048, 2048)
-                label = QLabel()
-                label.setPixmap(pixmap)
-                scrollLayout.addWidget(label)
+            pixmap = QPixmap(itemsClass.getDefaultTexturePath())
+            pixmap = pixmap.scaled(32, 32)
+            label = QLabel()
+            label.setPixmap(pixmap)
+            scrollLayout.addWidget(label)
 
         layout.addWidget(self.scrollArea)
         self.setLayout(layout)
