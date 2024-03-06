@@ -16,17 +16,14 @@ from parameters import ViewText, EntityParameters, ViewParameters
 class EntityInfoView():
     def __init__(self,  container: QWidget):
         self.healthBar = QProgressBar()
-        self.healthBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
         self.infoLabel = QLabel()
 
         self.hungerBar = QProgressBar()
-        self.hungerBar.setStyleSheet(ViewParameters.PROGRESS_BAR)
         self.hungerBar.setRange(0, EntityParameters.MAX_HUNGER)
         self.hungerBar.hide()
 
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
-        self.controlButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.controlButton.setCheckable(True)
         self.controlButton.setMaximumWidth(500)
         self.controlButton.setMinimumWidth(200)

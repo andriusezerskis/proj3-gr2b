@@ -48,6 +48,7 @@ def main():
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     GenericParameters.reloadAllDicts()
     app = QApplication(sys.argv)
+    app.setStyleSheet(open("stylesheet.css").read())
     # font = QFont('Small Fonts')
     # app.setFont(font)
     startWindow = StartWindow()

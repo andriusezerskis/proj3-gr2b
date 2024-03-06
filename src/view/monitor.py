@@ -61,7 +61,6 @@ class MonitorWindow:
         self.button = QPushButton("OK")
         self.button.setMaximumWidth(500)
         self.button.setMinimumWidth(200)
-        self.button.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.button.setCheckable(True)
         self.layout.addWidget(self.button)
         self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
@@ -91,7 +90,6 @@ class MonitorWindow:
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
-        spinBox.setStyleSheet(ViewParameters.SPIN_COLOR2)
         layout.addWidget(spinBox)
 
         b3 = QRadioButton("Ile")

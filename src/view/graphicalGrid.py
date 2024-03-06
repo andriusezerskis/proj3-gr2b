@@ -69,8 +69,6 @@ class GraphicalGrid(QGraphicsView):
                    10 / ViewParameters.TEXTURE_SIZE)
         self.initNightMode()
 
-        self.setStyleSheet(ViewParameters.GRID_STYLESHEET)
-
         self.horizontalScrollbar = self.horizontalScrollBar()
         self.verticalScrollbar = self.verticalScrollBar()
 

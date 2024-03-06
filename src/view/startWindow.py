@@ -20,15 +20,12 @@ class StartWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Deb'île launcher")
         self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
-        self.setGeometry(100, 100, 100, 100)
-
-        self.setStyleSheet("background-color: #ffd294;")
+        self.setGeometry(100, 100, 1960, 862)
 
         self.layout = QVBoxLayout()
         label = QLabel("Deb'île")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # label.setFont(QFont('Small Fonts', 100))
-        label.setStyleSheet("QLabel{font-weight: bold}")
+        label.setFont(QFont('Small Fonts', 80))
         self.layout.addWidget(label)
 
         container = QWidget()
@@ -42,16 +39,18 @@ class StartWindow(QMainWindow):
         self.gridSizeWidth = 100
         self.gridSizeHeight = 100
         label2 = QLabel("Taille fenêtre longueur")
+        label2.setFixedSize(200, 30)
         self.layout2.addWidget(label2)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
+        self.spinBoxWidth.setFixedSize(100, 30)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
-        self.spinBoxWidth.setStyleSheet(ViewParameters.SPIN_COLOR)
 
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
+        self.spinBoxHeight.setFixedSize(100, 30)
+
         self.layout2.addWidget(self.spinBoxWidth)
         self.layout2.addWidget(self.spinBoxHeight)
-        self.spinBoxHeight.setStyleSheet(ViewParameters.SPIN_COLOR)
 
         # --- Hlayout  ---
         container2 = QWidget()
@@ -59,13 +58,13 @@ class StartWindow(QMainWindow):
         container2.setStyleSheet(ViewParameters.HLAYOUT_COLOR)
         self.layout.addWidget(container2)
 
-        label_im = QLabel(self)
-        image = QPixmap("../assets/textures"+"/banner.png")
-        image = image.scaledToWidth(1000)
-        #image = image.scaled(100, 100)
-        label_im.setPixmap(image)
-        label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.layout.addWidget(label_im)
+        # label_im = QLabel(self)
+        # image = QPixmap("../assets/textures"+"/banner.png")
+        # image = image.scaledToWidth(1000)
+        # image = image.scaled(100, 100)
+        # label_im.setPixmap(image)
+        # label_im.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.layout.addWidget(label_im)
 
         # ---- ok button ----
         self.button = QPushButton("Démarrer")

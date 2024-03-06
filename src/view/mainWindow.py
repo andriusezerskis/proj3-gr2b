@@ -122,12 +122,10 @@ class Window(QMainWindow):
 
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
-        self.pauseButton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.pauseButton.setCheckable(True)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
         self.fastFbutton = QPushButton("fast forward")
-        self.fastFbutton.setStyleSheet(ViewParameters.BUTTON_STYLESHEET)
         self.fastFbutton.setCheckable(True)
         self.fastFbutton.clicked.connect(self.fastForward)
 
