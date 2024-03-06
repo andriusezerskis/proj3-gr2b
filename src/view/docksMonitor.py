@@ -46,8 +46,6 @@ class CustomQDock(QDockWidget):
         # self.titleLabel.setFixedHeight(30)
         # layout.setContentsMargins(0, 0, 0, 0)
 
-        self.setStyleSheet(ViewParameters.DOCK_BG)
-
     def updateContent(self, j):
         ...
 
@@ -77,6 +75,9 @@ class MonitoringDock(CustomQDock):
         self.dockLayout.addWidget(container1)
         self.dockLayout.addWidget(container3)
         self.dockLayout.addWidget(container2)
+        container1.setObjectName("Dock")
+        container2.setObjectName("Dock")
+        container3.setObjectName("Dock")
 
         self.monitor = MonitorWindow(self, container1)
         self.graph = GraphWindow(self, container3)
