@@ -28,8 +28,8 @@ class TileRenderer(ABC):
 
     def createNewLayer(self):
         layer = QGraphicsPixmapItem()
-        layer.setPos(self.pos.y() * ViewParameters.TEXTURE_SIZE,
-                     self.pos.x() * ViewParameters.TEXTURE_SIZE)
+        layer.setPos(self.pos.x() * ViewParameters.TEXTURE_SIZE,
+                     self.pos.y() * ViewParameters.TEXTURE_SIZE)
         self.getScene().addItem(layer)
         self.layers.add(layer)
         return layer
