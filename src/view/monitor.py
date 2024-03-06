@@ -21,12 +21,11 @@ matplotlib.use('QtAgg')
 
 
 class MonitorWindow:
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         """
         Window for controlling catastrophe on the map >:)
         Display on the dock tab of main windows
         """
-        self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
 
@@ -57,10 +56,7 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
-        # todo button style
-        self.button = QPushButton("OK")
-        self.button.setMaximumWidth(500)
-        self.button.setMinimumWidth(200)
+        self.button = QPushButton("Lancer la catastrophe")
         self.button.setCheckable(True)
         self.layout.addWidget(self.button)
         self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
@@ -83,18 +79,18 @@ class MonitorWindow:
         label = QLabel("Choix de zone")
         layout.addWidget(label)
 
-        b2 = QRadioButton("Rayon")
-        b2.setChecked(True)
-        b2.toggled.connect(lambda: self.btnZone(b2))
-        layout.addWidget(b2)
+        rayonButton = QRadioButton("Rayon")
+        rayonButton.setChecked(True)
+        rayonButton.toggled.connect(lambda: self.btnZone(rayonButton))
+        layout.addWidget(rayonButton)
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
         layout.addWidget(spinBox)
 
-        b3 = QRadioButton("Ile")
-        b3.toggled.connect(lambda: self.btnZone(b3))
-        layout.addWidget(b3)
+        islandButton = QRadioButton("Ile")
+        islandButton.toggled.connect(lambda: self.btnZone(islandButton))
+        layout.addWidget(islandButton)
 
         container = QWidget()
         container.setLayout(layout)
@@ -102,21 +98,23 @@ class MonitorWindow:
 
     def checkBox2(self):
         layout = QVBoxLayout()
+        container = QWidget()
+        container.setLayout(layout)
 
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        b1 = QRadioButton(Disaster.ICE_TEXT, self.dock)
-        b1.setChecked(True)
-        b1.toggled.connect(lambda: self.btnCata(b1))
-        layout.addWidget(b1)
+        iceButton = QRadioButton(Disaster.ICE_TEXT, self.container)
+        iceButton.setChecked(True)
+        iceButton.toggled.connect(lambda: self.btnCata(iceButton))
+        layout.addWidget(iceButton)
 
-        b2 = QRadioButton(Disaster.FIRE_TEXT, self.dock)
-        b2.toggled.connect(lambda: self.btnCata(b2))
-        layout.addWidget(b2)
+        fireButton = QRadioButton(Disaster.FIRE_TEXT, self.container)
+        fireButton.toggled.connect(lambda: self.btnCata(fireButton))
+        layout.addWidget(fireButton)
 
-        b3 = QRadioButton(Disaster.INVASION_TEXT, self.dock)
-        b3.toggled.connect(lambda: self.btnCata(b3))
+        islandButton = QRadioButton(Disaster.INVASION_TEXT, self.container)
+        islandButton.toggled.connect(lambda: self.btnCata(islandButton))
 
         combobox5 = QComboBox()
 
@@ -129,11 +127,9 @@ class MonitorWindow:
             combobox5.currentText())
         combobox5.currentTextChanged.connect(self.indexChanged)
 
-        layout.addWidget(b3)
+        layout.addWidget(islandButton)
         layout.addWidget(combobox5)
 
-        container = QWidget()
-        container.setLayout(layout)
         return container
 
     def indexChanged(self, button: str):
@@ -141,20 +137,16 @@ class MonitorWindow:
         print(self.invasionChosen)
 
     # ---- handler for update information from button ----
-    def btnZone(self, b):
-        # handler de zone selectionné
-
-        if b.isChecked() == True:
-            self.infoZone = b.text()
+    def btnZone(self, zoneButton):
+        if zoneButton.isChecked() == True:
+            self.infoZone = zoneButton.text()
 
     def updateSpinbox(self, value):
         self.infoRayon = value
 
-    def btnCata(self, b):
-        # handler de catastrophe selectionné
-
-        if b.isChecked() == True:
-            self.infoDisaster = b.text()
+    def btnCata(self, disasterButton):
+        if disasterButton.isChecked() == True:
+            self.infoDisaster = disasterButton.text()
 
 
 # --- for graph plot ---
@@ -167,7 +159,7 @@ class MplCanvas(FigureCanvas):
 
 
 class GraphWindow:
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()

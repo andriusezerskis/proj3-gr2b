@@ -79,12 +79,12 @@ class MonitoringDock(CustomQDock):
         container2.setObjectName("Dock")
         container3.setObjectName("Dock")
 
-        self.monitor = MonitorWindow(self, container1)
-        self.graph = GraphWindow(self, container3)
+        self.monitor = MonitorWindow(container1)
+        self.graph = GraphWindow(container3)
         self.entityController = EntityInfoController(container2)
 
-    def updateContent(self, j):
-        self.graph.updatePlot(j.getCount(), j)
+    def updateContent(self, entityType):
+        self.graph.updatePlot(entityType.getCount(), entityType)
 
     def updateController(self):
         self.entityController.update()

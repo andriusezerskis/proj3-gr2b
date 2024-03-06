@@ -16,8 +16,7 @@ class PlayerDockView(QDockWidget):
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.lageButton)
 
-        self.container = container
-        self.container.setLayout(self.layout)
+        container.setLayout(self.layout)
 
     @staticmethod
     def lageEntity():
