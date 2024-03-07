@@ -46,6 +46,17 @@ class Player(Movable):
         self.pos = None
         self.claimed_entity = None
 
+    def isDead(self):
+        """The entity chosen never dies
+
+        Returns:
+            _type_: _description_
+        """
+        return False
+
+    def getTile(self):
+        return self.grid.getTile(self.pos)
+
     def move(self, movement: Point):
         oldPosition = copy(self.pos)
         wantedPosition = self.pos + movement

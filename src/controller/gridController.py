@@ -44,7 +44,6 @@ class GridController:
             pos = self.simulation.getPlayer().getPos()
             if self.simulation.getPlayer().move(movement):
                 self.graphicalGrid.movePlayer(
-
                     pos, self.simulation.getPlayer().getPos())
                 if not self.renderingMonitor.isNextToBorder(self.simulation.getPlayer().getPos() if movement.isPositive() else pos, movement):
                     self.graphicalGrid.initSmoothScroll(movement)
@@ -64,7 +63,6 @@ class GridController:
 
     def lageEntity(self):
         self.simulation.getPlayer().removeClaimedEntity()
-        print(self.simulation.hasPlayer())
 
     def resizeEvent(self, event):
         if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():

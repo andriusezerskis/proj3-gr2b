@@ -73,9 +73,9 @@ class MainWindowController:
     def playerControll(self, tile):
         if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
             entity = tile.getEntity()
-            #print(entity.loot())
             self.simulation.player.addInInventory(entity.loot())
-            self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(self.simulation.player.getInventory())
+            self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
+                self.simulation.player.getInventory())
             tile.removeEntity()
             self.graphicalGrid.redraw(tile)
 
