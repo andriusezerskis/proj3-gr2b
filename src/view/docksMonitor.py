@@ -99,8 +99,8 @@ class PlayerDock(CustomQDock):
         container2 = QWidget()
         self.dockLayout.addWidget(container1)
         self.dockLayout.addWidget(container2)
-        self.playerController = PlayerDockController(container1)
-        self.scrollArea = ScrollArea(container2)
+        self.playerController = PlayerDockController(container2)
+        self.scrollArea = ScrollArea(container1)
 
     def updateContent(self, j):
         return

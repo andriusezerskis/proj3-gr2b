@@ -36,6 +36,8 @@ class MonitorWindow:
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # tittle.setFont(QFont('Small Fonts', 20))
         title.setObjectName("title")
+        title.setStyleSheet("background: rgba(0, 0, 0, 0)")
+        title.setFont(QFont('Small Fonts', 20))
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----

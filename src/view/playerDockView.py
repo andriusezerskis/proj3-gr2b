@@ -36,8 +36,8 @@ class PlayerDockView(QDockWidget):
         self.secondContainer.setLayout(self.secondLayout)
 
         self.firstLayout = QVBoxLayout()
-        self.firstLayout.addWidget(self.lageButton)
         self.firstLayout.addWidget(self.secondContainer)
+        self.firstLayout.addWidget(self.lageButton)
 
         self.container = container
         self.container.setLayout(self.firstLayout)

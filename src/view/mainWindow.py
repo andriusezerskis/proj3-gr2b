@@ -124,11 +124,11 @@ class Window(QMainWindow):
         self.commands.show()
 
     def drawButtons(self):
-        self.pauseButton = QPushButton("pause")
+        self.pauseButton = QPushButton("⏸︎")
         self.pauseButton.setCheckable(True)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
-        self.fastFbutton = QPushButton("fast forward")
+        self.fastFbutton = QPushButton("⏩")
         self.fastFbutton.setCheckable(True)
         self.fastFbutton.clicked.connect(self.fastForward)
 
@@ -141,7 +141,7 @@ class Window(QMainWindow):
         self.changeTileRendererButton = QPushButton("Change Renderer")
         self.changeTileRendererButton.clicked.connect(self.changeTileRenderer)
 
-        self.buttonOpenDock = QPushButton(">")
+        self.buttonOpenDock = QPushButton("➡︎")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
             self.mainWindowController.openDockEvent)
