@@ -33,7 +33,7 @@ class ScrollArea(QWidget):
         # Ajoutez des images à la liste
         for itemsClass in getTerminalSubclassesOfClass(Loot):
             h_layout = QHBoxLayout()
-            pixmap = QPixmap(items_class.getDefaultTexturePath())
+            pixmap = QPixmap(itemsClass.getDefaultTexturePath())
             # pixmap.scaled(2048, 2048)
             image = QLabel()
             image.resize(200, 200)
@@ -41,9 +41,9 @@ class ScrollArea(QWidget):
             h_layout.addWidget(image)
             text = QLabel()
             text.setText("0")
-            self.quantities[items_class.__name__] = [image, text]
+            self.quantities[itemsClass.__name__] = [image, text]
             h_layout.addWidget(text)
-            scroll_layout.addLayout(h_layout)
+            scrollLayout.addLayout(h_layout)
 
         layout.addWidget(self.scrollArea)
         self.setLayout(layout)

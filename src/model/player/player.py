@@ -22,7 +22,6 @@ from view.playerDockView import PlayerDockView
 class Player(Movable):
 
     def __init__(self, pos: Point | None, grid: "Grid"):
-    def __init__(self, pos: Point | None, grid: "Grid"):
         super().__init__()
         self.pos = pos
         self.grid = grid
@@ -85,9 +84,8 @@ class Player(Movable):
         return self.claimed_entity.getPreferredTemperature()
 
     def kill(self):
-        #self.removeClaimedEntity()
+        # self.removeClaimedEntity()
         PlayerDockView.lageEntity()
-
 
     def hasEnoughQuantityToCraft(self, item):
         for material, quantity in item.getBlueprint().items():

@@ -13,7 +13,7 @@ class PlayerDockView(QDockWidget):
     def __init__(self,  container: QWidget):
         super().__init__()
 
-        self.lageButton = QPushButton(RELEASE_PLAYER)
+        self.lageButton = QPushButton(ViewText.RELEASE_PLAYER)
         self.lageButton.clicked.connect(self.lageEntity)
         # self.lageButton.hide()
 
@@ -36,7 +36,7 @@ class PlayerDockView(QDockWidget):
         self.secondContainer.setLayout(self.secondLayout)
 
         self.firstLayout = QVBoxLayout()
-        self.firstLayout.addWidget(self.freeButton)
+        self.firstLayout.addWidget(self.lageButton)
         self.firstLayout.addWidget(self.secondContainer)
 
         self.container = container
