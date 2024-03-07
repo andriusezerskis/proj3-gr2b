@@ -228,7 +228,7 @@ class GraphWindow:
             if max(self.ydata[entity]) * 1.15 > ylim:
                 ylim = 1.15 * max(self.ydata[entity])
 
-        self.canvas.axes.set_ylim(0, ylim)
+        self.canvas.axes.set_ylim(1, ylim)
         """
         if self.chosenEntity.getFrenchName()[0] in "AEIOUYH":
             self.canvas.axes.set_title(
@@ -248,5 +248,4 @@ class GraphWindow:
 
     def updatePlot(self, newNumber, entity):
         self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
-
         self.drawPlot()
