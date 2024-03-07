@@ -141,7 +141,7 @@ class Window(QMainWindow):
         self.changeTileRendererButton = QPushButton("Change Renderer")
         self.changeTileRendererButton.clicked.connect(self.changeTileRenderer)
 
-        self.buttonOpenDock = QPushButton("➡︎")
+        self.buttonOpenDock = QPushButton("⇨")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
             self.mainWindowController.openDockEvent)
