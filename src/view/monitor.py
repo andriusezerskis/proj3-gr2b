@@ -7,7 +7,7 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QGroupBox
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QGroupBox, QGridLayout
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
@@ -73,7 +73,7 @@ class MonitorWindow:
 
     # ---- method for init GUI ----
     def checkBox(self):
-        layout = QVBoxLayout()
+        layout = QGridLayout()
 
         rayonButton = QRadioButton("Rayon")
         rayonButton.setChecked(True)
@@ -85,27 +85,27 @@ class MonitorWindow:
         islandButton = QRadioButton("Ile")
         islandButton.toggled.connect(lambda: self.btnZone(islandButton))
 
-        layout.addWidget(islandButton)
-        layout.addWidget(rayonButton)
-        layout.addWidget(spinBox)
+        layout.addWidget(islandButton, 0, 0)
+        layout.addWidget(rayonButton, 1, 0)
+        layout.addWidget(spinBox, 1, 1)
 
         container = QGroupBox("Choix de la zone")
         container.setLayout(layout)
         return container
 
     def checkBox2(self):
-        layout = QVBoxLayout()
+        layout = QGridLayout()
         container = QGroupBox("Choix de catastrophe")
         container.setLayout(layout)
 
         iceButton = QRadioButton(Disaster.ICE_TEXT, self.container)
         iceButton.setChecked(True)
         iceButton.toggled.connect(lambda: self.btnCata(iceButton))
-        layout.addWidget(iceButton)
+        layout.addWidget(iceButton, 0, 0)
 
         fireButton = QRadioButton(Disaster.FIRE_TEXT, self.container)
         fireButton.toggled.connect(lambda: self.btnCata(fireButton))
-        layout.addWidget(fireButton)
+        layout.addWidget(fireButton, 1, 0)
 
         islandButton = QRadioButton(Disaster.INVASION_TEXT, self.container)
         islandButton.toggled.connect(lambda: self.btnCata(islandButton))
@@ -121,8 +121,8 @@ class MonitorWindow:
             combobox5.currentText())
         combobox5.currentTextChanged.connect(self.indexChanged)
 
-        layout.addWidget(islandButton)
-        layout.addWidget(combobox5)
+        layout.addWidget(islandButton, 2, 0)
+        layout.addWidget(combobox5, 2, 1)
 
         return container
 

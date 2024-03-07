@@ -53,6 +53,7 @@ def main():
     # app.setFont(font)
     startWindow = StartWindow()
     startWindow.show()
+    # app.setStyle("Windows")
     app.exec()
 
 

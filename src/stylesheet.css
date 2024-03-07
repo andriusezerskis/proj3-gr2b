@@ -7,16 +7,17 @@ QGroupBox {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #E0E0E0, stop: 1 #FFFFFF);
     border: 2px solid rgb(105, 120, 149);
     border-radius: 5px;
-    margin-top: 2ex;
+    margin-top: 1ex;
     /*leave space at the top for the title */
     font-size: 13px;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    subcontrol-position: top center;
+    subcontrol-position: top left;
+    left: 10px;
     /* position at the top center */
-    padding: 0 3px;
+    padding: 0 0px;
     font-size: 13px;
 }
 
@@ -25,9 +26,25 @@ QWidget#semiTransparent {
     font-size: 16px;
 }
 
-QSpinBox>QWidget {
+QSpinBox > QWidget {
     background: rgba(0, 0, 0, 50);
+    font-size: 16px;
 }
+
+QSpinBox::up-button  {
+    subcontrol-origin: border ;
+    subcontrol-position: right top;
+    width: 20px;
+
+}
+
+QSpinBox::down-button{
+    subcontrol-origin: border ;
+    subcontrol-position: right bottom;
+    width: 20px;
+
+}
+
 
 
 
