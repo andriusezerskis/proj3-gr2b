@@ -24,6 +24,8 @@ from model.renderMonitor import RenderMonitor
 from controller.mainWindowController import MainWindowController
 
 from view.tilerenderers.classictilerenderer import ClassicTileRenderer
+from view.tilerenderers.temperaturetilerenderer import TemperatureTileRenderer
+from view.tilerenderers.depthtilerenderer import DepthTileRenderer
 from view.tilerenderers.tilerenderer import TileRenderer
 
 from view.pixmaputils import PixmapUtils
@@ -36,6 +38,8 @@ from model.simulation import Simulation
 
 class GraphicalGrid(QGraphicsView):
 
+    tileRenderers = [ClassicTileRenderer, TemperatureTileRenderer, DepthTileRenderer]
+
     def __init__(self, gridSize: Point, grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
 
         self.luminosityMode = None
@@ -45,6 +49,8 @@ class GraphicalGrid(QGraphicsView):
 
         TileRenderer.setScene(self.scene)
 
+        self.tileRenderer = None
+
         self.latestVerticalValue = renderingMonitor.getFirstYVisible()
         self.latestHorizontalValue = renderingMonitor.getFirstXVisible()
         self.renderingMonitor = renderingMonitor
@@ -53,9 +59,11 @@ class GraphicalGrid(QGraphicsView):
 
         self.textureSize = ViewParameters.TEXTURE_SIZE
         self.gridSize: Point = gridSize
-        self.pixmapItems: List[List[TileRenderer]] = \
-            [[ClassicTileRenderer(Point(x, y)) for x in range(self.gridSize.x())]
-             for y in range(self.gridSize.y())]
+        self.pixmapItems: List[List[TileRenderer]] | None = None
+
+        self.initNightMode()
+
+        self.changeTileRenderer(ClassicTileRenderer)
 
         start_time = time.time()
         self.drawGrid(grid)
@@ -66,7 +74,6 @@ class GraphicalGrid(QGraphicsView):
         # taille de la fenêtre (1000) / grid (100) = 10, divisé par size pixmap
         self.scale(10 / ViewParameters.TEXTURE_SIZE,
                    10 / ViewParameters.TEXTURE_SIZE)
-        self.initNightMode()
 
         self.horizontalScrollbar = self.horizontalScrollBar()
         self.verticalScrollbar = self.verticalScrollBar()
@@ -88,6 +95,31 @@ class GraphicalGrid(QGraphicsView):
         self.chosenEntity = None
         self.highlitedTile.hide()
 
+    def changeTileRenderer(self, newTileRenderer: type = None):
+        if not newTileRenderer:
+            idx = self.tileRenderers.index(self.tileRenderer)
+            newTileRenderer = self.tileRenderers[(idx + 1) % len(self.tileRenderers)]
+
+        assert issubclass(newTileRenderer, TileRenderer)
+
+        if not self.pixmapItems:
+            self.pixmapItems = [[newTileRenderer(Point(x, y)) for x in range(self.gridSize.x())]
+                                for y in range(self.gridSize.y())]
+        else:
+            for y in range(self.gridSize.y()):
+                for x in range(self.gridSize.x()):
+                    self.pixmapItems[y][x].kill()
+                    self.pixmapItems[y][x] = newTileRenderer(Point(x, y))
+
+        self.tileRenderer = newTileRenderer
+
+        self.drawGrid(self.simulation.getGrid())
+
+        if self.tileRenderer.allowsNightCycle():
+            self.luminosityMode.show()
+        else:
+            self.luminosityMode.hide()
+
     def initNightMode(self):
         """
         Initialize a pixmap with the night mode
@@ -105,13 +137,18 @@ class GraphicalGrid(QGraphicsView):
         transform.scale(scale * self.gridSize.x(),
                         scale * self.gridSize.y())
         self.luminosityMode.setTransform(transform)
-        self.luminosityMode.show()
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updatedTiles: Set[Tile]):
-        for tile in updatedTiles:
-            if tile in self.renderingMonitor.getRenderingSection():
-                self.redraw(tile)
+        if self.tileRenderer.mustNotBeUpdated():
+            return
+
+        if not self.tileRenderer.mustBeUpdatedAtEveryStep():
+            for tile in updatedTiles:
+                if tile in self.renderingMonitor.getRenderingSection():
+                    self.redraw(tile)
+        else:
+            self.drawGrid(self.simulation.getGrid())
 
         self.updateHighlighted()
 

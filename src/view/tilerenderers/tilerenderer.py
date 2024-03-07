@@ -46,5 +46,28 @@ class TileRenderer(ABC):
         return
 
     @abstractmethod
+    def getAllItems(self) -> list[QGraphicsPixmapItem]:
+        ...
+
+    def kill(self):
+        for item in self.getAllItems():
+            self._scene.removeItem(item)
+
+    @classmethod
+    @abstractmethod
+    def allowsNightCycle(cls) -> bool:
+        ...
+
+    @classmethod
+    @abstractmethod
+    def mustBeUpdatedAtEveryStep(cls) -> bool:
+        ...
+
+    @classmethod
+    @abstractmethod
+    def mustNotBeUpdated(cls) -> bool:
+        ...
+
+    @abstractmethod
     def update(self, tile: Tile):
         ...

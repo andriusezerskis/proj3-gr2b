@@ -1,3 +1,5 @@
+from PyQt6.QtWidgets import QGraphicsPixmapItem
+
 from model.entities.entity import Entity
 from model.generator.gridGenerator import GridGenerator
 from model.terrains.tile import Tile
@@ -52,6 +54,25 @@ class ClassicTileRenderer(TileRenderer):
     @override
     def hideEntity(self):
         self.entityLayer.hide()
+
+    @override
+    def getAllItems(self) -> list[QGraphicsPixmapItem]:
+        return [self.depthLayer, self.disasterLayer, self.entityLayer, self.terrainLayer]
+
+    @classmethod
+    @override
+    def allowsNightCycle(cls) -> bool:
+        return True
+
+    @classmethod
+    @override
+    def mustBeUpdatedAtEveryStep(cls) -> bool:
+        return False
+
+    @classmethod
+    @override
+    def mustNotBeUpdated(cls) -> bool:
+        return False
 
     @override
     def update(self, tile: Tile):
