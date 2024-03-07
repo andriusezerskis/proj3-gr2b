@@ -7,7 +7,7 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QGroupBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
@@ -65,8 +65,7 @@ class MonitorWindow:
         return self.button.isChecked()
 
     def offIsMonitor(self):
-        # calls when click on the map after selection of catastroph
-        # (end of the action)
+        # calls when click on the map after selection of disaster
         self.button.setChecked(False)
 
     def getInfo(self):
@@ -76,33 +75,28 @@ class MonitorWindow:
     def checkBox(self):
         layout = QVBoxLayout()
 
-        label = QLabel("Choix de zone")
-        layout.addWidget(label)
-
         rayonButton = QRadioButton("Rayon")
         rayonButton.setChecked(True)
         rayonButton.toggled.connect(lambda: self.btnZone(rayonButton))
-        layout.addWidget(rayonButton)
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
-        layout.addWidget(spinBox)
 
         islandButton = QRadioButton("Ile")
         islandButton.toggled.connect(lambda: self.btnZone(islandButton))
-        layout.addWidget(islandButton)
 
-        container = QWidget()
+        layout.addWidget(islandButton)
+        layout.addWidget(rayonButton)
+        layout.addWidget(spinBox)
+
+        container = QGroupBox("Choix de la zone")
         container.setLayout(layout)
         return container
 
     def checkBox2(self):
         layout = QVBoxLayout()
-        container = QWidget()
+        container = QGroupBox("Choix de catastrophe")
         container.setLayout(layout)
-
-        label = QLabel("Choix de catastrophe")
-        layout.addWidget(label)
 
         iceButton = QRadioButton(Disaster.ICE_TEXT, self.container)
         iceButton.setChecked(True)

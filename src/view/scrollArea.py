@@ -7,7 +7,7 @@ Date: December 2023
 from typing import Dict, List
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QLabel, QHBoxLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QLabel, QHBoxLayout, QGroupBox
 
 from model.crafting.loots import Loot
 from utils import getTerminalSubclassesOfClass
@@ -22,7 +22,7 @@ class ScrollArea(QWidget):
 
     def initUI(self, container: QWidget):
         layout = QVBoxLayout()
-        contentWidget = QWidget()
+        contentWidget = QGroupBox("Inventaire")
         self.scrollArea.setWidget(contentWidget)
         self.scrollArea.setWidgetResizable(True)
         # self.scrollArea.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
