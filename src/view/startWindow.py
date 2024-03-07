@@ -98,7 +98,6 @@ class StartWindow(QMainWindow):
         self.qFileDialog.setNameFilter("MAP files (*.map)")
         self.qFileDialog.exec()
         self.file = self.qFileDialog.selectedFiles()
-        print(self.file)
         if self.file and self.file[0].endswith(".map"):
             self.loadButton.setText("Carte chargée")
             # desactivate the button to choose the size of the map

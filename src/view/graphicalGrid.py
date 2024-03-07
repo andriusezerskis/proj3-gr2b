@@ -38,7 +38,8 @@ from model.simulation import Simulation
 
 class GraphicalGrid(QGraphicsView):
 
-    tileRenderers = [ClassicTileRenderer, TemperatureTileRenderer, DepthTileRenderer]
+    tileRenderers = [ClassicTileRenderer,
+                     TemperatureTileRenderer, DepthTileRenderer]
 
     def __init__(self, gridSize: Point, grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
 
@@ -89,7 +90,8 @@ class GraphicalGrid(QGraphicsView):
         Initialize the border of the tile to know which tile is selected
         """
         highlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
-        highlight = highlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        highlight = highlight.scaled(
+            ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
         self.highlitedTile = QGraphicsPixmapItem(highlight)
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
@@ -98,7 +100,8 @@ class GraphicalGrid(QGraphicsView):
     def changeTileRenderer(self, newTileRenderer: type = None):
         if not newTileRenderer:
             idx = self.tileRenderers.index(self.tileRenderer)
-            newTileRenderer = self.tileRenderers[(idx + 1) % len(self.tileRenderers)]
+            newTileRenderer = self.tileRenderers[(
+                idx + 1) % len(self.tileRenderers)]
 
         assert issubclass(newTileRenderer, TileRenderer)
 
@@ -158,6 +161,8 @@ class GraphicalGrid(QGraphicsView):
     def updateHighlighted(self):
         if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
+            print(self.chosenEntity.getTile().getPos(),
+                  "selected", self.chosenEntity)
         else:
             self.highlitedTile.hide()
 
@@ -168,7 +173,7 @@ class GraphicalGrid(QGraphicsView):
     def _drawHighlightedTile(self, tile: Tile):
         x, y = tile.getPos()
         self.highlitedTile.setPos(x * self.textureSize, y * self.textureSize)
-        #self.highlitedTile.setScale(1)
+        # self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
     def removeEntity(self, point: Point):
@@ -195,6 +200,8 @@ class GraphicalGrid(QGraphicsView):
     def movePlayer(self, oldPos: Point, newPos: Point):
         self.pixmapItems[oldPos.y()][oldPos.x()].hideEntity()
         self.redraw(self.simulation.getGrid().getTile(newPos))
+        self.chosenEntity = self.simulation.player
+        self.updateHighlighted()
 
     def removeRenderedSection(self):
         for point in self.renderingMonitor.getRenderingSection():
