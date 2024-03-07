@@ -7,36 +7,35 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QButtonGroup
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-import os
-
 
 import matplotlib
-from utils import getTerminalSubclassesOfClass
-from constants import CLICKED_BUTTON_STYLESHEET, NOT_CLICKED_BUTTON_STYLESHEET, Disaster
-from model.entities.animals import Crab
+from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
+from model.disaster import Disaster
+from parameters import ViewParameters
 from model.entities.entity import Entity
 
 matplotlib.use('QtAgg')
 
 
 class MonitorWindow:
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         """
         Window for controlling catastrophe on the map >:)
         Display on the dock tab of main windows
         """
-        self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
+
         self.container.setLayout(self.layout)
 
         # --- main layout settings ---
         title = QLabel('Tableau de bord-inator')
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("QLabel{font-size: 20pt;}")
+        # tittle.setFont(QFont('Small Fonts', 20))
+        title.setObjectName("title")
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----
@@ -57,24 +56,18 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
-        self.button = QPushButton("OK")
-        self.button.clicked.connect(self.okButtonCallback)
-        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button = QPushButton("Lancer la catastrophe")
+        self.button.setCheckable(True)
         self.layout.addWidget(self.button)
-
-    def okButtonCallback(self):
-        # handler of ok button after selection of a catastroph
-        self.isMonitor = True
-        self.button.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
+        self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
 
     def getIsMonitor(self):
-        return self.isMonitor
+        return self.button.isChecked()
 
     def offIsMonitor(self):
         # calls when click on the map after selection of catastroph
         # (end of the action)
-        self.isMonitor = False
-        self.button.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.button.setChecked(False)
 
     def getInfo(self):
         return self.infoZone, self.infoRayon, self.infoDisaster, self.invasionChosen
@@ -86,18 +79,18 @@ class MonitorWindow:
         label = QLabel("Choix de zone")
         layout.addWidget(label)
 
-        b2 = QRadioButton("Rayon")
-        b2.setChecked(True)
-        b2.toggled.connect(lambda: self.btnZone(b2))
-        layout.addWidget(b2)
+        rayonButton = QRadioButton("Rayon")
+        rayonButton.setChecked(True)
+        rayonButton.toggled.connect(lambda: self.btnZone(rayonButton))
+        layout.addWidget(rayonButton)
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
         layout.addWidget(spinBox)
 
-        b3 = QRadioButton("Ile")
-        b3.toggled.connect(lambda: self.btnZone(b3))
-        layout.addWidget(b3)
+        islandButton = QRadioButton("Ile")
+        islandButton.toggled.connect(lambda: self.btnZone(islandButton))
+        layout.addWidget(islandButton)
 
         container = QWidget()
         container.setLayout(layout)
@@ -105,21 +98,23 @@ class MonitorWindow:
 
     def checkBox2(self):
         layout = QVBoxLayout()
+        container = QWidget()
+        container.setLayout(layout)
 
         label = QLabel("Choix de catastrophe")
         layout.addWidget(label)
 
-        b1 = QRadioButton(Disaster.ICE_TEXT, self.dock)
-        b1.setChecked(True)
-        b1.toggled.connect(lambda: self.btnCata(b1))
-        layout.addWidget(b1)
+        iceButton = QRadioButton(Disaster.ICE_TEXT, self.container)
+        iceButton.setChecked(True)
+        iceButton.toggled.connect(lambda: self.btnCata(iceButton))
+        layout.addWidget(iceButton)
 
-        b2 = QRadioButton(Disaster.FIRE_TEXT, self.dock)
-        b2.toggled.connect(lambda: self.btnCata(b2))
-        layout.addWidget(b2)
+        fireButton = QRadioButton(Disaster.FIRE_TEXT, self.container)
+        fireButton.toggled.connect(lambda: self.btnCata(fireButton))
+        layout.addWidget(fireButton)
 
-        b3 = QRadioButton(Disaster.INVASION_TEXT, self.dock)
-        b3.toggled.connect(lambda: self.btnCata(b3))
+        islandButton = QRadioButton(Disaster.INVASION_TEXT, self.container)
+        islandButton.toggled.connect(lambda: self.btnCata(islandButton))
 
         combobox5 = QComboBox()
 
@@ -128,70 +123,65 @@ class MonitorWindow:
             animalIcon = QIcon(entityType.getDefaultTexturePath())
             combobox5.addItem(animalIcon, entityType.getFrenchName())
 
-        self.invasionChosen = combobox5.currentText()
+        self.invasionChosen = getFrenchToEnglishTranslation(
+            combobox5.currentText())
         combobox5.currentTextChanged.connect(self.indexChanged)
 
-        layout.addWidget(b3)
+        layout.addWidget(islandButton)
         layout.addWidget(combobox5)
 
-        container = QWidget()
-        container.setLayout(layout)
         return container
 
-    def indexChanged(self, button):
-        self.invasionChosen = button
-        print(self.invasionChosen)
+    def indexChanged(self, button: str):
+        self.invasionChosen = getFrenchToEnglishTranslation(button)
 
     # ---- handler for update information from button ----
-    def btnZone(self, b):
-        # handler de zone selectionné
-
-        if b.isChecked() == True:
-            self.infoZone = b.text()
+    def btnZone(self, zoneButton):
+        if zoneButton.isChecked() == True:
+            self.infoZone = zoneButton.text()
 
     def updateSpinbox(self, value):
         self.infoRayon = value
 
-    def btnCata(self, b):
-        # handler de catastrophe selectionné
-
-        if b.isChecked() == True:
-            self.infoDisaster = b.text()
+    def btnCata(self, disasterButton):
+        if disasterButton.isChecked() == True:
+            self.infoDisaster = disasterButton.text()
 
 
 # --- for graph plot ---
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
+        fig.set_facecolor(eval(ViewParameters.FIG_BCKGROUND))
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
 
 class GraphWindow:
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()
         container.setLayout(self.layout)
         self.layout.addWidget(self.canvas)
+
+        # --- buttons range with different entities ---
         iconWidget = QWidget()
-        iconLayout = QHBoxLayout()
+        iconLayout = QVBoxLayout()
+        iconsubLayout = QHBoxLayout()
+        iconsubLayout2 = QHBoxLayout()
+        iconsubWidget = QWidget()
+        iconsubWidget2 = QWidget()
+        iconsubWidget.setLayout(iconsubLayout)
+        iconsubWidget2.setLayout(iconsubLayout2)
+        iconLayout.addWidget(iconsubWidget)
+        iconLayout.addWidget(iconsubWidget2)
+        self.chosenEntity = []
+
         iconWidget.setLayout(iconLayout)
         self.layout.addWidget(iconWidget)
         self.iconButtonSelected = None
-
-        for entityType in getTerminalSubclassesOfClass(Entity):
-            assert issubclass(entityType, Entity)
-            iconbutton = QPushButton(entityType.getFrenchName())
-            iconbutton.clicked.connect(partial(self.setChosenEntity, entityType, iconbutton))
-            icon = entityType.getDefaultTexturePath()
-            iconbutton.setIcon(
-                QIcon(icon))
-            iconbutton.setIconSize(QSize(15, 15))
-            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
-
-            iconLayout.addWidget(iconbutton)
-
+        # range display
         nData = 50
         self.xdata = list(range(nData))
         self.nData = nData
@@ -203,39 +193,64 @@ class GraphWindow:
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
-        self.setChosenEntity(entityType, iconbutton)
+
+        for index, entityType in enumerate(getTerminalSubclassesOfClass(Entity)):
+            assert issubclass(entityType, Entity)
+            # text = Text(entityType.getFrenchName())
+            iconbutton = QPushButton(entityType.getFrenchName())
+            iconbutton.setCheckable(True)
+            self.setChosenEntity(entityType, iconbutton)
+            iconbutton.clicked.connect(
+                partial(self.setChosenEntity, entityType, iconbutton))
+            icon = entityType.getDefaultTexturePath()
+            iconbutton.setStyleSheet(
+                "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: " + entityType.getColor()+"; color: white ; border-radius: 3px;}")
+            iconbutton.setIcon(
+                QIcon(icon))
+            iconbutton.setIconSize(QSize(15, 15))
+            if len(getTerminalSubclassesOfClass(Entity)) / 2 > index:
+                iconsubLayout.addWidget(iconbutton)
+            else:
+                iconsubLayout2.addWidget(iconbutton)
 
     def setChosenEntity(self, entity, iconbutton):
-        if iconbutton.styleSheet() == NOT_CLICKED_BUTTON_STYLESHEET:  # not chosen
-            iconbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)  # chosen
-            if self.iconButtonSelected:
-                self.iconButtonSelected.setStyleSheet(
-                    NOT_CLICKED_BUTTON_STYLESHEET)
-            self.iconButtonSelected = iconbutton
+        if iconbutton.isChecked():
+
+            self.chosenEntity.remove(entity)
+
         else:
-            iconbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
-        self.chosenEntity = entity
+
+            self.chosenEntity.append(entity)
         self.drawPlot()
 
     def drawPlot(self):
         self.canvas.axes.clear()
-        self.canvas.axes.plot(self.xdata, self.ydata[self.chosenEntity], 'r')
-        self.canvas.axes.set_ylim(
-            0, max(max(self.ydata[self.chosenEntity]), 1))
+        ylim = 0
+        for entity in self.chosenEntity:
+            self.canvas.axes.plot(self.xdata, self.ydata[entity], color=entity.getColor(
+            ), label=entity.getFrenchName())
+            if max(self.ydata[entity]) * 1.15 > ylim:
+                ylim = 1.15 * max(self.ydata[entity])
+
+        self.canvas.axes.set_ylim(0, ylim)
+        """
+        if self.chosenEntity.getFrenchName()[0] in "AEIOUYH":
+            self.canvas.axes.set_title(
+                f"Évolution de la population d' " + self.chosenEntity.getFrenchName().lower() + "s")
+        else:
+            self.canvas.axes.set_title(
+                f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
+
+        title = "Évolution des populations" if len(
+            self.chosenEntity) != 1 else "Évolution de la population "
+
+        self.canvas.axes.set_title(title if len(
+            self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")
+        self.canvas.axes.set_facecolor(eval(ViewParameters.PLOT_BCKGROUND))
+        self.canvas.axes.set_ylabel("Quantité")
         self.canvas.draw()
 
     def updatePlot(self, newNumber, entity):
         self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
 
-        # Note: we no longer need to clear the axis.
-        if self._plotRef is None:
-            # First time we have no plot reference, so do a normal plot.
-            # .plot returns a list of line <reference>s, as we're
-            # only getting one we can take the first element.
-            plotRefs = self.canvas.axes.plot(
-                self.xdata, self.ydata[self.chosenEntity], 'r')
-            self._plotRef = plotRefs[0]
-        else:
-            # We have a reference, we can use it to update the data for that line.
-            self._plotRef.set_ydata(self.ydata[self.chosenEntity])
         self.drawPlot()

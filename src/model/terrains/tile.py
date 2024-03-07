@@ -5,19 +5,17 @@ Date: December 2023
 """
 
 from abc import ABC
-from typing import TypeVar
 from overrides import override
 
 
 from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
 from model.movable import Movable
+from model.disaster import Disaster
 
 from utils import Point
-from constants import FIRE, ICE, TILE_PARAMETERS, TILES_TEXTURE_FOLDER_PATH, Disaster
 
-
-Tile_ = TypeVar("Tile_")
+from parameters import TerrainParameters, ViewParameters
 
 
 class Tile(ParametrizedDrawable, ABC):
@@ -32,20 +30,20 @@ class Tile(ParametrizedDrawable, ABC):
 
     def getDisasterPathName(self):
         if self.disaster == Disaster.FIRE_TEXT:
-            return FIRE
+            return ViewParameters.FIRE_TEXTURE_PATH
         elif self.disaster == Disaster.ICE_TEXT:
-            return ICE
+            return ViewParameters.ICE_TEXTURE_PATH
         return None
 
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return TILE_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/tiles.json"
 
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return TILES_TEXTURE_FOLDER_PATH
+        return TerrainParameters.TEXTURE_FOLDER_PATH
 
     @classmethod
     def getLevel(cls) -> float:
@@ -83,9 +81,12 @@ class Tile(ParametrizedDrawable, ABC):
             self.movable = entity
             return True
         return False
-    
+
     def setDisaster(self, disasterType: str) -> None:
         self.disaster = disasterType
+        
+    def getDisasterOpacity(self) -> float:
+        return self.disasterOpacity
 
     def setDisasterOpacity(self, disasterOpacity: float) -> None:
         self.disasterOpacity = disasterOpacity
@@ -110,7 +111,7 @@ class Tile(ParametrizedDrawable, ABC):
         return self.pos
 
     @staticmethod
-    def copyWithDifferentTypeOf(toCopy: Tile_, type_: type) -> Tile_:
+    def copyWithDifferentTypeOf(toCopy: "Tile_", type_: type) -> "Tile_":
         """
         Copies the passed tile in a new tile of a different tile.
         Attemps to copy the potential entity but might not succeed.

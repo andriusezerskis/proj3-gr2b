@@ -5,10 +5,13 @@ Date: December 2023
 """
 
 import time
-from PyQt6.QtGui import QCloseEvent
-from PyQt6.QtWidgets import QVBoxLayout, QDockWidget, QMainWindow, QPushButton, QWidget, QHBoxLayout, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
-from constants import MAIN_WINDOW_TITLE, NOT_CLICKED_BUTTON_STYLESHEET, CLICKED_BUTTON_STYLESHEET, STEP_TIME, TIME_FORMAT
+from PyQt6.QtGui import QIcon
+
+from parameters import ViewParameters, ViewText
+from utils import Point, getTerminalSubclassesOfClass
+
 
 from model.entities.entity import Entity
 from model.simulation import Simulation
@@ -19,24 +22,26 @@ from view.graphicalGrid import GraphicalGrid
 from controller.gridController import GridController
 from controller.mainWindowController import MainWindowController
 
-
 from view.docksMonitor import DocksMonitor
 
 
 class Window(QMainWindow):
-    def __init__(self, gridSize, simulation: Simulation):
+    def __init__(self, gridSize: Point, simulation: Simulation):
         super().__init__()
 
-        self.setWindowTitle(MAIN_WINDOW_TITLE)
+        self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
-        self.view = GraphicalGrid(gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
-        self.mainWindowController = MainWindowController(self.view, simulation, self)
+        self.view = GraphicalGrid(
+            gridSize, simulation.getGrid(), simulation, self.renderingMonitor)
+        self.mainWindowController = MainWindowController(
+            self.view, simulation, self)
         self.layout = QHBoxLayout()
         self.drawButtons()
         self.docksMonitor = DocksMonitor(self.mainWindowController, self)
 
-        self.gridController = GridController(self.view, simulation, self.renderingMonitor)
+        self.gridController = GridController(
+            self.view, simulation, self.renderingMonitor)
 
         self.setCentralWidget(self.view)
         self.simulation = simulation
@@ -54,7 +59,7 @@ class Window(QMainWindow):
 
     def initTimer(self):
         self.timer = QTimer()
-        self.timer.setInterval(STEP_TIME)
+        self.timer.setInterval(ViewParameters.STEP_TIME)
         self.timer.timeout.connect(self.recurringTimer)
         self.timer.start()
         self.recurringTimer()
@@ -64,20 +69,17 @@ class Window(QMainWindow):
         if self.paused:
             self.paused = False
             self.timer.start()
-            self.pauseButton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
             self.timer.stop()
             self.paused = True
-            self.pauseButton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
     def recurringTimer(self):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
-        for i in Entity.__subclasses__():
-            for j in i.__subclasses__():
-                self.docksMonitor.getCurrentDock().updateContent(j)
+        for j in getTerminalSubclassesOfClass(Entity):
+            self.docksMonitor.getCurrentDock().updateContent(j)
         self.docksMonitor.getCurrentDock().updateController()
         self.showTime()
 
@@ -85,28 +87,32 @@ class Window(QMainWindow):
         """
         Display the time passed, one step is one hour
         """
-
         convert = time.strftime(
-            TIME_FORMAT, time.gmtime(self.totalTime * 3600))
-        hour = time.strftime("%H", time.gmtime(self.totalTime * 3600))
+            ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
+        hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))
+        if int(hour) == ViewParameters.NIGHT_MODE_START:
+            self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
+        elif int(hour) == ViewParameters.NIGHT_MODE_FINISH:
+            self.timebutton.setIcon(QIcon(ViewParameters.SUN_ICON))
         self.timebutton.setText(convert)
         self.view.nightMode(int(hour))
 
     def fastForward(self):
         if self.fastF:
-            self.timer.setInterval(STEP_TIME)
+            self.timer.setInterval(ViewParameters.STEP_TIME)
             self.fastF = False
-            self.fastFbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
 
         else:
-            self.timer.setInterval(STEP_TIME // 2)
+            self.timer.setInterval(ViewParameters.STEP_TIME // 2)
             self.fastF = True
-            self.fastFbutton.setStyleSheet(CLICKED_BUTTON_STYLESHEET)
 
     def getGraphicalGrid(self):
         return self.view
 
     def updateGrid(self):
+        """
+        Update the grid with the tiles that has been updated by the simulation
+        """
         start = time.time()
         self.view.updateGrid(self.simulation.getUpdatedTiles())
         print(f"update time : {time.time() - start}")
@@ -116,21 +122,23 @@ class Window(QMainWindow):
 
     def drawButtons(self):
         self.pauseButton = QPushButton("pause")
-        self.pauseButton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.pauseButton.setCheckable(True)
         self.pauseButton.clicked.connect(self.pauseTimer)
 
         self.fastFbutton = QPushButton("fast forward")
-        self.fastFbutton.setStyleSheet(NOT_CLICKED_BUTTON_STYLESHEET)
+        self.fastFbutton.setCheckable(True)
         self.fastFbutton.clicked.connect(self.fastForward)
 
         self.timebutton = QPushButton("00:00:00")
+        self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
 
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)
 
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
-        self.buttonOpenDock.clicked.connect(self.mainWindowController.openDockEvent)
+        self.buttonOpenDock.clicked.connect(
+            self.mainWindowController.openDockEvent)
 
         self.layout.addWidget(self.buttonOpenDock,
                               alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
@@ -144,7 +152,6 @@ class Window(QMainWindow):
         self.layout.addWidget(
             self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
-
     def drawButtons2(self):
         self.zoomInButton = QPushButton("+")
         self.zoomInButton.clicked.connect(self.gridController.zoomIn)
@@ -157,11 +164,13 @@ class Window(QMainWindow):
         self.layout.addStretch()
 
     def closeEvent(self, event):
+        self.pauseTimer()
         result = QMessageBox.question(
-            self, "Confirm Exit...", "Are you sure you want to exit ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            self, "Confirmer la fermeture...", "Êtes-vous sûr de vouloir fermer la fenêtre ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         event.ignore()
 
         if result == QMessageBox.StandardButton.Yes:
             event.accept()
         else:
+            self.pauseTimer()
             event.ignore()

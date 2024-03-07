@@ -11,10 +11,10 @@ class PlayerDockController:
     """Singleton"""
     instance = None
 
-    def __new__(cls, dock, container):
+    def __new__(cls, container):
         if cls.instance is None:
             cls.instance = object.__new__(cls)
-            cls.view = PlayerDockView(dock, container)
+            cls.view = PlayerDockView(container)
         return cls.instance
 
     @staticmethod

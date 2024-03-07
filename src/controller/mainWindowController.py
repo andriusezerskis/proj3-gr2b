@@ -32,7 +32,7 @@ class MainWindowController:
 
     def getClickedTile(self, point: Point) -> Tile | bool:
         """return false if there is no tile at (x, y) coord"""
-        board_point = point // self.graphicalGrid.texture_size
+        board_point = point // self.graphicalGrid.textureSize
         if self.simulation.getGrid().isInGrid(board_point):
             return self.simulation.getGrid().getTile(board_point)
         return False
@@ -41,7 +41,7 @@ class MainWindowController:
         """Handles the mouse press event
 
         Args:
-            event (_type_): the mouse press event
+            event (Event): the mouse press event
         """
         scenePos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(Point(scenePos.x(), scenePos.y()))
@@ -50,14 +50,16 @@ class MainWindowController:
                     self.mainWindow.docksMonitor.getCurrentDock().monitor.getIsMonitor():
                 self.mainWindow.docksMonitor.getCurrentDock().monitor.offIsMonitor()
                 zone, radius, disaster, entityChosen = self.mainWindow.docksMonitor.getCurrentDock().monitor.getInfo()
-                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, entityChosen, tile.getPos())
+                tiles = self.simulation.bordinatorExecution(
+                    zone, radius, disaster, entityChosen, tile.getPos())
                 self.graphicalGrid.updateGrid(tiles)
 
             elif tile.hasEntity():
                 if not self.simulation.hasPlayer():
                     if not self.mainWindow.docksMonitor.isDisplayed():
                         self.openDockEvent()
-                    self.mainWindow.docksMonitor.getCurrentDock().entityController.setEntity(tile.getEntity())
+                    self.mainWindow.docksMonitor.getCurrentDock(
+                    ).entityController.setEntity(tile.getEntity())
                     self.graphicalGrid.chosenEntity = tile.getEntity()
                     self.mainWindow.docksMonitor.getCurrentDock().entityController.update()
                     self.graphicalGrid.updateHighlighted()

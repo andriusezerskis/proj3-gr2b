@@ -10,7 +10,8 @@ from abc import ABC
 from overrides import override
 from random import choice, choices
 
-from constants import ENTITY_MAX_HUNGER, ENTITY_MAX_HUNGER_REPRODUCTION, ENTITY_HUNGRY_THRESHOLD
+from parameters import EntityParameters
+
 from model.entities.entity import Entity
 from model.action import Action
 
@@ -50,15 +51,15 @@ class Animal(Entity, ABC):
         return abs(self.getGrid().getTemperature(self.getPos()) - self.getPreferredTemperature())
 
     @override
-    def evolve(self):
+    def evolve(self) -> bool:
         self.hunger += 1 + self.getTemperatureDifference() / 10
 
-        super().evolve()
+        return super().evolve()
 
     @override
     def _scanSurroundings(self) -> None:
         self._local_information = {"mates": {"adjacent": set(), "viewable": set()},
-                                   "preys": {"adjacent": set(), "viewable": set()},
+                                   "preys": {"adjacent": set(), "viewable": set(), "eatable": set()},
                                    "predators": {"adjacent": set(), "viewable": set()},
                                    "valid_movement_tiles": []}
 
@@ -73,6 +74,8 @@ class Animal(Entity, ABC):
                 self._local_information["preys"]["viewable"].add(entity)
                 if self.getPos().isNextTo(tile.getPos()):
                     self._local_information["preys"]["adjacent"].add(entity)
+                    if entity.canBeEaten():
+                        self._local_information["preys"]["eatable"].add(entity)
 
             if isinstance(entity, Animal) and entity.isPrey(type(self)):
                 self._local_information["predators"]["viewable"].add(entity)
@@ -146,13 +149,13 @@ class Animal(Entity, ABC):
                        [move, eat, reproduce, idle])[0]
 
     def choosePrey(self) -> Entity:
-        return choice(list(self._local_information["preys"]["adjacent"]))
+        return choice(list(self._local_information["preys"]["eatable"]))
 
     def canMove(self) -> bool:
         return len(self.getValidMovementTiles()) > 0
 
     def canEat(self) -> bool:
-        return len(self._local_information["preys"]["adjacent"]) > 0
+        return len(self._local_information["preys"]["eatable"]) > 0
 
     def _scorePosition(self, pos: Point) -> float:
         assert pos.octileDistance(self.getPos()) == 1
@@ -193,9 +196,9 @@ class Animal(Entity, ABC):
 
         return choices(freeTiles, scores)[0].getPos() - self.getPos()
 
-    def eat(self, prey: Entity):
+    def eat(self, prey: Entity) -> bool:
         self.hunger = 0
-        prey.kill()
+        return prey.getEaten()
 
     @override
     def isDead(self):
@@ -224,13 +227,13 @@ class Animal(Entity, ABC):
 
     @override
     def isFitForReproduction(self) -> bool:
-        return super().isFitForReproduction() and self.hunger <= ENTITY_MAX_HUNGER_REPRODUCTION
+        return super().isFitForReproduction() and self.hunger <= EntityParameters.REPRODUCTION_MAX_HUNGER
 
     def starvedToDeath(self) -> bool:
-        return self.hunger >= ENTITY_MAX_HUNGER
+        return self.hunger >= EntityParameters.MAX_HUNGER
 
     def getHunger(self) -> float:
         return self.hunger
 
     def isHungry(self) -> bool:
-        return self.getHunger() > ENTITY_HUNGRY_THRESHOLD
+        return self.getHunger() > EntityParameters.HUNGRY_THRESHOLD

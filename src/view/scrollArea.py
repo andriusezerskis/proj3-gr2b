@@ -1,3 +1,9 @@
+"""
+Project 3: Ecosystem simulation in 2D
+Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
+Date: December 2023
+"""
+
 from typing import Dict, List
 
 from PyQt6.QtGui import QPixmap
@@ -8,27 +14,27 @@ from utils import getTerminalSubclassesOfClass
 
 
 class ScrollArea(QWidget):
-    def __init__(self, container):
+    def __init__(self, container: QWidget):
         super().__init__()
-        self.scroll_area = QScrollArea()
+        self.scrollArea = QScrollArea()
         self.quantities: Dict[str: List[QLabel, QLabel]] = {}
         self.initUI(container)
 
-    def initUI(self, container):
+    def initUI(self, container: QWidget):
         layout = QVBoxLayout()
-        content_widget = QWidget()
-        self.scroll_area.setWidget(content_widget)
-        self.scroll_area.setWidgetResizable(True)
-        #self.scroll_area.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
+        contentWidget = QWidget()
+        self.scrollArea.setWidget(contentWidget)
+        self.scrollArea.setWidgetResizable(True)
+        # self.scrollArea.setHorizontalScrollBarPolicy(False)  # ScrollBarAlwaysOff
 
-        scroll_layout = QVBoxLayout()
-        content_widget.setLayout(scroll_layout)
+        scrollLayout = QVBoxLayout()
+        contentWidget.setLayout(scrollLayout)
 
         # Ajoutez des images à la liste
-        for items_class in getTerminalSubclassesOfClass(Loot):
+        for itemsClass in getTerminalSubclassesOfClass(Loot):
             h_layout = QHBoxLayout()
             pixmap = QPixmap(items_class.getDefaultTexturePath())
-            #pixmap.scaled(2048, 2048)
+            # pixmap.scaled(2048, 2048)
             image = QLabel()
             image.resize(200, 200)
             image.setPixmap(pixmap)
@@ -39,12 +45,11 @@ class ScrollArea(QWidget):
             h_layout.addWidget(text)
             scroll_layout.addLayout(h_layout)
 
-        layout.addWidget(self.scroll_area)
+        layout.addWidget(self.scrollArea)
         self.setLayout(layout)
         container.setLayout(layout)
 
     def update_content(self, loots):
         for items in loots:
             self.quantities[items][1].setText(str(loots[items]))
-        #print(self.quantities)
-
+        # print(self.quantities)

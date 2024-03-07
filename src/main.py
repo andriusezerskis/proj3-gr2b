@@ -13,10 +13,14 @@ import signal
 from model.crafting.crafts import FishingRod, Fence
 from model.crafting.loots import Wood, Claw
 from model.entities.animals import Crab
+import parameters
+
+from parameter.genericparameters import GenericParameters
 from view.startWindow import StartWindow
 
 
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QFont
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -42,7 +46,11 @@ def setlocale(name):
 
 def main():
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    GenericParameters.reloadAllDicts()
     app = QApplication(sys.argv)
+    app.setStyleSheet(open("stylesheet.css").read())
+    # font = QFont('Small Fonts')
+    # app.setFont(font)
     startWindow = StartWindow()
     startWindow.show()
     app.exec()

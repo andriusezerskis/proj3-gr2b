@@ -4,25 +4,19 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-from cmath import sqrt
-import itertools
-import math
 from random import choice, random
 import time
-import os
-import sys
 
-import numpy as np
+from parameters import TerrainParameters
 
-from constants import *
 from utils import Point, getTerminalSubclassesOfClass
 from math import cos, pi
 
 # do not trust your IDE, we need it for the globals() function
 
 from model.entities.plant import Plant
-from model.entities.animals import Crab, Fish
-from model.entities.plants import Algae, Tree
+
+from model.gridloader import GridLoader
 
 ###
 
@@ -33,26 +27,16 @@ from model.generator.entitiesGenerator import EntitiesGenerator
 from model.terrains.tile import Tile
 from model.terrains.tiles import Water
 from model.entities.entity import Entity
-from model.entities.human import Human
-from model.pathfinder import Pathfinder
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 from model.action import Action
-from model.disaster import DisasterHandler
-
-
-sys.path.append(os.path.dirname(
-    os.path.dirname(os.path.abspath("constants.py"))))
+from model.disasterhandler import DisasterHandler
 
 
 class Simulation:
-    def __init__(self, gridSize):
+    def __init__(self, gridSize: Point, grid):
         super().__init__()
-        self.grid = GridGenerator(gridSize,
-                                  [2, 3, 4, 5, 6],
-                                  350).generateGrid()
-        EntitiesGenerator().generateEntities(self.grid)
-
+        self.grid = grid
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
@@ -63,14 +47,34 @@ class Simulation:
 
         Entity.setGrid(self.grid)
 
-    def bordinatorExecution(self, zone, radius, disaster, entityChosen, pos):
+    @staticmethod
+    def generateGrid(gridSize):
+        grid = GridGenerator(gridSize,
+                             [2, 3, 4, 5, 6],
+                             350).generateGrid()
+        EntitiesGenerator().generateEntities(grid)
+        return grid
+
+    def bordinatorExecution(self, zone: str, radius: int, disaster, entityChosen, initialPos: Point):
         # if zone == "Ile":
         #     self.grid.islands[0].bordinatorExecution(
         #         zone, radius, disaster, pos, "bordinator")
-        disasterHandler = DisasterHandler(pos, disaster, radius)
+        disasterHandler = DisasterHandler(
+            initialPos, disaster, radius, entityChosen)
         if zone == "Rayon":
             modification = set()
-            for tile in self.grid.getTilesInRadius(pos, radius):
+            for tile in self.grid.getTilesInRadius(initialPos, radius):
+                disasterHandler.chooseDisaster(tile)
+                if tile.getEntity():
+                    tile.getEntity().removeHealthPoints()
+                modification.add(tile)
+            return modification
+
+        elif zone == "Ile":
+            modification = set()
+            initialTile = self.grid.getTile(initialPos)
+            island = self.grid.getIsland(initialTile)
+            for tile in island:
                 disasterHandler.chooseDisaster(tile)
                 if tile.getEntity():
                     tile.getEntity().removeHealthPoints()
@@ -110,18 +114,18 @@ class Simulation:
         validTypes = []
         for plantType in getTerminalSubclassesOfClass(Plant):
             assert issubclass(plantType, Plant)
-            if plantType.isValidTileType(type(tile)):
+            if plantType.doesGenerateSpontaneously() and plantType.isValidTileType(type(tile)):
                 validTypes.append(plantType)
 
         if len(validTypes) > 0:
             tile.addNewEntity(choice(validTypes))
             self.addModifiedTiles(tile)
 
-    def diminishDisaster(self, tile):
-        if tile.disasterOpacity > 0:
-            tile.disasterOpacity -= 0.1
+    def diminishDisaster(self, tile: Tile):
+        if tile.getDisasterOpacity() > 0:
+            tile.setDisasterOpacity(tile.getDisasterOpacity() - 0.1)
         else:
-            tile.disaster = None
+            tile.setDisaster(None)
 
     def getUpdatedTiles(self):
         return self.modifiedTiles
@@ -129,13 +133,15 @@ class Simulation:
     def updateWaterLevel(self) -> None:
         # two oscillations a day
         self.waterLevel = (Water.getLevel() +
-                           (-cos(4 * pi * self.stepCount / DAY_DURATION) + 1)
-                           * (MAX_WATER_LEVEL - Water.getLevel()) / 2)
+                           (-cos(4 * pi * self.stepCount /
+                            TerrainParameters.DAY_DURATION) + 1)
+                           * (TerrainParameters.MAX_WATER_LEVEL - Water.getLevel()) / 2)
         modified = self.grid.updateTilesWithWaterLevel(self.waterLevel)
         self.modifiedTiles |= modified
 
     def evolution(self, entity: Entity) -> None:
-        entity.evolve()
+        if entity.evolve():
+            self.addModifiedTiles(entity.getTile())
 
         if entity.isDead():
             self.dead(self.grid.getTile(entity.getPos()))
@@ -156,8 +162,10 @@ class Simulation:
     def eat(self, entity: Entity):
         assert isinstance(entity, Animal)
         prey = entity.choosePrey()
-        entity.eat(prey)
-        self.dead(prey.getTile())
+        if entity.eat(prey):
+            self.dead(prey.getTile())
+        else:
+            self.addModifiedTiles(prey.getTile())
 
     def reproduceEntity(self, entity: Entity):
         mate = None
@@ -176,9 +184,10 @@ class Simulation:
         self.addModifiedTiles(self.getEntityTile(entity))
 
     def dead(self, tile: Tile) -> None:
-        tile.getEntity().kill()
-        tile.removeEntity()
-        self.addModifiedTiles(tile)
+        if tile.hasEntity():
+            tile.getEntity().kill()
+            tile.removeEntity()
+            self.addModifiedTiles(tile)
 
     def getEntityTile(self, entity: Entity) -> Tile:
         return self.getGrid().getTile(entity.getPos())
@@ -189,7 +198,7 @@ class Simulation:
     def getPlayer(self) -> Player:
         return self.player
 
-    def setPlayerEntity(self, tile) -> None:
+    def setPlayerEntity(self, tile: Tile) -> None:
         self.player.setClaimedEntity(tile)
 
     def hasPlayer(self) -> bool:

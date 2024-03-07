@@ -3,30 +3,28 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
-
-from PyQt6.QtWidgets import QDockWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton, QHBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget,  QVBoxLayout, QLabel, QProgressBar, QPushButton
 from controller.gridController import GridController
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from controller.mainWindowController import MainWindowController
-from constants import CONTROL_PLAYER, ENTITY_DEAD_MESSAGE, ENTITY_MAX_HUNGER, ENTITY_NOT_SELECTED, \
-    ENTITY_PARAMETERS, RELEASE_PLAYER, HEALTH_BAR_TEXT, NAME_TEXT, AGE_TEXT, HUNGER_TEXT
+
+from parameters import ViewText, EntityParameters, ViewParameters
 
 
-class EntityInfoView(QDockWidget):
-    def __init__(self, dock, container):
-        super().__init__()
-        self.dock = dock
-
+class EntityInfoView():
+    def __init__(self,  container: QWidget):
         self.healthBar = QProgressBar()
         self.infoLabel = QLabel()
 
         self.hungerBar = QProgressBar()
-        self.hungerBar.setRange(0, ENTITY_MAX_HUNGER)
+        self.hungerBar.setRange(0, EntityParameters.MAX_HUNGER)
         self.hungerBar.hide()
 
-        self.controlButton = QPushButton(CONTROL_PLAYER)
+        self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
+        self.controlButton.setCheckable(True)
         self.controlButton.hide()
 
         self.layout = QVBoxLayout()
@@ -34,6 +32,8 @@ class EntityInfoView(QDockWidget):
         self.layout.addWidget(self.hungerBar)
         self.layout.addWidget(self.infoLabel)
         self.layout.addWidget(self.controlButton)
+        self.layout.setAlignment(
+            self.controlButton, Qt.AlignmentFlag.AlignCenter)
 
         self.container = container
         self.container.setLayout(self.layout)
@@ -42,7 +42,7 @@ class EntityInfoView(QDockWidget):
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
-        #MainWindowController.getInstance().closeDock()
+        # MainWindowController.getInstance().closeDock()
         MainWindowController.getInstance().changeDock()
 
     def setEntity(self, entity: Entity):
@@ -56,10 +56,11 @@ class EntityInfoView(QDockWidget):
         self.healthBar.show()
         self.healthBar.setRange(0, entity.getMaxHealthPoints())
         self.healthBar.setValue(int(entity.getHealthPoints()))
-        self.healthBar.setFormat(f"{HEALTH_BAR_TEXT}{int(entity.getHealthPoints())}")
+        self.healthBar.setFormat(
+            f"{ViewText.HEALTH_BAR_TEXT}{int(entity.getHealthPoints())}")
 
-        baseText = f"{NAME_TEXT}{entity.getName()}\n"
-        baseText += f"{AGE_TEXT}{entity.getDisplayAge()} jours\n"
+        baseText = f"{ViewText.NAME_TEXT}{entity.getName()}\n"
+        baseText += f"{ViewText.AGE_TEXT}{entity.getDisplayAge()} jours\n"
         if isinstance(entity, Animal):
             self.hungerBar.show()
             preys = entity.getPreysNames()
@@ -69,17 +70,17 @@ class EntityInfoView(QDockWidget):
             baseText += ": "
             i = 0
             for prey in preys:
-                baseText += f"{ENTITY_PARAMETERS[prey]['french_name']}"
+                baseText += f"{Entity.getFrenchNameFromClassName(prey)}"
                 if i != len(preys) - 1:
                     baseText += ", "
                 i += 1
             baseText += "\n"
-            baseText += f"{entity.getCount()} {ENTITY_PARAMETERS[entity.__class__.__name__]['french_name'].lower()}s\n"
-            self.hungerBar.setFormat(f"{HUNGER_TEXT}")
+            baseText += f"{entity.getCount()} {entity.getFrenchName().lower()}s\n"
+            self.hungerBar.setFormat(f"{ViewText.HUNGER_TEXT}")
             self.hungerBar.setValue(int(entity.getHunger()))
         else:
             self.hungerBar.hide()
-            baseText += f"{entity.getCount()} {ENTITY_PARAMETERS[entity.__class__.__name__]['french_name'].lower()}s\n"
+            baseText += f"{entity.getCount()} {entity.getFrenchName().lower()}s\n"
         self.infoLabel.setText(baseText)
         if entity.isDead():
             self.showDeadEntity()
@@ -89,17 +90,18 @@ class EntityInfoView(QDockWidget):
             self.__updateText(self.entity)
         else:
             self.hungerBar.setValue(0)
-            self.hungerBar.setFormat(ENTITY_NOT_SELECTED)
+            self.hungerBar.setFormat(ViewText.ENTITY_NOT_SELECTED)
             self.healthBar.setValue(0)
-            self.healthBar.setFormat(ENTITY_NOT_SELECTED)
+            self.healthBar.setFormat(ViewText.ENTITY_NOT_SELECTED)
 
     def showDeadEntity(self):
         """
         When the entity dies, the progress bar shows that the entity is dead
         """
         self.hungerBar.setValue(0)
-        self.hungerBar.setFormat(ENTITY_DEAD_MESSAGE)
+        self.hungerBar.setFormat(ViewText.ENTITY_DEAD_MESSAGE)
         self.healthBar.setValue(0)
-        self.healthBar.setFormat(ENTITY_DEAD_MESSAGE)
+        self.healthBar.setFormat(ViewText.ENTITY_DEAD_MESSAGE)
         self.infoLabel.clear()
+        self.controlButton.hide()
         self.entity = None

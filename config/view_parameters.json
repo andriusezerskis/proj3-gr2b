@@ -1,0 +1,21 @@
+{
+    "NIGHT_MODE_START": 18,
+    "MIDDLE_OF_THE_NIGHT": 1,
+    "NIGHT_MODE_FINISH": 8,
+    "SUNSET_MODE_START": 16,
+    "MAX_TILE_FILTER_OPACITY": 0.7,
+    "NIGHT_MODE_COLOR": "#090957",
+    "SUNSET_MODE_COLOR": "#fc995b",
+    "TEXTURE_SIZE": 2048,
+    "MOON_ICON" : "../assets/textures/effects/moon.png",
+    "SUN_ICON" : "../assets/textures/effects/sun.png",
+    "FIRE_TEXTURE_PATH": "../assets/textures/effects/fire.png",
+    "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/frame.png",
+    "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",
+    "TIME_FORMAT": "%e %A: %Hh",
+    "STEP_TIME": 2000,
+
+    "PLOT_BCKGROUND" : "(67/255, 76/255, 93/255, 1)",
+    "FIG_BCKGROUND" : "(67/255, 76/255, 93/255, 1)"
+
+}

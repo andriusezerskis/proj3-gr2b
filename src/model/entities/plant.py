@@ -10,22 +10,29 @@ from random import random
 
 from model.entities.entity import Entity
 from model.action import Action
-from constants import (PLANT_REPRODUCTION_PROBABILITY, PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD,
-                       PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS)
+
+from parameters import EntityParameters
 
 
 class Plant(Entity, ABC):
+
+    @classmethod
+    def getDuplicationProbability(cls) -> float:
+        return cls._getParameter("duplication_probability")
+
+    @classmethod
+    def doesGenerateSpontaneously(cls) -> bool:
+        return bool(cls._getParameter("spontaneous_generation"))
 
     @override
     def chooseAction(self) -> Action:
         adjacentPeers = len([tile for tile in self.getAdjacentTiles()
                              if tile.hasEntity() and type(self) is type(tile.getEntity())])
 
-        if (adjacentPeers >= PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD and
-                random() < PLANT_PROBABILITY_DEATH_IF_TOO_MUCH_PEERS):
+        if adjacentPeers >= EntityParameters.PLANT_ADJACENT_PEERS_AUTO_DEATH_THRESHOLD:
             return Action.DIE
 
-        probability = PLANT_REPRODUCTION_PROBABILITY - 0.01 * adjacentPeers
+        probability = self.getDuplicationProbability() - 0.01 * adjacentPeers
 
         if random() < probability and len(self.getValidMovementTiles()) > 0:
             return Action.REPRODUCE

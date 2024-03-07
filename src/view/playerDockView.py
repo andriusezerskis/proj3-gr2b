@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import QDockWidget, QPushButton, QVBoxLayout, QWidget, QLabel, QHBoxLayout,  QTextEdit
 from PyQt6.QtGui import QPixmap, QIcon
 
-from constants import RELEASE_PLAYER
+from parameters import ViewText
 from controller.mainWindowController import MainWindowController
-from model.entities.entity import Entity
 from controller.gridController import GridController
 
 from model.crafting.crafts import FishingRod
@@ -11,12 +10,11 @@ from model.crafting.loots import *
 
 
 class PlayerDockView(QDockWidget):
-    def __init__(self, dock, container):
+    def __init__(self,  container: QWidget):
         super().__init__()
-        self.dock = dock
 
-        self.freeButton = QPushButton(RELEASE_PLAYER)
-        self.freeButton.clicked.connect(self.lageEntity)
+        self.lageButton = QPushButton(RELEASE_PLAYER)
+        self.lageButton.clicked.connect(self.lageEntity)
         # self.lageButton.hide()
 
         self.peche = QPushButton("Débloquer")
@@ -44,12 +42,8 @@ class PlayerDockView(QDockWidget):
         self.container = container
         self.container.setLayout(self.firstLayout)
 
-        self.entity = None
-
-    def setEntity(self, entity: Entity):
-        self.entity = entity
-
-    def lageEntity(self):
+    @staticmethod
+    def lageEntity():
         GridController.getInstance().lageEntity()
         MainWindowController.getInstance().changeDock()
 

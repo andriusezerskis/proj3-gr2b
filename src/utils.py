@@ -75,7 +75,14 @@ class Point:
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
     def isPositive(self):
-        return self.x() >= 0 and self.y() >= 0
+        return self.xIsPositive() and self.yIsPositive()
+
+    def xIsPositive(self):
+        return self.x() >= 0
+
+    def yIsPositive(self):
+        return self.y() >= 0
+
 
     def __lt__(self, other):
         return self.x() < other.x() and self.y() < other.y()
@@ -117,3 +124,16 @@ def getTerminalSubclassesOfClass(cls: type) -> set[type]:
         else:
             stack.extend(subclasses)
     return res
+
+def getFrenchToEnglishTranslation(frenchEntity: str) -> str:
+    return {
+        "Crabe": "Crab",
+        "Poisson": "Fish",
+        "Arbre": "Tree",
+        "Plante": "Plant",
+        "Algue": "Algae",
+        "Humain": "Human",
+        "Chevre" : "Goat",
+        "Leopard des neiges" : "SnowLeopard",
+        "Fleur" : "Flower"
+    }[frenchEntity]

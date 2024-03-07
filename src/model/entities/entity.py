@@ -8,8 +8,9 @@ import random
 from mimesis import Person
 from mimesis import Locale
 from abc import ABC, abstractmethod
-from constants import (ENTITY_MAX_AGE, ENTITY_REPRODUCTION_COOLDOWN, ENTITY_MIN_AGE_REPRODUCTION, DAY_DURATION,
-                       ENTITY_PARAMETERS, ENTITIES_TEXTURE_FOLDER_PATH, Disaster)
+
+from parameters import EntityParameters, TerrainParameters
+
 from model.action import Action
 from typing import TypeVar
 from utils import Point
@@ -19,6 +20,7 @@ from overrides import override
 from random import choice
 
 from model.movable import Movable
+from model.disaster import Disaster
 
 Entity_ = TypeVar("Entity_")
 Tile = TypeVar("Tile")
@@ -50,13 +52,20 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     @classmethod
     @override
-    def _getParameters(cls) -> dict:
-        return ENTITY_PARAMETERS
+    def _getConfigFilePath(cls) -> str:
+        return "../config/entities.json"
 
     @classmethod
     @override
     def _getFilePathPrefix(cls) -> str:
-        return ENTITIES_TEXTURE_FOLDER_PATH
+        return EntityParameters.TEXTURE_FOLDER_PATH
+
+    @staticmethod
+    def getFrenchNameFromClassName(className: str) -> str:
+        for cls in Entity.parameterDicts.keys():
+            if cls.__name__ == className:
+                return cls.getFrenchName()
+        raise KeyError
 
     @classmethod
     def getSpawnWeight(cls) -> float:
@@ -81,9 +90,28 @@ class Entity(Movable, ParametrizedDrawable, ABC):
     def getHealthPoints(self) -> float:
         return self._hp
 
+    def canBeEaten(self) -> bool:
+        return True
+
+    @classmethod
+    def getColor(cls) -> str:
+        return cls._getParameter("color")
+
+    @classmethod
+    def getSymbol(cls) -> str:
+        return cls._getParameter("symbol")
+
+    def getEaten(self) -> bool:
+        """
+        Make the entity get eaten
+        :return: True if the entity dies
+        """
+        self.kill()
+        return True
+
     def removeHealthPoints(self) -> None:
         if self.getTile().disaster == Disaster.FIRE_TEXT or self.getTile().disaster == Disaster.ICE_TEXT:
-            self._hp -= self.getTile().disasterOpacity * 100
+            self._hp -= self.getTile().getDisasterOpacity() * 100
             print("health points", self._hp)
         if self._hp <= 0:
             print("killed")
@@ -100,15 +128,15 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         Reproduces and places the newborn in the grid
         :return: the position of the newborn
         """
-        self._reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+        self._reproductionCooldown = EntityParameters.REPRODUCTION_COOLDOWN
         if other:
-            other.reproductionCooldown = ENTITY_REPRODUCTION_COOLDOWN
+            other.reproductionCooldown = EntityParameters.REPRODUCTION_COOLDOWN
         freeTile = choice(self.getValidMovementTiles())
         freeTile.addNewEntity(self.__class__)
         return freeTile
 
     def isDeadByOldness(self):
-        return self._age >= ENTITY_MAX_AGE
+        return self._age >= EntityParameters.MAX_AGE
 
     def isDead(self):
         return self.isDeadByOldness() or self._dead
@@ -121,17 +149,22 @@ class Entity(Movable, ParametrizedDrawable, ABC):
             self._counts[cls] -= 1
 
         self._killed = True
-    
+
     def inflictDamage(self, damage: float) -> None:
         self._hp -= damage
         if self._hp <= 0:
             self.kill()
 
-    def evolve(self):
+    def evolve(self) -> bool:
+        """
+        Makes the entity age
+        :return: True if the entity needs to be updated visually
+        """
         self._age += 1
         self._reproductionCooldown = max(0, self._reproductionCooldown - 1)
 
         self._scanSurroundings()
+        return False
 
     def _scanSurroundings(self) -> None:
         self._local_information = {"valid_movement_tiles": []}
@@ -147,7 +180,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return self._name
 
     def getDisplayAge(self) -> int:
-        return self.getAge() // DAY_DURATION
+        return self.getAge() // TerrainParameters.DAY_DURATION
 
     def __str__(self):
         return self.__class__.__name__[0]
@@ -160,9 +193,6 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     def getValidMovementTiles(self) -> list[Tile]:
         return self._local_information["valid_movement_tiles"]
-
-    def setDead(self, dead):
-        self._dead = dead
 
     @abstractmethod
     def chooseAction(self) -> Action:
@@ -184,7 +214,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
 
     def setPos(self, pos: Point):
         self._pos = pos
-        #self.getGrid().getTile(self._pos).removeEntity()
+        # self.getGrid().getTile(self._pos).removeEntity()
 
     @staticmethod
     def getGrid() -> Grid:
@@ -201,13 +231,15 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return self.getGrid().getTile(self.getPos())
 
     def isFitForReproduction(self) -> bool:
-        return self.getReproductionCooldown() == 0 and self.getAge() >= ENTITY_MIN_AGE_REPRODUCTION
+        return self.getReproductionCooldown() == 0 and self.getAge() >= EntityParameters.REPRODUCTION_MIN_AGE
 
     def getReproductionCooldown(self) -> int:
         return self._reproductionCooldown
 
     @classmethod
     def getCount(cls) -> int:
+        if cls not in cls._counts.keys():
+            return 0
         return cls._counts[cls]
 
     @classmethod
@@ -233,6 +265,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         for str_loot in self.getLoots():
             tot = 0
             for _ in range(self.getLoots().get(str_loot)[0]):
-                tot += 1 if random.random() < self.getLoots().get(str_loot)[1] else 0
+                tot += 1 if random.random() < self.getLoots().get(str_loot)[
+                    1] else 0
             res[str_loot] = tot
         return res

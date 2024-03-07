@@ -7,6 +7,7 @@ Date: December 2023
 from copy import copy
 from overrides import override
 from typing import Dict
+from overrides import override
 
 from utils import Point, getTerminalSubclassesOfClass
 
@@ -15,10 +16,12 @@ from model.entities.animal import Animal
 from model.terrains.tile import Tile
 from model.movable import Movable
 from model.crafting.loots import Loot
+from view.playerDockView import PlayerDockView
 
 
 class Player(Movable):
 
+    def __init__(self, pos: Point | None, grid: "Grid"):
     def __init__(self, pos: Point | None, grid: "Grid"):
         super().__init__()
         self.pos = pos
@@ -80,6 +83,11 @@ class Player(Movable):
     def getPreferredTemperature(self) -> float:
         assert isinstance(self.claimed_entity, Animal)
         return self.claimed_entity.getPreferredTemperature()
+
+    def kill(self):
+        #self.removeClaimedEntity()
+        PlayerDockView.lageEntity()
+
 
     def hasEnoughQuantityToCraft(self, item):
         for material, quantity in item.getBlueprint().items():

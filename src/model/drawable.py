@@ -7,14 +7,24 @@ Date: December 2023
 
 from abc import ABC, abstractmethod
 from typing import Any
+from json import load
 from random import choice
 
 
 class ParametrizedDrawable(ABC):
+    parameterDicts: dict = dict()
+
+    @classmethod
+    def _getParameters(cls) -> dict:
+        if cls not in cls.parameterDicts.keys():
+            with open(cls._getConfigFilePath(), "r") as f:
+                cls.parameterDicts[cls] = load(f)
+
+        return cls.parameterDicts[cls]
 
     @classmethod
     @abstractmethod
-    def _getParameters(cls) -> dict:
+    def _getConfigFilePath(cls) -> str:
         ...
 
     @classmethod
@@ -24,6 +34,7 @@ class ParametrizedDrawable(ABC):
 
     @classmethod
     def getParameters(cls) -> dict:
+        assert cls.__name__ in cls._getParameters().keys(), f"{cls.__name__} is not a configured (sub)type"
         return cls._getParameters()[cls.__name__]
 
     @classmethod
@@ -43,10 +54,10 @@ class ParametrizedDrawable(ABC):
         return cls._constructFullTexturePath(choice(cls._getParameter("texture_path")))
 
     def getTexturePath(self) -> str:
-        return self._texture_path
+        return self._texturePath
 
     def __init__(self):
         if self.__class__.__name__ == "Player":
             return
 
-        self._texture_path = self.pickRandomTexturePath()
+        self._texturePath = self.pickRandomTexturePath()

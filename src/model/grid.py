@@ -4,7 +4,6 @@ Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, M
 Date: December 2023
 """
 
-import math
 from typing import List
 from utils import Point, getPointsInRadius
 
@@ -13,7 +12,7 @@ from model.terrains.tiles import Water, Sand
 
 from model.regionHandler import RegionHandler
 
-from constants import MAX_WATER_LEVEL
+from parameters import TerrainParameters
 
 
 class Grid:
@@ -32,8 +31,15 @@ class Grid:
 
         # construct the set of tiles that will be affected by tides
         for tile in self:
-            if Water.getLevel() < tile.height < MAX_WATER_LEVEL:
+            if Water.getLevel() < tile.height < TerrainParameters.MAX_WATER_LEVEL:
                 self.coasts.add(tile)
+                
+    def getIsland(self, tile: Tile) -> List[Tile]:
+        """Get the island in which the tile is located"""
+        for island in self.islands:
+            if tile in island:
+                return island
+        return []
 
     def getTilesInRadius(self, center: Point, radius: int):
         """
