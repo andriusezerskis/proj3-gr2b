@@ -9,6 +9,9 @@ from view.tilerenderers.tilerenderer import TileRenderer
 from overrides import override
 from view.pixmaputils import PixmapUtils
 
+from model.movable import Movable
+from model.player.player import Player
+
 
 class ClassicTileRenderer(TileRenderer):
 
@@ -25,7 +28,7 @@ class ClassicTileRenderer(TileRenderer):
     def _updateEntityLayer(self, tile: Tile):
         entity = tile.getEntity()
         if entity:
-            assert isinstance(entity, Entity)
+            assert isinstance(entity, Movable)
             self.entityLayer.setPixmap(PixmapUtils.getPixmapFromPath(entity.getTexturePath()))
             self.entityLayer.show()
         else:
