@@ -33,7 +33,7 @@ class Grid:
         for tile in self:
             if Water.getLevel() < tile.height < TerrainParameters.MAX_WATER_LEVEL:
                 self.coasts.add(tile)
-                
+
     def getIsland(self, tile: Tile) -> List[Tile]:
         """Get the island in which the tile is located"""
         for island in self.islands:
@@ -74,10 +74,8 @@ class Grid:
                 continue
 
             if tile.hasEntity() and not newTile.hasEntity():
-                #print(type(tile.getEntity()))
-                #if not isinstance(tile.getEntity(), Player):
-                #todo aaaaaah wtf, bug si la marée monte
                 tile.getEntity().kill()
+                tile.removeEntity()
 
             self.coasts.remove(tile)
             self.coasts.add(newTile)
@@ -87,7 +85,8 @@ class Grid:
         return modified
 
     def updateTemperature(self, tile: Tile) -> None:
-        tile.updateTemperature(self.regionHandler.sampleTemperature(tile.getPos().x(), tile.getPos().y()))
+        tile.updateTemperature(self.regionHandler.sampleTemperature(
+            tile.getPos().x(), tile.getPos().y()))
 
     def getTile(self, pos: Point) -> Tile:
         if not self.isInGrid(pos):

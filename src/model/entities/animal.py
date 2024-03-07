@@ -2,7 +2,7 @@
 Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
-""" 
+"""
 
 from utils import Point
 from typing import TypeVar
@@ -67,7 +67,8 @@ class Animal(Entity, ABC):
             entity = tile.getEntity()
             if not entity:
                 if self.getPos().isNextTo(tile.getPos()) and self.isValidTileType(type(tile)):
-                    self._local_information["valid_movement_tiles"].append(tile)
+                    self._local_information["valid_movement_tiles"].append(
+                        tile)
                 continue
 
             if self.isPrey(type(entity)):
@@ -80,7 +81,8 @@ class Animal(Entity, ABC):
             if isinstance(entity, Animal) and entity.isPrey(type(self)):
                 self._local_information["predators"]["viewable"].add(entity)
                 if self.getPos().isNextTo(tile.getPos()):
-                    self._local_information["predators"]["adjacent"].add(entity)
+                    self._local_information["predators"]["adjacent"].add(
+                        entity)
 
             if type(entity) is type(self) and entity.isFitForReproduction():
                 self._local_information["mates"]["viewable"].add(entity)
@@ -202,7 +204,7 @@ class Animal(Entity, ABC):
 
     @override
     def isDead(self):
-        return self.starvedToDeath() or self.isDeadByOldness() or self._dead
+        return self.starvedToDeath() or super().isDead()
 
     @override
     def canReproduce(self) -> bool:

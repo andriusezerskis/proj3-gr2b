@@ -137,7 +137,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return self._age >= EntityParameters.MAX_AGE
 
     def isDead(self):
-        return self.isDeadByOldness() or self._dead
+        return self.isDeadByOldness() or self._dead or self._killed
 
     def kill(self) -> None:
         if self._killed:
