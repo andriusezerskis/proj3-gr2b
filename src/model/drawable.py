@@ -50,6 +50,10 @@ class ParametrizedDrawable(ABC):
         return cls._constructFullTexturePath(cls._getParameter("texture_path")[0])
 
     @classmethod
+    def getIconTexturePath(cls) -> str:
+        return cls._constructFullTexturePath(cls._getParameter("icon_texture_path"))
+
+    @classmethod
     def pickRandomTexturePath(cls) -> str:
         return cls._constructFullTexturePath(choice(cls._getParameter("texture_path")))
 

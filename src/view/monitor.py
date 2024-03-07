@@ -198,7 +198,7 @@ class GraphWindow:
             self.setChosenEntity(entityType, iconbutton)
             iconbutton.clicked.connect(
                 partial(self.setChosenEntity, entityType, iconbutton))
-            icon = entityType.getDefaultTexturePath()
+            icon = entityType.getIconTexturePath()
             iconbutton.setStyleSheet(
                 "QPushButton:checked {background-color: rgba(159, 134, 109, 1); color: rgba(247, 229, 209, 1); border-radius: 3px;} QPushButton {background-color: " + entityType.getColor()+"; color: white ; border-radius: 3px;}")
             iconbutton.setIcon(
