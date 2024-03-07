@@ -13,12 +13,7 @@
     "HIGHTLIGHTED_TILE_TEXTURE_PATH": "../assets/textures/effects/frame.png",
     "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",
     "TIME_FORMAT": "%e %A: %Hh",
-    "GRID_STYLESHEET": "",
     "STEP_TIME": 2000,
-
-    "DOCK_BG" : "background-color: rgba(47, 54, 66, 1)",
-
-    "START_BUTTON_STYLE_SHEET" :"background-color: #7cac04; color: white; border-radius:10px; font-size: 30px; width: 5px;",
 
     "PLOT_BCKGROUND" : "(67/255, 76/255, 93/255, 1)",
     "FIG_BCKGROUND" : "(67/255, 76/255, 93/255, 1)"

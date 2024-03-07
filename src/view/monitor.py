@@ -35,7 +35,7 @@ class MonitorWindow:
         title = QLabel('Tableau de bord-inator')
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # tittle.setFont(QFont('Small Fonts', 20))
-        title.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
+        title.setObjectName("title")
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----

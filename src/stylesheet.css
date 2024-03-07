@@ -3,6 +3,17 @@ QMainWindow#startWindow {
 
 }
 
+QWidget#semiTransparent {
+    background: rgba(0, 0, 0, 50);
+    font-size: 16px;
+}
+
+QSpinBox>QWidget {
+    background: rgba(0, 0, 0, 50);
+}
+
+
+
 QWidget#Dock {
     background-color: rgba(67, 76, 93, 1);
         border-radius: 10px;
@@ -18,7 +29,7 @@ QDockWidget > QWidget{
 
 
 
-QToolButton {
+QToolButton#startButton {
     background-color: #7cac04; 
     color: white; 
     border-radius:10px; 
@@ -29,6 +40,10 @@ QToolButton {
 QWidget {
     background-color: rgba(67, 76, 93, 1);
         border-radius: 10px;
+}
+
+QWidget#Transparent {
+    background: transparent;
 }
 
 
@@ -58,7 +73,7 @@ QProgressBar {
     }
 
 
-QSpinBox {background: rgba(0,0,0,50);}
+
 
 
 QScrollBar:horizontal {
@@ -107,5 +122,12 @@ QScrollBar::sub-line:vertical {
 }
 
 QLabel {
+
     font-weight: bold
+}
+
+QLabel#title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
 }

@@ -22,18 +22,19 @@ from parameters import ViewParameters
 class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Deb'île launcher")
+        self.setWindowTitle("Simulation")
         self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
         self.setGeometry(0, 0, 1000, 400)
 
         self.layout = QVBoxLayout()
-        label = QLabel("Deb'île")
+        label = QLabel("Simulation")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         label.setFont(QFont('Small Fonts', 80))
+        label.setObjectName("Transparent")
         self.layout.addWidget(label)
         container = QWidget()
         container.setLayout(self.layout)
-        container.setStyleSheet("background: transparent;")
+        container.setObjectName("Transparent")
 
         self.setObjectName("startWindow")
 
@@ -46,19 +47,19 @@ class StartWindow(QMainWindow):
         self.gridSizeHeight = 100
         label2 = QToolButton()
         label2.setText("Taille de la grille")
-        label2.setStyleSheet("background: rgba(0,0,0,50);")
+        label2.setObjectName("semiTransparent")
         label2.setFixedSize(200, 30)
         self.layout2.addStretch()
         self.layout2.addWidget(label2, alignment=Qt.AlignmentFlag.AlignCenter)
         self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxWidth.setFixedSize(50, 30)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
-        self.spinBoxWidth.setStyleSheet("background: rgba(0,0,0,50);")
+        self.spinBoxWidth.setObjectName("semiTransparent")
 
         self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
         self.spinBoxHeight.setFixedSize(50, 30)
-        self.spinBoxHeight.setStyleSheet("background: rgba(0,0,0,50); ")
+        self.spinBoxHeight.setObjectName("semiTransparent")
 
         self.layout2.addWidget(
             self.spinBoxWidth, alignment=Qt.AlignmentFlag.AlignHCenter)
@@ -70,11 +71,12 @@ class StartWindow(QMainWindow):
         self.loadButton.setText("Charger une carte")
         self.loadButton.clicked.connect(self.loadButtonCallback)
         self.loadButton.setFixedSize(200, 30)
-        self.loadButton.setStyleSheet("background: rgba(0,0,0,50);")
+        self.loadButton.setObjectName("semiTransparent")
 
         # --- Hlayout  ---
         container2 = QWidget()
         container2.setLayout(self.layout2)
+        container2.setObjectName("Transparent")
         self.layout.addWidget(container2)
         self.layout.addWidget(
             self.loadButton, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -84,7 +86,7 @@ class StartWindow(QMainWindow):
         self.button.setText("Démarrer")
         self.button.setFixedSize(200, 50)
         self.button.clicked.connect(self.initMainWindow)
-        self.button.setStyleSheet(ViewParameters.START_BUTTON_STYLE_SHEET)
+        self.button.setObjectName("startButton")
         self.layout.addWidget(
             self.button, alignment=Qt.AlignmentFlag.AlignCenter)
 

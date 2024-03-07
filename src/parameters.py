@@ -61,7 +61,6 @@ class ViewParameters(GenericParameters, ABC):
     FIRE_TEXTURE_PATH: str = None
     ICE_TEXTURE_PATH: str = None
     TIME_FORMAT: str = None
-    GRID_STYLESHEET: str = None
     TEXTURE_SIZE: int = None
     STEP_TIME: int = None
 
