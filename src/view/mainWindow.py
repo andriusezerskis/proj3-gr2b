@@ -106,6 +106,9 @@ class Window(QMainWindow):
             self.timer.setInterval(ViewParameters.STEP_TIME // 2)
             self.fastF = True
 
+    def changeTileRenderer(self):
+        self.view.changeTileRenderer()
+
     def getGraphicalGrid(self):
         return self.view
 
@@ -135,6 +138,9 @@ class Window(QMainWindow):
         self.commandsButton = QPushButton("Commands")
         self.commandsButton.clicked.connect(self.commandsCallback)
 
+        self.changeTileRendererButton = QPushButton("Change Renderer")
+        self.changeTileRendererButton.clicked.connect(self.changeTileRenderer)
+
         self.buttonOpenDock = QPushButton(">")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
@@ -149,6 +155,8 @@ class Window(QMainWindow):
             self.fastFbutton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(
+            self.changeTileRendererButton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 

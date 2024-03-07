@@ -27,6 +27,7 @@ class Tile(ParametrizedDrawable, ABC):
         self.movable: Movable | None = None
         self.disaster = None
         self.disasterOpacity = 0
+        self.temperature = 0
 
     def getDisasterPathName(self):
         if self.disaster == Disaster.FIRE_TEXT:
@@ -48,6 +49,12 @@ class Tile(ParametrizedDrawable, ABC):
     @classmethod
     def getLevel(cls) -> float:
         return cls._getParameter("level")
+
+    def updateTemperature(self, temperature: float):
+        self.temperature = temperature
+
+    def getTemperature(self) -> float:
+        return self.temperature
 
     @classmethod
     def getFilterColor(cls) -> str:

@@ -77,7 +77,7 @@ class MainWindowController:
             self.simulation.player.addInInventory(entity.loot())
             self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(self.simulation.player.getInventory())
             tile.removeEntity()
-            self.graphicalGrid.removeEntity(tile.getPos())
+            self.graphicalGrid.redraw(tile)
 
             self.graphicalGrid.updateHighlighted()
 

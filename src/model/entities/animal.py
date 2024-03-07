@@ -48,7 +48,7 @@ class Animal(Entity, ABC):
         return prey.__name__ in cls._getPreys()
 
     def getTemperatureDifference(self) -> float:
-        return abs(self.getGrid().getTemperature(self.getPos()) - self.getPreferredTemperature())
+        return abs(self.getTile().getTemperature() - self.getPreferredTemperature())
 
     @override
     def evolve(self) -> bool:

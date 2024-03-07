@@ -85,11 +85,13 @@ class Simulation:
         self.modifiedTiles = set()
         self.updatedEntities = set()
         self.stepCount += 1
+        self.getGrid().regionHandler.advanceTime()
         print("Step " + str(self.stepCount))
         t = time.time()
         self.updateWaterLevel()
 
         for tile in self.grid:
+            self.grid.updateTemperature(tile)
             self.diminishDisaster(tile)
             entity = tile.getEntity()
             if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
@@ -124,6 +126,7 @@ class Simulation:
     def diminishDisaster(self, tile: Tile):
         if tile.getDisasterOpacity() > 0:
             tile.setDisasterOpacity(tile.getDisasterOpacity() - 0.1)
+            self.addModifiedTiles(tile)
         else:
             tile.setDisaster(None)
 
