@@ -12,17 +12,6 @@ class Craft(ParametrizedDrawable):
         super().__init__()
         self.blueprint: Dict[Loot, int] = self.getBlueprint()
 
-    def hasEnoughQuantity(self, materials: Dict[Loot, int]):
-        for material, quantity in materials.items():
-            if self.blueprint.get(material) and self.blueprint.get(material) > quantity:
-                return False
-
-    def craft(self, materials: Dict[Loot, int]):
-        if not self.hasEnoughQuantity(materials):
-            return False
-        for material, quantity in self.blueprint:
-            materials[material] -= quantity
-
     @classmethod
     @override
     def _getConfigFilePath(cls) -> str:

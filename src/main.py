@@ -66,4 +66,5 @@ if __name__ == '__main__':
     # print(Crab.getLoots())
     # print(Crab.isValidItemType(Claw))
     # print(Crab.getChance(Claw))
+    print(eval("Wood"))
     main()

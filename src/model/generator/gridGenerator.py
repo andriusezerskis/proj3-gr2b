@@ -26,7 +26,7 @@ class GridGenerator(AutomaticGenerator):
 
     def __init__(self, gridSize: Point, islandNb: list[int], islandSize: int):
         """
-        :param size: x: width of the map, y: height of the map
+        :param gridSize: x: width of the map, y: height of the map
         :param islandNb: number of islands in the grid (an array of possible values)
         :param islandSize: minimal number of land tiles in an island
         """
@@ -72,33 +72,41 @@ class GridGenerator(AutomaticGenerator):
         cls._ranges[tileType] = res
         return tuple(res)
 
+    @classmethod
+    def getTileFromHeight(cls, x: int, y: int, height: float) -> Tile:
+        if len(cls._thresholds) == 0:
+            cls.generateThresholds()
+
+        for tileType, threshold in cls._thresholds:
+            if height <= threshold:
+                return tileType(Point(x, y), height)
+
     def _getTile(self, x: int, y: int) -> Tile:
         sample = self.noiseGenerator.sample2D(
             x/self.gridSize.x(), y/self.gridSize.y()) / self.maxAbsHeight
 
-        for tileType, threshold in self._thresholds:
-            if sample <= threshold:
-                return tileType(Point(x, y), sample)
+        return self.getTileFromHeight(x, y, sample)
 
     def _generateMatrix(self) -> list[list[Tile]]:
         return [[self._getTile(x, y) for x in range(self.gridSize.x())] for y in range(self.gridSize.y())]
 
-    def getIslands(self) -> list[set[Tile]]:
+    @classmethod
+    def getIslands(cls, matrix, gridSize, islandNb=(-1,)) -> list[set[Tile]]:
         islands = []
         visited = set()
-        for y, row in enumerate(self.matrix):
+        for y, row in enumerate(matrix):
             for x, tile in enumerate(row):
                 if type(tile) is not Water and tile not in visited:
 
                     # new island found
-                    if len(islands) >= max(self.islandNb):
+                    if islandNb != (-1,) and len(islands) >= max(islandNb):
                         # no need to look further, we've found too many islands
                         return []
 
                     visited.add(tile)
                     island = set()
 
-                    self._getIsland(x, y, island, visited)
+                    cls._getIsland(matrix, gridSize, x, y, island, visited)
                     islands.append(island)
 
                 else:
@@ -106,15 +114,16 @@ class GridGenerator(AutomaticGenerator):
 
         return islands
 
-    def _getIsland(self, x: int, y: int, island: set[Tile], visited: set[Tile]) -> None:
+    @classmethod
+    def _getIsland(cls, matrix, gridSize, x: int, y: int, island: set[Tile], visited: set[Tile]) -> None:
         stack = [(x, y)]
         while len(stack) > 0:
             x, y = stack.pop()
-            island.add(self.matrix[y][x])
+            island.add(matrix[y][x])
             for newx, newy in [(x + offsetx, y + offsety) for offsetx in [-1, 0, 1] for offsety in [-1, 0, 1]]:
-                if (0 <= newx < self.gridSize.x() and 0 <= newy < self.gridSize.y() and self.matrix[newy][newx] not in visited and
-                        type(self.matrix[newy][newx]) is not Water):
-                    visited.add(self.matrix[newy][newx])
+                if (0 <= newx < gridSize.x() and 0 <= newy < gridSize.y() and matrix[newy][newx] not in visited and
+                        type(matrix[newy][newx]) is not Water):
+                    visited.add(matrix[newy][newx])
                     stack.append((newx, newy))
 
     def getNormalizationBorns(self) -> None:
@@ -136,7 +145,7 @@ class GridGenerator(AutomaticGenerator):
             self.noiseGenerator.addNoise(4, 0.5)
             self.getNormalizationBorns()
             self.matrix = self._generateMatrix()
-            islands = self.getIslands()
+            islands = self.getIslands(self.matrix, self.gridSize, self.islandNb)
             size_ok = True
             for island in islands:
                 if len(island) < self.islandSize:

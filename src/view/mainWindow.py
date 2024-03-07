@@ -174,7 +174,7 @@ class Window(QMainWindow):
     def closeEvent(self, event):
         self.pauseTimer()
         result = QMessageBox.question(
-            self, "Confirm Exit...", "Are you sure you want to exit ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            self, "Confirmer la fermeture...", "Êtes-vous sûr de vouloir fermer la fenêtre ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         event.ignore()
 
         if result == QMessageBox.StandardButton.Yes:

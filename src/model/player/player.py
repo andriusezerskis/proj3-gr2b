@@ -6,13 +6,16 @@ Date: December 2023
 
 from copy import copy
 from overrides import override
+from typing import Dict
+from overrides import override
 
-from utils import Point
+from utils import Point, getTerminalSubclassesOfClass
 
 from model.entities.entity import Entity
 from model.entities.animal import Animal
 from model.terrains.tile import Tile
 from model.movable import Movable
+from model.crafting.loots import Loot
 from view.playerDockView import PlayerDockView
 
 
@@ -23,6 +26,10 @@ class Player(Movable):
         self.pos = pos
         self.grid = grid
         self.claimed_entity: Entity | None = None
+        self.inventory = {
+            loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
+
+        self.abilityUnlockedRod = False
 
     def isPlaying(self):
         return self.claimed_entity is not None
@@ -51,6 +58,17 @@ class Player(Movable):
             return True
         return False
 
+    def addInInventory(self, loots: Dict[str, int]):
+        for loot_name in loots:
+            self.inventory[loot_name] += loots[loot_name]
+
+    def removeFromInventory(self, recipe: Dict[str, int]):
+        for loot_name in recipe:
+            self.inventory[loot_name] -= recipe[loot_name]
+
+    def getInventory(self):
+        return self.inventory
+
     @override
     def getPos(self) -> Point:
         return self.pos
@@ -66,5 +84,16 @@ class Player(Movable):
         return self.claimed_entity.getPreferredTemperature()
 
     def kill(self):
-        #self.removeClaimedEntity()
+        # self.removeClaimedEntity()
         PlayerDockView.lageEntity()
+
+    def hasEnoughQuantityToCraft(self, item):
+        for material, quantity in item.getBlueprint().items():
+            if self.inventory.get(material) < quantity:
+                return False
+        return True
+
+    def craft(self, item):
+        if not self.hasEnoughQuantity(item):
+            return False
+        self.removeFromInventory(item.getBlueprint())

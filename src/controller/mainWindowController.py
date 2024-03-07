@@ -8,6 +8,8 @@ from utils import Point, getPointsAdjacentTo
 
 from model.terrains.tile import Tile
 
+from model.crafting.crafts import FishingRod
+
 
 class MainWindowController:
     """Singleton"""
@@ -71,11 +73,22 @@ class MainWindowController:
     def playerControll(self, tile):
         if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
             entity = tile.getEntity()
-            print(entity.loot())
+            #print(entity.loot())
+            self.simulation.player.addInInventory(entity.loot())
+            self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(self.simulation.player.getInventory())
             tile.removeEntity()
             self.graphicalGrid.redraw(tile)
 
             self.graphicalGrid.updateHighlighted()
+
+    def unlockFishing(self):
+        if not self.simulation.getPlayer().abilityUnlockedRod and self.simulation.getPlayer().hasEnoughQuantityToCraft(FishingRod):
+            self.simulation.getPlayer().abilityUnlockedRod = True
+            self.simulation.getPlayer().removeFromInventory(FishingRod.getBlueprint())
+            self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
+                self.simulation.player.getInventory())
+            return True
+        return False
 
     def closeDock(self):
         self.mainWindow.docksMonitor.getCurrentDock().close()

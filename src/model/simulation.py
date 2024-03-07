@@ -16,6 +16,8 @@ from math import cos, pi
 
 from model.entities.plant import Plant
 
+from model.gridloader import GridLoader
+
 ###
 
 from model.entities.animal import Animal
@@ -32,13 +34,9 @@ from model.disasterhandler import DisasterHandler
 
 
 class Simulation:
-    def __init__(self, gridSize: Point):
+    def __init__(self, gridSize: Point, grid):
         super().__init__()
-        self.grid = GridGenerator(gridSize,
-                                  [2, 3, 4, 5, 6],
-                                  350).generateGrid()
-        EntitiesGenerator().generateEntities(self.grid)
-
+        self.grid = grid
         self.stepCount = 0
         self.modifiedTiles: set[Tile] = set()
         self.updatedEntities: set[Entity] = set()
@@ -48,6 +46,14 @@ class Simulation:
         self.waterLevel = Water.getLevel()
 
         Entity.setGrid(self.grid)
+
+    @staticmethod
+    def generateGrid(gridSize):
+        grid = GridGenerator(gridSize,
+                             [2, 3, 4, 5, 6],
+                             350).generateGrid()
+        EntitiesGenerator().generateEntities(grid)
+        return grid
 
     def bordinatorExecution(self, zone: str, radius: int, disaster, entityChosen, initialPos: Point):
         # if zone == "Ile":
@@ -120,6 +126,7 @@ class Simulation:
     def diminishDisaster(self, tile: Tile):
         if tile.getDisasterOpacity() > 0:
             tile.setDisasterOpacity(tile.getDisasterOpacity() - 0.1)
+            self.addModifiedTiles(tile)
         else:
             tile.setDisaster(None)
 

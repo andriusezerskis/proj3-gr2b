@@ -7,7 +7,7 @@ Date: December 2023
 from functools import partial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QRadioButton, QSpinBox, QComboBox, QGroupBox
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
@@ -21,12 +21,11 @@ matplotlib.use('QtAgg')
 
 
 class MonitorWindow:
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         """
         Window for controlling catastrophe on the map >:)
         Display on the dock tab of main windows
         """
-        self.dock = dock
         self.container = container
         self.layout = QVBoxLayout()
 
@@ -36,7 +35,7 @@ class MonitorWindow:
         title = QLabel('Tableau de bord-inator')
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # tittle.setFont(QFont('Small Fonts', 20))
-        title.setStyleSheet("QLabel{font-size: 20pt; font-weight: bold}")
+        title.setObjectName("title")
         self.layout.addWidget(title)
 
         # ---- second layout for selection ----
@@ -57,10 +56,7 @@ class MonitorWindow:
         self.container2.setLayout(self.layout2)
         self.layout.addWidget(self.container2)
 
-        # todo button style
-        self.button = QPushButton("OK")
-        self.button.setMaximumWidth(500)
-        self.button.setMinimumWidth(200)
+        self.button = QPushButton("Lancer la catastrophe")
         self.button.setCheckable(True)
         self.layout.addWidget(self.button)
         self.layout.setAlignment(self.button, Qt.AlignmentFlag.AlignCenter)
@@ -69,8 +65,7 @@ class MonitorWindow:
         return self.button.isChecked()
 
     def offIsMonitor(self):
-        # calls when click on the map after selection of catastroph
-        # (end of the action)
+        # calls when click on the map after selection of disaster
         self.button.setChecked(False)
 
     def getInfo(self):
@@ -80,43 +75,40 @@ class MonitorWindow:
     def checkBox(self):
         layout = QVBoxLayout()
 
-        label = QLabel("Choix de zone")
-        layout.addWidget(label)
-
-        b2 = QRadioButton("Rayon")
-        b2.setChecked(True)
-        b2.toggled.connect(lambda: self.btnZone(b2))
-        layout.addWidget(b2)
+        rayonButton = QRadioButton("Rayon")
+        rayonButton.setChecked(True)
+        rayonButton.toggled.connect(lambda: self.btnZone(rayonButton))
 
         spinBox = QSpinBox(minimum=1, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
+
+        islandButton = QRadioButton("Ile")
+        islandButton.toggled.connect(lambda: self.btnZone(islandButton))
+
+        layout.addWidget(islandButton)
+        layout.addWidget(rayonButton)
         layout.addWidget(spinBox)
 
-        b3 = QRadioButton("Ile")
-        b3.toggled.connect(lambda: self.btnZone(b3))
-        layout.addWidget(b3)
-
-        container = QWidget()
+        container = QGroupBox("Choix de la zone")
         container.setLayout(layout)
         return container
 
     def checkBox2(self):
         layout = QVBoxLayout()
+        container = QGroupBox("Choix de catastrophe")
+        container.setLayout(layout)
 
-        label = QLabel("Choix de catastrophe")
-        layout.addWidget(label)
+        iceButton = QRadioButton(Disaster.ICE_TEXT, self.container)
+        iceButton.setChecked(True)
+        iceButton.toggled.connect(lambda: self.btnCata(iceButton))
+        layout.addWidget(iceButton)
 
-        b1 = QRadioButton(Disaster.ICE_TEXT, self.dock)
-        b1.setChecked(True)
-        b1.toggled.connect(lambda: self.btnCata(b1))
-        layout.addWidget(b1)
+        fireButton = QRadioButton(Disaster.FIRE_TEXT, self.container)
+        fireButton.toggled.connect(lambda: self.btnCata(fireButton))
+        layout.addWidget(fireButton)
 
-        b2 = QRadioButton(Disaster.FIRE_TEXT, self.dock)
-        b2.toggled.connect(lambda: self.btnCata(b2))
-        layout.addWidget(b2)
-
-        b3 = QRadioButton(Disaster.INVASION_TEXT, self.dock)
-        b3.toggled.connect(lambda: self.btnCata(b3))
+        islandButton = QRadioButton(Disaster.INVASION_TEXT, self.container)
+        islandButton.toggled.connect(lambda: self.btnCata(islandButton))
 
         combobox5 = QComboBox()
 
@@ -129,32 +121,25 @@ class MonitorWindow:
             combobox5.currentText())
         combobox5.currentTextChanged.connect(self.indexChanged)
 
-        layout.addWidget(b3)
+        layout.addWidget(islandButton)
         layout.addWidget(combobox5)
 
-        container = QWidget()
-        container.setLayout(layout)
         return container
 
     def indexChanged(self, button: str):
         self.invasionChosen = getFrenchToEnglishTranslation(button)
-        print(self.invasionChosen)
 
     # ---- handler for update information from button ----
-    def btnZone(self, b):
-        # handler de zone selectionné
-
-        if b.isChecked() == True:
-            self.infoZone = b.text()
+    def btnZone(self, zoneButton):
+        if zoneButton.isChecked() == True:
+            self.infoZone = zoneButton.text()
 
     def updateSpinbox(self, value):
         self.infoRayon = value
 
-    def btnCata(self, b):
-        # handler de catastrophe selectionné
-
-        if b.isChecked() == True:
-            self.infoDisaster = b.text()
+    def btnCata(self, disasterButton):
+        if disasterButton.isChecked() == True:
+            self.infoDisaster = disasterButton.text()
 
 
 # --- for graph plot ---
@@ -167,7 +152,7 @@ class MplCanvas(FigureCanvas):
 
 
 class GraphWindow:
-    def __init__(self, dock, container):
+    def __init__(self,  container):
         # --- graph ----
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         self.layout = QVBoxLayout()
@@ -250,11 +235,8 @@ class GraphWindow:
             self.canvas.axes.set_title(
                 f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
 
-        title = "Évolution des populations"
-        """if len(self.chosenEntity) != 1 else "Évolution de la population " + \
-                f"{"d'" if self.chosenEntity[0].getFrenchName()[0] in "AEIOUYH" else "de "}" + \
-                self.chosenEntity[0].getFrenchName().lower() + \
-                f"{'s' if self.chosenEntity[0].getFrenchName()[-1] not in "xs" else ""}"""
+        title = "Évolution des populations" if len(
+            self.chosenEntity) != 1 else "Évolution de la population "
 
         self.canvas.axes.set_title(title if len(
             self.chosenEntity) > 0 else "Veuillez sélectionner\n une entitée")

@@ -25,8 +25,6 @@ class EntityInfoView():
         self.controlButton = QPushButton(ViewText.CONTROL_PLAYER)
         self.controlButton.clicked.connect(self.controlEntity)
         self.controlButton.setCheckable(True)
-        self.controlButton.setMaximumWidth(500)
-        self.controlButton.setMinimumWidth(200)
         self.controlButton.hide()
 
         self.layout = QVBoxLayout()

@@ -3,22 +3,50 @@ QMainWindow#startWindow {
 
 }
 
+QGroupBox {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #E0E0E0, stop: 1 #FFFFFF);
+    border: 2px solid rgb(159, 134, 109);
+    border-radius: 5px;
+    margin-top: 2ex;
+    /*leave space at the top for the title */
+    font-size: 13px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    /* position at the top center */
+    padding: 0 3px;
+    font-size: 13px;
+}
+
+QWidget#semiTransparent {
+    background: rgba(0, 0, 0, 50);
+    font-size: 16px;
+}
+
+QSpinBox>QWidget {
+    background: rgba(0, 0, 0, 50);
+}
+
+
+
 QWidget#Dock {
-    background-color: rgba(67, 76, 93, 1);
+    background-color: rgba(191, 162, 132, 1);
         border-radius: 10px;
-        border: 1px solid rgb(105, 120, 149);
+        border: 1px solid rgb(122, 100, 83);
 
 }
 
 
 QDockWidget > QWidget{
-    background-color: rgba(67, 76, 93, 1);
+    background-color: rgba(159, 134, 109, 1);
     border-radius: 10px;
 }
 
 
 
-QToolButton {
+QToolButton#startButton {
     background-color: #7cac04; 
     color: white; 
     border-radius:10px; 
@@ -27,8 +55,12 @@ QToolButton {
 }
 
 QWidget {
-    background-color: rgba(67, 76, 93, 1);
+    background-color: rgba(205, 176, 143, 1);
         border-radius: 10px;
+}
+
+QWidget#Transparent {
+    background: transparent;
 }
 
 
@@ -47,18 +79,18 @@ QPushButton {
 }
 
 QProgressBar {
-        border: 2px solid grey;
+        border: 2px rgb(122, 100, 83);
         border-radius: 5px;
         text-align: center;
     }
 
     QProgressBar::chunk {
-        background-color: rgb(100, 115, 141);
+        background-color: rgb(159, 134, 109);
         width: 10px;
     }
 
 
-QSpinBox {background: rgba(0,0,0,50);}
+
 
 
 QScrollBar:horizontal {
@@ -107,5 +139,12 @@ QScrollBar::sub-line:vertical {
 }
 
 QLabel {
+
     font-weight: bold
+}
+
+QLabel#title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
 }
