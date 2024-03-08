@@ -99,8 +99,13 @@ class RenderMonitor:
     def isNextToBorder(self, point: Point, movement: Point):
         upper_borders = point - self.renderingSize // 2
         lower_borders = point + self.renderingSize // 2 - self.gridSize
-        print(upper_borders, lower_borders)
         if (movement.x() and (not upper_borders.xIsPositive() or lower_borders.xIsPositive())) \
                 or (movement.y() and (not upper_borders.yIsPositive() or lower_borders.yIsPositive())):
             return True
         return False
+
+    def isMaximumZoomIndex(self):
+        return self.zoomIndex == len(self.zooms) - 1
+
+    def isMinimumZoomIndex(self):
+        return self.zoomIndex == 0

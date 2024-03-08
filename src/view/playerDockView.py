@@ -45,6 +45,7 @@ class PlayerDockView(QDockWidget):
     @staticmethod
     def lageEntity():
         GridController.getInstance().lageEntity()
+        MainWindowController.getInstance().onEntityLage()
         MainWindowController.getInstance().changeDock()
 
     def unlockFishing(self):

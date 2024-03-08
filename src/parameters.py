@@ -63,6 +63,7 @@ class ViewParameters(GenericParameters, ABC):
     TIME_FORMAT: str = None
     TEXTURE_SIZE: int = None
     STEP_TIME: int = None
+    LOCKED_BUTTON: str = None
 
     @classmethod
     @override

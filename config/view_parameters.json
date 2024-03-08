@@ -16,6 +16,7 @@
     "STEP_TIME": 2000,
 
     "PLOT_BCKGROUND" : "(191/255, 162/255, 132/255, 1)",
-    "FIG_BCKGROUND" : "(191/255, 162/255, 132/255, 1)"
+    "FIG_BCKGROUND" : "(191/255, 162/255, 132/255, 1)",
+    "LOCKED_BUTTON" : "background-color: rgba(84, 74, 68, 1); color: rgba(134, 123, 118, 1); border-radius: 3px; padding: 5px;"
 
 }

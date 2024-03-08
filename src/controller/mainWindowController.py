@@ -10,6 +10,8 @@ from model.terrains.tile import Tile
 
 from model.crafting.crafts import FishingRod
 
+from parameters import ViewParameters
+
 
 class MainWindowController:
     """Singleton"""
@@ -113,3 +115,25 @@ class MainWindowController:
     def openDockEvent(self):
         self.mainWindow.buttonOpenDock.hide()
         self.mainWindow.docksMonitor.openDock()
+
+    def onEntityControl(self):
+        self.mainWindow.zoomInButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
+        self.mainWindow.zoomOutButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
+        self.mainWindow.changeTileRendererButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
+
+    def onEntityLage(self):
+        self.mainWindow.zoomInButton.setStyleSheet(None)
+        self.mainWindow.zoomOutButton.setStyleSheet(None)
+        self.mainWindow.changeTileRendererButton.setStyleSheet(None)
+
+    def onZoomIn(self):
+        if self.simulation.renderMonitor.isMaximumZoomIndex():
+            self.mainWindow.zoomInButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
+        else:
+            self.mainWindow.zoomOutButton.setStyleSheet(None)
+
+    def onZoomOut(self):
+        if self.simulation.renderMonitor.isMinimumZoomIndex():
+            self.mainWindow.zoomOutButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
+        else:
+            self.mainWindow.zoomInButton.setStyleSheet(None)

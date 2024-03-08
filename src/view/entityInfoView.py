@@ -42,7 +42,7 @@ class EntityInfoView:
 
     def controlEntity(self):
         GridController.getInstance().controlEntity(self.entity.getTile())
-        # MainWindowController.getInstance().closeDock()
+        MainWindowController.getInstance().onEntityControl()
         MainWindowController.getInstance().changeDock()
 
     def setEntity(self, entity: Entity):

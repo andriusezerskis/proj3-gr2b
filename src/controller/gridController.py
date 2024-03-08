@@ -8,6 +8,8 @@ from typing import Tuple
 from PyQt6.QtCore import *
 from utils import Point
 
+from controller.mainWindowController import MainWindowController
+
 
 class GridController:
     """Singleton"""
@@ -56,9 +58,7 @@ class GridController:
             self.recomputeCuboid()
             self.graphicalGrid.removeRenderedSection()
             self.renderingMonitor.centerOnPoint(tile.getPos())
-            self.graphicalGrid.setScrollBars(
-
-                self.renderingMonitor.getUpperPoint())
+            self.graphicalGrid.setScrollBars(self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
     def lageEntity(self):
@@ -87,12 +87,16 @@ class GridController:
                 return size if is_size else size - Point(1, 1)
 
     def zoomIn(self):
+        if self.simulation.hasPlayer():
+            return
+
         if self.renderingMonitor.zoomIndex < len(self.renderingMonitor.zooms)-1:
             self.renderingMonitor.zoomIndex += 1
             scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
             self.renderingMonitor.zoomFactor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
 
+            MainWindowController.getInstance().onZoomIn()
             self.recomputeCuboid()
 
     def recomputeCuboid(self):
@@ -114,12 +118,14 @@ class GridController:
         return upperTile, lowerTile, width, height
 
     def zoomOut(self):
+        if self.simulation.hasPlayer():
+            return
+
         if self.renderingMonitor.zoomIndex > 0:
-            scaler = 1 / \
-                \
-                self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
+            scaler = 1 / self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
             self.renderingMonitor.zoomFactor *= scaler
             self.graphicalGrid.scale(scaler, scaler)
             self.renderingMonitor.zoomIndex -= 1
 
+            MainWindowController.getInstance().onZoomOut()
             self.recomputeCuboid()
