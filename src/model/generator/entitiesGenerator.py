@@ -5,6 +5,7 @@ Date: December 2023
 """
 
 import random
+from typing import Type
 
 from parameters import TerrainParameters, EntityParameters
 
@@ -27,12 +28,12 @@ import model.entities.human
 class EntitiesGenerator(AutomaticGenerator):
 
     def __init__(self):
-        self.entitySet: set[type] = self.getTerminalChildrenOfBaseClass()
+        self.entitySet: set[Type[Entity]] = self.getTerminalChildrenOfBaseClass()
         self._validEntitiesForTileType = {}
 
     @classmethod
     @override
-    def getBaseClass(cls) -> type:
+    def getBaseClass(cls) -> Type[Entity]:
         return Entity
 
     def generateEntities(self, grid: Grid):
@@ -40,12 +41,11 @@ class EntitiesGenerator(AutomaticGenerator):
             if random() >= TerrainParameters.EMPTY_TILE_PROBABILITY_GENERATION:
                 self.addRandomEntity(tile)
 
-    def getValidEntities(self, tile: type) -> list[type]:
+    def getValidEntities(self, tile: Type[Tile]) -> list[type]:
 
         if tile not in self._validEntitiesForTileType:
             res = []
             for entityType in self.entitySet:
-                assert issubclass(entityType, Entity)
                 if entityType.isValidTileType(tile):
                     res.append(entityType)
 

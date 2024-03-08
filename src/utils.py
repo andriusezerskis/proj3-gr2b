@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Type, TypeVar
 
 
 class Point:
@@ -70,7 +70,7 @@ class Point:
 
     def octileDistance(self, other):
         return max(abs(self.x() - other.x()), abs(self.y() - other.y()))
-    
+
     def manhattanDistance(self, other):
         return abs(self.x() - other.x()) + abs(self.y() - other.y())
 
@@ -82,7 +82,6 @@ class Point:
 
     def yIsPositive(self):
         return self.y() >= 0
-
 
     def __lt__(self, other):
         return self.x() < other.x() and self.y() < other.y()
@@ -113,7 +112,10 @@ def getPointsInRadius(point: Point, radius: int) -> list[Point]:
             if x != 0 or y != 0]
 
 
-def getTerminalSubclassesOfClass(cls: type) -> set[type]:
+C = TypeVar("C")
+
+
+def getTerminalSubclassesOfClass(cls: Type[C]) -> set[Type[C]]:
     res = set()
     stack = [cls]
     while len(stack) > 0:
@@ -125,6 +127,7 @@ def getTerminalSubclassesOfClass(cls: type) -> set[type]:
             stack.extend(subclasses)
     return res
 
+
 def getFrenchToEnglishTranslation(frenchEntity: str) -> str:
     return {
         "Crabe": "Crab",
@@ -133,7 +136,7 @@ def getFrenchToEnglishTranslation(frenchEntity: str) -> str:
         "Plante": "Plant",
         "Algue": "Algae",
         "Humain": "Human",
-        "Chevre" : "Goat",
-        "Leopard des neiges" : "SnowLeopard",
-        "Fleur" : "Flower"
+        "Chevre": "Goat",
+        "Leopard des neiges": "SnowLeopard",
+        "Fleur": "Flower"
     }[frenchEntity]

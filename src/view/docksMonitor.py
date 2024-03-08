@@ -1,4 +1,5 @@
-from typing import TypeVar
+from typing import TypeVar, Type
+from model.entities.entity import Entity
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QCloseEvent
@@ -83,7 +84,7 @@ class MonitoringDock(CustomQDock):
         self.graph = GraphWindow(container3)
         self.entityController = EntityInfoController(container2)
 
-    def updateContent(self, entityType):
+    def updateContent(self, entityType: Type[Entity]):
         self.graph.updatePlot(entityType.getCount(), entityType)
 
     def updateController(self):

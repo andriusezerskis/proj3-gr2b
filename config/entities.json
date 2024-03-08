@@ -17,7 +17,7 @@
         "texture_path": ["tree4.png"],
         "icon_texture_path": "tree3.png",
         "fruit_texture_path": ["apple_tree.png"],
-        "duplication_probability": 0.005,
+        "duplication_probability": 0.015,
         "spontaneous_generation": 0,
         "fruit_cooldown": 6,
         "color": "#b3d5a4",

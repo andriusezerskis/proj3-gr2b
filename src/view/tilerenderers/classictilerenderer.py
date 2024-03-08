@@ -28,7 +28,6 @@ class ClassicTileRenderer(TileRenderer):
     def _updateEntityLayer(self, tile: Tile):
         entity = tile.getEntity()
         if entity:
-            assert isinstance(entity, Movable)
             self.entityLayer.setPixmap(PixmapUtils.getPixmapFromPath(entity.getTexturePath()))
             self.entityLayer.show()
         else:

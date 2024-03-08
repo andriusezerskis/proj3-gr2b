@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 from utils import Point
-from typing import TypeVar
+from typing import TypeVar, Type
 from abc import ABC
 from overrides import override
 from random import choice, choices
@@ -44,7 +44,7 @@ class Animal(Entity, ABC):
         return cls._getParameter("preferred_temperature")
 
     @classmethod
-    def isPrey(cls, prey: type):
+    def isPrey(cls, prey: Type[Entity]):
         return prey.__name__ in cls._getPreys()
 
     def getTemperatureDifference(self) -> float:

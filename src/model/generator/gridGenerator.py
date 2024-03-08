@@ -5,6 +5,8 @@ Date: December 2023
 """
 
 import time
+from typing import Type
+
 from model.generator.noiseGenerator import NoiseGenerator
 from model.terrains.tile import Tile
 from model.grid import Grid
@@ -21,8 +23,8 @@ from utils import Point
 
 class GridGenerator(AutomaticGenerator):
 
-    _thresholds: list[tuple[type, float]] = []
-    _ranges: dict[type: tuple[float, float]] = {}
+    _thresholds: list[tuple[Type[Tile], float]] = []
+    _ranges: dict[Type[Tile]: tuple[float, float]] = {}
 
     def __init__(self, gridSize: Point, islandNb: list[int], islandSize: int):
         """
@@ -40,7 +42,7 @@ class GridGenerator(AutomaticGenerator):
 
     @classmethod
     @override
-    def getBaseClass(cls) -> type:
+    def getBaseClass(cls) -> Type[Tile]:
         return Tile
 
     @classmethod
@@ -48,14 +50,13 @@ class GridGenerator(AutomaticGenerator):
         tileTypes = cls.getTerminalChildrenOfBaseClass()
         res = []
         for tileType in tileTypes:
-            assert issubclass(tileType, Tile)
             res.append((tileType, tileType.getLevel()))
 
         cls._thresholds = sorted(res, key=lambda x: x[1])
 
     # maybe move this inside an attribute/property of the future Constant class?
     @classmethod
-    def getRange(cls, tileType: type) -> tuple[float, float]:
+    def getRange(cls, tileType: Type[Tile]) -> tuple[float, float]:
         if tileType in cls._ranges:
             return cls._ranges[tileType]
 

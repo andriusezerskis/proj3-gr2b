@@ -13,20 +13,32 @@ from utils import Point
 
 class TemperatureTileRenderer(TileRenderer):
 
+    minTemp = None
+    maxTemp = None
+    _p = None
+    _m = None
+
     def __init__(self, pos: Point):
         super().__init__(pos)
+        if not self.minTemp:
+            self._initConstants()
         self.temperatureLayer = self.createNewLayer()
+
+    def _initConstants(self):
         self.minTemp = (TerrainParameters.AVERAGE_TEMPERATURE - TerrainParameters.MAX_TEMPERATURE_DIFFERENCE -
                         TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2)
         self.maxTemp = (TerrainParameters.AVERAGE_TEMPERATURE + TerrainParameters.MAX_TEMPERATURE_DIFFERENCE +
                         TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2)
+        self._p = 255 / (-self.maxTemp / self.minTemp + 1)
+        self._m = -self._p / self.minTemp
+
+    def _getColor(self, temperature: float):
+        return int(self._m * temperature + self._p)
 
     def _updateTemperatureLayer(self, tile: Tile):
         temperature = tile.getTemperature()
 
-        p = 255 / (-self.maxTemp / self.minTemp + 1)
-        m = -p / self.minTemp
-        red = int(m * temperature + p)
+        red = self._getColor(temperature)
 
         hexColor = QColor(red, 0, 255 - red).name()
 

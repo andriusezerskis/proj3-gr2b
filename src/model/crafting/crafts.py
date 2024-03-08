@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Type
 from overrides import override
 
 from parameters import CraftParameters
@@ -27,7 +27,7 @@ class Craft(ParametrizedDrawable):
         return cls._getParameter("blueprint")
 
     @classmethod
-    def isValidItemType(cls, itemType: type) -> bool:
+    def isValidItemType(cls, itemType: Type[Loot]) -> bool:
         return itemType.__name__ in cls.getBlueprint()
 
 

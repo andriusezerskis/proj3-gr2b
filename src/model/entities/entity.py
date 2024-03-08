@@ -12,9 +12,10 @@ from abc import ABC, abstractmethod
 from parameters import EntityParameters, TerrainParameters
 
 from model.action import Action
-from typing import TypeVar
+from typing import TypeVar, Type
 from utils import Point
 from model.drawable import ParametrizedDrawable
+from model.crafting.loots import Loot
 from overrides import override
 
 from random import choice
@@ -84,7 +85,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return cls._getParameter("valid_tiles")
 
     @classmethod
-    def isValidTileType(cls, tileType: type) -> bool:
+    def isValidTileType(cls, tileType: Type[Tile]) -> bool:
         return tileType.__name__ in cls._getValidTiles()
 
     def getHealthPoints(self) -> float:
@@ -255,7 +256,7 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return cls.getLoots().get(loot.__name__)[1]
 
     @classmethod
-    def isValidItemType(cls, itemType: type) -> bool:
+    def isValidItemType(cls, itemType: Type[Loot]) -> bool:
         return itemType.__name__ in cls.getLoots()
 
     def loot(self):

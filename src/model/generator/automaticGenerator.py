@@ -5,16 +5,21 @@ Date: December 2023
 """
 
 from abc import ABC, abstractmethod
+from typing import Type, TypeVar
+
 from utils import getTerminalSubclassesOfClass
+
+
+C = TypeVar("C")
 
 
 class AutomaticGenerator(ABC):
 
     @classmethod
     @abstractmethod
-    def getBaseClass(cls) -> type:
+    def getBaseClass(cls) -> Type[C]:
         ...
 
     @classmethod
-    def getTerminalChildrenOfBaseClass(cls) -> set[type]:
+    def getTerminalChildrenOfBaseClass(cls) -> set[Type[C]]:
         return getTerminalSubclassesOfClass(cls.getBaseClass())

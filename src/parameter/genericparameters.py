@@ -18,7 +18,6 @@ class GenericParameters(ABC):
     @staticmethod
     def reloadAllDicts():
         for parameterType in getTerminalSubclassesOfClass(GenericParameters):
-            assert issubclass(parameterType, GenericParameters)
             parameterType.reloadDict()
 
     @classmethod

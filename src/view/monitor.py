@@ -115,7 +115,6 @@ class MonitorWindow:
         combobox5 = QComboBox()
 
         for entityType in getTerminalSubclassesOfClass(Entity):
-            assert issubclass(entityType, Entity)
             animalIcon = QIcon(entityType.getDefaultTexturePath())
             combobox5.addItem(animalIcon, entityType.getFrenchName())
 
@@ -191,7 +190,6 @@ class GraphWindow:
         self._plotRef = None
 
         for index, entityType in enumerate(getTerminalSubclassesOfClass(Entity)):
-            assert issubclass(entityType, Entity)
             # text = Text(entityType.getFrenchName())
             iconbutton = QPushButton(entityType.getFrenchName())
             iconbutton.setCheckable(True)

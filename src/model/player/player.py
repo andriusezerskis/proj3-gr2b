@@ -6,7 +6,7 @@ Date: December 2023
 
 from copy import copy
 from overrides import override
-from typing import Dict
+from typing import Dict, Type
 from overrides import override
 
 from utils import Point, getTerminalSubclassesOfClass
@@ -87,7 +87,7 @@ class Player(Movable):
     def getTexturePath(self) -> str:
         return self.claimed_entity.getTexturePath()
 
-    def isValidTileType(self, tileType: type):
+    def isValidTileType(self, tileType: Type[Tile]):
         return self.claimed_entity.isValidTileType(tileType)
 
     def getPreferredTemperature(self) -> float:

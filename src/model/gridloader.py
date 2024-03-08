@@ -12,7 +12,6 @@ class GridLoader(ABC):
     @classmethod
     def _generateSymbolsToType(cls):
         for instanciable in getTerminalSubclassesOfClass(Entity):
-            assert issubclass(instanciable, Entity)
             cls.symbolsToType[instanciable.getSymbol()] = instanciable
 
     @classmethod

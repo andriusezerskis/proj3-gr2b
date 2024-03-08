@@ -5,6 +5,8 @@ Date: December 2023
 """
 
 from abc import ABC
+from typing import Type
+
 from overrides import override
 
 
@@ -98,7 +100,7 @@ class Tile(ParametrizedDrawable, ABC):
     def setDisasterOpacity(self, disasterOpacity: float) -> None:
         self.disasterOpacity = disasterOpacity
 
-    def addNewEntity(self, entity: type, age: int = 0) -> None:
+    def addNewEntity(self, entity: Type[Entity], age: int = 0) -> None:
         """
         Places a new entity in this tile
         :param entity: the type of entity that must be created
@@ -106,7 +108,6 @@ class Tile(ParametrizedDrawable, ABC):
         """
         if not self.movable:
             newEntity = entity(self.getPos())
-            assert isinstance(newEntity, Entity)
             self.setEntity(newEntity)
             newEntity.setAge(age)
 
@@ -118,7 +119,7 @@ class Tile(ParametrizedDrawable, ABC):
         return self.pos
 
     @staticmethod
-    def copyWithDifferentTypeOf(toCopy: "Tile_", type_: type) -> "Tile_":
+    def copyWithDifferentTypeOf(toCopy: "Tile_", type_: Type["Tile_"]) -> "Tile_":
         """
         Copies the passed tile in a new tile of a different tile.
         Attemps to copy the potential entity but might not succeed.
