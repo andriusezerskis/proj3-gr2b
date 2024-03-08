@@ -27,6 +27,7 @@ from view.tilerenderers.classictilerenderer import ClassicTileRenderer
 from view.tilerenderers.temperaturetilerenderer import TemperatureTileRenderer
 from view.tilerenderers.depthtilerenderer import DepthTileRenderer
 from view.tilerenderers.tilerenderer import TileRenderer
+from view.tilerenderers.unfilteredterraintilerenderer import UnfilteredTerrainTileRenderer
 
 from view.pixmaputils import PixmapUtils
 
@@ -39,7 +40,7 @@ from model.simulation import Simulation
 class GraphicalGrid(QGraphicsView):
 
     tileRenderers = [ClassicTileRenderer,
-                     TemperatureTileRenderer, DepthTileRenderer]
+                     TemperatureTileRenderer, DepthTileRenderer, UnfilteredTerrainTileRenderer]
 
     def __init__(self, gridSize: Point, grid: Grid, simulation: Simulation, renderingMonitor: RenderMonitor):
 
