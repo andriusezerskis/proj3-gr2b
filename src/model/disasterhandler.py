@@ -17,16 +17,22 @@ class DisasterHandler:
         self.modifiedTiles = set()
         self.entityChosen = entityChosen
 
-    def chooseDisaster(self, tile: Tile):
+    def chooseDisaster(self, tile: Tile, zone):
         initialPosPoint = Point(self.initialPos.x(), self.initialPos.y())
 
         if self.disasterType == Disaster.FIRE_TEXT:
-            self.executeFireDisaster(tile, abs(
-                1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
+            if zone == "Rayon":
+                self.executeFireDisaster(tile, abs(
+                    1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
+            else:
+                self.executeFireDisaster(tile, 1)
 
         elif self.disasterType == Disaster.ICE_TEXT:
-            self.executeIceDisaster(tile, abs(
-                1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
+            if zone == "Rayon":
+                self.executeIceDisaster(tile, abs(
+                    1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
+            else:
+                self.executeFireDisaster(tile, 1)
 
         elif self.disasterType == Disaster.INVASION_TEXT:
             self.executeEntityDisaster(tile)

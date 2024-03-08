@@ -169,6 +169,8 @@ class Window(QMainWindow):
         self.zoomInButton.clicked.connect(self.gridController.zoomIn)
         self.zoomOutButton = QPushButton("-")
         self.zoomOutButton.clicked.connect(self.gridController.zoomOut)
+        MainWindowController.getInstance().onZoomIn()
+        MainWindowController.getInstance().onZoomOut()
         self.layout.addWidget(
             self.zoomInButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight)
         self.layout.addWidget(

@@ -64,7 +64,7 @@ class Simulation:
         if zone == "Rayon":
             modification = set()
             for tile in self.grid.getTilesInRadius(initialPos, radius):
-                disasterHandler.chooseDisaster(tile)
+                disasterHandler.chooseDisaster(tile, zone)
                 if tile.getEntity():
                     tile.getEntity().removeHealthPoints()
                 modification.add(tile)
@@ -75,7 +75,7 @@ class Simulation:
             initialTile = self.grid.getTile(initialPos)
             island = self.grid.getIsland(initialTile)
             for tile in island:
-                disasterHandler.chooseDisaster(tile)
+                disasterHandler.chooseDisaster(tile, zone)
                 if tile.getEntity():
                     tile.getEntity().removeHealthPoints()
                 modification.add(tile)
