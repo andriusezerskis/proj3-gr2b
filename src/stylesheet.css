@@ -111,17 +111,19 @@ QProgressBar {
 
 
 QScrollBar:horizontal {
-    background-color: #808080;
+    background-color: rgba(122, 100, 83, 1);
     /* Couleur de fond */
-    height: 15px;
+    height: 10px;
     /* Hauteur */
 }
 
 QScrollBar::handle:horizontal {
-    background-color: #C0C0C0;
+    background-color: rgba(191, 162, 132, 1);
     /* Couleur du curseur */
-    min-width: 50px;
+    min-width: 20px;
     /* Largeur minimale */
+    border-radius: 5px;
+    border: 2px solid rgb(122, 100, 83);
 }
 
 QScrollBar::add-line:horizontal {
@@ -133,17 +135,19 @@ QScrollBar::sub-line:horizontal {
 }
 
 QScrollBar:vertical {
-    background-color: #808080;
+    background-color: rgba(122, 100, 83, 1);
     /* Couleur de fond */
-    width: 15px;
+    width: 10px;
     /* Largeur */
 }
 
 QScrollBar::handle:vertical {
-    background-color: #C0C0C0;
+    background-color: rgba(191, 162, 132, 1);
     /* Couleur du curseur */
-    min-height: 50px;
+    min-height: 20px;
     /* Hauteur minimale */
+    border-radius: 5px;
+    border: 2px solid rgb(122, 100, 83);
 }
 
 
