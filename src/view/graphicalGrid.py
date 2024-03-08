@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 import time
-from typing import Set, List
+from typing import Set, List, Type
 
 from PyQt6.QtCore import QTimer
 from controller.gridController import GridController
@@ -50,7 +50,7 @@ class GraphicalGrid(QGraphicsView):
 
         TileRenderer.setScene(self.scene)
 
-        self.tileRenderer = None
+        self.tileRendererIdx: int = 0
 
         self.latestVerticalValue = renderingMonitor.getFirstYVisible()
         self.latestHorizontalValue = renderingMonitor.getFirstXVisible()
@@ -60,11 +60,18 @@ class GraphicalGrid(QGraphicsView):
 
         self.textureSize = ViewParameters.TEXTURE_SIZE
         self.gridSize: Point = gridSize
-        self.pixmapItems: List[List[TileRenderer]] | None = None
+        self.pixmapItems: List[List[List[TileRenderer]]] = \
+            [[[tileRenderer(Point(x, y)) for tileRenderer in self.tileRenderers]
+              for x in range(self.gridSize.x())]
+             for y in range(self.gridSize.y())]
+
+        for y in range(self.gridSize.y()):
+            for x in range(self.gridSize.x()):
+                for i in range(len(self.tileRenderers)):
+                    if i != self.tileRendererIdx:
+                        self.pixmapItems[y][x][i].hide()
 
         self.initNightMode()
-
-        self.changeTileRenderer(ClassicTileRenderer)
 
         start_time = time.time()
         self.drawGrid(grid)
@@ -97,31 +104,29 @@ class GraphicalGrid(QGraphicsView):
         self.chosenEntity = None
         self.highlitedTile.hide()
 
-    def changeTileRenderer(self, newTileRenderer: type = None):
-        if not newTileRenderer:
-            idx = self.tileRenderers.index(self.tileRenderer)
-            newTileRenderer = self.tileRenderers[(
-                idx + 1) % len(self.tileRenderers)]
+    def changeTileRenderer(self, newTileRendererIdx: int = None):
+        if not newTileRendererIdx:
+            newTileRendererIdx = (self.tileRendererIdx + 1) % len(self.tileRenderers)
 
-        assert issubclass(newTileRenderer, TileRenderer)
+        for y in range(self.gridSize.y()):
+            for x in range(self.gridSize.x()):
+                self.pixmapItems[y][x][self.tileRendererIdx].hide()
+                self.pixmapItems[y][x][newTileRendererIdx].show()
 
-        if not self.pixmapItems:
-            self.pixmapItems = [[newTileRenderer(Point(x, y)) for x in range(self.gridSize.x())]
-                                for y in range(self.gridSize.y())]
-        else:
-            for y in range(self.gridSize.y()):
-                for x in range(self.gridSize.x()):
-                    self.pixmapItems[y][x].kill()
-                    self.pixmapItems[y][x] = newTileRenderer(Point(x, y))
-
-        self.tileRenderer = newTileRenderer
+        self.tileRendererIdx = newTileRendererIdx
 
         self.drawGrid(self.simulation.getGrid())
 
-        if self.tileRenderer.allowsNightCycle():
+        if self.tileRenderers[self.tileRendererIdx].allowsNightCycle():
             self.luminosityMode.show()
         else:
             self.luminosityMode.hide()
+
+    def getPixmapItem(self, point: Point):
+        return self.pixmapItems[point.y()][point.x()][self.tileRendererIdx]
+
+    def getCurrentTileRenderer(self) -> Type[TileRenderer]:
+        return self.tileRenderers[self.tileRendererIdx]
 
     def initNightMode(self):
         """
@@ -143,10 +148,10 @@ class GraphicalGrid(QGraphicsView):
         self.luminosityMode.setOpacity(0.7)
 
     def updateGrid(self, updatedTiles: Set[Tile]):
-        if self.tileRenderer.mustNotBeUpdated():
+        if self.getCurrentTileRenderer().mustNotBeUpdated():
             return
 
-        if not self.tileRenderer.mustBeUpdatedAtEveryStep():
+        if not self.getCurrentTileRenderer().mustBeUpdatedAtEveryStep():
             for tile in updatedTiles:
                 if tile in self.renderingMonitor.getRenderingSection():
                     self.redraw(tile)
@@ -156,7 +161,7 @@ class GraphicalGrid(QGraphicsView):
         self.updateHighlighted()
 
     def redraw(self, tile: Tile):
-        self.pixmapItems[tile.getPos().y()][tile.getPos().x()].update(tile)
+        self.getPixmapItem(tile.getPos()).update(tile)
 
     def updateHighlighted(self):
         if self.chosenEntity and not self.chosenEntity.isDead():
@@ -178,7 +183,7 @@ class GraphicalGrid(QGraphicsView):
 
     def removeEntity(self, point: Point):
         assert isinstance(point, Point)
-        self.pixmapItems[point.y()][point.x()].hideEntity()
+        self.getPixmapItem(point).hideEntity()
 
     def nightMode(self, hour: int):
         opacity = self.luminosityMode.opacity()
@@ -198,7 +203,7 @@ class GraphicalGrid(QGraphicsView):
             self.luminosityMode.setOpacity(opacity - 0.1)
 
     def movePlayer(self, oldPos: Point, newPos: Point):
-        self.pixmapItems[oldPos.y()][oldPos.x()].hideEntity()
+        self.getPixmapItem(oldPos).hideEntity()
         self.redraw(self.simulation.getGrid().getTile(newPos))
         self.chosenEntity = self.simulation.player
         self.updateHighlighted()
