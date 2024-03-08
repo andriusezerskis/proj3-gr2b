@@ -13,7 +13,7 @@ from controller.mainWindowController import MainWindowController
 from parameters import ViewText, EntityParameters, ViewParameters
 
 
-class EntityInfoView():
+class EntityInfoView:
     def __init__(self,  container: QWidget):
         self.healthBar = QProgressBar()
         self.infoLabel = QLabel()
@@ -94,14 +94,20 @@ class EntityInfoView():
             self.healthBar.setValue(0)
             self.healthBar.setFormat(ViewText.ENTITY_NOT_SELECTED)
 
+    def deselectEntity(self):
+        self._hideSelectedEntityPart(ViewText.ENTITY_NOT_SELECTED)
+
     def showDeadEntity(self):
         """
         When the entity dies, the progress bar shows that the entity is dead
         """
+        self._hideSelectedEntityPart(ViewText.ENTITY_DEAD_MESSAGE)
+
+    def _hideSelectedEntityPart(self, text):
         self.hungerBar.setValue(0)
-        self.hungerBar.setFormat(ViewText.ENTITY_DEAD_MESSAGE)
+        self.hungerBar.setFormat(text)
         self.healthBar.setValue(0)
-        self.healthBar.setFormat(ViewText.ENTITY_DEAD_MESSAGE)
+        self.healthBar.setFormat(text)
         self.infoLabel.clear()
         self.controlButton.hide()
         self.entity = None

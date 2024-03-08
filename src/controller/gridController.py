@@ -62,7 +62,9 @@ class GridController:
             self.graphicalGrid.renderSection()
 
     def lageEntity(self):
+        player_pos = self.simulation.getPlayer().getPos()
         self.simulation.getPlayer().removeClaimedEntity()
+        self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(player_pos).getEntity()
 
     def resizeEvent(self, event):
         if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():

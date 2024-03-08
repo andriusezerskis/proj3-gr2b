@@ -129,6 +129,9 @@ class GraphicalGrid(QGraphicsView):
     def getCurrentTileRenderer(self) -> Type[TileRenderer]:
         return self.tileRenderers[self.tileRendererIdx]
 
+    def isDefaultTileRenderer(self):
+        return self.tileRendererIdx == 0
+
     def initNightMode(self):
         """
         Initialize a pixmap with the night mode

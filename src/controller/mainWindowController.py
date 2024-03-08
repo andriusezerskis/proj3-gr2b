@@ -43,6 +43,8 @@ class MainWindowController:
         Args:
             event (Event): the mouse press event
         """
+        if not self.graphicalGrid.isDefaultTileRenderer():
+            return
         scenePos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(Point(scenePos.x(), scenePos.y()))
         if tile:
@@ -66,6 +68,12 @@ class MainWindowController:
                 else:
                     self.playerControll(tile)
                     return
+
+            else:
+                if not self.simulation.hasPlayer():
+                    self.graphicalGrid.chosenEntity = None
+                    self.graphicalGrid.updateHighlighted()
+                    self.mainWindow.docksMonitor.getCurrentDock().entityController.view.deselectEntity()
 
     def EntityMonitorPressEvent(self, event):
         ...

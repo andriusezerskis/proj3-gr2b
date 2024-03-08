@@ -107,7 +107,11 @@ class Window(QMainWindow):
             self.fastF = True
 
     def changeTileRenderer(self):
-        self.view.changeTileRenderer()
+        if not self.simulation.hasPlayer():
+            self.view.changeTileRenderer()
+            self.view.chosenEntity = None
+            self.view.updateHighlighted()
+            self.docksMonitor.getCurrentDock().entityController.view.deselectEntity()
 
     def getGraphicalGrid(self):
         return self.view
