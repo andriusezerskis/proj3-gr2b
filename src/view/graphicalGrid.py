@@ -98,8 +98,7 @@ class GraphicalGrid(QGraphicsView):
         Initialize the border of the tile to know which tile is selected
         """
         highlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
-        highlight = highlight.scaled(
-            ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        highlight = highlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
         self.highlitedTile = QGraphicsPixmapItem(highlight)
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
@@ -227,6 +226,9 @@ class GraphicalGrid(QGraphicsView):
     def mousePressEvent(self, event):
         MainWindowController.getInstance().mousePressEvent(event)
 
+    def mouseReleaseEvent(self, event):
+        MainWindowController.getInstance().mouseReleaseEvent(event)
+
     def getVerticalScrollBar(self):
         return self.verticalScrollbar
 
@@ -307,3 +309,11 @@ class GraphicalGrid(QGraphicsView):
         tileSize = int((1000/100) * self.renderingMonitor.zoomFactor)
         self.horizontalScrollbar.setValue(point.x() * tileSize)
         self.verticalScrollbar.setValue(point.y() * tileSize)
+
+    def drawHook(self, point: Point):
+        highlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
+        highlight = highlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        self.hookedTile = QGraphicsPixmapItem(highlight)
+        self.scene.addItem(self.hookedTile)
+        self.hookedTile.setPos(point.x() * self.textureSize, point.y() * self.textureSize)
+        self.hookedTile.show()

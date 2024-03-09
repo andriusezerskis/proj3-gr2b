@@ -42,11 +42,10 @@ class GridController:
                 self.movePlayer(Point(1, 0))
 
     def movePlayer(self, movement):
-        if self.simulation.hasPlayer():
+        if self.simulation.hasPlayer() and not self.simulation.player.isFishing():
             pos = self.simulation.getPlayer().getPos()
             if self.simulation.getPlayer().move(movement):
-                self.graphicalGrid.movePlayer(
-                    pos, self.simulation.getPlayer().getPos())
+                self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPos())
                 if not self.renderingMonitor.isNextToBorder(self.simulation.getPlayer().getPos() if movement.isPositive() else pos, movement):
                     self.graphicalGrid.initSmoothScroll(movement)
 

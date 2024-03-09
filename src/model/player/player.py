@@ -3,7 +3,7 @@ Project 3: Ecosystem simulation in 2D
 Authors: Loïc Blommaert, Hà Uyên Tran, Andrius Ezerskis, Mathieu Vannimmen, Moïra Vanderslagmolen
 Date: December 2023
 """
-
+import time
 from copy import copy
 from overrides import override
 from typing import Dict, Type
@@ -18,6 +18,8 @@ from model.movable import Movable
 from model.crafting.loots import Loot
 from view.playerDockView import PlayerDockView
 
+from src.utils import getNormalizedVector
+
 
 class Player(Movable):
 
@@ -26,10 +28,15 @@ class Player(Movable):
         self.pos = pos
         self.grid = grid
         self.claimed_entity: Entity | None = None
-        self.inventory = {
-            loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
+        self.inventory = {loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
 
         self.abilityUnlockedRod = False
+        self._isFishing = False
+        self.startHookTime = None
+        self.hookVelocity = 0
+        self.hookDirection = None
+        self.targetedTileForHooking = None
+        self.hookPlace = None
 
     def isPlaying(self):
         return self.claimed_entity is not None
@@ -108,3 +115,32 @@ class Player(Movable):
         if not self.hasEnoughQuantity(item):
             return False
         self.removeFromInventory(item.getBlueprint())
+
+    def isFishing(self):
+        return self._isFishing
+
+    def startFishing(self, tile):
+        self.stopFishing()
+        self.targetedTileForHooking = tile
+        self._isFishing = True
+        self.hookDirection = getNormalizedVector(tile.getPos() - self.pos)
+        self.startHookTime = time.time()
+
+    def throwHook(self):
+        self.hookVelocity = min(5 * (time.time() - self.startHookTime), 8)
+        self.hookPlace = self.pos + (self.hookDirection * self.hookVelocity)
+        return self.hookPlace
+
+    def getTargetedTileForHooking(self):
+        return self.targetedTileForHooking
+
+    def getHookPlace(self):
+        return self.hookPlace
+
+    def stopFishing(self):
+        self.hookVelocity = 0
+        self.hookDirection = 0
+        self.startHookTime = None
+        self._isFishing = False
+        self.targetedTileForHooking = None
+        self.hookPlace = None

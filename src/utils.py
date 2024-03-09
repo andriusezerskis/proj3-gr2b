@@ -7,6 +7,9 @@ Date: December 2023
 from dataclasses import dataclass, field
 from typing import Any, Type, TypeVar
 
+import numpy
+import numpy as np
+
 
 class Point:
     """
@@ -24,7 +27,11 @@ class Point:
         return self._y
 
     def __add__(self, other):
-        return Point(self.x() + other.x(), self.y() + other.y())
+        if isinstance(other, Point):
+            return Point(self.x() + other.x(), self.y() + other.y())
+        elif isinstance(other, numpy.ndarray):
+            other = list(other)
+            return Point(int(round(self.x() + other[0], 0)), int(round(self.y() + other[1], 0)))
 
     def __sub__(self, other):
         return Point(self.x() - other.x(), self.y() - other.y())
@@ -34,6 +41,8 @@ class Point:
             return Point(self.x() * other, self.y() * other)
         elif isinstance(other, Point):
             return Point(self.x() * other.x(), self.y() * other.y())
+        elif isinstance(other, float):
+            return Point(int(round(self.x() * other, 0)), int(round(self.y() * other, 0)))
 
     def __truediv__(self, other):
         if isinstance(other, int):
@@ -110,6 +119,12 @@ def getPointsInRadius(point: Point, radius: int) -> list[Point]:
     assert radius > 0 and isinstance(radius, int)
     return [Point(point.x() + x, point.y() + y) for y in range(-radius, radius + 1) for x in range(-radius, radius + 1)
             if x != 0 or y != 0]
+
+
+def getNormalizedVector(point: Point):
+    vector = np.array([point.x(), point.y()])
+    norm = np.linalg.norm(vector)
+    return vector / norm
 
 
 C = TypeVar("C")

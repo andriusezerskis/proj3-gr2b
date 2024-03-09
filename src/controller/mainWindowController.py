@@ -12,6 +12,8 @@ from model.crafting.crafts import FishingRod
 
 from parameters import ViewParameters
 
+from model.terrains.tiles import Water
+
 
 class MainWindowController:
     """Singleton"""
@@ -49,39 +51,58 @@ class MainWindowController:
             return
         scenePos = self.graphicalGrid.mapToScene(event.pos())
         tile = self.getClickedTile(Point(scenePos.x(), scenePos.y()))
+
+        fish_click = False
+        if self.simulation.hasPlayer() and self.simulation.getPlayer().isFishing():
+            fish_click = True
+            self.raiseHook()
+
         if tile:
             if self.mainWindow.docksMonitor.isMonitoringDock() and \
                     self.mainWindow.docksMonitor.getCurrentDock().monitor.getIsMonitor():
                 self.mainWindow.docksMonitor.getCurrentDock().monitor.offIsMonitor()
                 zone, radius, disaster, entityChosen = self.mainWindow.docksMonitor.getCurrentDock().monitor.getInfo()
-                tiles = self.simulation.bordinatorExecution(
-                    zone, radius, disaster, entityChosen, tile.getPos())
+                tiles = self.simulation.bordinatorExecution(zone, radius, disaster, entityChosen, tile.getPos())
                 self.graphicalGrid.updateGrid(tiles)
 
-            elif tile.hasEntity():
-                if not self.simulation.hasPlayer():
-                    if not self.mainWindow.docksMonitor.isDisplayed():
-                        self.openDockEvent()
-                    self.mainWindow.docksMonitor.getCurrentDock(
-                    ).entityController.setEntity(tile.getEntity())
-                    self.graphicalGrid.chosenEntity = tile.getEntity()
-                    self.mainWindow.docksMonitor.getCurrentDock().entityController.update()
-                    self.graphicalGrid.updateHighlighted()
-                else:
-                    self.playerControll(tile)
-                    return
+            if not self.simulation.hasPlayer():
+                if not self.mainWindow.docksMonitor.isDisplayed():
+                    self.openDockEvent()
+                self.mainWindow.docksMonitor.getCurrentDock().entityController.setEntity(tile.getEntity())
+                self.graphicalGrid.chosenEntity = tile.getEntity()
+                self.mainWindow.docksMonitor.getCurrentDock().entityController.update()
+                self.graphicalGrid.updateHighlighted()
+            elif not fish_click:
+                self.playerControll(tile)
+                return
 
+            if not tile.hasEntity() and not self.simulation.hasPlayer():
+                self.graphicalGrid.chosenEntity = None
+                self.graphicalGrid.updateHighlighted()
+                self.mainWindow.docksMonitor.getCurrentDock().entityController.view.deselectEntity()
+
+    def mouseReleaseEvent(self, event):
+        """End of hook throwing"""
+        if self.simulation.hasPlayer() and isinstance(self.simulation.getPlayer().getTargetedTileForHooking(), Water):
+            fallingPlace = self.simulation.getPlayer().throwHook()
+            if isinstance(self.simulation.getGrid().getTile(fallingPlace), Water):
+                self.graphicalGrid.drawHook(fallingPlace)
             else:
-                if not self.simulation.hasPlayer():
-                    self.graphicalGrid.chosenEntity = None
-                    self.graphicalGrid.updateHighlighted()
-                    self.mainWindow.docksMonitor.getCurrentDock().entityController.view.deselectEntity()
+                print("pêche échouée")
+                self.simulation.getPlayer().stopFishing()
+
+    def raiseHook(self):
+        if self.simulation.getGrid().getTile(self.simulation.getPlayer().getHookPlace()).hasEntity():
+            print("vous avez pêché " + str(self.simulation.getPlayer().getHookPlace()))
+        else:
+            print("NAK " + str(self.simulation.getPlayer().getHookPlace()))
+        self.simulation.getPlayer().stopFishing()
 
     def EntityMonitorPressEvent(self, event):
         ...
 
     def playerControll(self, tile):
-        if tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
+        if tile.hasEntity() and tile.getPos() in getPointsAdjacentTo(self.simulation.getPlayer().getPos()):
             entity = tile.getEntity()
             self.simulation.player.addInInventory(entity.loot())
             self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
@@ -90,6 +111,9 @@ class MainWindowController:
             self.graphicalGrid.redraw(tile)
 
             self.graphicalGrid.updateHighlighted()
+        elif isinstance(tile, Water):
+            self.simulation.getPlayer().startFishing(tile)
+            print("yeeeeeeeaaaaaah start")
 
     def unlockFishing(self):
         if not self.simulation.getPlayer().abilityUnlockedRod and self.simulation.getPlayer().hasEnoughQuantityToCraft(FishingRod):
