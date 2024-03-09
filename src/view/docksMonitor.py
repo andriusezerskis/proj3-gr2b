@@ -30,23 +30,6 @@ class CustomQDock(QDockWidget):
         self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.observer = observer
 
-        # self.titleBarFrame = QFrame()
-        # self.setTitleBarWidget(self.titleBarFrame)
-
-        # Appliquer le style CSS à la barre de titre
-        # self.titleBarFrame.setStyleSheet("""
-        #            QFrame {
-        #                background-color: #2c3e50; /* Couleur de fond de la barre de titre */
-        #                color: white; /* Couleur du texte de la barre de titre */
-        #                border: none; /* Supprimer la bordure */
-        #            }
-        #        """)
-        # self.titleLabel = QLabel("title")
-        # layout = QVBoxLayout(self.titleBarFrame)
-        # layout.addWidget(self.titleLabel)
-        # self.titleLabel.setFixedHeight(30)
-        # layout.setContentsMargins(0, 0, 0, 0)
-
     def updateContent(self, j):
         ...
 

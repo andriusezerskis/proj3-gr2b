@@ -89,14 +89,23 @@ class MainWindowController:
                 self.graphicalGrid.drawHook(fallingPlace)
             else:
                 print("pêche échouée")
+                self.graphicalGrid.stopHooking()
                 self.simulation.getPlayer().stopFishing()
 
     def raiseHook(self):
-        if self.simulation.getGrid().getTile(self.simulation.getPlayer().getHookPlace()).hasEntity():
+        tile = self.simulation.getGrid().getTile(self.simulation.getPlayer().getHookPlace())
+        if tile.hasEntity():
             print("vous avez pêché " + str(self.simulation.getPlayer().getHookPlace()))
+            entity = tile.getEntity()
+            self.simulation.player.addInInventory(entity.loot())
+            self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
+                self.simulation.player.getInventory())
+            tile.removeEntity()
+            self.graphicalGrid.redraw(tile)
         else:
             print("NAK " + str(self.simulation.getPlayer().getHookPlace()))
         self.simulation.getPlayer().stopFishing()
+        self.graphicalGrid.removeHook()
 
     def EntityMonitorPressEvent(self, event):
         ...
@@ -111,9 +120,10 @@ class MainWindowController:
             self.graphicalGrid.redraw(tile)
 
             self.graphicalGrid.updateHighlighted()
-        elif isinstance(tile, Water):
+        elif isinstance(tile, Water) and self.simulation.getPlayer().canFish():
+            print("start")
             self.simulation.getPlayer().startFishing(tile)
-            print("yeeeeeeeaaaaaah start")
+            self.graphicalGrid.startHooking()
 
     def unlockFishing(self):
         if not self.simulation.getPlayer().abilityUnlockedRod and self.simulation.getPlayer().hasEnoughQuantityToCraft(FishingRod):
@@ -144,6 +154,8 @@ class MainWindowController:
         self.mainWindow.zoomInButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
         self.mainWindow.zoomOutButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
         self.mainWindow.changeTileRendererButton.setStyleSheet(ViewParameters.LOCKED_BUTTON)
+        self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
+            self.simulation.player.getInventory())
 
     def onEntityLage(self):
         self.mainWindow.zoomInButton.setStyleSheet(None)

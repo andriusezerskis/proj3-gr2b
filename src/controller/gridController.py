@@ -61,6 +61,8 @@ class GridController:
             self.graphicalGrid.renderSection()
 
     def lageEntity(self):
+        if self.simulation.getPlayer().isFishing():
+            self.graphicalGrid.removeHook()
         player_pos = self.simulation.getPlayer().getPos()
         self.simulation.getPlayer().removeClaimedEntity()
         self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(player_pos).getEntity()

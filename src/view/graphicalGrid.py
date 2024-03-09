@@ -7,7 +7,7 @@ Date: December 2023
 import time
 from typing import Set, List, Type
 
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt, QLineF
 from controller.gridController import GridController
 
 from utils import Point
@@ -38,7 +38,6 @@ from model.simulation import Simulation
 
 
 class GraphicalGrid(QGraphicsView):
-
     tileRenderers = [ClassicTileRenderer,
                      TemperatureTileRenderer, DepthTileRenderer, UnfilteredTerrainTileRenderer]
 
@@ -77,6 +76,7 @@ class GraphicalGrid(QGraphicsView):
         start_time = time.time()
         self.drawGrid(grid)
         self.initHighlightedTile()
+        self.initHook()
 
         exec_time = time.time() - start_time
         print(f"drawn in: {exec_time}s")
@@ -246,37 +246,37 @@ class GraphicalGrid(QGraphicsView):
         self.renderSection()
 
     def moveVerticalScrollBarPositively(self):
-        if self.timers[0][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[0][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[0][0].stop()
             self.timers[0][0] = None
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.verticalScrollbar.setValue(
             self.verticalScrollbar.value() + step)
         self.timers[0][1] += step
 
     def moveVerticalScrollBarNegatively(self):
-        if self.timers[1][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[1][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[1][0].stop()
             self.timers[0][0] = None
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.verticalScrollbar.setValue(
             self.verticalScrollbar.value() - step)
         self.timers[1][1] += step
 
     def moveHorizontalScrollBarPositively(self):
-        if self.timers[2][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[2][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[2][0].stop()
             self.timers[0][0] = None
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.horizontalScrollbar.setValue(
             self.horizontalScrollbar.value() + step)
         self.timers[2][1] += step
 
     def moveHorizontalScrollBarNegatively(self):
-        if self.timers[3][1] >= (1000/100) * self.renderingMonitor.zoomFactor:
+        if self.timers[3][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
             self.timers[3][0].stop()
             self.timers[0][0] = None
-        step = int((1000/100) * self.renderingMonitor.zoomFactor / 10)
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
         self.horizontalScrollbar.setValue(
             self.horizontalScrollbar.value() - step)
         self.timers[3][1] += step
@@ -306,14 +306,54 @@ class GraphicalGrid(QGraphicsView):
         timer.start()
 
     def setScrollBars(self, point: Point):
-        tileSize = int((1000/100) * self.renderingMonitor.zoomFactor)
+        tileSize = int((1000 / 100) * self.renderingMonitor.zoomFactor)
         self.horizontalScrollbar.setValue(point.x() * tileSize)
         self.verticalScrollbar.setValue(point.y() * tileSize)
 
-    def drawHook(self, point: Point):
-        highlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
-        highlight = highlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
-        self.hookedTile = QGraphicsPixmapItem(highlight)
+    def initHook(self):
+        hookThrowing = QPixmap(ViewParameters.FISHING_ROD_TEXTURE_PATH)
+        hookThrowing = hookThrowing.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        hook = QPixmap(ViewParameters.HOOK_TEXTURE_PATH)
+        hook = hook.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        fishingRod = QPixmap(ViewParameters.FISHING_ROD_IN_USE_TEXTURE_PATH)
+        fishingRod = fishingRod.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        self.hookedTile = QGraphicsPixmapItem(hook)
+        self.hookingPlayer = QGraphicsPixmapItem(fishingRod)
+        self.hookThrowing = QGraphicsPixmapItem(hookThrowing)
         self.scene.addItem(self.hookedTile)
+        self.scene.addItem(self.hookingPlayer)
+        self.scene.addItem(self.hookThrowing)
+        self.hookedTile.hide()
+        self.hookingPlayer.hide()
+        self.hookThrowing.hide()
+
+    def startHooking(self):
+        pos = self.simulation.getPlayer().getPos()
+        self.hookThrowing.setPos(pos.x() * self.textureSize, pos.y() * self.textureSize)
+        self.hookThrowing.show()
+
+    def stopHooking(self):
+        self.hookThrowing.hide()
+
+    def drawHook(self, point: Point):
+        self.stopHooking()
+        pos = self.simulation.getPlayer().getPos()
         self.hookedTile.setPos(point.x() * self.textureSize, point.y() * self.textureSize)
+        self.hookingPlayer.setPos(pos.x() * self.textureSize, pos.y() * self.textureSize)
+
+        pen = QPen(QColor(255, 255, 255))
+        pen.setWidth(50)
+        line = QLineF(int(point.x() * self.textureSize + self.textureSize/2), int(point.y() * self.textureSize + self.textureSize/2),
+                         int(pos.x() * self.textureSize + self.textureSize/2), int(pos.y() * self.textureSize) + self.textureSize/2)
+        self.line = QGraphicsLineItem(line)
+        self.line.setPen(pen)
+        self.scene.addItem(self.line)
         self.hookedTile.show()
+        self.hookingPlayer.show()
+        self.line.show()
+
+    def removeHook(self):
+        self.hookedTile.hide()
+        self.hookingPlayer.hide()
+        self.stopHooking()
+        self.scene.removeItem(self.line)

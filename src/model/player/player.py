@@ -48,10 +48,7 @@ class Player(Movable):
         tile.setEntity(self)
 
     def removeClaimedEntity(self):
-        self.claimed_entity.setPos(self.pos)
-        self.grid.getTile(self.pos).setEntity(self.claimed_entity)
-        self.pos = None
-        self.claimed_entity = None
+        self._reset()
 
     def isDead(self):
         """The entity chosen never dies
@@ -105,6 +102,9 @@ class Player(Movable):
         # self.removeClaimedEntity()
         PlayerDockView.lageEntity()
 
+    def canFish(self):
+        return self.abilityUnlockedRod
+
     def hasEnoughQuantityToCraft(self, item):
         for material, quantity in item.getBlueprint().items():
             if self.inventory.get(material) < quantity:
@@ -144,3 +144,12 @@ class Player(Movable):
         self._isFishing = False
         self.targetedTileForHooking = None
         self.hookPlace = None
+
+    def _reset(self):
+        self.claimed_entity.setPos(self.pos)
+        self.grid.getTile(self.pos).setEntity(self.claimed_entity)
+        self.pos = None
+        self.claimed_entity = None
+        self.inventory = {loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}
+        self.abilityUnlockedRod = False
+        self.stopFishing()

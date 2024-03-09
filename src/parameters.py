@@ -58,6 +58,9 @@ class ViewParameters(GenericParameters, ABC):
     NIGHT_MODE_COLOR: str = None
     SUNSET_MODE_COLOR: str = None
     HIGHTLIGHTED_TILE_TEXTURE_PATH: str = None
+    HOOK_TEXTURE_PATH: str = None
+    FISHING_ROD_TEXTURE_PATH: str = None
+    FISHING_ROD_IN_USE_TEXTURE_PATH: str = None
     FIRE_TEXTURE_PATH: str = None
     ICE_TEXTURE_PATH: str = None
     TIME_FORMAT: str = None
