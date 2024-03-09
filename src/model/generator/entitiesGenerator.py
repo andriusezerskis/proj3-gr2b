@@ -12,6 +12,7 @@ from parameters import TerrainParameters, EntityParameters
 from random import random, choices
 
 from model.grid import Grid
+from random import randint
 
 from model.generator.automaticGenerator import AutomaticGenerator
 from overrides import override
@@ -41,7 +42,7 @@ class EntitiesGenerator(AutomaticGenerator):
             if random() >= TerrainParameters.EMPTY_TILE_PROBABILITY_GENERATION:
                 self.addRandomEntity(tile)
 
-    def getValidEntities(self, tile: Type[Tile]) -> list[type]:
+    def getValidEntities(self, tile: Type[Tile]) -> list[Type[Entity]]:
 
         if tile not in self._validEntitiesForTileType:
             res = []
@@ -57,7 +58,7 @@ class EntitiesGenerator(AutomaticGenerator):
         validEntities = self.getValidEntities(type(tile))
         if len(validEntities) == 0:
             return
-        weights = [entityType.getSpawnWeight() for entityType in validEntities if issubclass(entityType, Entity)]
+        weights = [entityType.getSpawnWeight() for entityType in validEntities]
 
         return tile.addNewEntity(choices(population=validEntities, weights=weights)[0],
-                                 EntityParameters.REPRODUCTION_MIN_AGE)
+                                 randint(0, EntityParameters.MAX_AGE - 1))
