@@ -43,8 +43,8 @@ class StartWindow(QMainWindow):
         self.file = None
 
         # ---- input windows size ----
-        self.gridSizeWidth = 100
-        self.gridSizeHeight = 100
+        self.gridSizeWidth = 80
+        self.gridSizeHeight = 80
         label2 = QToolButton()
         label2.setText("Taille de la grille")
         label2.setObjectName("semiTransparent")

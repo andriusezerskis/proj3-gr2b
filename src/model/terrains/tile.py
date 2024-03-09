@@ -93,7 +93,7 @@ class Tile(ParametrizedDrawable, ABC):
 
     def setDisaster(self, disasterType: str) -> None:
         self.disaster = disasterType
-        
+
     def getDisasterOpacity(self) -> float:
         return self.disasterOpacity
 
@@ -106,7 +106,7 @@ class Tile(ParametrizedDrawable, ABC):
         :param entity: the type of entity that must be created
         :param age: the age of the new entity
         """
-        if not self.movable:
+        if not self.movable and entity and entity.isValidTileType(self.__class__):
             newEntity = entity(self.getPos())
             self.setEntity(newEntity)
             newEntity.setAge(age)

@@ -26,6 +26,8 @@ class DisasterHandler:
                     1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
             else:
                 self.executeFireDisaster(tile, 1)
+            if tile.getEntity():
+                tile.getEntity().removeHealthPoints()
 
         elif self.disasterType == Disaster.ICE_TEXT:
             if zone == "Rayon":
@@ -33,9 +35,12 @@ class DisasterHandler:
                     1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
             else:
                 self.executeFireDisaster(tile, 1)
+            if tile.getEntity():
+                tile.getEntity().removeHealthPoints()
 
         elif self.disasterType == Disaster.INVASION_TEXT:
             self.executeEntityDisaster(tile)
+        return tile
 
     def executeFireDisaster(self, tile: Tile, disasterOpacity: float):
         tile.setDisaster(self.disasterType)
@@ -46,7 +51,5 @@ class DisasterHandler:
         tile.setDisasterOpacity(disasterOpacity)
 
     def executeEntityDisaster(self, tile: Tile):
-        if not tile.hasEntity():
-            entity = globals()[self.entityChosen](tile.getPos())
-            tile.setEntity(entity)
-
+        entityType = globals()[self.entityChosen]
+        tile.addNewEntity(entityType)
