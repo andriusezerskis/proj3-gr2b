@@ -5,6 +5,7 @@ Date: December 2023
 """
 
 import time
+from enum import Enum
 from typing import Set, List, Type
 
 from PyQt6.QtCore import QTimer, Qt, QLineF
@@ -18,7 +19,6 @@ from PyQt6.QtWidgets import *
 
 from model.grid import Grid
 from model.terrains.tile import Tile
-from model.drawable import ParametrizedDrawable
 from model.renderMonitor import RenderMonitor
 
 from controller.mainWindowController import MainWindowController
@@ -33,8 +33,14 @@ from view.pixmaputils import PixmapUtils
 
 from parameters import ViewParameters
 
-from model.player.player import Player
 from model.simulation import Simulation
+
+
+class Movement(Enum):
+    DOWN: int = 0
+    UP: int = 1
+    RIGHT: int = 2
+    LEFT: int = 3
 
 
 class GraphicalGrid(QGraphicsView):
@@ -90,8 +96,8 @@ class GraphicalGrid(QGraphicsView):
         self.horizontalScrollbar.valueChanged.connect(self.horizontalScroll)
         self.verticalScrollbar.valueChanged.connect(self.verticalScroll)
 
-        self.timers: List[List[QTimer | None | int]] = [
-            [None, 0] for _ in range(4)]
+        self.timers: List[List[QTimer, int]] = [[QTimer(), 0, 0] for _ in range(4)]
+        self.initTimers()
 
     def initHighlightedTile(self):
         """
@@ -169,8 +175,6 @@ class GraphicalGrid(QGraphicsView):
     def updateHighlighted(self):
         if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
-            print(self.chosenEntity.getTile().getPos(),
-                  "selected", self.chosenEntity)
         else:
             self.highlitedTile.hide()
 
@@ -181,7 +185,6 @@ class GraphicalGrid(QGraphicsView):
     def _drawHighlightedTile(self, tile: Tile):
         x, y = tile.getPos()
         self.highlitedTile.setPos(x * self.textureSize, y * self.textureSize)
-        # self.highlitedTile.setScale(1)
         self.highlitedTile.show()
 
     def removeEntity(self, point: Point):
@@ -224,7 +227,8 @@ class GraphicalGrid(QGraphicsView):
         GridController.getInstance().keyPressEvent(event)
 
     def mousePressEvent(self, event):
-        MainWindowController.getInstance().mousePressEvent(event)
+        if event.button() == Qt.MouseButton.LeftButton:
+            MainWindowController.getInstance().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         MainWindowController.getInstance().mouseReleaseEvent(event)
@@ -246,64 +250,68 @@ class GraphicalGrid(QGraphicsView):
         self.renderSection()
 
     def moveVerticalScrollBarPositively(self):
-        if self.timers[0][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
-            self.timers[0][0].stop()
-            self.timers[0][0] = None
-        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
-        self.verticalScrollbar.setValue(
-            self.verticalScrollbar.value() + step)
-        self.timers[0][1] += step
+        self.moveScrollBar(Movement.DOWN)
 
     def moveVerticalScrollBarNegatively(self):
-        if self.timers[1][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
-            self.timers[1][0].stop()
-            self.timers[0][0] = None
-        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
-        self.verticalScrollbar.setValue(
-            self.verticalScrollbar.value() - step)
-        self.timers[1][1] += step
+        self.moveScrollBar(Movement.UP)
 
     def moveHorizontalScrollBarPositively(self):
-        if self.timers[2][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
-            self.timers[2][0].stop()
-            self.timers[0][0] = None
-        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
-        self.horizontalScrollbar.setValue(
-            self.horizontalScrollbar.value() + step)
-        self.timers[2][1] += step
+        self.moveScrollBar(Movement.RIGHT)
 
     def moveHorizontalScrollBarNegatively(self):
-        if self.timers[3][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
-            self.timers[3][0].stop()
-            self.timers[0][0] = None
-        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / 10)
-        self.horizontalScrollbar.setValue(
-            self.horizontalScrollbar.value() - step)
-        self.timers[3][1] += step
+        self.moveScrollBar(Movement.LEFT)
+
+    def moveScrollBar(self, movement: Movement):
+        if self.timers[movement.value][2] > 1:
+            """add time rathenr than reset it when player click too quickly"""
+            self.timers[movement.value][1] -= (1000 / 100) * self.renderingMonitor.zoomFactor
+            self.timers[movement.value][2] -= 1
+
+        if self.timers[movement.value][1] >= (1000 / 100) * self.renderingMonitor.zoomFactor:
+            self.timers[movement.value][0].stop()
+            self.timers[movement.value][1] = 0
+            self.timers[movement.value][2] = 0
+        step = int((1000 / 100) * self.renderingMonitor.zoomFactor / (10 if self.timers[movement.value][1] >= 0 else 5))
+        value = step if movement in (Movement.DOWN, Movement.RIGHT) else -step
+        if movement in (Movement.UP, Movement.DOWN):
+            self.verticalScrollbar.setValue(self.verticalScrollbar.value() + value)
+        else:
+            self.horizontalScrollbar.setValue(self.horizontalScrollbar.value() + value)
+        self.timers[movement.value][1] += step
+
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
         GridController.getInstance().resizeEvent(event)
 
+    def initTimers(self):
+        for i, (timer, _, _) in enumerate(self.timers):
+            timer.setInterval(1)
+            match i:
+                case Movement.DOWN.value:
+                    timer.timeout.connect(self.moveVerticalScrollBarPositively)
+                case Movement.UP.value:
+                    timer.timeout.connect(self.moveVerticalScrollBarNegatively)
+                case Movement.RIGHT.value:
+                    timer.timeout.connect(self.moveHorizontalScrollBarPositively)
+                case Movement.LEFT.value:
+                    timer.timeout.connect(self.moveHorizontalScrollBarNegatively)
+
     def initSmoothScroll(self, movement: Point):
         # TODO si on appuie trop rapidemment, la caméra ne suivra pas assez bien
         #  solutions : lock du clavier, ou augementer la distance avant la fin du timer à chaque input
-        timer = QTimer()
-        timer.setInterval(1)
         if movement == Point(0, 1):
-            self.timers[0] = [timer, 0]
-            timer.timeout.connect(self.moveVerticalScrollBarPositively)
+            self.timers[Movement.DOWN.value][0].start()
+            self.timers[Movement.DOWN.value][2] += 1
         elif movement == Point(0, -1):
-            self.timers[1] = [timer, 0]
-            timer.timeout.connect(self.moveVerticalScrollBarNegatively)
+            self.timers[Movement.UP.value][0].start()
+            self.timers[Movement.UP.value][2] += 1
         elif movement == Point(1, 0):
-            self.timers[2] = [timer, 0]
-            timer.timeout.connect(self.moveHorizontalScrollBarPositively)
+            self.timers[Movement.RIGHT.value][0].start()
+            self.timers[Movement.RIGHT.value][2] += 1
         elif movement == Point(-1, 0):
-            self.timers[3] = [timer, 0]
-            timer.timeout.connect(self.moveHorizontalScrollBarNegatively)
-
-        timer.start()
+            self.timers[Movement.LEFT.value][0].start()
+            self.timers[Movement.LEFT.value][2] += 1
 
     def setScrollBars(self, point: Point):
         tileSize = int((1000 / 100) * self.renderingMonitor.zoomFactor)
