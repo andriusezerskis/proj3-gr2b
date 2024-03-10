@@ -53,6 +53,9 @@ class GridController:
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
             scaler = self.renderingMonitor.setOnZoomIndex()
+            #self.graphicalGrid.scale(1, 1)
+            #scaler = self.renderingMonitor.getAreaScalerFactor()
+            #print(scaler)
             self.graphicalGrid.scale(scaler, scaler)
             self.recomputeCuboid()
             self.graphicalGrid.removeRenderedSection()
@@ -68,8 +71,16 @@ class GridController:
         self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(player_pos).getEntity()
 
     def resizeEvent(self, event):
-        if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():
-            self.recomputeCuboid()
+        if not self.simulation.hasPlayer():
+            if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():
+                self.recomputeCuboid()
+        else:
+            if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():
+                self.recomputeCuboid()
+            """if self.renderingMonitor.getRenderingSize() != self.simulation.getGrid().getSize():
+                scaler = self.renderingMonitor.getAreaScalerFactor()
+                self.graphicalGrid.scale(scaler, scaler)
+                self.recomputeCuboid()"""
 
     def getGridCoordinate(self, point: Point, for_cuboid=False, is_size=False) -> Point | None:
         """return the coordinate in the grid of a point on the screen

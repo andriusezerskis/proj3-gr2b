@@ -101,6 +101,7 @@ class MainWindowController:
             self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
                 self.simulation.player.getInventory())
             tile.removeEntity()
+            entity.kill()
             self.graphicalGrid.redraw(tile)
         else:
             print("NAK " + str(self.simulation.getPlayer().getHookPlace()))
@@ -117,6 +118,7 @@ class MainWindowController:
             self.mainWindow.docksMonitor.getCurrentDock().scrollArea.update_content(
                 self.simulation.player.getInventory())
             tile.removeEntity()
+            entity.kill()
             self.graphicalGrid.redraw(tile)
 
             self.graphicalGrid.updateHighlighted()

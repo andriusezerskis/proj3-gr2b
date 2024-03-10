@@ -34,6 +34,15 @@ class Cuboid:
             item = item.getPos()
         return self.upper.x() <= item.x() <= self.lower.x() and self.upper.y() <= item.y() <= self.lower.y()
 
+    def getArea(self):
+        return self.getWidth() * self.getHeight()
+
+    def getHeight(self):
+        return self.lower.y() - self.upper.y() + 1
+
+    def getWidth(self):
+        return self.lower.x() - self.upper.x() + 1
+
     def __repr__(self):
         return f"Cuboid({self.upper}, {self.lower})"
 
@@ -95,6 +104,9 @@ class RenderMonitor:
         else:
             newZoom = 1
         return newZoom
+
+    def getAreaScalerFactor(self, area=100):
+        return round(1 / ((area / (self.renderingSection.getArea())) ** (1 / 2)), 3)
 
     def isNextToBorder(self, point: Point, movement: Point):
         upper_borders = point - self.renderingSize // 2
