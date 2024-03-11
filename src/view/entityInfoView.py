@@ -78,7 +78,7 @@ class EntityInfoView:
             baseText += f"{entity.getCount()} {entity.getFrenchName().lower()}s\n"
             self.hungerBar.setFormat(f"{ViewText.HUNGER_TEXT}")
             self.hungerBar.setValue(int(entity.getHunger()))
-        else:
+        else:  # entities which do not have hunger
             self.hungerBar.hide()
             baseText += f"{entity.getCount()} {entity.getFrenchName().lower()}s\n"
         self.infoLabel.setText(baseText)
@@ -86,6 +86,7 @@ class EntityInfoView:
             self.showDeadEntity()
 
     def updateOnStep(self):
+        """Update the view at each time step of the simulation"""
         if self.entity is not None:
             self.__updateText(self.entity)
         else:
@@ -98,12 +99,11 @@ class EntityInfoView:
         self._hideSelectedEntityPart(ViewText.ENTITY_NOT_SELECTED)
 
     def showDeadEntity(self):
-        """
-        When the entity dies, the progress bar shows that the entity is dead
-        """
+        """When the entity dies, the progress bar shows that the entity is dead"""
         self._hideSelectedEntityPart(ViewText.ENTITY_DEAD_MESSAGE)
 
     def _hideSelectedEntityPart(self, text):
+        """Hides all the information about the entity"""
         self.hungerBar.setValue(0)
         self.hungerBar.setFormat(text)
         self.healthBar.setValue(0)
