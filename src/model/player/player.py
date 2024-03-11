@@ -18,7 +18,7 @@ from model.movable import Movable
 from model.crafting.loots import Loot
 from view.playerDockView import PlayerDockView
 
-from src.utils import getNormalizedVector
+from utils import getNormalizedVector
 
 
 class Player(Movable):
