@@ -9,7 +9,7 @@ from mimesis import Person
 from mimesis import Locale
 from abc import ABC, abstractmethod
 
-from parameters import EntityParameters, TerrainParameters
+from parameters import EntityParameters, TerrainParameters, DisasterParameters
 
 from model.action import Action
 from typing import TypeVar, Type
@@ -111,10 +111,10 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         return True
 
     def removeHealthPoints(self) -> None:
-        if self.getTile().disaster == Disaster.FIRE_TEXT or self.getTile().disaster == Disaster.ICE_TEXT:
-            self._hp -= self.getTile().getDisasterOpacity() * 100
-        if self._hp <= 0:
-            self.kill()
+        if self.getTile().getDisaster() == Disaster.FIRE_TEXT:
+            self.inflictDamage(DisasterParameters.FIRE_DAMAGE)  # TODO compute damage with some kind of 1/something
+        elif self.getTile().getDisaster() == Disaster.ICE_TEXT:
+            self.inflictDamage(DisasterParameters.ICE_DAMAGE)  # TODO compute damage with some kind of 1/something
 
     def canReproduce(self) -> bool:
         """

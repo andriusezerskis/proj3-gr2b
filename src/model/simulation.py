@@ -30,7 +30,7 @@ from model.entities.entity import Entity
 from model.player.player import Player
 from model.renderMonitor import RenderMonitor
 from model.action import Action
-from model.disasterhandler import DisasterHandler
+from model.disasterHandler import DisasterHandler
 
 
 class Simulation:

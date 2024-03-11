@@ -27,7 +27,7 @@ class Tile(ParametrizedDrawable, ABC):
         self.pos = pos
         self.height = height
         self.movable: Movable | None = None
-        self.disaster = None
+        self.disaster: str = None
         self.disasterOpacity = 0
         self.temperature = 0
 
@@ -90,6 +90,9 @@ class Tile(ParametrizedDrawable, ABC):
             self.movable = entity
             return True
         return False
+    
+    def getDisaster(self) -> str:
+        return self.disaster
 
     def setDisaster(self, disasterType: str) -> None:
         self.disaster = disasterType

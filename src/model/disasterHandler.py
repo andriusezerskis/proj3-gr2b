@@ -11,13 +11,22 @@ from model.entities.human import Human
 
 class DisasterHandler:
     def __init__(self, initialPos: tuple, disasterType: str, radius: int, entityChosen: Entity) -> None:
-        self.disasterType = disasterType
-        self.initialPos = initialPos
+        self.disasterType: str = disasterType
+        self.initialPos: tuple = initialPos
         self.radius: int = radius
-        self.modifiedTiles = set()
-        self.entityChosen = entityChosen
+        self.modifiedTiles: set = set()
+        self.entityChosen: Entity = entityChosen
 
-    def chooseDisaster(self, tile: Tile, zone):
+    def chooseDisaster(self, tile: Tile, zone: str) -> Tile:
+        """Chooses a disaster based on disasterType and whether it's for a radius or an island
+
+        Args:
+            tile (Tile): tile on which the disaster is executed
+            zone (str): whether the disaster is for a radius or an entire island
+
+        Returns:
+            Tile: modified tile after disaster execution
+        """
         initialPosPoint = Point(self.initialPos.x(), self.initialPos.y())
 
         if self.disasterType == Disaster.FIRE_TEXT:
@@ -26,7 +35,7 @@ class DisasterHandler:
                     1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
             else:
                 self.executeFireDisaster(tile, 1)
-            if tile.getEntity():
+            if tile.getEntity():  # if an entity is present, disaster inflicts damage
                 tile.getEntity().removeHealthPoints()
 
         elif self.disasterType == Disaster.ICE_TEXT:
@@ -35,11 +44,11 @@ class DisasterHandler:
                     1 - initialPosPoint.manhattanDistance(tile.getPos()) / (self.radius * 2)))
             else:
                 self.executeFireDisaster(tile, 1)
-            if tile.getEntity():
+            if tile.getEntity():  # if an entity is present, disaster inflicts damage
                 tile.getEntity().removeHealthPoints()
 
         elif self.disasterType == Disaster.INVASION_TEXT:
-            self.executeEntityDisaster(tile)
+            self.executeEntityInvasion(tile)
         return tile
 
     def executeFireDisaster(self, tile: Tile, disasterOpacity: float):
@@ -50,6 +59,6 @@ class DisasterHandler:
         tile.setDisaster(self.disasterType)
         tile.setDisasterOpacity(disasterOpacity)
 
-    def executeEntityDisaster(self, tile: Tile):
+    def executeEntityInvasion(self, tile: Tile):
         entityType = globals()[self.entityChosen]
         tile.addNewEntity(entityType)
