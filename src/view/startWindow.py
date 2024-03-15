@@ -119,4 +119,5 @@ class StartWindow(QMainWindow):
         window = Window(
             self.grid.gridSize, simulation)
         window.show()
+        window.showMaximized()
         self.hide()
