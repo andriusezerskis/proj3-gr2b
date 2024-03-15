@@ -81,7 +81,7 @@ class MonitorWindow:
         rayonButton.setChecked(True)
         rayonButton.toggled.connect(lambda: self.btnZone(rayonButton))
 
-        spinBox = QSpinBox(minimum=1, maximum=100, value=10)
+        spinBox = QSpinBox(minimum=10, maximum=100, value=10)
         spinBox.valueChanged.connect(self.updateSpinbox)
 
         islandButton = QRadioButton("Ile")

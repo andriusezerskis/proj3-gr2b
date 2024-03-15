@@ -65,8 +65,8 @@ class GridGenerator(AutomaticGenerator):
 
         res: tuple[float, float] = (-1, -1)
         for tile, level in cls._thresholds:
-            old_max = res[1]
-            res = old_max, level
+            oldMax = res[1]
+            res = oldMax, level
             if tile is tileType:
                 break
 
@@ -137,20 +137,21 @@ class GridGenerator(AutomaticGenerator):
 
     def generateGrid(self) -> Grid:
         islands = []
-        size_ok = False
+        sizeOk = False
         start = time.time()
         print("Generating terrain...")
-        while len(islands) not in self.islandNb or not size_ok:
+        while len(islands) not in self.islandNb or not sizeOk:
             self.noiseGenerator = NoiseGenerator()
             self.noiseGenerator.addNoise(2, 1)
             self.noiseGenerator.addNoise(4, 0.5)
             self.getNormalizationBorns()
             self.matrix = self._generateMatrix()
-            islands = self.getIslands(self.matrix, self.gridSize, self.islandNb)
-            size_ok = True
+            islands = self.getIslands(
+                self.matrix, self.gridSize, self.islandNb)
+            sizeOk = True
             for island in islands:
                 if len(island) < self.islandSize:
-                    size_ok = False
+                    sizeOk = False
                     break
 
         grid = Grid(self.gridSize)

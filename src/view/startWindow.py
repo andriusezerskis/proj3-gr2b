@@ -9,14 +9,10 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from model.generator.entitiesGenerator import EntitiesGenerator
 from model.generator.gridGenerator import GridGenerator
-from model.grid import Grid
 from model.gridloader import GridLoader
-
 from model.simulation import Simulation
 from utils import Point
 from view.mainWindow import Window
-
-from parameters import ViewParameters
 
 
 class StartWindow(QMainWindow):
@@ -51,12 +47,12 @@ class StartWindow(QMainWindow):
         label2.setFixedSize(200, 30)
         self.layout2.addStretch()
         self.layout2.addWidget(label2, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
+        self.spinBoxWidth = QSpinBox(minimum=50, maximum=200, value=100)
         self.spinBoxWidth.setFixedSize(50, 30)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
         self.spinBoxWidth.setObjectName("semiTransparent")
 
-        self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
+        self.spinBoxHeight = QSpinBox(minimum=50, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
         self.spinBoxHeight.setFixedSize(50, 30)
         self.spinBoxHeight.setObjectName("semiTransparent")

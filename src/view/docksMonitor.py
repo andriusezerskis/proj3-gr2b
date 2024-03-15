@@ -86,12 +86,6 @@ class PlayerDock(CustomQDock):
         self.playerController = PlayerDockController(container2)
         self.scrollArea = ScrollArea(container1)
 
-    def updateContent(self, j):
-        return
-
-    def updateController(self):
-        return
-
 
 class DocksMonitor(Observer):
     def __init__(self, mainWindowController: MainWindowController, mainWindow: "Window"):

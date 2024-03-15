@@ -23,7 +23,6 @@ class Cuboid:
         self.size = size
 
     def __iter__(self):
-        # print(f"y: {self.upper.y()} to {self.lower.y() + 1} ; x: {self.upper.x()} to {self.lower.x() + 1}")
         for y in range(self.upper.y(), self.lower.y() + 1):
             for x in range(self.upper.x(), self.lower.x() + 1):
                 yield Point(x, y)
@@ -55,7 +54,8 @@ class RenderMonitor:
         assert isinstance(size, Point)
         self.gridSize = gridSize
         self.renderingSize = size
-        self.renderingSection = Cuboid(Point(0, 0), Point(gridSize.x() - 1, gridSize.y() - 1), self.renderingSize)
+        self.renderingSection = Cuboid(Point(0, 0), Point(
+            gridSize.x() - 1, gridSize.y() - 1), self.renderingSize)
 
         self.zoomIndex = 0
         self.zoomFactor = 1
@@ -79,15 +79,18 @@ class RenderMonitor:
     def setNewPoints(self, upperPoint: Point, lowerPoint: Point, width: int, height: int):
         assert isinstance(upperPoint, Point)
         assert isinstance(lowerPoint, Point)
-        self.renderingSection = Cuboid(upperPoint, lowerPoint, Point(width, height))
+        self.renderingSection = Cuboid(
+            upperPoint, lowerPoint, Point(width, height))
         self.renderingSize = Point(width, height)
 
     def centerOnPoint(self, point: Point):
         assert isinstance(point, Point)
         upper = point - self.renderingSize // 2
-        upper = Point(0 if not upper.xIsPositive() else upper.x(), 0 if not upper.yIsPositive() else upper.y())
+        upper = Point(0 if not upper.xIsPositive() else upper.x(),
+                      0 if not upper.yIsPositive() else upper.y())
         lower = point + self.renderingSize // 2
-        lower = self.gridSize - Point(1, 1) if not lower < self.gridSize else lower
+        lower = self.gridSize - \
+            Point(1, 1) if not lower < self.gridSize else lower
 
         self.renderingSection = Cuboid(upper, lower, self.renderingSize)
 
@@ -96,10 +99,12 @@ class RenderMonitor:
         self.zoomIndex = index
         difference = self.zoomIndex - oldZoom
         if difference > 0:
-            newZoom = reduce(lambda x, y: x * y, self.zooms[oldZoom + 1:self.zoomIndex + 1])
+            newZoom = reduce(lambda x, y: x * y,
+                             self.zooms[oldZoom + 1:self.zoomIndex + 1])
             self.zoomFactor *= newZoom
         elif difference < 0:
-            newZoom = 1 / reduce(lambda x, y: x * y, self.zooms[oldZoom + 1 + difference:oldZoom + 1])
+            newZoom = 1 / reduce(lambda x, y: x * y,
+                                 self.zooms[oldZoom + 1 + difference:oldZoom + 1])
             self.zoomFactor *= newZoom
         else:
             newZoom = 1

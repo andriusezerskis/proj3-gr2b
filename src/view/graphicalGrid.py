@@ -154,7 +154,7 @@ class GraphicalGrid(QGraphicsView):
         self.luminosityMode.setPos(0, 0)
 
         pixmapWidth = self.luminosityMode.pixmap().width()
-        sceneWidth, sceneHeight = self.textureSize, self.textureSize
+        sceneWidth = self.textureSize
 
         scale = sceneWidth / pixmapWidth if pixmapWidth > 0 else 1
         transform = QTransform()
