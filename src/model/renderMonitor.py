@@ -77,6 +77,7 @@ class RenderMonitor:
         self.zoomIndex = 0
         self.zoomFactor = 1
         self.zooms = [1, 4 / 3, 3 / 2, 2, 5 / 2, 2]
+        self.playerZoomFactor = None
 
     def getUpperPoint(self):
         return self.renderingSection.upper
@@ -114,23 +115,24 @@ class RenderMonitor:
         self.renderingSection = Cuboid(upper, lower)
 
     def setOnZoomIndex(self, index=3):
-        oldZoom = self.zoomIndex
+        oldZoom = self.getZoomIndex()
         self.zoomIndex = index
-        difference = self.zoomIndex - oldZoom
+        difference = self.getZoomIndex() - oldZoom
         if difference > 0:
             newZoom = reduce(lambda x, y: x * y,
-                             self.zooms[oldZoom + 1:self.zoomIndex + 1])
-            self.zoomFactor *= newZoom
+                             self.zooms[oldZoom + 1:self.getZoomIndex() + 1])
+            self.multiplyZoomFactor(newZoom)
         elif difference < 0:
             newZoom = 1 / reduce(lambda x, y: x * y,
                                  self.zooms[oldZoom + 1 + difference:oldZoom + 1])
-            self.zoomFactor *= newZoom
+            self.multiplyZoomFactor(newZoom)
         else:
             newZoom = 1
         return newZoom
 
     def getAreaScalerFactor(self, area=100):
-        return round(1 / ((area / (self.renderingSection.getArea())) ** (1 / 2)), 3)
+        self.playerZoomFactor = round(1 / ((area / (self.renderingSection.getArea())) ** (1 / 2)), 3)
+        return self.playerZoomFactor
 
     def isNextToBorder(self, point: Point, movement: Point):
         upper_borders = point - self.renderingSize // 2
@@ -141,7 +143,19 @@ class RenderMonitor:
         return False
 
     def isMaximumZoomIndex(self):
-        return self.zoomIndex == len(self.zooms) - 1
+        return self.getZoomIndex() == len(self.zooms) - 1
 
     def isMinimumZoomIndex(self):
-        return self.zoomIndex == 0
+        return self.getZoomIndex() == 0
+
+    def getZoomFactor(self):
+        return self.playerZoomFactor if self.playerZoomFactor is not None else self.zoomFactor
+
+    def getZoomIndex(self):
+        return self.zoomIndex
+
+    def resetPlayerZoomFactor(self):
+        self.playerZoomFactor = None
+
+    def multiplyZoomFactor(self, coeff):
+        self.zoomFactor *= coeff

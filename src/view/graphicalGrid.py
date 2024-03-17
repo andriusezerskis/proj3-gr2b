@@ -271,14 +271,14 @@ class GraphicalGrid(QGraphicsView):
     def moveScrollBar(self, movement: Movement):
         if self.timers[movement.value][2] > 1:
             """add time rathenr than reset it when player click too quickly"""
-            self.timers[movement.value][1] -= (self.scene_size / self.min_border) * self.renderingMonitor.zoomFactor
+            self.timers[movement.value][1] -= (self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor()
             self.timers[movement.value][2] -= 1
 
-        if self.timers[movement.value][1] >= (self.scene_size / self.min_border) * self.renderingMonitor.zoomFactor:
+        if self.timers[movement.value][1] >= (self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor():
             self.timers[movement.value][0].stop()
             self.timers[movement.value][1] = 0
             self.timers[movement.value][2] = 0
-        step = int((self.scene_size / self.min_border) * self.renderingMonitor.zoomFactor / (10 if self.timers[movement.value][1] >= 0 else 5))
+        step = int((self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor() / (10 if self.timers[movement.value][1] >= 0 else 5))
         value = step if movement in (Movement.DOWN, Movement.RIGHT) else -step
         if movement in (Movement.UP, Movement.DOWN):
             self.verticalScrollbar.setValue(self.verticalScrollbar.value() + value)
@@ -320,7 +320,7 @@ class GraphicalGrid(QGraphicsView):
             self.timers[Movement.LEFT.value][2] += 1
 
     def setScrollBars(self, point: Point):
-        tileSize = int(self.scene_size / self.min_border * self.renderingMonitor.zoomFactor)
+        tileSize = int(self.scene_size / self.min_border * self.renderingMonitor.getZoomFactor())
         self.horizontalScrollbar.setValue(point.x() * tileSize)
         self.verticalScrollbar.setValue(point.y() * tileSize)
 

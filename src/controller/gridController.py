@@ -102,10 +102,10 @@ class GridController:
         if self.simulation.hasPlayer():
             return
 
-        if self.renderingMonitor.zoomIndex < len(self.renderingMonitor.zooms)-1:
+        if self.renderingMonitor.getZoomIndex() < len(self.renderingMonitor.zooms)-1:
             self.renderingMonitor.zoomIndex += 1
-            scaler = self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
-            self.renderingMonitor.zoomFactor *= scaler
+            scaler = self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex()]
+            self.renderingMonitor.multiplyZoomFactor(scaler)
             self.graphicalGrid.scale(scaler, scaler)
 
             MainWindowController.getInstance().onZoomIn()
@@ -131,9 +131,9 @@ class GridController:
         if self.simulation.hasPlayer():
             return
 
-        if self.renderingMonitor.zoomIndex > 0:
-            scaler = 1 / self.renderingMonitor.zooms[self.renderingMonitor.zoomIndex]
-            self.renderingMonitor.zoomFactor *= scaler
+        if self.renderingMonitor.getZoomIndex() > 0:
+            scaler = 1 / self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex()]
+            self.renderingMonitor.multiplyZoomFactor(scaler)
             self.graphicalGrid.scale(scaler, scaler)
             self.renderingMonitor.zoomIndex -= 1
 
