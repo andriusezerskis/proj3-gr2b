@@ -89,12 +89,14 @@ class Window(QMainWindow):
         """
         convert = time.strftime(
             ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
-        hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))
+        nb_days = self.totalTime // 24 + 1
+        hour = self.totalTime % 24
+        #hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))
         if int(hour) == ViewParameters.NIGHT_MODE_START:
             self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
         elif int(hour) == ViewParameters.NIGHT_MODE_FINISH:
             self.timebutton.setIcon(QIcon(ViewParameters.SUN_ICON))
-        self.timebutton.setText(convert)
+        self.timebutton.setText(f"Jour {nb_days} - {"0" if hour < 10 else ""}{hour}h")
         self.view.nightMode(int(hour))
 
     def fastForward(self):
@@ -139,10 +141,10 @@ class Window(QMainWindow):
         self.timebutton = QPushButton("00:00:00")
         self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
 
-        self.commandsButton = QPushButton("Commands")
-        self.commandsButton.clicked.connect(self.commandsCallback)
+        #self.commandsButton = QPushButton("Commands")
+        #self.commandsButton.clicked.connect(self.commandsCallback)
 
-        self.changeTileRendererButton = QPushButton("Change Renderer")
+        self.changeTileRendererButton = QPushButton("Changer de rendu")
         self.changeTileRendererButton.clicked.connect(self.changeTileRenderer)
 
         self.buttonOpenDock = QPushButton("⇨")
@@ -161,8 +163,8 @@ class Window(QMainWindow):
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.changeTileRendererButton, alignment=Qt.AlignmentFlag.AlignTop)
-        self.layout.addWidget(
-            self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        """self.layout.addWidget(
+            self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)"""
 
     def drawButtons2(self):
         self.zoomInButton = QPushButton("+")

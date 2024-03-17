@@ -41,7 +41,7 @@ def setlocale(name):
 
 
 def main():
-    #locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+    #locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     GenericParameters.reloadAllDicts()
     app = QApplication(sys.argv)
     app.setStyleSheet(open("stylesheet.css").read())
