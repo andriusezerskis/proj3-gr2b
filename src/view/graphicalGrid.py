@@ -179,6 +179,10 @@ class GraphicalGrid(QGraphicsView):
     def redraw(self, tile: Tile):
         self.getPixmapItem(tile.getPos()).update(tile)
 
+    def redrawSection(self, section):
+        for point in section:
+            self.redraw(self.simulation.getGrid().getTile(point))
+
     def updateHighlighted(self):
         if self.chosenEntity and not self.chosenEntity.isDead():
             self._drawHighlightedTile(self.chosenEntity.getTile())
@@ -247,14 +251,10 @@ class GraphicalGrid(QGraphicsView):
         return self.horizontalScrollbar
 
     def verticalScroll(self):
-        self.removeRenderedSection()
         GridController.getInstance().recomputeCuboid()
-        self.renderSection()
 
     def horizontalScroll(self):
-        self.removeRenderedSection()
         GridController.getInstance().recomputeCuboid()
-        self.renderSection()
 
     def moveVerticalScrollBarPositively(self):
         self.moveScrollBar(Movement.DOWN)
@@ -285,7 +285,6 @@ class GraphicalGrid(QGraphicsView):
         else:
             self.horizontalScrollbar.setValue(self.horizontalScrollbar.value() + value)
         self.timers[movement.value][1] += step
-
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

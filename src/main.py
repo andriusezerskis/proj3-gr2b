@@ -14,6 +14,8 @@ from PyQt6.QtWidgets import QApplication
 
 
 from parameter.genericparameters import GenericParameters
+from model.renderMonitor import Cuboid
+from utils import Point
 from view.startWindow import StartWindow
 
 
@@ -39,7 +41,7 @@ def setlocale(name):
 
 
 def main():
-    locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+    #locale.setlocale(locale.LC_ALL, 'en_US.utf8')
     GenericParameters.reloadAllDicts()
     app = QApplication(sys.argv)
     app.setStyleSheet(open("stylesheet.css").read())

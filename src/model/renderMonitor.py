@@ -5,27 +5,30 @@ Date: December 2023
 """
 
 from functools import reduce
+from typing import TypeVar, List
 
 from model.terrains.tile import Tile
 from utils import Point
+
+Cuboid_ = TypeVar("Cuboid_")
 
 
 class Cuboid:
     """Represents a rectangle that covers the area between
     the given upper left point, and the lower right point (both included)"""
 
-    def __init__(self, upperLeftPoint: Point, lowerRightPoint: Point, size: Point):
-        assert isinstance(size, Point)
+    def __init__(self, upperLeftPoint: Point, lowerRightPoint: Point, component: List[Cuboid_] = None):
         assert isinstance(upperLeftPoint, Point)
         assert isinstance(lowerRightPoint, Point)
         self.upper = upperLeftPoint
         self.lower = lowerRightPoint
-        self.size = size
+        self.component: List[Cuboid_] = component
 
     def __iter__(self):
         for y in range(self.upper.y(), self.lower.y() + 1):
             for x in range(self.upper.x(), self.lower.x() + 1):
-                yield Point(x, y)
+                if not self.component or (Point(x, y) in self.component[1] and not Point(x, y) in self.component[0]):
+                    yield Point(x, y)
 
     def __contains__(self, item):
         assert isinstance(item, (Point, Tile))
@@ -45,6 +48,20 @@ class Cuboid:
     def __repr__(self):
         return f"Cuboid({self.upper}, {self.lower})"
 
+    def __eq__(self, other):
+        return self.upper == other.upper and self.lower == other.lower
+
+    def isEqual(self, upper, lower):
+        return self.upper == upper and self.lower == lower
+
+    def setConstraint(self, constraint):
+        self.component = constraint
+
+    def difference(self, other: Cuboid_):
+        return Cuboid(Point(min(self.upper.x(), other.upper.x()), min(self.upper.y(), other.upper.y())),
+                      Point(max(self.lower.x(), other.lower.x()), max(self.lower.y(), other.lower.y())),
+                      [self, other])
+
 
 class RenderMonitor:
     """Represents the visible section of the grid for the user"""
@@ -55,7 +72,7 @@ class RenderMonitor:
         self.gridSize = gridSize
         self.renderingSize = size
         self.renderingSection = Cuboid(Point(0, 0), Point(
-            gridSize.x() - 1, gridSize.y() - 1), self.renderingSize)
+            gridSize.x() - 1, gridSize.y() - 1))
 
         self.zoomIndex = 0
         self.zoomFactor = 1
@@ -79,9 +96,11 @@ class RenderMonitor:
     def setNewPoints(self, upperPoint: Point, lowerPoint: Point, width: int, height: int):
         assert isinstance(upperPoint, Point)
         assert isinstance(lowerPoint, Point)
-        self.renderingSection = Cuboid(
-            upperPoint, lowerPoint, Point(width, height))
+        new_section = Cuboid(upperPoint, lowerPoint)
+        difference = self.renderingSection.difference(new_section)
+        self.renderingSection = new_section
         self.renderingSize = Point(width, height)
+        return difference
 
     def centerOnPoint(self, point: Point):
         assert isinstance(point, Point)
@@ -90,9 +109,9 @@ class RenderMonitor:
                       0 if not upper.yIsPositive() else upper.y())
         lower = point + self.renderingSize // 2
         lower = self.gridSize - \
-            Point(1, 1) if not lower < self.gridSize else lower
+                Point(1, 1) if not lower < self.gridSize else lower
 
-        self.renderingSection = Cuboid(upper, lower, self.renderingSize)
+        self.renderingSection = Cuboid(upper, lower)
 
     def setOnZoomIndex(self, index=3):
         oldZoom = self.zoomIndex
