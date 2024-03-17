@@ -115,7 +115,7 @@ class MonitorWindow:
         combobox5 = QComboBox()
 
         for entityType in getTerminalSubclassesOfClass(Entity):
-            animalIcon = QIcon(entityType.getDefaultTexturePath())
+            animalIcon = QIcon(entityType.getIconTexturePath())
             combobox5.addItem(animalIcon, entityType.getFrenchName())
 
         self.invasionChosen = getFrenchToEnglishTranslation(

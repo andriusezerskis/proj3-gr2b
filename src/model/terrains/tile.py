@@ -27,7 +27,7 @@ class Tile(ParametrizedDrawable, ABC):
         self.pos = pos
         self.height = height
         self.movable: Movable | None = None
-        self.disaster: str = None
+        self.disaster: str | None = None
         self.disasterOpacity = 0
         self.temperature = 0
 

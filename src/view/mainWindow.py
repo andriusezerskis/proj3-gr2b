@@ -12,9 +12,9 @@ from PyQt6.QtGui import QIcon
 from parameters import ViewParameters, ViewText
 from utils import Point, getTerminalSubclassesOfClass
 
-
 from model.entities.entity import Entity
 from model.simulation import Simulation
+from model.gridexporter import GridExporter
 
 from view.commandsWindow import CommandWindow
 from view.graphicalGrid import GraphicalGrid
@@ -115,6 +115,10 @@ class Window(QMainWindow):
             self.view.updateHighlighted()
             self.docksMonitor.getCurrentDock().entityController.view.deselectEntity()
 
+    def saveGrid(self):
+        GridExporter.exportToMap(self.getGraphicalGrid().simulation.getGrid())
+        print("Saved grid !")
+
     def getGraphicalGrid(self):
         return self.view
 
@@ -147,6 +151,9 @@ class Window(QMainWindow):
         self.changeTileRendererButton = QPushButton("Changer de rendu")
         self.changeTileRendererButton.clicked.connect(self.changeTileRenderer)
 
+        self.saveGridButton = QPushButton("Sauvegarder")
+        self.saveGridButton.clicked.connect(self.saveGrid)
+
         self.buttonOpenDock = QPushButton("⇨")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
@@ -163,6 +170,8 @@ class Window(QMainWindow):
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.changeTileRendererButton, alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(
+            self.saveGridButton, alignment=Qt.AlignmentFlag.AlignTop)
         """self.layout.addWidget(
             self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)"""
 

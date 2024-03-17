@@ -99,7 +99,7 @@ class Grid:
     def isInGrid(self, pos: Point) -> bool:
         return 0 <= pos.x() < self.gridSize.x() and 0 <= pos.y() < self.gridSize.y()
 
-    def __iter__(self):
+    def __iter__(self) -> Tile:
         for line in self.tiles:
             for tile in line:
                 yield tile
