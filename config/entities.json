@@ -17,7 +17,7 @@
         "texture_path": ["tree4.png"],
         "icon_texture_path": "tree3.png",
         "fruit_texture_path": ["apple_tree.png"],
-        "duplication_probability": 0.015,
+        "duplication_probability": 0.035,
         "spontaneous_generation": 0,
         "fruit_cooldown": 6,
         "color": "#b3d5a4",
@@ -31,7 +31,7 @@
     "Algae": {
         "texture_path": ["algae3.png"],
         "icon_texture_path": "algae3.png",
-        "duplication_probability": 0.07,
+        "duplication_probability": 0.05,
         "spontaneous_generation": 1,
         "french_name": "Algue",
         "color": "#93A5D2",
