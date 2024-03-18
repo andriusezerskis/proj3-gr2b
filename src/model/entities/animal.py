@@ -106,7 +106,7 @@ class Animal(Entity, ABC):
 
         # incentive to move to find food if hungry
         if len(self._local_information["preys"]["adjacent"]) == 0:
-            score += self.getHunger() / 10 + 3 * self.isHungry()
+            score += self.getHunger() * 10 + 30 * self.isHungry()
 
         return score
 
