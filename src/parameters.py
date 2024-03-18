@@ -88,6 +88,9 @@ class ViewText(GenericParameters, ABC):
     AGE_TEXT: str = None
     NAME_TEXT: str = None
     HUNGER_TEXT: str = None
+    DISASTER_ICE_TEXT: str = None
+    DISASTER_FIRE_TEXT: str = None
+    DISASTER_INVASION_TEXT: str = None
 
     @classmethod
     @override

@@ -9,5 +9,8 @@
     "HEALTH_BAR_TEXT": "Santé : ",
     "NAME_TEXT": "Prénom : ",
     "AGE_TEXT": "Âge : ",
-    "HUNGER_TEXT": "Faim"
+    "HUNGER_TEXT": "Faim",
+    "DISASTER_ICE_TEXT": "Froid glacial",
+    "DISASTER_FIRE_TEXT": "Explosion",
+    "DISASTER_INVASION_TEXT": "Invasion de:"
 }

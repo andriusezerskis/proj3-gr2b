@@ -33,7 +33,7 @@ class TemperatureTileRenderer(TileRenderer):
         self._m = -self._p / self.minTemp
 
     def _getColor(self, temperature: float):
-        return int(self._m * temperature + self._p)
+        return max(0, min(255, int(self._m * temperature + self._p)))
 
     def _updateTemperatureLayer(self, tile: Tile):
         temperature = tile.getTemperature()

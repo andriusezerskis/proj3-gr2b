@@ -53,9 +53,9 @@ class ClassicTileRenderer(TileRenderer):
         self.depthLayer.show()
 
     def _updateDisasterLayer(self, tile: Tile):
-        self.disasterLayer.setOpacity(tile.getDisasterOpacity())
+        self.disasterLayer.setOpacity(tile.getDisaster().getStrength())
         self.disasterLayer.setPixmap(
-            PixmapUtils.getPixmapFromPath(tile.getDisasterPathName()))
+            PixmapUtils.getPixmapFromPath(tile.getDisaster().getTexturePath()))
 
     @override
     def hideEntity(self):

@@ -13,8 +13,7 @@ from PyQt6.QtGui import *
 
 import matplotlib
 from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
-from model.disaster import Disaster
-from parameters import ViewParameters
+from parameters import ViewParameters, ViewText
 from model.entities.entity import Entity
 
 matplotlib.use('QtAgg')
@@ -100,16 +99,16 @@ class MonitorWindow:
         container = QGroupBox("Choix de catastrophe")
         container.setLayout(layout)
 
-        iceButton = QRadioButton(Disaster.ICE_TEXT, self.container)
+        iceButton = QRadioButton(ViewText.DISASTER_ICE_TEXT, self.container)
         iceButton.setChecked(True)
         iceButton.toggled.connect(lambda: self.btnCata(iceButton))
         layout.addWidget(iceButton, 0, 0)
 
-        fireButton = QRadioButton(Disaster.FIRE_TEXT, self.container)
+        fireButton = QRadioButton(ViewText.DISASTER_FIRE_TEXT, self.container)
         fireButton.toggled.connect(lambda: self.btnCata(fireButton))
         layout.addWidget(fireButton, 1, 0)
 
-        islandButton = QRadioButton(Disaster.INVASION_TEXT, self.container)
+        islandButton = QRadioButton(ViewText.DISASTER_INVASION_TEXT, self.container)
         islandButton.toggled.connect(lambda: self.btnCata(islandButton))
 
         combobox5 = QComboBox()

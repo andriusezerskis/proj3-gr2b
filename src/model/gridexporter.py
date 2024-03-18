@@ -9,7 +9,7 @@ from utils import Point
 
 class GridExporter(ABC):
     @staticmethod
-    def exportToMap(grid: Grid, folderPath: str = "../assets/grids") -> None:
+    def exportToMap(grid: Grid, folderPath: str = "../assets/grids", precision: int = 4) -> None:
         res = ""
         res += f"{grid.getSize().y()}\n{grid.getSize().x()}\n"
 
@@ -20,7 +20,7 @@ class GridExporter(ABC):
         for y in range(grid.getSize().y()):
             for x in range(grid.getSize().x()):
                 tile = grid.getTile(Point(x, y))
-                res += f"{tile.getHeight()} "
+                res += f"{round(tile.getHeight(), precision)} "
 
                 entity = tile.getEntity()
 
