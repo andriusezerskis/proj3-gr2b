@@ -121,6 +121,12 @@ def getPointsInRadius(point: Point, radius: int) -> list[Point]:
             if x != 0 or y != 0]
 
 
+def getPointsInManhattanRadius(point: Point, radius: int) -> list[Point]:
+    assert radius > 0 and isinstance(radius, int)
+    return [Point(point.x() + x, point.y() + y) for y in range(-radius, radius + 1) for x in range(-radius, radius + 1)
+            if x != 0 or y != 0 and Point(x, y).manhattanDistance(Point(0, 0)) <= radius]
+
+
 def getNormalizedVector(point: Point):
     vector = np.array([point.x(), point.y()])
     norm = np.linalg.norm(vector)

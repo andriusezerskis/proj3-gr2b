@@ -5,7 +5,7 @@ Date: December 2023
 """
 
 from typing import List
-from utils import Point, getPointsInRadius
+from utils import Point, getPointsInRadius, getPointsInManhattanRadius
 
 from model.terrains.tile import Tile
 from model.terrains.tiles import Water, Sand
@@ -40,6 +40,13 @@ class Grid:
             if tile in island:
                 return island
         return []
+
+    def getTilesInManhattanCircle(self, center: Point, radius: int):
+        tiles = [self.getTile(center)]
+        for pos in getPointsInManhattanRadius(center, radius):
+            if self.isInGrid(pos):
+                tiles.append(self.getTile(pos))
+        return tiles
 
     def getTilesInRadius(self, center: Point, radius: int):
         """
@@ -85,8 +92,12 @@ class Grid:
         return modified
 
     def updateTemperature(self, tile: Tile) -> None:
-        tile.updateTemperature(self.regionHandler.sampleTemperature(
-            tile.getPos().x(), tile.getPos().y()))
+        if tile.getDisaster():
+            temperature = (self.regionHandler.sampleTemperature(tile.getPos().x(), tile.getPos().y()) +
+                           tile.getDisaster().getTemperature())
+        else:
+            temperature = (self.regionHandler.sampleTemperature(tile.getPos().x(), tile.getPos().y()))
+        tile.updateTemperature(temperature)
 
     def getTile(self, pos: Point) -> Tile:
         if not self.isInGrid(pos):

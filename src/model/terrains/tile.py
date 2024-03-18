@@ -13,11 +13,11 @@ from overrides import override
 from model.entities.entity import Entity
 from model.drawable import ParametrizedDrawable
 from model.movable import Movable
-from model.disaster import Disaster
+from model.disasters.disaster import Disaster
 
 from utils import Point
 
-from parameters import TerrainParameters, ViewParameters
+from parameters import TerrainParameters
 
 
 class Tile(ParametrizedDrawable, ABC):
@@ -27,16 +27,8 @@ class Tile(ParametrizedDrawable, ABC):
         self.pos = pos
         self.height = height
         self.movable: Movable | None = None
-        self.disaster: str | None = None
-        self.disasterOpacity = 0
+        self.disaster: Disaster | None = None
         self.temperature = 0
-
-    def getDisasterPathName(self):
-        if self.disaster == Disaster.FIRE_TEXT:
-            return ViewParameters.FIRE_TEXTURE_PATH
-        elif self.disaster == Disaster.ICE_TEXT:
-            return ViewParameters.ICE_TEXTURE_PATH
-        return None
 
     @classmethod
     @override
@@ -86,22 +78,19 @@ class Tile(ParametrizedDrawable, ABC):
         :return: whether the assignment was successful
         """
         # we only set the entity if the tile is of a valid type
-        if entity and entity.isValidTileType(self.__class__):
+        if entity and isinstance(entity, Entity) and entity.isValidTileType(self.__class__):
             self.movable = entity
             return True
         return False
 
-    def getDisaster(self) -> str:
+    def getDisaster(self) -> Disaster:
         return self.disaster
 
-    def setDisaster(self, disasterType: str) -> None:
-        self.disaster = disasterType
+    def setDisaster(self, disaster: Disaster) -> None:
+        self.disaster = disaster
 
-    def getDisasterOpacity(self) -> float:
-        return self.disasterOpacity
-
-    def setDisasterOpacity(self, disasterOpacity: float) -> None:
-        self.disasterOpacity = disasterOpacity
+    def removeDisaster(self) -> None:
+        self.disaster = None
 
     def addNewEntity(self, entity: Type[Entity], age: int = 0) -> None:
         """
@@ -133,7 +122,6 @@ class Tile(ParametrizedDrawable, ABC):
         tile = type_(toCopy.pos, toCopy.height)
         tile.setEntity(toCopy.getEntity())
         tile.setDisaster(toCopy.getDisaster())
-        tile.setDisasterOpacity(toCopy.getDisasterOpacity())
         return tile
 
     def __repr__(self):

@@ -21,7 +21,6 @@ from overrides import override
 from random import choice
 
 from model.movable import Movable
-from model.disaster import Disaster
 
 Entity_ = TypeVar("Entity_")
 Tile = TypeVar("Tile")
@@ -109,12 +108,6 @@ class Entity(Movable, ParametrizedDrawable, ABC):
         """
         self.kill()
         return True
-
-    def removeHealthPoints(self) -> None:
-        if self.getTile().getDisaster() == Disaster.FIRE_TEXT:
-            self.inflictDamage(DisasterParameters.FIRE_DAMAGE)  # TODO compute damage with some kind of 1/something
-        elif self.getTile().getDisaster() == Disaster.ICE_TEXT:
-            self.inflictDamage(DisasterParameters.ICE_DAMAGE)  # TODO compute damage with some kind of 1/something
 
     def canReproduce(self) -> bool:
         """
