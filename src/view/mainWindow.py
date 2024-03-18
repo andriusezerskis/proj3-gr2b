@@ -28,7 +28,7 @@ from view.docksMonitor import DocksMonitor
 class Window(QMainWindow):
     def __init__(self, gridSize: Point, simulation: Simulation):
         super().__init__()
-
+        self.setWindowIcon(QIcon(ViewParameters.COW_TEXTURE_PATH))
         self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
