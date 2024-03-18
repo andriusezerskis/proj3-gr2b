@@ -19,13 +19,14 @@ class GenericParameters(ABC):
     def reloadAllDicts():
         for parameterType in getTerminalSubclassesOfClass(GenericParameters):
             parameterType.reloadDict()
-        print("Configuration rechargée !")
 
     @classmethod
     def reloadDict(cls) -> None:
         with open(cls.getFilePath(), "r") as f:
             d = load(f)
             for key in d.keys():
+                if key in cls.__dict__ and getattr(cls, key) is not None and getattr(cls, key) != d[key]:
+                    print("modified attribute", key)
                 setattr(cls, key, d[key])
 
     @classmethod
