@@ -120,11 +120,12 @@ class Player(Movable):
         return self._isFishing
 
     def startFishing(self, tile):
-        self.stopFishing()
-        self.targetedTileForHooking = tile
-        self._isFishing = True
-        self.hookDirection = getNormalizedVector(tile.getPos() - self.pos)
-        self.startHookTime = time.time()
+        if not self._isFishing:
+            self.stopFishing()
+            self.targetedTileForHooking = tile
+            self._isFishing = True
+            self.hookDirection = getNormalizedVector(tile.getPos() - self.pos)
+            self.startHookTime = time.time()
 
     def throwHook(self):
         self.hookVelocity = min(5 * (time.time() - self.startHookTime), 8)
