@@ -4,6 +4,7 @@ from model.disaster import Disaster
 from model.entities.entity import Entity
 from model.entities.plants import *
 from model.entities.animals import *
+from model.entities.human import Human
 
 
 class DisasterHandler:
