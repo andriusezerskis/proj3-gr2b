@@ -11,6 +11,7 @@ from model.generator.entitiesGenerator import EntitiesGenerator
 from model.generator.gridGenerator import GridGenerator
 from model.gridloader import GridLoader
 from model.simulation import Simulation
+from parameters import ViewParameters
 from utils import Point
 from view.mainWindow import Window
 
@@ -19,7 +20,7 @@ class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Simulation")
-        self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
+        self.setWindowIcon(QIcon(ViewParameters.COW_TEXTURE_PATH))
         self.setGeometry(0, 0, 1000, 400)
 
         self.layout = QVBoxLayout()

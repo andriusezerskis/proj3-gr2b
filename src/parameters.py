@@ -67,6 +67,7 @@ class ViewParameters(GenericParameters, ABC):
     TEXTURE_SIZE: int = None
     STEP_TIME: int = None
     LOCKED_BUTTON: str = None
+    COW_TEXTURE_PATH: str = None
 
     @classmethod
     @override
@@ -102,12 +103,12 @@ class CraftParameters(GenericParameters, ABC):
     @override
     def getFileName(cls) -> str:
         return "crafting_parameters.json"
-    
-    
+
+
 class DisasterParameters(GenericParameters, ABC):
     FIRE_DAMAGE: int = None
     ICE_DAMAGE: int = None
-    
+
     @classmethod
     @override
     def getFileName(cls) -> str:
