@@ -27,7 +27,7 @@ class Tile(ParametrizedDrawable, ABC):
         self.pos = pos
         self.height = height
         self.movable: Movable | None = None
-        self.disaster: str = None
+        self.disaster: str | None = None
         self.disasterOpacity = 0
         self.temperature = 0
 
@@ -90,7 +90,7 @@ class Tile(ParametrizedDrawable, ABC):
             self.movable = entity
             return True
         return False
-    
+
     def getDisaster(self) -> str:
         return self.disaster
 
@@ -132,6 +132,8 @@ class Tile(ParametrizedDrawable, ABC):
         """
         tile = type_(toCopy.pos, toCopy.height)
         tile.setEntity(toCopy.getEntity())
+        tile.setDisaster(toCopy.getDisaster())
+        tile.setDisasterOpacity(toCopy.getDisasterOpacity())
         return tile
 
     def __repr__(self):

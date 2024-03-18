@@ -38,14 +38,12 @@ class CustomQDock(QDockWidget):
 
     def close(self):
         super().close()
-        # print("closed")
         self.mainWindowController.hide_button()
 
     def closeEvent(self, event: QCloseEvent | None) -> None:
         super().closeEvent(event)
         self.observer.updateClosure()
         self.mainWindowController.closeDockEvent()
-        # print("closed by me")
 
 
 class MonitoringDock(CustomQDock):
@@ -85,12 +83,6 @@ class PlayerDock(CustomQDock):
         self.dockLayout.addWidget(container2)
         self.playerController = PlayerDockController(container2)
         self.scrollArea = ScrollArea(container1)
-
-    def updateContent(self, j):
-        return
-
-    def updateController(self):
-        return
 
 
 class DocksMonitor(Observer):

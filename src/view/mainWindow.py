@@ -12,9 +12,10 @@ from PyQt6.QtGui import QIcon
 from parameters import ViewParameters, ViewText
 from utils import Point, getTerminalSubclassesOfClass
 
-
 from model.entities.entity import Entity
 from model.simulation import Simulation
+from model.gridexporter import GridExporter
+from parameter.genericparameters import GenericParameters
 
 from view.commandsWindow import CommandWindow
 from view.graphicalGrid import GraphicalGrid
@@ -28,7 +29,7 @@ from view.docksMonitor import DocksMonitor
 class Window(QMainWindow):
     def __init__(self, gridSize: Point, simulation: Simulation):
         super().__init__()
-
+        self.setWindowIcon(QIcon(ViewParameters.COW_TEXTURE_PATH))
         self.setWindowTitle(ViewText.MAIN_WINDOW_TITLE)
         self.renderingMonitor = simulation.getRenderMonitor()
 
@@ -87,14 +88,16 @@ class Window(QMainWindow):
         """
         Display the time passed, one step is one hour
         """
-        convert = time.strftime(
-            ViewParameters.TIME_FORMAT, time.gmtime(self.totalTime * 3600))
-        hour = time.strftime("%-H", time.gmtime(self.totalTime * 3600))
+        nb_days = self.totalTime // 24 + 1
+        hour = self.totalTime % 24
         if int(hour) == ViewParameters.NIGHT_MODE_START:
             self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
         elif int(hour) == ViewParameters.NIGHT_MODE_FINISH:
             self.timebutton.setIcon(QIcon(ViewParameters.SUN_ICON))
-        self.timebutton.setText(convert)
+        if hour < 10:
+            self.timebutton.setText(f"Jour {nb_days} - 0{hour}h")
+        else:
+            self.timebutton.setText(f"Jour {nb_days} - {hour}h")
         self.view.nightMode(int(hour))
 
     def fastForward(self):
@@ -112,6 +115,10 @@ class Window(QMainWindow):
             self.view.chosenEntity = None
             self.view.updateHighlighted()
             self.docksMonitor.getCurrentDock().entityController.view.deselectEntity()
+
+    def saveGrid(self):
+        GridExporter.exportToMap(self.getGraphicalGrid().simulation.getGrid())
+        print("Saved grid !")
 
     def getGraphicalGrid(self):
         return self.view
@@ -139,11 +146,17 @@ class Window(QMainWindow):
         self.timebutton = QPushButton("00:00:00")
         self.timebutton.setIcon(QIcon(ViewParameters.MOON_ICON))
 
-        self.commandsButton = QPushButton("Commands")
-        self.commandsButton.clicked.connect(self.commandsCallback)
+        # self.commandsButton = QPushButton("Commands")
+        # self.commandsButton.clicked.connect(self.commandsCallback)
 
-        self.changeTileRendererButton = QPushButton("Change Renderer")
+        self.changeTileRendererButton = QPushButton("Changer de rendu")
         self.changeTileRendererButton.clicked.connect(self.changeTileRenderer)
+
+        self.saveGridButton = QPushButton("Sauvegarder")
+        self.saveGridButton.clicked.connect(self.saveGrid)
+
+        self.reloadConfigButton = QPushButton("Recharger la configuration")
+        self.reloadConfigButton.clicked.connect(GenericParameters.reloadAllDicts)
 
         self.buttonOpenDock = QPushButton("⇨")
         self.buttonOpenDock.hide()
@@ -162,7 +175,12 @@ class Window(QMainWindow):
         self.layout.addWidget(
             self.changeTileRendererButton, alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
-            self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+            self.reloadConfigButton, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.layout.addWidget(
+            self.saveGridButton, alignment=Qt.AlignmentFlag.AlignTop)
+        """self.layout.addWidget(
+            self.commandsButton, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)"""
 
     def drawButtons2(self):
         self.zoomInButton = QPushButton("+")
@@ -180,11 +198,12 @@ class Window(QMainWindow):
     def closeEvent(self, event):
         self.pauseTimer()
         result = QMessageBox.question(
-            self, "Confirmer la fermeture...", "Êtes-vous sûr de vouloir fermer la fenêtre ?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            self, "Confirmer la fermeture...", "Êtes-vous sûr de retourner au menu?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         event.ignore()
 
         if result == QMessageBox.StandardButton.Yes:
             event.accept()
+            self.close()
         else:
             self.pauseTimer()
             event.ignore()

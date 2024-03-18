@@ -47,8 +47,8 @@ class Player(Movable):
         tile.removeEntity()
         tile.setEntity(self)
 
-    def removeClaimedEntity(self):
-        self._reset()
+    def removeClaimedEntity(self, killed=False):
+        self._reset(killed)
 
     def isDead(self):
         """The entity chosen never dies
@@ -99,8 +99,7 @@ class Player(Movable):
         return self.claimed_entity.getPreferredTemperature()
 
     def kill(self):
-        # self.removeClaimedEntity()
-        PlayerDockView.lageEntity()
+        PlayerDockView.lageEntity(True)
 
     def canFish(self):
         return self.abilityUnlockedRod
@@ -120,11 +119,12 @@ class Player(Movable):
         return self._isFishing
 
     def startFishing(self, tile):
-        self.stopFishing()
-        self.targetedTileForHooking = tile
-        self._isFishing = True
-        self.hookDirection = getNormalizedVector(tile.getPos() - self.pos)
-        self.startHookTime = time.time()
+        if not self._isFishing:
+            self.stopFishing()
+            self.targetedTileForHooking = tile
+            self._isFishing = True
+            self.hookDirection = getNormalizedVector(tile.getPos() - self.pos)
+            self.startHookTime = time.time()
 
     def throwHook(self):
         self.hookVelocity = min(5 * (time.time() - self.startHookTime), 8)
@@ -145,9 +145,12 @@ class Player(Movable):
         self.targetedTileForHooking = None
         self.hookPlace = None
 
-    def _reset(self):
-        self.claimed_entity.setPos(self.pos)
-        self.grid.getTile(self.pos).setEntity(self.claimed_entity)
+    def _reset(self, killed=False):
+        if not killed:
+            self.claimed_entity.setPos(self.pos)
+            self.grid.getTile(self.pos).setEntity(self.claimed_entity)
+        else:
+            self.claimed_entity.kill()
         self.pos = None
         self.claimed_entity = None
         self.inventory = {loot_class.__name__: 0 for loot_class in getTerminalSubclassesOfClass(Loot)}

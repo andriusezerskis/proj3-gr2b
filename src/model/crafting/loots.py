@@ -22,3 +22,11 @@ class Wood(Loot):
 
 class Claw(Loot):
     ...
+
+
+class FishItem(Loot):
+    ...
+
+
+class AlgaeItem(Loot):
+    ...

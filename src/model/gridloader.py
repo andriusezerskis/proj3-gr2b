@@ -1,4 +1,6 @@
 from abc import ABC
+from typing import Type
+
 from model.grid import Grid
 from model.terrains.tile import Tile
 from model.generator.gridGenerator import GridGenerator
@@ -15,7 +17,7 @@ class GridLoader(ABC):
             cls.symbolsToType[instanciable.getSymbol()] = instanciable
 
     @classmethod
-    def _getEntityTypeFromSymbol(cls, symbol: str) -> type | None:
+    def _getEntityTypeFromSymbol(cls, symbol: str) -> Type[Entity] | None:
         if len(cls.symbolsToType) == 0:
             cls._generateSymbolsToType()
 

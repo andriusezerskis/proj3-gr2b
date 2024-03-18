@@ -9,21 +9,18 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from model.generator.entitiesGenerator import EntitiesGenerator
 from model.generator.gridGenerator import GridGenerator
-from model.grid import Grid
 from model.gridloader import GridLoader
-
 from model.simulation import Simulation
+from parameters import ViewParameters
 from utils import Point
 from view.mainWindow import Window
-
-from parameters import ViewParameters
 
 
 class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Simulation")
-        self.setWindowIcon(QIcon("../assets/textures"+"/entities"+"/cow.png"))
+        self.setWindowIcon(QIcon(ViewParameters.COW_TEXTURE_PATH))
         self.setGeometry(0, 0, 1000, 400)
 
         self.layout = QVBoxLayout()
@@ -51,12 +48,12 @@ class StartWindow(QMainWindow):
         label2.setFixedSize(200, 30)
         self.layout2.addStretch()
         self.layout2.addWidget(label2, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.spinBoxWidth = QSpinBox(minimum=10, maximum=200, value=100)
+        self.spinBoxWidth = QSpinBox(minimum=50, maximum=200, value=100)
         self.spinBoxWidth.setFixedSize(50, 30)
         self.spinBoxWidth.valueChanged.connect(self.updateSpinboxWidth)
         self.spinBoxWidth.setObjectName("semiTransparent")
 
-        self.spinBoxHeight = QSpinBox(minimum=10, maximum=200, value=100)
+        self.spinBoxHeight = QSpinBox(minimum=50, maximum=200, value=100)
         self.spinBoxHeight.valueChanged.connect(self.updateSpinboxHeight)
         self.spinBoxHeight.setFixedSize(50, 30)
         self.spinBoxHeight.setObjectName("semiTransparent")
@@ -122,5 +119,6 @@ class StartWindow(QMainWindow):
             self.grid.gridSize, self.grid)
         window = Window(
             self.grid.gridSize, simulation)
-        window.show()
         self.hide()
+        window.show()
+        window.showMaximized()

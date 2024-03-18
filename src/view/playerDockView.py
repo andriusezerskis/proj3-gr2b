@@ -43,8 +43,8 @@ class PlayerDockView(QDockWidget):
         self.container.setLayout(self.firstLayout)
 
     @staticmethod
-    def lageEntity():
-        GridController.getInstance().lageEntity()
+    def lageEntity(killed=False):
+        GridController.getInstance().lageEntity(killed)
         MainWindowController.getInstance().onEntityLage()
         MainWindowController.getInstance().changeDock()
 

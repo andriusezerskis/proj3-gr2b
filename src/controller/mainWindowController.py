@@ -123,7 +123,6 @@ class MainWindowController:
 
             self.graphicalGrid.updateHighlighted()
         elif isinstance(tile, Water) and self.simulation.getPlayer().canFish():
-            print("start")
             self.simulation.getPlayer().startFishing(tile)
             self.graphicalGrid.startHooking()
 

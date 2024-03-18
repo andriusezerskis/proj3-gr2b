@@ -144,9 +144,6 @@ class Animal(Entity, ABC):
         eat = self._scoreEat()
         reproduce = self._scoreReproduce()
         idle = self._scoreIdle()
-
-        # print(f"move: {move}, eat: {eat}, repr: {reproduce}, idle: {idle}")
-
         return choices([Action.MOVE, Action.EAT, Action.REPRODUCE, Action.IDLE],
                        [move, eat, reproduce, idle])[0]
 

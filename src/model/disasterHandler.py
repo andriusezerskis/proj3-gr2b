@@ -1,12 +1,9 @@
 from utils import Point, getFrenchToEnglishTranslation
 from model.terrains.tile import Tile
-from model.entities.animals import Crab
 from model.disaster import Disaster
 from model.entities.entity import Entity
 from model.entities.plants import *
-from model.entities.plant import Plant
 from model.entities.animals import *
-from model.entities.human import Human
 
 
 class DisasterHandler:

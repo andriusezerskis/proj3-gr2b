@@ -23,18 +23,21 @@ class ClassicTileRenderer(TileRenderer):
         self.disasterLayer = self.createNewLayer()
 
     def _updateTerrainLayer(self, tile: Tile):
-        self.terrainLayer.setPixmap(PixmapUtils.getPixmapFromPath(tile.getTexturePath()))
+        self.terrainLayer.setPixmap(
+            PixmapUtils.getPixmapFromPath(tile.getTexturePath()))
 
     def _updateEntityLayer(self, tile: Tile):
         entity = tile.getEntity()
         if entity:
-            self.entityLayer.setPixmap(PixmapUtils.getPixmapFromPath(entity.getTexturePath()))
+            self.entityLayer.setPixmap(
+                PixmapUtils.getPixmapFromPath(entity.getTexturePath()))
             self.entityLayer.show()
         else:
             self.entityLayer.hide()
 
     def _updateDepthLayer(self, tile: Tile):
-        self.depthLayer.setPixmap(PixmapUtils.getPixmapFromRGBHex(tile.getFilterColor()))
+        self.depthLayer.setPixmap(
+            PixmapUtils.getPixmapFromRGBHex(tile.getFilterColor()))
 
         # linear mapping from 0 <-> X_LEVEL to MAX_FILTER <-> X+1_LEVEL
         levelRange = GridGenerator.getRange(type(tile))
@@ -51,7 +54,8 @@ class ClassicTileRenderer(TileRenderer):
 
     def _updateDisasterLayer(self, tile: Tile):
         self.disasterLayer.setOpacity(tile.getDisasterOpacity())
-        self.disasterLayer.setPixmap(PixmapUtils.getPixmapFromPath(tile.getDisasterPathName()))
+        self.disasterLayer.setPixmap(
+            PixmapUtils.getPixmapFromPath(tile.getDisasterPathName()))
 
     @override
     def hideEntity(self):
@@ -81,4 +85,5 @@ class ClassicTileRenderer(TileRenderer):
         self._updateTerrainLayer(tile)
         self._updateDepthLayer(tile)
         self._updateEntityLayer(tile)
-        self._updateDisasterLayer(tile)
+        if tile.disaster:
+            self._updateDisasterLayer(tile)

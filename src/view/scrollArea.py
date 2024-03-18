@@ -52,4 +52,3 @@ class ScrollArea(QWidget):
     def update_content(self, loots):
         for items in loots:
             self.quantities[items][1].setText(str(loots[items]))
-        # print(self.quantities)

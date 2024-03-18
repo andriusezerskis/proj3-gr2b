@@ -62,15 +62,14 @@ class RegionHandler:
 
     def renderTemperatureMap(self):
         vmin = (TerrainParameters.AVERAGE_TEMPERATURE - TerrainParameters.MAX_TEMPERATURE_DIFFERENCE -
-                TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2)
+                TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE)
         vmax = (TerrainParameters.AVERAGE_TEMPERATURE + TerrainParameters.MAX_TEMPERATURE_DIFFERENCE +
-                TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE / 2)
+                TerrainParameters.SEASON_TEMPERATURE_DIFFERENCE)
         plt.imshow(self.temperatureMap + self._sampleSineTemperature(),
                    vmin=vmin, vmax=vmax)
         plt.text(1, 4, f"t={self.t}", backgroundcolor="white")
         plt.colorbar()
         plt.draw()
-        # plt.savefig(f"../assets/steps/{self.t}.png")
         plt.pause(0.0001)
         plt.clf()
 
