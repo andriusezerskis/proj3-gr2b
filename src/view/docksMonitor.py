@@ -38,14 +38,12 @@ class CustomQDock(QDockWidget):
 
     def close(self):
         super().close()
-        # print("closed")
         self.mainWindowController.hide_button()
 
     def closeEvent(self, event: QCloseEvent | None) -> None:
         super().closeEvent(event)
         self.observer.updateClosure()
         self.mainWindowController.closeDockEvent()
-        # print("closed by me")
 
 
 class MonitoringDock(CustomQDock):

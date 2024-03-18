@@ -88,10 +88,11 @@ class GraphicalGrid(QGraphicsView):
         print(f"drawn in: {exec_time}s")
         self.min_border = min(self.gridSize.x(), self.gridSize.y())
         self.max_border = max(self.gridSize.x(), self.gridSize.y())
-        self.scene_size = 1000  #todo find value, je comprends pas
-        #todo + la valeur est grande plus la carte apparait en grand et la taille de la fenêtre aussi,
+        self.scene_size = 1000  # todo find value, je comprends pas
+        # todo + la valeur est grande plus la carte apparait en grand et la taille de la fenêtre aussi,
         # et j'aimerais que la fenêtre fasse du ~1000x1000 et que l'entiereté de la carte soit affichée
-        self.tile_size = (self.scene_size / self.min_border) / ViewParameters.TEXTURE_SIZE
+        self.tile_size = (self.scene_size / self.min_border) / \
+            ViewParameters.TEXTURE_SIZE
         self.scale(self.tile_size, self.tile_size)
 
         self.horizontalScrollbar = self.horizontalScrollBar()
@@ -100,7 +101,8 @@ class GraphicalGrid(QGraphicsView):
         self.horizontalScrollbar.valueChanged.connect(self.horizontalScroll)
         self.verticalScrollbar.valueChanged.connect(self.verticalScroll)
 
-        self.timers: List[List[QTimer | int]] = [[QTimer(), 0, 0] for _ in range(4)]
+        self.timers: List[List[QTimer | int]] = [[QTimer(), 0, 0]
+                                                 for _ in range(4)]
         self.initTimers()
 
     def find_perfect_size(self):
@@ -111,7 +113,8 @@ class GraphicalGrid(QGraphicsView):
         Initialize the border of the tile to know which tile is selected
         """
         highlight = QPixmap(ViewParameters.HIGHTLIGHTED_TILE_TEXTURE_PATH)
-        highlight = highlight.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        highlight = highlight.scaled(
+            ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
         self.highlitedTile = QGraphicsPixmapItem(highlight)
         self.scene.addItem(self.highlitedTile)
         self.chosenEntity = None
@@ -119,7 +122,8 @@ class GraphicalGrid(QGraphicsView):
 
     def changeTileRenderer(self, newTileRendererIdx: int = None):
         if not newTileRendererIdx:
-            newTileRendererIdx = (self.tileRendererIdx + 1) % len(self.tileRenderers)
+            newTileRendererIdx = (self.tileRendererIdx +
+                                  1) % len(self.tileRenderers)
 
         for y in range(self.gridSize.y()):
             for x in range(self.gridSize.x()):
@@ -213,7 +217,7 @@ class GraphicalGrid(QGraphicsView):
                 PixmapUtils.getPixmapFromRGBHex(ViewParameters.NIGHT_MODE_COLOR))
             self.luminosityMode.setOpacity(0.1)
         elif hour == ViewParameters.NIGHT_MODE_FINISH:
-            self.luminosityMode.setPixmap(QPixmap())
+            self.luminosityMode.setOpacity(0)
         elif hour > ViewParameters.NIGHT_MODE_START or hour < ViewParameters.MIDDLE_OF_THE_NIGHT - 2:
             self.luminosityMode.setOpacity(opacity + 0.1)
         elif ViewParameters.MIDDLE_OF_THE_NIGHT + 2 < hour < ViewParameters.NIGHT_MODE_FINISH:
@@ -271,19 +275,23 @@ class GraphicalGrid(QGraphicsView):
     def moveScrollBar(self, movement: Movement):
         if self.timers[movement.value][2] > 1:
             """add time rathenr than reset it when player click too quickly"""
-            self.timers[movement.value][1] -= (self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor()
+            self.timers[movement.value][1] -= (
+                self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor()
             self.timers[movement.value][2] -= 1
 
         if self.timers[movement.value][1] >= (self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor():
             self.timers[movement.value][0].stop()
             self.timers[movement.value][1] = 0
             self.timers[movement.value][2] = 0
-        step = int((self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor() / (10 if self.timers[movement.value][1] >= 0 else 5))
+        step = int((self.scene_size / self.min_border) * self.renderingMonitor.getZoomFactor() /
+                   (10 if self.timers[movement.value][1] >= 0 else 5))
         value = step if movement in (Movement.DOWN, Movement.RIGHT) else -step
         if movement in (Movement.UP, Movement.DOWN):
-            self.verticalScrollbar.setValue(self.verticalScrollbar.value() + value)
+            self.verticalScrollbar.setValue(
+                self.verticalScrollbar.value() + value)
         else:
-            self.horizontalScrollbar.setValue(self.horizontalScrollbar.value() + value)
+            self.horizontalScrollbar.setValue(
+                self.horizontalScrollbar.value() + value)
         self.timers[movement.value][1] += step
 
     def resizeEvent(self, event):
@@ -299,9 +307,11 @@ class GraphicalGrid(QGraphicsView):
                 case Movement.UP.value:
                     timer.timeout.connect(self.moveVerticalScrollBarNegatively)
                 case Movement.RIGHT.value:
-                    timer.timeout.connect(self.moveHorizontalScrollBarPositively)
+                    timer.timeout.connect(
+                        self.moveHorizontalScrollBarPositively)
                 case Movement.LEFT.value:
-                    timer.timeout.connect(self.moveHorizontalScrollBarNegatively)
+                    timer.timeout.connect(
+                        self.moveHorizontalScrollBarNegatively)
 
     def initSmoothScroll(self, movement: Point):
         # TODO si on appuie trop rapidemment, la caméra ne suivra pas assez bien
@@ -320,17 +330,21 @@ class GraphicalGrid(QGraphicsView):
             self.timers[Movement.LEFT.value][2] += 1
 
     def setScrollBars(self, point: Point):
-        tileSize = int(self.scene_size / self.min_border * self.renderingMonitor.getZoomFactor())
+        tileSize = int(self.scene_size / self.min_border *
+                       self.renderingMonitor.getZoomFactor())
         self.horizontalScrollbar.setValue(point.x() * tileSize)
         self.verticalScrollbar.setValue(point.y() * tileSize)
 
     def initHook(self):
         hookThrowing = QPixmap(ViewParameters.FISHING_ROD_TEXTURE_PATH)
-        hookThrowing = hookThrowing.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        hookThrowing = hookThrowing.scaled(
+            ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
         hook = QPixmap(ViewParameters.HOOK_TEXTURE_PATH)
-        hook = hook.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        hook = hook.scaled(ViewParameters.TEXTURE_SIZE,
+                           ViewParameters.TEXTURE_SIZE)
         fishingRod = QPixmap(ViewParameters.FISHING_ROD_IN_USE_TEXTURE_PATH)
-        fishingRod = fishingRod.scaled(ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
+        fishingRod = fishingRod.scaled(
+            ViewParameters.TEXTURE_SIZE, ViewParameters.TEXTURE_SIZE)
         self.hookedTile = QGraphicsPixmapItem(hook)
         self.hookingPlayer = QGraphicsPixmapItem(fishingRod)
         self.hookThrowing = QGraphicsPixmapItem(hookThrowing)
@@ -343,7 +357,8 @@ class GraphicalGrid(QGraphicsView):
 
     def startHooking(self):
         pos = self.simulation.getPlayer().getPos()
-        self.hookThrowing.setPos(pos.x() * self.textureSize, pos.y() * self.textureSize)
+        self.hookThrowing.setPos(
+            pos.x() * self.textureSize, pos.y() * self.textureSize)
         self.hookThrowing.show()
 
     def stopHooking(self):
@@ -352,13 +367,15 @@ class GraphicalGrid(QGraphicsView):
     def drawHook(self, point: Point):
         self.stopHooking()
         pos = self.simulation.getPlayer().getPos()
-        self.hookedTile.setPos(point.x() * self.textureSize, point.y() * self.textureSize)
-        self.hookingPlayer.setPos(pos.x() * self.textureSize, pos.y() * self.textureSize)
+        self.hookedTile.setPos(point.x() * self.textureSize,
+                               point.y() * self.textureSize)
+        self.hookingPlayer.setPos(
+            pos.x() * self.textureSize, pos.y() * self.textureSize)
 
         pen = QPen(QColor(255, 255, 255))
         pen.setWidth(50)
         line = QLineF(int(point.x() * self.textureSize + self.textureSize/2), int(point.y() * self.textureSize + self.textureSize/2),
-                         int(pos.x() * self.textureSize + self.textureSize/2), int(pos.y() * self.textureSize) + self.textureSize/2)
+                      int(pos.x() * self.textureSize + self.textureSize/2), int(pos.y() * self.textureSize) + self.textureSize/2)
         self.line = QGraphicsLineItem(line)
         self.line.setPen(pen)
         self.scene.addItem(self.line)

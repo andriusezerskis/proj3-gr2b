@@ -45,7 +45,8 @@ class GridController:
         if self.simulation.hasPlayer() and not self.simulation.player.isFishing():
             pos = self.simulation.getPlayer().getPos()
             if self.simulation.getPlayer().move(movement):
-                self.graphicalGrid.movePlayer(pos, self.simulation.getPlayer().getPos())
+                self.graphicalGrid.movePlayer(
+                    pos, self.simulation.getPlayer().getPos())
                 if not self.renderingMonitor.isNextToBorder(self.simulation.getPlayer().getPos() if movement.isPositive() else pos, movement):
                     self.graphicalGrid.initSmoothScroll(movement)
 
@@ -53,14 +54,12 @@ class GridController:
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
             scaler = self.renderingMonitor.setOnZoomIndex()
-            #self.graphicalGrid.scale(1, 1)
-            #scaler = self.renderingMonitor.getAreaScalerFactor()
-            #print(scaler)
             self.graphicalGrid.scale(scaler, scaler)
             self.recomputeCuboid()
             self.graphicalGrid.removeRenderedSection()
             self.renderingMonitor.centerOnPoint(tile.getPos())
-            self.graphicalGrid.setScrollBars(self.renderingMonitor.getUpperPoint())
+            self.graphicalGrid.setScrollBars(
+                self.renderingMonitor.getUpperPoint())
             self.graphicalGrid.renderSection()
 
     def lageEntity(self):
@@ -68,7 +67,8 @@ class GridController:
             self.graphicalGrid.removeHook()
         player_pos = self.simulation.getPlayer().getPos()
         self.simulation.getPlayer().removeClaimedEntity()
-        self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(player_pos).getEntity()
+        self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(
+            player_pos).getEntity()
 
     def resizeEvent(self, event):
         if not self.simulation.hasPlayer():
@@ -104,7 +104,8 @@ class GridController:
 
         if self.renderingMonitor.getZoomIndex() < len(self.renderingMonitor.zooms)-1:
             self.renderingMonitor.zoomIndex += 1
-            scaler = self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex()]
+            scaler = self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex(
+            )]
             self.renderingMonitor.multiplyZoomFactor(scaler)
             self.graphicalGrid.scale(scaler, scaler)
 
@@ -112,10 +113,12 @@ class GridController:
             self.recomputeCuboid()
 
     def recomputeCuboid(self):
-        real_rendered_area = self.graphicalGrid.mapToScene(self.graphicalGrid.viewport().rect()).boundingRect()
+        real_rendered_area = self.graphicalGrid.mapToScene(
+            self.graphicalGrid.viewport().rect()).boundingRect()
         upper, lower, width, height = self.getCuboid(real_rendered_area)
         if not self.renderingMonitor.getRenderingSection().isEqual(upper, lower):
-            self.graphicalGrid.redrawSection(self.renderingMonitor.setNewPoints(upper, lower, width, height))
+            self.graphicalGrid.redrawSection(
+                self.renderingMonitor.setNewPoints(upper, lower, width, height))
 
     def getCuboid(self, dim: QRectF) -> Tuple[Point, Point, int, int]:
         upperTile = self.getGridCoordinate(Point(dim.x(), dim.y()), True)
@@ -132,7 +135,9 @@ class GridController:
             return
 
         if self.renderingMonitor.getZoomIndex() > 0:
-            scaler = 1 / self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex()]
+            scaler = 1 / \
+                self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex(
+                )]
             self.renderingMonitor.multiplyZoomFactor(scaler)
             self.graphicalGrid.scale(scaler, scaler)
             self.renderingMonitor.zoomIndex -= 1

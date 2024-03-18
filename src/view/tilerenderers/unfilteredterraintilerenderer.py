@@ -14,7 +14,8 @@ class UnfilteredTerrainTileRenderer(TileRenderer):
         self.terrainLayer = self.createNewLayer()
 
     def _updateTerrainLayer(self, tile: Tile):
-        self.terrainLayer.setPixmap(PixmapUtils.getPixmapFromPath(tile.getTexturePath()))
+        self.terrainLayer.setPixmap(
+            PixmapUtils.getPixmapFromPath(tile.getTexturePath()))
 
     @override
     def getAllItems(self) -> list[QGraphicsPixmapItem]:
