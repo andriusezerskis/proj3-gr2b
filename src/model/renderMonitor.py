@@ -155,7 +155,9 @@ class RenderMonitor:
         return self.zoomIndex
 
     def resetPlayerZoomFactor(self):
+        zoom = self.getZoomFactor()
         self.playerZoomFactor = None
+        return 1 / zoom
 
     def multiplyZoomFactor(self, coeff):
         self.zoomFactor *= coeff

@@ -54,21 +54,26 @@ class GridController:
         if not self.simulation.hasPlayer():
             self.simulation.setPlayerEntity(tile)
             scaler = self.renderingMonitor.setOnZoomIndex()
+            #scaler = self.renderingMonitor.getAreaScalerFactor()
+            #self.graphicalGrid.scale(1, 1)
             self.graphicalGrid.scale(scaler, scaler)
-            self.recomputeCuboid()
-            self.graphicalGrid.removeRenderedSection()
+            #self.recomputeCuboid()
+            #self.graphicalGrid.removeRenderedSection()
             self.renderingMonitor.centerOnPoint(tile.getPos())
-            self.graphicalGrid.setScrollBars(
-                self.renderingMonitor.getUpperPoint())
-            self.graphicalGrid.renderSection()
+            self.graphicalGrid.setScrollBars(self.renderingMonitor.getUpperPoint())
+            #self.graphicalGrid.renderSection()
+            self.recomputeCuboid()
 
-    def lageEntity(self):
+    def lageEntity(self, killed=False):
         if self.simulation.getPlayer().isFishing():
             self.graphicalGrid.removeHook()
         player_pos = self.simulation.getPlayer().getPos()
-        self.simulation.getPlayer().removeClaimedEntity()
-        self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(
-            player_pos).getEntity()
+        self.simulation.getPlayer().removeClaimedEntity(killed)
+        self.graphicalGrid.chosenEntity = self.simulation.getGrid().getTile(player_pos).getEntity() if not killed else None
+        #scaler = self.renderingMonitor.resetPlayerZoomFactor()
+        #self.graphicalGrid.scale(scaler, scaler)
+        #self.renderingMonitor.setOnZoomIndex(self.renderingMonitor.getZoomIndex())
+        #self.recomputeCuboid()
 
     def resizeEvent(self, event):
         if not self.simulation.hasPlayer():
@@ -104,8 +109,7 @@ class GridController:
 
         if self.renderingMonitor.getZoomIndex() < len(self.renderingMonitor.zooms)-1:
             self.renderingMonitor.zoomIndex += 1
-            scaler = self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex(
-            )]
+            scaler = self.renderingMonitor.zooms[self.renderingMonitor.getZoomIndex()]
             self.renderingMonitor.multiplyZoomFactor(scaler)
             self.graphicalGrid.scale(scaler, scaler)
 
