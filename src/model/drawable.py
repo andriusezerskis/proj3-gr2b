@@ -6,6 +6,7 @@ Date: December 2023
 
 
 from abc import ABC, abstractmethod
+from utils import getTerminalSubclassesOfClass
 from typing import Any
 from json import load
 from random import choice
@@ -21,6 +22,12 @@ class ParametrizedDrawable(ABC):
                 cls.parameterDicts[cls] = load(f)
 
         return cls.parameterDicts[cls]
+
+    @classmethod
+    def reloadAllDicts(cls):
+        cls.parameterDicts = dict()
+        for parameterType in getTerminalSubclassesOfClass(ParametrizedDrawable):
+            parameterType._getParameters()
 
     @classmethod
     @abstractmethod

@@ -15,6 +15,7 @@ from utils import Point, getTerminalSubclassesOfClass
 from model.entities.entity import Entity
 from model.simulation import Simulation
 from model.gridexporter import GridExporter
+from model.drawable import ParametrizedDrawable
 from parameter.genericparameters import GenericParameters
 
 from view.commandsWindow import CommandWindow
@@ -134,6 +135,12 @@ class Window(QMainWindow):
     def commandsCallback(self):
         self.commands.show()
 
+    @staticmethod
+    def reloadConfigs():
+        GenericParameters.reloadAllDicts()
+        ParametrizedDrawable.reloadAllDicts()
+        print("Configuration rechargée !")
+
     def drawButtons(self):
         self.pauseButton = QPushButton("⏸︎")
         self.pauseButton.setCheckable(True)
@@ -156,7 +163,7 @@ class Window(QMainWindow):
         self.saveGridButton.clicked.connect(self.saveGrid)
 
         self.reloadConfigButton = QPushButton("Recharger la configuration")
-        self.reloadConfigButton.clicked.connect(GenericParameters.reloadAllDicts)
+        self.reloadConfigButton.clicked.connect(self.reloadConfigs)
 
         self.buttonOpenDock = QPushButton("⇨")
         self.buttonOpenDock.hide()
