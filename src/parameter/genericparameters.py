@@ -19,6 +19,7 @@ class GenericParameters(ABC):
     def reloadAllDicts():
         for parameterType in getTerminalSubclassesOfClass(GenericParameters):
             parameterType.reloadDict()
+        print("Configuration rechargée !")
 
     @classmethod
     def reloadDict(cls) -> None:

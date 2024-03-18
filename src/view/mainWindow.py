@@ -15,6 +15,7 @@ from utils import Point, getTerminalSubclassesOfClass
 from model.entities.entity import Entity
 from model.simulation import Simulation
 from model.gridexporter import GridExporter
+from parameter.genericparameters import GenericParameters
 
 from view.commandsWindow import CommandWindow
 from view.graphicalGrid import GraphicalGrid
@@ -154,6 +155,9 @@ class Window(QMainWindow):
         self.saveGridButton = QPushButton("Sauvegarder")
         self.saveGridButton.clicked.connect(self.saveGrid)
 
+        self.reloadConfigButton = QPushButton("Recharger la configuration")
+        self.reloadConfigButton.clicked.connect(GenericParameters.reloadAllDicts)
+
         self.buttonOpenDock = QPushButton("⇨")
         self.buttonOpenDock.hide()
         self.buttonOpenDock.clicked.connect(
@@ -170,6 +174,9 @@ class Window(QMainWindow):
             self.timebutton,  alignment=Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(
             self.changeTileRendererButton, alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(
+            self.reloadConfigButton, alignment=Qt.AlignmentFlag.AlignTop
+        )
         self.layout.addWidget(
             self.saveGridButton, alignment=Qt.AlignmentFlag.AlignTop)
         """self.layout.addWidget(
