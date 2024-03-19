@@ -78,7 +78,7 @@ class Tile(ParametrizedDrawable, ABC):
         :return: whether the assignment was successful
         """
         # we only set the entity if the tile is of a valid type
-        if entity and isinstance(entity, Entity) and entity.isValidTileType(self.__class__):
+        if entity and isinstance(entity, Movable) and entity.isValidTileType(self.__class__):
             self.movable = entity
             return True
         return False
