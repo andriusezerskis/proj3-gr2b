@@ -80,8 +80,10 @@ class Window(QMainWindow):
         self.totalTime += 1
         self.simulation.step()
         self.updateGrid()
+        self.docksMonitor.getCurrentDock().addNewStep()
         for j in getTerminalSubclassesOfClass(Entity):
             self.docksMonitor.getCurrentDock().updateContent(j)
+        self.docksMonitor.getCurrentDock().redrawPlot()
         self.docksMonitor.getCurrentDock().updateController()
         self.showTime()
 

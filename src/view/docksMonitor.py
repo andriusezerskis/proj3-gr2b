@@ -68,6 +68,12 @@ class MonitoringDock(CustomQDock):
     def updateContent(self, entityType: Type[Entity]):
         self.graph.updatePlot(entityType.getCount(), entityType)
 
+    def redrawPlot(self) -> None:
+        self.graph.drawPlot()
+
+    def addNewStep(self) -> None:
+        self.graph.addNewStep()
+
     def updateController(self):
         self.entityController.update()
 

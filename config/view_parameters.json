@@ -17,6 +17,7 @@
     "ICE_TEXTURE_PATH": "../assets/textures/effects/ice.png",
     "TIME_FORMAT": "%A, %e %B :  %Hh",
     "STEP_TIME": 2000,
+    "MAX_GRAPH_X": 24,
 
     "PLOT_BCKGROUND" : "(191/255, 162/255, 132/255, 1)",
     "FIG_BCKGROUND" : "(191/255, 162/255, 132/255, 1)",

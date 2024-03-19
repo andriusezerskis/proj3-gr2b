@@ -12,6 +12,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 import matplotlib
+from matplotlib.ticker import MaxNLocator
 from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
 from parameters import ViewParameters, ViewText
 from model.entities.entity import Entity
@@ -176,13 +177,11 @@ class GraphWindow:
         self.layout.addWidget(iconWidget)
         self.iconButtonSelected = None
         # range display
-        nData = 50
-        self.xdata = list(range(nData))
-        self.nData = nData
+        self.xdata = [0]
         self.ydata = {}
 
         for entityType in getTerminalSubclassesOfClass(Entity):
-            self.ydata[entityType] = [0 for k in range(nData)]
+            self.ydata[entityType] = [0]
 
         # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
@@ -208,16 +207,14 @@ class GraphWindow:
 
     def setChosenEntity(self, entity, iconbutton):
         if iconbutton.isChecked():
-
             self.chosenEntity.remove(entity)
-
         else:
-
             self.chosenEntity.append(entity)
         self.drawPlot()
 
     def drawPlot(self):
         self.canvas.axes.clear()
+        self.canvas.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
         ylim = 0
         for entity in self.chosenEntity:
             self.canvas.axes.plot(self.xdata, self.ydata[entity], color=entity.getColor(
@@ -226,13 +223,6 @@ class GraphWindow:
                 ylim = 1.15 * max(self.ydata[entity])
 
         self.canvas.axes.set_ylim(1, ylim)
-        """
-        if self.chosenEntity.getFrenchName()[0] in "AEIOUYH":
-            self.canvas.axes.set_title(
-                f"Évolution de la population d' " + self.chosenEntity.getFrenchName().lower() + "s")
-        else:
-            self.canvas.axes.set_title(
-                f"Évolution de la population de " + self.chosenEntity.getFrenchName().lower() + "s")"""
 
         title = "Évolution des populations" if len(
             self.chosenEntity) != 1 else "Évolution de la population "
@@ -243,6 +233,16 @@ class GraphWindow:
         self.canvas.axes.set_ylabel("Quantité")
         self.canvas.draw()
 
+    def addNewStep(self):
+        currentNb = len(self.xdata)
+        if currentNb == ViewParameters.MAX_GRAPH_X:
+            self.xdata = self.xdata[1:] + [self.xdata[-1] + 1]
+        else:
+            self.xdata.append(self.xdata[-1] + 1)
+
     def updatePlot(self, newNumber, entity):
-        self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
-        self.drawPlot()
+        currentNb = len(self.ydata[entity])
+        if currentNb == ViewParameters.MAX_GRAPH_X:
+            self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
+        else:
+            self.ydata[entity].append(newNumber)

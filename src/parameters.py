@@ -66,6 +66,7 @@ class ViewParameters(GenericParameters, ABC):
     TIME_FORMAT: str = None
     TEXTURE_SIZE: int = None
     STEP_TIME: int = None
+    MAX_GRAPH_X: int = None
     LOCKED_BUTTON: str = None
     COW_TEXTURE_PATH: str = None
 
