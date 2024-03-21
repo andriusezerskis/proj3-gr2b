@@ -89,6 +89,12 @@ class PlayerDock(CustomQDock):
         self.dockLayout.addWidget(container2)
         self.playerController = PlayerDockController(container2)
         self.scrollArea = ScrollArea(container1)
+        
+    def addNewStep(self) -> None:
+        ...
+        
+    def redrawPlot(self) -> None:
+        ...
 
 
 class DocksMonitor(Observer):

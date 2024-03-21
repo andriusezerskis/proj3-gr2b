@@ -16,6 +16,7 @@ from model.entities.entity import Entity
 from model.simulation import Simulation
 from model.gridexporter import GridExporter
 from model.drawable import ParametrizedDrawable
+from model.player.player import Player
 from parameter.genericparameters import GenericParameters
 
 from view.commandsWindow import CommandWindow
@@ -82,7 +83,8 @@ class Window(QMainWindow):
         self.updateGrid()
         self.docksMonitor.getCurrentDock().addNewStep()
         for j in getTerminalSubclassesOfClass(Entity):
-            self.docksMonitor.getCurrentDock().updateContent(j)
+            if j is not Player:
+                self.docksMonitor.getCurrentDock().updateContent(j)
         self.docksMonitor.getCurrentDock().redrawPlot()
         self.docksMonitor.getCurrentDock().updateController()
         self.showTime()
