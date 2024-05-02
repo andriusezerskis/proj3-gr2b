@@ -108,7 +108,7 @@ class Simulation:
             if entity and not isinstance(entity, Player) and entity not in self.updatedEntities:
                 self.evolution(entity)
                 self.updatedEntities.add(entity)
-            if not entity:
+            elif not entity:
                 self.spontaneousGeneration(tile)
 
         print(f"compute time : {time.time() - t}")

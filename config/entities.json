@@ -104,7 +104,7 @@
         "valid_tiles": ["Mountain"],
         "preys": ["Goat"],
         "color": "#95C9D4",
-        "spawn_weight": 0.5,
+        "spawn_weight": 1,
         "preferred_temperature": 0,
         "health_points": 200,
         "loots": {},
