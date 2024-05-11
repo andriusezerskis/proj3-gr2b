@@ -29,6 +29,7 @@ class CustomQDock(QDockWidget):
         self.setWidget(container)
         self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.observer = observer
+        self.save_datas = True
 
     def updateContent(self, j):
         ...
@@ -66,10 +67,10 @@ class MonitoringDock(CustomQDock):
         self.entityController = EntityInfoController(container2)
 
     def updateContent(self, entityType: Type[Entity]):
-        self.graph.updatePlot(entityType.getCount(), entityType)
+        self.graph.updatePlot(entityType.getCount(), entityType, self.save_datas)
 
     def redrawPlot(self) -> None:
-        self.graph.drawPlot()
+        self.graph.drawPlot(self.save_datas)
 
     def addNewStep(self) -> None:
         self.graph.addNewStep()

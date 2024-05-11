@@ -179,11 +179,15 @@ class GraphWindow:
         # range display
         self.xdata = [0]
         self.ydata = {}
+        self.all_data = {}
+        self.saved = False
+        self.nb_hours = 168
 
         for entityType in getTerminalSubclassesOfClass(Entity):
             self.ydata[entityType] = [0]
+            self.all_data[entityType] = [0]
 
-        # We need to store a reference to the plotted line
+            # We need to store a reference to the plotted line
         # somewhere, so we can apply the new data to it.
         self._plotRef = None
 
@@ -212,7 +216,7 @@ class GraphWindow:
             self.chosenEntity.append(entity)
         self.drawPlot()
 
-    def drawPlot(self):
+    def drawPlot(self, save=False):
         self.canvas.axes.clear()
         self.canvas.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
         ylim = 0
@@ -221,6 +225,16 @@ class GraphWindow:
             ), label=entity.getFrenchName())
             if max(self.ydata[entity]) * 1.15 > ylim:
                 ylim = 1.15 * max(self.ydata[entity])
+
+        if save and len(self.all_data[self.chosenEntity[0]]) == self.nb_hours + 2 and not self.saved:
+            self.all_data[self.chosenEntity[0]].pop()
+            print("END\n\n\n\n\n\n")
+            with open("analyse/datas/evolution.txt", 'w') as f:
+                f.write("{")
+                for entity in self.chosenEntity:
+                    f.write(f'"{entity.getFrenchName()}": {self.all_data[entity]},')
+                f.write("}")
+            self.saved = True
 
         self.canvas.axes.set_ylim(1, ylim)
 
@@ -240,9 +254,12 @@ class GraphWindow:
         else:
             self.xdata.append(self.xdata[-1] + 1)
 
-    def updatePlot(self, newNumber, entity):
+    def updatePlot(self, newNumber, entity, save=False):
         currentNb = len(self.ydata[entity])
         if currentNb == ViewParameters.MAX_GRAPH_X:
             self.ydata[entity] = self.ydata[entity][1:] + [newNumber]
         else:
             self.ydata[entity].append(newNumber)
+
+        if save and len(self.all_data[entity]) <= self.nb_hours + 1:
+            self.all_data[entity].append(newNumber)
