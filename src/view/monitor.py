@@ -181,7 +181,7 @@ class GraphWindow:
         self.ydata = {}
         self.all_data = {}
         self.saved = False
-        self.nb_hours = 168
+        self.nb_hours = 300
 
         for entityType in getTerminalSubclassesOfClass(Entity):
             self.ydata[entityType] = [0]
@@ -226,8 +226,8 @@ class GraphWindow:
             if max(self.ydata[entity]) * 1.15 > ylim:
                 ylim = 1.15 * max(self.ydata[entity])
 
-        if save and len(self.all_data[self.chosenEntity[0]]) == self.nb_hours + 2 and not self.saved:
-            self.all_data[self.chosenEntity[0]].pop()
+        if save and (len(self.all_data[self.chosenEntity[0]]) == (self.nb_hours + 1)) and not self.saved:
+            #self.all_data[self.chosenEntity[0]].pop()
             print("END\n\n\n\n\n\n")
             with open("analyse/datas/evolution.txt", 'w') as f:
                 f.write("{")
@@ -261,5 +261,5 @@ class GraphWindow:
         else:
             self.ydata[entity].append(newNumber)
 
-        if save and len(self.all_data[entity]) <= self.nb_hours + 1:
+        if save and len(self.all_data[entity]) <= self.nb_hours:
             self.all_data[entity].append(newNumber)

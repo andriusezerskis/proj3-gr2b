@@ -33,7 +33,7 @@ class GraphPlotter:
 def summarize_data(n=10):
     samples = {}
     for i in range(1, n+1):
-        with open(f"datas/res{i}.txt", 'r') as f:
+        with open(f"datas/evolution{i}.txt", 'r') as f:
             res = eval(f.read())
             for key in res.keys():
                 if i == 1:
@@ -52,9 +52,10 @@ def print_data(summarized):
 
 
 if __name__ == '__main__':
-    i = 10
+    i = 2
     summarized = summarize_data(i)
     print_data(summarized)
-    GraphPlotter.plot_scores(summarized, {"Humain": ["#00B7BB", "#9ECDC6"], "Crabe": ["#EA9300", "#DEBE8A"], "Arbre": ["#4F8F00", "#BDCFA4"]}, "terrestre", True, path="datas/terrestre.png")
-    GraphPlotter.plot_scores(summarized, {"Leopard des neiges": ["#BB133E", "#C59997"], "Chevre": ["#00B7BB", "#9ECDC6"], "Fleur": ["#4F8F00", "#BDCFA4"]}, "alpestre", True, path="datas/alpestre.png")
-    GraphPlotter.plot_scores(summarized, {"Crabe": ["#EA9300", "#DEBE8A"], "Poisson": ["#00B7BB", "#9ECDC6"], "Algue": ["#4F8F00", "#BDCFA4"]}, "marines", True, path="datas/marines.png")
+    save = False
+    GraphPlotter.plot_scores(summarized, {"Humain": ["#00B7BB", "#9ECDC6"], "Crabe": ["#EA9300", "#DEBE8A"], "Arbre": ["#4F8F00", "#BDCFA4"]}, "terrestre", save, path="datas/terrestre.png")
+    GraphPlotter.plot_scores(summarized, {"Leopard des neiges": ["#BB133E", "#C59997"], "Chevre": ["#00B7BB", "#9ECDC6"], "Fleur": ["#4F8F00", "#BDCFA4"]}, "alpestre", save, path="datas/alpestre.png")
+    GraphPlotter.plot_scores(summarized, {"Crabe": ["#EA9300", "#DEBE8A"], "Poisson": ["#00B7BB", "#9ECDC6"], "Algue": ["#4F8F00", "#BDCFA4"]}, "marines", save, path="datas/marines.png")
