@@ -181,7 +181,7 @@ class GraphWindow:
         self.ydata = {}
         self.all_data = {}
         self.saved = False
-        self.nb_hours = 300
+        self.nb_hours = 3000
 
         for entityType in getTerminalSubclassesOfClass(Entity):
             self.ydata[entityType] = [0]

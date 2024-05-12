@@ -33,7 +33,7 @@ class GraphPlotter:
 def summarize_data(n=10):
     samples = {}
     for i in range(1, n+1):
-        with open(f"datas/evolution{i}.txt", 'r') as f:
+        with open(f"datas/evolution{""}.txt", 'r') as f:
             res = eval(f.read())
             for key in res.keys():
                 if i == 1:
