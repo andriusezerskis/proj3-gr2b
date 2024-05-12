@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 class GraphPlotter:
 
     @staticmethod
-    def plot_scores(scores_to_plot, keys, entity_type, save=False, path="datas/temp.png"):
+    def plot_scores(scores_to_plot, keys, entity_type, save=False, path="datas/res.png"):
         plt.figure(figsize=(12, 6))
 
         for key in keys.keys():
@@ -42,7 +42,6 @@ def summarize_data(n=10):
                     samples[key].append(res[key][1:])
     return samples
 
-
 def print_data(summarized):
     for key in summarized.keys():
         print(f"{key}")
@@ -53,9 +52,19 @@ def print_data(summarized):
 
 if __name__ == '__main__':
     i = 2
-    summarized = summarize_data(i)
+    summarized = summarize_data()
     print_data(summarized)
-    save = False
-    GraphPlotter.plot_scores(summarized, {"Humain": ["#00B7BB", "#9ECDC6"], "Crabe": ["#EA9300", "#DEBE8A"], "Arbre": ["#4F8F00", "#BDCFA4"]}, "terrestre", save, path="datas/terrestre.png")
-    GraphPlotter.plot_scores(summarized, {"Leopard des neiges": ["#BB133E", "#C59997"], "Chevre": ["#00B7BB", "#9ECDC6"], "Fleur": ["#4F8F00", "#BDCFA4"]}, "alpestre", save, path="datas/alpestre.png")
-    GraphPlotter.plot_scores(summarized, {"Crabe": ["#EA9300", "#DEBE8A"], "Poisson": ["#00B7BB", "#9ECDC6"], "Algue": ["#4F8F00", "#BDCFA4"]}, "marines", save, path="datas/marines.png")
+    save = True
+    #GraphPlotter.plot_scores(summarized, {"Humain": ["#00B7BB", "#9ECDC6"], "Crabe": ["#EA9300", "#DEBE8A"], "Arbre": ["#4F8F00", "#BDCFA4"]}, "terrestre", save, path="datas/terrestre.png")
+    #GraphPlotter.plot_scores(summarized, {"Leopard des neiges": ["#BB133E", "#C59997"], "Chevre": ["#00B7BB", "#9ECDC6"], "Fleur": ["#4F8F00", "#BDCFA4"]}, "alpestre", save, path="datas/alpestre.png")
+    #GraphPlotter.plot_scores(summarized, {"Crabe": ["#EA9300", "#DEBE8A"], "Poisson": ["#00B7BB", "#9ECDC6"], "Algue": ["#4F8F00", "#BDCFA4"]}, "marines", save, path="datas/marines.png")
+    GraphPlotter.plot_scores(summarized, {
+                                          "Humain": ["#FCBF00", "#FCE086"],
+                                          "Crabe": ["#EA9300", "#DEBE8A"],
+                                          "Arbre": ["#4F8F00", "#BDCFA4"],
+                                          "Leopard des neiges": ["#797979", "#D6D6D6"],
+                                          "Chevre": ["#9B41CA", "#AE97C3"],
+                                          "Fleur": ["#BB133E", "#C59997"],
+                                          "Poisson": ["#00B7BB", "#9ECDC6"],
+                                          "Algue": ["#004D80", "#AEBBD4"]
+                                          }, "", save, path="datas/graphe/all.png")
