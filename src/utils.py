@@ -147,17 +147,3 @@ def getTerminalSubclassesOfClass(cls: Type[C]) -> set[Type[C]]:
         else:
             stack.extend(subclasses)
     return res
-
-
-def getFrenchToEnglishTranslation(frenchEntity: str) -> str:
-    return {
-        "Crabe": "Crab",
-        "Poisson": "Fish",
-        "Arbre": "Tree",
-        "Plante": "Plant",
-        "Algue": "Algae",
-        "Humain": "Human",
-        "Chevre": "Goat",
-        "Leopard des neiges": "SnowLeopard",
-        "Fleur": "Flower"
-    }[frenchEntity]

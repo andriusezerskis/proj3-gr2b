@@ -13,7 +13,8 @@ from PyQt6.QtGui import *
 
 import matplotlib
 from matplotlib.ticker import MaxNLocator
-from utils import getTerminalSubclassesOfClass, getFrenchToEnglishTranslation
+from utils import getTerminalSubclassesOfClass
+from view.frenchToEnglish import getFrenchToEnglishTranslation
 from parameters import ViewParameters, ViewText
 from model.entities.entity import Entity
 
